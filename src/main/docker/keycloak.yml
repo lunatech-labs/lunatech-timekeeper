@@ -1,0 +1,15 @@
+version: '3'
+services:
+  keycloak-container:
+    image: jboss/keycloak
+    restart: always
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+    command:
+      - "-b 0.0.0.0"
+      - "-Dkeycloak.import=/opt/jboss/keycloak/examples-realm.json"
+    ports:
+      - "8180:8080"
+    volumes:
+      - ../config/realm-export.json:/opt/jboss/keycloak/examples-realm.json
