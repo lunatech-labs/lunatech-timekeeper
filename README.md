@@ -1,30 +1,58 @@
 # timekeeper project
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Why another Toggl you might ask… 
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+That’s a good question.
 
-## Running the application in dev mode
+We know that there is a lot of open-source solution or SaaS solution (à la Toggl). We decided to bootstrap this project with only one objective : we want to learn.
 
-You can run your application in dev mode that enables live coding using:
-```
-./mvnw quarkus:dev
-```
+We want to learn to design a product, to do workshop and brainstorming. We also want to demonstrate what kind of work we’re able to offer to our customer. Have a look at the various workshops we did in Chessy. 
 
-## Packaging and running the application
+Our main purpose is to build a cool playground where we can learn, experiment and build a great tool. 
 
-The application can be packaged using `./mvnw package`.
-It produces the `timekeeper-1.0.0-SNAPSHOT-runner.jar` file in the `/target` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/lib` directory.
+Toggl is a good tool. We’ve been using it since 2016. However there is some requirements that are not and will never be cover by this tool.
 
-The application is now runnable using `java -jar target/timekeeper-1.0.0-SNAPSHOT-runner.jar`.
+Thus, Timekeeper
 
-## Creating a native executable
+Enjoy, have fun and contribute ! 
 
-You can create a native executable using: `./mvnw package -Pnative`.
+#Documenation 
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: `./mvnw package -Pnative -Dquarkus.native.container-build=true`.
+All documentation are hold on Confluence pages [here](https://lunatech.atlassian.net/wiki/spaces/INTRANET/pages/1609695253/Timekeeper)
 
-You can then execute your native executable with: `./target/timekeeper-1.0.0-SNAPSHOT-runner`
+#Technical stack 
 
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/building-native-image-guide.
+All ADRs are on Confluence [here](https://lunatech.atlassian.net/wiki/spaces/INTRANET/pages/1686077447/Technical+architecture#Architecture-decision-records)
+
+## Backend 
+
+- Quarkus
+- PostgresSQL
+- Hibernate-panache
+- JsonB
+- Docker
+
+## FrontEnd
+
+- React
+
+# Getting started
+
+## 1 - Database
+
+Run docker-compose as :
+
+    docker-compose up
+    
+2 main services will be started :
+
+- Postgres dedicated to TimeKeeper app
+- Keycloak (+ one postgres dedicated to Keycloak)
+
+## 2 - Start TimeKeeper
+
+    mvn quarkus:dev
+    
+We are using Flyway extension. Database's model will be created at the first run of the app.
+
+## 3 - FrontEnd   
