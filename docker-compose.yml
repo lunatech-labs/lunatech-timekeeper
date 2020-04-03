@@ -33,4 +33,4 @@ services:
     volumes:
       - ./data/pgdata:/var/lib/postgresql/data
     ports:
-      - "5434:5432"
+      - "5435:5432"
