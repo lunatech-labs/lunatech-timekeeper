@@ -20,7 +20,7 @@ services:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
     ports:
-      - 8081:8080
+      - 8082:8080
     depends_on:
       - postgres-keycloak
   postgres:
@@ -34,3 +34,12 @@ services:
       - ./data/pgdata:/var/lib/postgresql/data
     ports:
       - "5435:5432"
+
+  mailhog-timekeeper:
+    container_name: mailhog
+    image: mailhog/mailhog
+    restart: always
+    ports:
+      - 1026:1025
+      - 8026:8025
+
