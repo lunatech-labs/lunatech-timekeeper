@@ -114,4 +114,12 @@ Go to the `frontend` folder and check the README.md
 
 Keycloak runs on port http://localhost:8082 use admin/admin (configured in docker-compose.yml).
 
+docker compose imports `keycloak/realm-export.json`. This JSON file will create a "Quarkus" Realm and 2 clients : 
+- backend-service for Quarkus
+- react-ff for the React Frontend
+
+Some users are also automatically imported (alice/alice).
+
+
+
 

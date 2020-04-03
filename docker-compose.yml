@@ -7,6 +7,7 @@ services:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: password
+
   keycloak:
     image: jboss/keycloak
     container_name: keycloak
@@ -23,6 +24,11 @@ services:
       - 8082:8080
     depends_on:
       - postgres-keycloak
+    volumes:
+    - ./keycloak:/opt/jboss/keycloak/imports
+    command:
+        - "-b 0.0.0.0 -Dkeycloak.import=/opt/jboss/keycloak/imports/realm-export.json"
+
   postgres:
     image: postgres:12.2
     container_name: postgres
@@ -36,7 +42,7 @@ services:
       - "5435:5432"
 
   mailhog-timekeeper:
-    container_name: mailhog
+    container_name: mailhog-tk
     image: mailhog/mailhog
     restart: always
     ports:
