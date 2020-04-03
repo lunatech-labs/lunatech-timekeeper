@@ -25,12 +25,23 @@ This starts the frontend on http://localhost:5000/
 ## I am a frontend developer, should I use it? 
 
 No.
-Install node 8.11 and npm 5.6 and use `npm start` (see below)
+Install node and npm then use 
 
-## The long version     
+    npm start
+
+This starts a local node server and the TimeKeeper React app should be on http://localhost:3000/
+
+On my Mac I relies on :
+
+    npm 6.9.0 installed with brew install npm
+    node v10.15.3 installed with brew install node
+
+# The long version     
 
 This project relies on `frontend-maven-plugin`(https://github.com/eirslett/frontend-maven-plugin)
 The Maven plugin downloads/installs Node and NPM locally for your project, runs npm install, and then any combination of Bower, Grunt, Gulp, Jspm, Karma, or Webpack. It's supposed to work on Windows, OS X and Linux.
+
+This is interesting to build the application to `frontend/build` folder.
 
 #### What is this plugin meant to do?
 - Let you keep your frontend and backend builds as separate as possible, by
