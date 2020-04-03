@@ -16,11 +16,11 @@ Thus, Timekeeper
 
 Enjoy, have fun and contribute ! 
 
-#Documenation 
+# Documenation 
 
 All documentation are hold on Confluence pages [here](https://lunatech.atlassian.net/wiki/spaces/INTRANET/pages/1609695253/Timekeeper)
 
-#Technical stack 
+# Technical stack 
 
 All ADRs are on Confluence [here](https://lunatech.atlassian.net/wiki/spaces/INTRANET/pages/1686077447/Technical+architecture#Architecture-decision-records)
 
