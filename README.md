@@ -16,7 +16,7 @@ Thus, Timekeeper
 
 Enjoy, have fun and contribute ! 
 
-# Documenation 
+# Documentation 
 
 All documentation are hold on Confluence pages [here](https://lunatech.atlassian.net/wiki/spaces/INTRANET/pages/1609695253/Timekeeper)
 
