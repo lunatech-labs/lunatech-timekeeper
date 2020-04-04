@@ -1,5 +1,7 @@
 # Timekeeper project
 
+[![Codeship Status for lunatech-labs/lunatech-timekeeper](https://app.codeship.com/projects/352930a0-589d-0138-5f43-3e74b59257eb/status?branch=master)](https://app.codeship.com/projects/391390)
+
 Why another Toggl you might ask… 
 
 That’s a good question.
