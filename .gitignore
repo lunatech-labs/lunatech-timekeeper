@@ -34,3 +34,27 @@ pom.xml.releaseBackup
 pom.xml.versionsBackup
 release.properties
 /data/
+
+# Frontend -- START
+# dependencies
+frontend/node_modules
+frontend/node
+frontend/.pnp
+frontend.pnp.js
+frontend/target
+frontend/log.txt
+# testing
+frontend/coverage
+# production
+frontend/build
+# misc
+.DS_Store
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# Frontend -- END
