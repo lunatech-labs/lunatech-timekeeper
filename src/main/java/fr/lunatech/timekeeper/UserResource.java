@@ -28,14 +28,4 @@ public class UserResource {
         return new User(identity);
     }
 
-    @GET
-    @Path("/decode")
-    @Produces(MediaType.APPLICATION_JSON)
-    @NoCache
-    public Map decode() {
-        Map map = new HashMap();
-        map.put("token" , new User(identity));
-        map.put("expired", false);
-        return map;
-    }
 }
