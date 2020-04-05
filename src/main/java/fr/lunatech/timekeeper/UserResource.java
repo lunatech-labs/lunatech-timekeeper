@@ -11,6 +11,9 @@ import org.jboss.resteasy.annotations.cache.NoCache;
 
 import io.quarkus.security.identity.SecurityIdentity;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Path("/api/users")
 public class UserResource {
 
@@ -25,4 +28,14 @@ public class UserResource {
         return new User(identity);
     }
 
+    @GET
+    @Path("/decode")
+    @Produces(MediaType.APPLICATION_JSON)
+    @NoCache
+    public Map decode() {
+        Map map = new HashMap();
+        map.put("token" , new User(identity));
+        map.put("expired", false);
+        return map;
+    }
 }
