@@ -1440,7 +1440,7 @@
       "linkOnly": false,
       "firstBrokerLoginFlowAlias": "first broker login",
       "config": {
-        "clientSecret": "**********",
+        "clientSecret": "***REMOVED***",
         "clientId": "***REMOVED***",
         "defaultScope": "openid profile email",
         "useJwksUrl": "true"
