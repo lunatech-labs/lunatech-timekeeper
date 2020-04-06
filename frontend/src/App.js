@@ -1,42 +1,58 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react'
+import Keycloak from 'keycloak-js'
+import { KeycloakProvider } from '@react-keycloak/web'
 import logo from './logo_timekeeper_homepage.png';
 import './App.css';
+import { AppRouter } from './routes'
 
-function App() {
+const keycloak = new Keycloak({
+    // Il est possible de configurer via des variables d'environement pour la PROD
+    // realm: process.env.REACT_APP_KEYCLOAK_REALM,
+    //url: process.env.REACT_APP_KEYCLOAK_URL,
+    //clientId: process.env.REACT_APP_KEYCLOAK_CLIENT_ID,
+    realm: "quarkus",
+    url: "http://localhost:8082/auth/",
+    clientId: "react-ff",
+    publicClient: "true"
+})
 
-    const [data, setData] = useState({ users: [] });
-    useEffect(() => {
-        const fetchData = async () => {
-            const result = await axios(
-                'http://127.0.0.1:8080/api/users/me', { headers: { "Authorization": "Bearer " + localStorage.getItem("react-token") } }
-            );
-            setData(result.data);
-        };
-        fetchData();
-    }, []);
-
-
-    return (
-        <div className="App">
-            <header className="App-header">
-                <h1>TimeKeeper</h1>
-                <div>
-                    <img src={logo} className="App-logo" alt="logo" />
-                </div>
-                <div>
-
-                    <h2>Response from Quarkus API: /api/users/me </h2>
-
-                    <p>Name: {data.name}</p>
-                    <p>First name: {data.givenName}</p>
-                    <p>Last name: {data.familyName}</p>
-                    <p>Email:{data.email}</p>
-
-                </div>
-            </header>
-        </div>
-    );
+const keycloakProviderInitConfig = {
+    onLoad: 'check-sso',
 }
 
-export default App;
+class App extends React.PureComponent {
+    onKeycloakEvent = (event, error) => {
+        console.log('onKeycloakEvent', event, error)
+    }
+
+    onKeycloakTokens = (tokens) => {
+        console.log('onKeycloakTokens', tokens)
+    }
+
+    render() {
+        return (
+            <KeycloakProvider
+                keycloak={keycloak}
+                initConfig={keycloakProviderInitConfig}
+                onEvent={this.onKeycloakEvent}
+                onTokens={this.onKeycloakTokens}
+            >
+
+                <div className="App">
+                    <header className="App-header">
+                        <div>
+                            <img src={logo} className="App-logo" alt="logo" />
+                        </div>
+                        <div>
+                            <AppRouter />
+                        </div>
+                    </header>
+                </div>
+
+
+            </KeycloakProvider>
+        )
+    }
+}
+
+export default App
