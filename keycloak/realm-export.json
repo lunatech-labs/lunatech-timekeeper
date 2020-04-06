@@ -463,7 +463,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "secret-ae4c5ec2",
       "defaultRoles": [
         "view-profile",
         "manage-account"
@@ -510,7 +510,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "secret-ae4c5ec2",
       "redirectUris": [
         "/realms/quarkus/account/*"
       ],
@@ -563,7 +563,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "secret-ae4c5ec2",
       "redirectUris": [],
       "webOrigins": [],
       "notBefore": 0,
@@ -602,7 +602,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "secret-ae4c5ec2",
       "redirectUris": [],
       "webOrigins": [],
       "notBefore": 0,
@@ -644,7 +644,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "secret-ae4c5ec2",
       "redirectUris": [
         "http://127.0.0.1:3000/*",
         "http://localhost:3000/*"
@@ -743,7 +743,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "secret-ae4c5ec2",
       "redirectUris": [
         "/admin/Timekeeper/console/*"
       ],
@@ -808,7 +808,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "ae4c5ec2-7514-43e9-b026-dafc4eb52453",
       "redirectUris": [
         "http://localhost:8080/"
       ],
