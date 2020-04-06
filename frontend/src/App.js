@@ -10,9 +10,9 @@ const keycloak = new Keycloak({
     // realm: process.env.REACT_APP_KEYCLOAK_REALM,
     //url: process.env.REACT_APP_KEYCLOAK_URL,
     //clientId: process.env.REACT_APP_KEYCLOAK_CLIENT_ID,
-    realm: "quarkus",
+    realm: "Timekeeper",
     url: "http://localhost:8082/auth/",
-    clientId: "react-ff",
+    clientId: "react-timekeeper-client",
     publicClient: "true"
 })
 

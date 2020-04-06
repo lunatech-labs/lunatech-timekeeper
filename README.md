@@ -38,6 +38,8 @@ To see the full list of installed JDK :
 
     /usr/libexec/java_home -V
     
+Create a .jenv folder in your $HOME folder    
+    
 To add Jdk11 to jenv : 
 
     jenv add /Library/Java/JavaVirtualMachines/openjdk-11.0.2.jdk/Contents/Home
