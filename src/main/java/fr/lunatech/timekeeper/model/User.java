@@ -2,6 +2,8 @@ package fr.lunatech.timekeeper.model;
 
 import io.quarkus.oidc.runtime.OidcJwtCallerPrincipal;
 import io.quarkus.security.identity.SecurityIdentity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This object is created from the JWT token sent by Quarkus.
@@ -14,18 +16,21 @@ public class User {
     private String familyName;
     private String email;
 
+    private static Logger logger = LoggerFactory.getLogger(User.class);
+
+
     public User(SecurityIdentity identity) {
 
-        System.out.println("create user from "+identity.getPrincipal());
+        logger.debug("create user from "+identity.getPrincipal());
 
         setName(identity.getPrincipal().getName());
 
-        System.out.println(identity.getPrincipal().getClass());
+       logger.debug(identity.getPrincipal().getClass().toString());
 
         if(identity.getPrincipal() instanceof io.quarkus.oidc.runtime.OidcJwtCallerPrincipal){
             OidcJwtCallerPrincipal jwtCallerPrincipal = (io.quarkus.oidc.runtime.OidcJwtCallerPrincipal) identity.getPrincipal();
 
-            // System.out.println("Claims" + jwtCallerPrincipal.getClaims());
+            // logger.debug("Claims" + jwtCallerPrincipal.getClaims());
             setEmail(jwtCallerPrincipal.getClaims().getClaimValueAsString("email"));
             setGivenName(jwtCallerPrincipal.getClaims().getClaimValueAsString("given_name"));
             setFamilyName(jwtCallerPrincipal.getClaims().getClaimValueAsString("family_name"));
