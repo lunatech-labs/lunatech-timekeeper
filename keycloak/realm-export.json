@@ -1440,7 +1440,7 @@
       "linkOnly": false,
       "firstBrokerLoginFlowAlias": "first broker login",
       "config": {
-        "clientSecret": "**********",
+        "clientSecret": "_TOW4vSvNX0dgkVaH0MXKXKi",
         "clientId": "941763132071-skunln329de3efa6j53mpc69eon6vpni.apps.googleusercontent.com",
         "defaultScope": "openid profile email",
         "useJwksUrl": "true"
