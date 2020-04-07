@@ -32,7 +32,7 @@ services:
 
   postgres:
     image: postgres:12.2
-    container_name: postgres
+    container_name: postgres-timekeeper
     environment:
       POSTGRES_DB: timekeeper
       POSTGRES_USER: keycloak
