@@ -1,4 +1,4 @@
-package fr.lunatech.timekeeper.model;
+package fr.lunatech.timekeeper.resources;
 
 import io.quarkus.oidc.runtime.OidcJwtCallerPrincipal;
 import io.quarkus.security.identity.SecurityIdentity;
@@ -10,16 +10,16 @@ import org.slf4j.LoggerFactory;
  * It used from UserResource.
  * @author Nicolas Martignole
  */
-public class User {
+public class JwtUser {
     private String name;
     private String givenName;
     private String familyName;
     private String email;
 
-    private static Logger logger = LoggerFactory.getLogger(User.class);
+    private static Logger logger = LoggerFactory.getLogger(JwtUser.class);
 
 
-    public User(SecurityIdentity identity) {
+    public JwtUser(SecurityIdentity identity) {
 
         logger.debug("create user from "+identity.getPrincipal());
 
