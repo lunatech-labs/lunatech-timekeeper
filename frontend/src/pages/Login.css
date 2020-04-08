@@ -1,0 +1,27 @@
+/* ---------- STRUCTURE ---------- */
+.login_LeftPart {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 100px 70px;
+    background: white;
+}
+.login_RightPart {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    background: #F8F9FC;
+}
+.login_RightPart img {
+    width: 70%;
+    margin-top: 100px;
+}
+/* ---------- LOGO ---------- */
+.logo_Tk img {width: 75%;}
+/* ---------- TITLE ---------- */
+.title_Tk h1 {font-weight: 700;}
+.title_Tk div {
+    font-size: 24px;
+    color: #B7BAC5;
+}
