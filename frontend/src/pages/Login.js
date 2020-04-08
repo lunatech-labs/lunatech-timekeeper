@@ -1,6 +1,9 @@
 import React, { useCallback } from 'react'
 import { Redirect, withRouter } from 'react-router-dom'
 import { withKeycloak } from '@react-keycloak/web'
+import { Button } from "antd";
+import { Layout } from 'antd';
+const {  Footer, Content } = Layout;
 
 const LoginPage = withRouter(
     withKeycloak(({ keycloak, location }) => {
@@ -12,11 +15,14 @@ const LoginPage = withRouter(
         }, [keycloak])
 
         return (
-            <div>
-                <button type="button" onClick={login} className="button">
-                    Login
-                </button>
-            </div>
+            <Layout>
+                <Content>
+                    <Button type="primary" onClick={login}>
+                        Login
+                    </Button>
+                </Content>
+                <Footer>Copyright(c) 2020 - Lunatech</Footer>
+            </Layout>
         )
     })
 )

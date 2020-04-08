@@ -56,3 +56,21 @@ div.userProfile p{
   border-bottom: 1px solid #eee;
   text-align: left;
 }
+
+.header {
+  color:#ffffee !important;
+}
+.mainContent{
+  margin: 10px 15px;
+  min-height: 87vh !important;
+  background-color: white;
+  padding: 10px
+}
+.footerTk{
+  text-align: center;
+}
+.logo {
+  height: 32px;
+  color: #ffffff;
+  margin: 16px;
+}

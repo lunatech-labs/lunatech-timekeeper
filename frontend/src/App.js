@@ -1,7 +1,6 @@
 import React from 'react'
 import Keycloak from 'keycloak-js'
 import { KeycloakProvider } from '@react-keycloak/web'
-import logo from './logo_timekeeper_homepage.png';
 import './App.css';
 import { AppRouter } from './routes'
 
@@ -38,18 +37,7 @@ class App extends React.PureComponent {
                 onTokens={this.onKeycloakTokens}
             >
 
-                <div className="App">
-                    <header className="App-header">
-                        <div>
-                            <img src={logo} className="App-logo" alt="logo" />
-                        </div>
-                        <div>
-                            <AppRouter />
-                        </div>
-                    </header>
-                </div>
-
-
+                <AppRouter />
             </KeycloakProvider>
         )
     }
