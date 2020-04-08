@@ -14,8 +14,7 @@ import { Row, Col } from 'antd';
 import { Typography } from 'antd';
 
 const { Content } = Layout;
-const { Title } = Typography;
-const { Text } = Typography;
+const { Title, Paragraph } = Typography;
 
 
 const LoginPage = withRouter(
@@ -37,9 +36,17 @@ const LoginPage = withRouter(
                             </div>
                             <div className="title_Tk">
                                 <Title>Simple time tracking. Powerful reporting.</Title>
-                                <Text>Turn your team on to productivity.</Text>
+                                <Paragraph>Turn your team on to productivity.</Paragraph>
                             </div>
-                            <Button type="primary" onClick={login}>Login</Button>
+
+                            <Button type="primary" onClick={login} danger>
+                                Login
+                            </Button>
+
+
+
+
+
                         </Col>
                         <Col className="login_RightPart" span={15}>
                             <img src={LoginBackground} alt=""/>
