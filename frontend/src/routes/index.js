@@ -17,8 +17,8 @@ export const AppRouter = () => {
     return (
         <Router>
             <Redirect from="/" to="/home" />
-            <PrivateRoute path="/home" component={HomePage} />
-            <Route path="/login" component={LoginPage} />
+            <PrivateRoute path="/home"  component={HomePage} />
+            <Route        path="/login" component={LoginPage} />
         </Router>
     )
 }
