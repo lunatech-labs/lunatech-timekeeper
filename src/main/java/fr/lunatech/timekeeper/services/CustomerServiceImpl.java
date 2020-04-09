@@ -6,7 +6,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
-
 @ApplicationScoped
 public class CustomerServiceImpl implements CustomerService {
 
@@ -17,9 +16,10 @@ public class CustomerServiceImpl implements CustomerService {
         return customer.id;
     }
 
-
     @Override
     public Optional<Customer> getCustomerById(long id) {
         return Customer.findByIdOptional(id);
+
+
     }
 }
