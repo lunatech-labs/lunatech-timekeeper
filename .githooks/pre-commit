@@ -6,7 +6,7 @@ LC_ALL=C
 
 local_branch="$(git rev-parse --abbrev-ref HEAD)"
 
-valid_branch_regex="^(feature|release|hotfix)\/[a-z0-9._-]+$"
+valid_branch_regex="^(feature|release|hotfix)\/[A-Za-z0-9._-]+$"
 
 message="❌  Invalid branch name. Your branch name should start with [feature/*] as we use Git Flow on TimeKeeper"
 message2="✅️ Please use the YouTrack ticket ID as part of your branch. For instance, TK-999 branch should be [feature/TK-999-short-description]"
