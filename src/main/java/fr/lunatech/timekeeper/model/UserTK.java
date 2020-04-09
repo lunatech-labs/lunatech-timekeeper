@@ -1,6 +1,6 @@
 package fr.lunatech.timekeeper.model;
 
-import fr.lunatech.timekeeper.model.enums.Profil;
+import fr.lunatech.timekeeper.model.enums.Profile;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
 import javax.persistence.Entity;
@@ -11,16 +11,16 @@ public class UserTK extends PanacheEntity {
     private String firstName;
     private String lastname;
     private String email;
-    private Profil profile;
+    private Profile profile;
 
     public UserTK() {
     }
 
-    public Profil getProfile() {
+    public Profile getProfile() {
         return profile;
     }
 
-    public void setProfile(Profil profile) {
+    public void setProfile(Profile profile) {
         this.profile = profile;
     }
 

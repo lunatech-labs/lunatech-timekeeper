@@ -1,7 +1,5 @@
 package fr.lunatech.timekeeper.services.dto;
 
-import fr.lunatech.timekeeper.model.enums.Profil;
-
 import java.util.Objects;
 import java.util.Optional;
 

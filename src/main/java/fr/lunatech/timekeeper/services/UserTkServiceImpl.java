@@ -2,7 +2,7 @@ package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.model.Member;
 import fr.lunatech.timekeeper.model.UserTK;
-import fr.lunatech.timekeeper.model.enums.Profil;
+import fr.lunatech.timekeeper.model.enums.Profile;
 import fr.lunatech.timekeeper.model.enums.Role;
 import fr.lunatech.timekeeper.services.dto.MemberDto;
 import fr.lunatech.timekeeper.services.dto.UserTkDto;
@@ -25,7 +25,7 @@ public class UserTkServiceImpl implements UserTkService {
         userTK.setEmail(userTkDto.getEmail());
         userTK.setFirstName(userTkDto.getFirstName());
         userTK.setLastname(userTkDto.getLastname());
-        userTK.setProfile(Profil.valueOf(userTkDto.getProfile()));
+        userTK.setProfile(Profile.valueOf(userTkDto.getProfile()));
 
         UserTK.persist(userTK);
         return userTK.id;

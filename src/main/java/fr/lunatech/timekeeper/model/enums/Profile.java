@@ -1,6 +1,6 @@
 package fr.lunatech.timekeeper.model.enums;
 
-public enum Profil {
+public enum Profile {
 
 
     Admin, SimpleUSer
