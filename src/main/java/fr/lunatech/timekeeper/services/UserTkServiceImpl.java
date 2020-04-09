@@ -6,6 +6,7 @@ import fr.lunatech.timekeeper.model.enums.Profile;
 import fr.lunatech.timekeeper.model.enums.Role;
 import fr.lunatech.timekeeper.services.dto.MemberDto;
 import fr.lunatech.timekeeper.services.dto.UserTkDto;
+import fr.lunatech.timekeeper.services.exception.IllegalEntityStateException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
@@ -45,7 +46,7 @@ public class UserTkServiceImpl implements UserTkService {
 
         memberDto.getId().map(v -> member.id = v);
         Optional<UserTK> userTK = UserTK.findByIdOptional(memberDto.getUserId());
-        member.setUser(userTK.orElseThrow(() -> new IllegalStateException("One User is required for member " + member.id + " activity name " + memberDto.getRole())));
+        member.setUser(userTK.orElseThrow(() -> new IllegalEntityStateException("One User is required for member " + member.id + " activity name " + memberDto.getRole())));
         member.setRole(Role.valueOf(memberDto.getRole()));
 
         Member.persist(member);

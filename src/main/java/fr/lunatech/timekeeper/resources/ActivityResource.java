@@ -1,15 +1,16 @@
 package fr.lunatech.timekeeper.resources;
 
+
+import fr.lunatech.timekeeper.resources.utils.HttpRespHandler;
 import fr.lunatech.timekeeper.services.ActivityService;
 import fr.lunatech.timekeeper.services.dto.ActivityDto;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.Optional;
 
 @Path("/activities")
-public class ActivityResource {
+public class ActivityResource extends HttpRespHandler {
 
     @Inject
     ActivityService activityService;
@@ -17,14 +18,17 @@ public class ActivityResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public long newCustomer(ActivityDto activity) {
-        return activityService.addActivity(activity);
+        return statusCodeHandler(() -> activityService.addActivity(activity));
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
-    public Optional<ActivityDto> readActivityById(@PathParam("id") long id) {
-        return activityService.getActivityById(id);
+    public ActivityDto readActivityById(@PathParam("id") long id) {
+        return notFoundHandler(activityService.getActivityById(id));
     }
+
+
+
 
 }

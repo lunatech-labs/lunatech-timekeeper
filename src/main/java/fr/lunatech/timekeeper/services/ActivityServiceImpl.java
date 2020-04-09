@@ -3,16 +3,14 @@ package fr.lunatech.timekeeper.services;
 import fr.lunatech.timekeeper.model.Activity;
 import fr.lunatech.timekeeper.model.Customer;
 import fr.lunatech.timekeeper.model.Member;
-import fr.lunatech.timekeeper.model.UserTK;
-import fr.lunatech.timekeeper.resources.JwtUser;
-import fr.lunatech.timekeeper.services.dto.*;
+import fr.lunatech.timekeeper.services.dto.ActivityDto;
+import fr.lunatech.timekeeper.services.exception.IllegalEntityStateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,13 +52,13 @@ public class ActivityServiceImpl implements ActivityService {
         activity.setBillale(activityDto.getBillale());
 
         Customer c = customerService.getCustomerById(activityDto.getCustomerId())
-                .orElseThrow(() -> new IllegalStateException("One Customer is required for activity " + activity.id + " activity name " + activityDto.getName()));
+                .orElseThrow(() -> new IllegalEntityStateException("One Customer is required for activity " + activity.id + " activity name " + activityDto.getName()));
 
         activity.setCustomer(c);
 
         List<Member> members = activityDto.getMembers().stream().map(memberId -> {
                     Optional<Member> m = Member.findByIdOptional(memberId);
-                    return m.orElseThrow(() -> new IllegalStateException("MemberId : " + memberId + " doesn't corresponding to any member"));
+                    return m.orElseThrow(() -> new IllegalEntityStateException("MemberId : " + memberId + " doesn't corresponding to any member"));
                 }
         ).collect(Collectors.toList());
 

@@ -42,5 +42,15 @@ class CustomerResourceTest {
                 .body(is("{\"id\":1,\"activities\":[],\"name\":\"NewClient\"}"));
     }
 
+    @Test
+    public void testGetUnExistedCustomerResourceEndpoint() {
+        given()
+                .when().get("/customers/4")
+                .then()
+                .statusCode(404);
+
+
+    }
+
 
 }

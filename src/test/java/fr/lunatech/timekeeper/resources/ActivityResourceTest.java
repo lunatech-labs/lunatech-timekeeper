@@ -83,7 +83,7 @@ class ActivityResourceTest {
         given()
                 .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billale\":true,\"description\":\"New project\", \"customerId\":10, \"members\":[]}").post("/activities")
                 .then()
-                .statusCode(500);
+                .statusCode(400);
 
 
     }
@@ -98,7 +98,17 @@ class ActivityResourceTest {
         given()
                 .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billale\":true,\"description\":\"New project\", \"customerId\":1, \"members\":[1,2]}").post("/activities")
                 .then()
-                .statusCode(500);
+                .statusCode(400);
+
+
+    }
+
+    @Test
+    public void testGetUnExistedActivityResourceEndpoint() {
+        given()
+                .when().get("/activities/4")
+                .then()
+                .statusCode(404);
 
 
     }
