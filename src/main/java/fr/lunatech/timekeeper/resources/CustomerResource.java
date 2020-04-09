@@ -6,6 +6,7 @@ import fr.lunatech.timekeeper.services.CustomerService;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.List;
 import java.util.Optional;
 
 @Path("/customers")
@@ -18,6 +19,12 @@ public class CustomerResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public long newCustomer(Customer customer) {
         return customerService.addCustomer(customer);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Customer> readAllCustomers() {
+        return customerService.getAllCustomers();
     }
 
     @GET
