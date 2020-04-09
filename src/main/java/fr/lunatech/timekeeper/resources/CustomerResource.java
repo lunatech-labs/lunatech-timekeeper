@@ -1,4 +1,4 @@
-package fr.lunatech.timekeeper;
+package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.model.Customer;
 import fr.lunatech.timekeeper.services.CustomerService;
