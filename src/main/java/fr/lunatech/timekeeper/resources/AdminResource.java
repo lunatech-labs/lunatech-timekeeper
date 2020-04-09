@@ -1,6 +1,7 @@
-package fr.lunatech.timekeeper;
+package fr.lunatech.timekeeper.resources;
 
 import io.quarkus.security.Authenticated;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
