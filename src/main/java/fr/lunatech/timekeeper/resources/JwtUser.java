@@ -1,4 +1,4 @@
-package fr.lunatech.timekeeper.model;
+package fr.lunatech.timekeeper.resources;
 
 import io.quarkus.oidc.runtime.OidcJwtCallerPrincipal;
 import io.quarkus.security.identity.SecurityIdentity;
@@ -8,26 +8,25 @@ import org.slf4j.LoggerFactory;
 /**
  * This object is created from the JWT token sent by Quarkus.
  * It used from UserResource.
+ *
  * @author Nicolas Martignole
  */
-public class User {
+public class JwtUser {
+    private static Logger logger = LoggerFactory.getLogger(JwtUser.class);
     private String name;
     private String givenName;
     private String familyName;
     private String email;
 
-    private static Logger logger = LoggerFactory.getLogger(User.class);
+    public JwtUser(SecurityIdentity identity) {
 
-
-    public User(SecurityIdentity identity) {
-
-        logger.debug("create user from "+identity.getPrincipal());
+        logger.debug("create user from " + identity.getPrincipal());
 
         setName(identity.getPrincipal().getName());
 
-       logger.debug(identity.getPrincipal().getClass().toString());
+        logger.debug(identity.getPrincipal().getClass().toString());
 
-        if(identity.getPrincipal() instanceof io.quarkus.oidc.runtime.OidcJwtCallerPrincipal){
+        if (identity.getPrincipal() instanceof io.quarkus.oidc.runtime.OidcJwtCallerPrincipal) {
             OidcJwtCallerPrincipal jwtCallerPrincipal = (io.quarkus.oidc.runtime.OidcJwtCallerPrincipal) identity.getPrincipal();
 
             // logger.debug("Claims" + jwtCallerPrincipal.getClaims());

@@ -1,4 +1,4 @@
-package fr.lunatech.timekeeper;
+package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.model.Customer;
 import fr.lunatech.timekeeper.services.CustomerService;
@@ -13,7 +13,6 @@ public class CustomerResource {
 
     @Inject
     CustomerService customerService;
-
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
