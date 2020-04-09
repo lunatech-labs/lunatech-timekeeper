@@ -1,10 +1,11 @@
-package fr.lunatech.timekeeper;
+package fr.lunatech.timekeeper.resources;
 
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
@@ -15,30 +16,30 @@ import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
-class CustomerResourceTest {
-
+@Tag("integration")
+class UserTkResourceTest {
 
     @Inject
     Flyway flyway;
 
     @AfterEach
-    public void cleanDB(){
+    public void cleanDB() {
         flyway.clean();
         flyway.migrate();
     }
 
     @Test
-    public void testPostArticleResourcesEndpoint() {
+    public void testPostUserTkResourcesEndpoint() {
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/customers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"firstname\":\"Sam\",\"lastname\":\"Huel\",\"email\":\"sam@gmail.com\", \"profile\":\"Admin\"}").post("/users")
                 .then()
-                .statusCode(200);
+                .statusCode(200).body(is("1"));
 
         given()
-                .when().get("/customers/1")
+                .when().get("/users/1")
                 .then()
                 .statusCode(200)
-                .body(is("{\"id\":1,\"name\":\"NewClient\"}"));
+                .body(is("{\"email\":\"sam@gmail.com\",\"id\":1,\"lastname\":\"Huel\",\"profile\":\"Admin\"}"));
     }
 
 
