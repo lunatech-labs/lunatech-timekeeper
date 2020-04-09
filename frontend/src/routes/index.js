@@ -1,14 +1,16 @@
 import React from 'react'
-import { HashRouter as Router, Redirect, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Redirect, Switch, Route } from 'react-router-dom'
 
 import { useKeycloak } from '@react-keycloak/web'
 
-import HomePage from '../pages/Home'
-import LoginPage from '../pages/Login'
+import HomePage from '../components/pages/Home'
+import LoginPage from '../components/pages/Login'
+import CustomersPage from '../components/pages/Customer/index'
+
 import { PrivateRoute } from './utils'
 
 export const AppRouter = () => {
-    const [, initialized] = useKeycloak()
+    const [, initialized] = useKeycloak();
 
     if (!initialized) {
         return <div>Loading...</div>
@@ -16,9 +18,12 @@ export const AppRouter = () => {
 
     return (
         <Router>
-            <Redirect from="/" to="/home" />
-            <PrivateRoute path="/home" component={HomePage} />
-            <Route path="/login" component={LoginPage} />
+            <Switch>
+                <PrivateRoute exact path="/home" component={HomePage} />
+                <Route path="/login" component={LoginPage} />
+                <Route exact path="/customers" component={CustomersPage} />
+                <Redirect from="/" to="/home" />
+            </Switch>
         </Router>
     )
 }
