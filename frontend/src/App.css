@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap');
+
+body {
+  font-family: 'Montserrat', sans-serif!important;
+}
+
 .App {
   text-align: center;
   color: #222;
@@ -64,4 +70,22 @@
 div.userProfile p{
   border-bottom: 1px solid #eee;
   text-align: left;
+}
+
+.header {
+  color:#ffffee !important;
+}
+.mainContent{
+  margin: 10px 15px;
+  min-height: 87vh !important;
+  background-color: white;
+  padding: 10px
+}
+.footerTk{
+  text-align: center;
+}
+.logo {
+  height: 32px;
+  color: #ffffff;
+  margin: 16px;
 }
