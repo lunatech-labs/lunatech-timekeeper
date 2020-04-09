@@ -1,9 +1,8 @@
 import React from 'react'
 import Keycloak from 'keycloak-js'
+import { KeycloakProvider } from '@react-keycloak/web'
 import TempHeader from './components/atoms/TempHeader';
 import logo from './logo_timekeeper_homepage.png';
-
-import { KeycloakProvider } from '@react-keycloak/web'
 import { AppRouter } from './routes'
 
 import './App.css';
@@ -40,17 +39,12 @@ class App extends React.PureComponent {
                 onEvent={this.onKeycloakEvent}
                 onTokens={this.onKeycloakTokens}
             >
-
                 <div className="App">
                     <TempHeader></TempHeader>
-                    <header className="App-header">
-                    </header>
                     <body className="App-body">
                         <AppRouter />
                     </body>
                 </div>
-
-
             </KeycloakProvider>
         )
     }
