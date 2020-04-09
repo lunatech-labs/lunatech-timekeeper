@@ -116,3 +116,4 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 
 https://www.npmjs.com/package/@react-keycloak/web
 https://github.com/panz3r/react-keycloak#readme
+
