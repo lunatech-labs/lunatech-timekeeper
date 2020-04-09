@@ -27,51 +27,9 @@ Timekeeper dashboard is [here](https://lunatechfr.myjetbrains.com/youtrack/issue
 
 All ADRs are on Confluence [here](https://lunatech.atlassian.net/wiki/spaces/INTRANET/pages/1686077447/Technical+architecture#Architecture-decision-records)
 
-Java 11 is required. 
-See this [How-To install JDK on MacOS with brew](https://medium.com/w-logs/installing-java-11-on-macos-with-homebrew-7f73c1e9fadf)
+# Developer guide
 
-    brew update
-    brew tap homebrew/cask-versions
-    brew cask install java11
-
-I recommend that you install `jenv` with brew. This utility let you manage various version of Java.
-
-To see the full list of installed JDK : 
-
-    /usr/libexec/java_home -V
-    
-Create a .jenv folder in your $HOME folder    
-    
-To add Jdk11 to jenv : 
-
-    jenv add /Library/Java/JavaVirtualMachines/openjdk-11.0.2.jdk/Contents/Home
-    
-You can then go to the Timekeeper folder and set the local Java version : 
-
-    cd lunatech-timekeeper
-    jenv local 11.0
-                
-## Fix Java 11 issues
-
-If you get this error with `./mvnw quarkus:dev`
-                
-    [ERROR] Failed to execute goal io.quarkus:quarkus-maven-plugin:1.3.1.Final:dev (default-cli) on project timekeeper: Fatal error compiling: invalid target release: 11 -> [Help 1]
-
-Check JAVA_HOME
-
-    echo $JAVA_HOME
-    export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-11.0.2.jdk/Contents/Home
-
-Check the value in $HOME/.mavenrc => it should contains Java 11. Or delete this file from your Home folder
-
-Make sure that Maven loads the correct Java version :
-
-    nicolas:lunatech-timekeeper nmartignole$ ./mvnw --version
-    Apache Maven 3.6.3 (cecedd343002696d0abb50b32b541b8a6ba2883f)
-    Maven home: /Users/nmartignole/.m2/wrapper/dists/apache-maven-3.6.3-bin/1iopthnavndlasol9gbrbg6bf2/apache-maven-3.6.3
-    Java version: 11.0.2, vendor: Oracle Corporation, runtime: /Library/Java/JavaVirtualMachines/openjdk-11.0.2.jdk/Contents/Home
-    Default locale: fr_FR, platform encoding: UTF-8
-    OS name: "mac os x", version: "10.13.6", arch: "x86_64", family: "mac"
+Read [How to setup your development environment](https://lunatech.atlassian.net/wiki/spaces/INTRANET/pages/1879343105/How-to+setup+your+development+environment) 
 
 ## Backend 
 
@@ -112,7 +70,15 @@ We are using Flyway extension. Database's model will be created at the first run
 
 ## 3 - FrontEnd   
 
-Go to the `frontend` folder and check the README.md
+Go to the `frontend` folder
+
+Install npm dependencies :
+
+    npm install
+    
+Start the React application in development mode
+
+    npm run start    
 
 ## 4 - Keycloak setup
 
@@ -124,6 +90,31 @@ docker compose imports `keycloak/realm-export.json`. This JSON file will create 
 
 Some users are also automatically imported (alice/alice).
 
+# Git branch and naming convention
 
+Git naming conventions are key. They allow you to understand the context of somebody’s work in a matter of seconds and can help you filter through your team’s work when well executed.
 
+To enforce branch names, each developer should execute this command from its Timekeeper folder 
+
+    git config core.hooksPath .githooks
+
+We use GitFlow convention 
+
+  - Feature branches (feature/*): takes the form of a user story, or a feature that will be merged later on. 
+  - Release branches (release/*): support the preparation of new product release, say a future rebranding of your website and will be eventually merged when ready
+  - Hotfix branches (hotfix/*): your typical bug fix. You could, for example, branch off in order to fix a bug in production
+
+Other branches:
+- `master` is for official release on production, with a Tag
+- `develop` is "last-stable" version of the project
+- `feature/TK-*' are ephemeral branches for WIP and PR
+
+Try to reuse YouTrack ID as part of branch : 
+
+    feature/TK-84-home-page-design
+    feature/TK-42-add-list-all-companies
+
+⚠️ TK must be uppercase ! 
+
+This command configures pre-commit hook and validation.
 
