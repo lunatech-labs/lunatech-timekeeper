@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
+import { Descriptions } from 'antd';
 
 class ShowUser extends Component {
     render() {
         return (
-            <div className='userProfile'>
-                <p>Name: {this.props.user.name}</p>
-                <p>First name: {this.props.user.givenName}</p>
-                <p>Last name: {this.props.user.familyName}</p>
-                <p>Email: {this.props.user.email}</p>
-            </div>
+            <Descriptions title="User Info"
+                          bordered
+                          column={{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }}>
+                <Descriptions.Item label="UserName">{this.props.user.name}</Descriptions.Item>
+                <Descriptions.Item label="First name"> {this.props.user.givenName}</Descriptions.Item>
+                <Descriptions.Item label="Last name"> {this.props.user.familyName}</Descriptions.Item>
+                <Descriptions.Item label="Email"> {this.props.user.email}</Descriptions.Item>
+            </Descriptions>
     );
     }
 
