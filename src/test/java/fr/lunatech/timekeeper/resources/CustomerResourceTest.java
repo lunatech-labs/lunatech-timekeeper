@@ -39,8 +39,35 @@ class CustomerResourceTest {
                 .when().get("/customers/1")
                 .then()
                 .statusCode(200)
-                .body(is("{\"id\":1,\"activities\":[],\"name\":\"NewClient\"}"));
+                .body(is("{\"activitiesId\":[],\"id\":1,\"name\":\"NewClient\"}"));
     }
 
+    @Test
+    public void testGetAllCustomersWithOutActivitiesEndpoint(){
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/customers")
+                .then()
+                .statusCode(200);
 
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient2\"}").post("/customers")
+                .then()
+                .statusCode(200);
+
+        given()
+                .when().get("/customers")
+                .then()
+                .statusCode(200)
+                .body(is("[{\"activitiesId\":[],\"id\":1,\"name\":\"NewClient\"},{\"activitiesId\":[],\"id\":2,\"name\":\"NewClient2\"}]"));
+    }
+
+    @Test
+    public void testGetAllCustomersWithOutCustomerAndWithOutActivitiesEndpoint(){
+
+        given()
+                .when().get("/customers")
+                .then()
+                .statusCode(200)
+                .body(is("[]"));
+    }
 }

@@ -1,13 +1,13 @@
 package fr.lunatech.timekeeper.services;
 
-import fr.lunatech.timekeeper.model.Customer;
+import fr.lunatech.timekeeper.services.dto.CustomerDto;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface CustomerService {
 
-    long addCustomer(Customer customer);
-    Optional<Customer> getCustomerById(long id);
-    List<Customer> getAllCustomers();
+    long addCustomer(CustomerDto customerDto);
+    Optional<CustomerDto> getCustomerById(long id);
+    List<CustomerDto> getAllCustomers();
 }

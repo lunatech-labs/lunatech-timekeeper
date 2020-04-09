@@ -1,36 +1,56 @@
 package fr.lunatech.timekeeper.services;
 
+import fr.lunatech.timekeeper.model.Activity;
 import fr.lunatech.timekeeper.model.Customer;
+import fr.lunatech.timekeeper.services.dto.CustomerDto;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class CustomerServiceImpl implements CustomerService {
 
     @Transactional
-    public long addCustomer(Customer customer) {
+    public long addCustomer(CustomerDto customerDto) {
+        Customer customer = from(customerDto);
 
         Customer.persist(customer);
         return customer.id;
     }
 
     @Override
-    public Optional<Customer> getCustomerById(long id) {
-        return Customer.findByIdOptional(id);
-
-
+    public Optional<CustomerDto> getCustomerById(long id) {
+        Optional<Customer> customerOptional = Customer.findByIdOptional(id);
+        return customerOptional.map(this::from);
     }
 
     @Override
-    public List<Customer> getAllCustomers() {
-        if(Customer.count() == 0){
-            return new ArrayList<>();
-        } else {
-            return Customer.findAll().list();
-        }
+    public List<CustomerDto> getAllCustomers() {
+        List<Customer> customers = Customer.listAll();
+        return customers.stream().map(this::from).collect(Collectors.toList());
+    }
+
+    private CustomerDto from(Customer customer){
+        return new CustomerDto(
+                Optional.of(customer.id), customer.getName(), customer.getDescription(), customer.getActivities().stream().map(a -> a.id).collect(Collectors.toList()));
+    }
+
+    private Customer from(CustomerDto customerDto){
+        Customer customer = new Customer();
+
+        List<Activity> activities = customerDto.getActivitiesId().stream().map(activityId -> {
+            Optional<Activity> a = Activity.findByIdOptional(activityId);
+            return a.orElseThrow(() -> new IllegalStateException("One activity's id doesn't match in database"));
+        }).collect(Collectors.toList());
+
+        customerDto.getId().map(v -> customer.id = v);
+        customer.setName(customerDto.getName());
+        customer.setDescription(customerDto.getDescription());
+        customer.setActivities(activities);
+
+        return customer;
     }
 }
