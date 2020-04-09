@@ -19,7 +19,6 @@ import static org.hamcrest.CoreMatchers.is;
 @Tag("integration")
 class ActivityResourceTest {
 
-
     @Inject
     Flyway flyway;
 
@@ -36,7 +35,6 @@ class ActivityResourceTest {
                 .then()
                 .statusCode(200).body(is("1"));
 
-
         given()
                 .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billale\":true,\"description\":\"New project\", \"customerId\":1, \"members\":[]}").post("/activities")
                 .then()
@@ -52,7 +50,6 @@ class ActivityResourceTest {
     @Test
     public void testPostActivityResourcesWithMemberValidEndpoint() {
 
-
         given()
                 .when().contentType(MediaType.APPLICATION_JSON).body("{\"firstname\":\"Sam\",\"lastname\":\"Huel\",\"email\":\"sam@gmail.com\", \"profile\":\"Admin\"}").post("/users")
                 .then()
@@ -67,7 +64,6 @@ class ActivityResourceTest {
                 .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/customers")
                 .then()
                 .statusCode(200).body(is("3"));
-
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billale\":true,\"description\":\"New project\", \"customerId\":3, \"members\":[2]}").post("/activities")
@@ -98,7 +94,6 @@ class ActivityResourceTest {
                 .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/customers")
                 .then()
                 .statusCode(200).body(is("1"));
-
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billale\":true,\"description\":\"New project\", \"customerId\":1, \"members\":[1,2]}").post("/activities")

@@ -14,7 +14,6 @@ public class CustomerResource {
     @Inject
     CustomerService customerService;
 
-
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public long newCustomer(Customer customer) {

@@ -9,7 +9,6 @@ import fr.lunatech.timekeeper.services.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -26,7 +25,6 @@ public class ActivityServiceImpl implements ActivityService {
     @Inject
     CustomerService customerService;
 
-
     @Transactional
     @Override
     public long addActivity(ActivityDto activityDto) {
@@ -42,7 +40,6 @@ public class ActivityServiceImpl implements ActivityService {
 
         return activity.map(this::from);
     }
-
 
     private ActivityDto from(Activity activity) {
         return new ActivityDto(
@@ -66,7 +63,6 @@ public class ActivityServiceImpl implements ActivityService {
                     return m.orElseThrow(() -> new IllegalStateException("MemberId : " + memberId + " doesn't corresponding to any member"));
                 }
         ).collect(Collectors.toList());
-
 
         activity.setMembers(members);
 

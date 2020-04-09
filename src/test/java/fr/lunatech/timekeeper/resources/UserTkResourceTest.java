@@ -19,12 +19,11 @@ import static org.hamcrest.CoreMatchers.is;
 @Tag("integration")
 class UserTkResourceTest {
 
-
     @Inject
     Flyway flyway;
 
     @AfterEach
-    public void cleanDB(){
+    public void cleanDB() {
         flyway.clean();
         flyway.migrate();
     }
@@ -35,7 +34,6 @@ class UserTkResourceTest {
                 .when().contentType(MediaType.APPLICATION_JSON).body("{\"firstname\":\"Sam\",\"lastname\":\"Huel\",\"email\":\"sam@gmail.com\", \"profile\":\"Admin\"}").post("/users")
                 .then()
                 .statusCode(200).body(is("1"));
-
 
         given()
                 .when().get("/users/1")

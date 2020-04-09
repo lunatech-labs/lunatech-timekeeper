@@ -9,17 +9,13 @@ import java.util.List;
 @Entity
 public class Customer extends PanacheEntity {
 
-
-    public Customer() {
-    }
-
-
     private String name;
     private String description;
     @OneToMany
     private List<Activity> activities;
 
-
+    public Customer() {
+    }
 
     public String getDescription() {
         return description;

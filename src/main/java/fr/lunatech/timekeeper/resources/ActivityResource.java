@@ -1,8 +1,7 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.services.dto.ActivityDto;
 import fr.lunatech.timekeeper.services.ActivityService;
-
+import fr.lunatech.timekeeper.services.dto.ActivityDto;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -14,7 +13,6 @@ public class ActivityResource {
 
     @Inject
     ActivityService activityService;
-
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

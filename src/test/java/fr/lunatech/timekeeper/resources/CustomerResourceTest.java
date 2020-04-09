@@ -19,12 +19,11 @@ import static org.hamcrest.CoreMatchers.is;
 @Tag("integration")
 class CustomerResourceTest {
 
-
     @Inject
     Flyway flyway;
 
     @AfterEach
-    public void cleanDB(){
+    public void cleanDB() {
         flyway.clean();
         flyway.migrate();
     }

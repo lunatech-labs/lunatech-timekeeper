@@ -14,7 +14,6 @@ public class UserTkResource {
     @Inject
     UserTkService userTkService;
 
-
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public long newCustomer(UserTkDto userTkDto) {

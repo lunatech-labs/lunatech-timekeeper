@@ -10,19 +10,16 @@ import java.util.List;
 @Entity
 public class Activity extends PanacheEntity {
 
-    public Activity() {
-    }
-
     private String name;
     private Boolean billale;
     private String description;
-
     @ManyToOne
     private Customer customer;
-
     @OneToMany
     private List<Member> members;
 
+    public Activity() {
+    }
 
     public String getDescription() {
         return description;

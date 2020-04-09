@@ -8,15 +8,13 @@ import javax.persistence.Entity;
 @Entity
 public class UserTK extends PanacheEntity {
 
-    public UserTK() {
-    }
-
-
-
     private String firstName;
     private String lastname;
     private String email;
     private Profil profile;
+
+    public UserTK() {
+    }
 
     public Profil getProfile() {
         return profile;

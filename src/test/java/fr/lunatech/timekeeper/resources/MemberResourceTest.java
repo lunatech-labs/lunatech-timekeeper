@@ -19,12 +19,11 @@ import static org.hamcrest.CoreMatchers.is;
 @Tag("integration")
 class MemberResourceTest {
 
-
     @Inject
     Flyway flyway;
 
     @AfterEach
-    public void cleanDB(){
+    public void cleanDB() {
         flyway.clean();
         flyway.migrate();
     }
@@ -48,7 +47,6 @@ class MemberResourceTest {
                 .statusCode(200)
                 .body(is("{\"id\":2,\"role\":\"Developer\",\"userId\":1}"));
     }
-
 
     @Test
     public void testPosMemberResourcesWithWrongUserIdEndpoint() {
