@@ -1,6 +1,5 @@
 package fr.lunatech.timekeeper.resources;
 
-
 import fr.lunatech.timekeeper.resources.utils.HttpRespHandler;
 import fr.lunatech.timekeeper.services.ActivityService;
 import fr.lunatech.timekeeper.services.dto.ActivityDto;
@@ -27,8 +26,6 @@ public class ActivityResource extends HttpRespHandler {
     public ActivityDto readActivityById(@PathParam("id") long id) {
         return notFoundHandler(activityService.getActivityById(id));
     }
-
-
 
 
 }
