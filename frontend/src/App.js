@@ -1,9 +1,12 @@
 import React from 'react'
 import Keycloak from 'keycloak-js'
-import { KeycloakProvider } from '@react-keycloak/web'
+import TempHeader from './components/atoms/TempHeader';
 import logo from './logo_timekeeper_homepage.png';
-import './App.css';
+
+import { KeycloakProvider } from '@react-keycloak/web'
 import { AppRouter } from './routes'
+
+import './App.css';
 
 const keycloak = new Keycloak({
     // Il est possible de configurer via des variables d'environement pour la PROD
@@ -39,14 +42,12 @@ class App extends React.PureComponent {
             >
 
                 <div className="App">
+                    <TempHeader></TempHeader>
                     <header className="App-header">
-                        <div>
-                            <img src={logo} className="App-logo" alt="logo" />
-                        </div>
-                        <div>
-                            <AppRouter />
-                        </div>
                     </header>
+                    <body className="App-body">
+                        <AppRouter />
+                    </body>
                 </div>
 
 
