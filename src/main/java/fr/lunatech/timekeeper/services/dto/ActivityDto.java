@@ -1,6 +1,5 @@
 package fr.lunatech.timekeeper.services.dto;
 
-
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -25,7 +24,7 @@ public class ActivityDto {
     private String name;
     private Boolean billale;
     private String description;
-    private long customerId;
+    private Long customerId;
     private List<Long> members;
 
     public Optional<Long> getId() {
@@ -64,7 +63,7 @@ public class ActivityDto {
         return customerId;
     }
 
-    public void setCustomerId(long customerId) {
+    public void setCustomerId(Long customerId) {
         this.customerId = customerId;
     }
 

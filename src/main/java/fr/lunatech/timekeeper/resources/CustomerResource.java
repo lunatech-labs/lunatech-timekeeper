@@ -6,8 +6,8 @@ import fr.lunatech.timekeeper.services.dto.CustomerDto;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
-import java.util.Optional;
 
 @Path("/customers")
 public class CustomerResource {
@@ -17,8 +17,9 @@ public class CustomerResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public long newCustomer(CustomerDto customerDto) {
-        return customerService.addCustomer(customerDto);
+    public Response newCustomer(CustomerDto customerDto) {
+        return Response.ok(customerService.addCustomer(customerDto)).build();
+
     }
 
     @GET
@@ -30,8 +31,10 @@ public class CustomerResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
-    public Optional<CustomerDto> readCustomerById(@PathParam("id") long id) {
-        return customerService.getCustomerById(id);
+
+    public CustomerDto readCustomerById(@PathParam("id") long id) {
+        return customerService.getCustomerById(id).orElseThrow(NotFoundException::new);
+
     }
 
 

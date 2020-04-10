@@ -54,7 +54,17 @@ class MemberResourceTest {
         given()
                 .when().contentType(MediaType.APPLICATION_JSON).body("{\"role\":\"Developer\", \"userId\":12}").post("/members")
                 .then()
-                .statusCode(500);
+                .statusCode(400);
+    }
+
+    @Test
+    public void testGetUnExistedMemberResourceEndpoint() {
+        given()
+                .when().get("/members/4")
+                .then()
+                .statusCode(404);
+
+
     }
 
 
