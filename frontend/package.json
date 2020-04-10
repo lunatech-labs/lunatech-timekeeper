@@ -12,10 +12,13 @@
     "antd": "^4.1.1",
     "axios": "^0.19.2",
     "keycloak-js": "^8.0.2",
+    "node-sass": "^4.13.1",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.4.1"
+    "react-scripts": "3.4.1",
+    "prop-types": "latest",
+    "@ant-design/icons": "latest"
   },
   "scripts": {
     "start": "react-scripts start",
