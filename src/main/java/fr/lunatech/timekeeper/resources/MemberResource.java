@@ -8,7 +8,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/members")
+@Path("/api/members")
 public class MemberResource {
 
     @Inject
@@ -22,7 +22,7 @@ public class MemberResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{id}")
+    @Path("/{id}")
     public MemberDto readActivityById(@PathParam("id") long id) {
         return userTkService.getMemberById(id).orElseThrow(NotFoundException::new);
     }

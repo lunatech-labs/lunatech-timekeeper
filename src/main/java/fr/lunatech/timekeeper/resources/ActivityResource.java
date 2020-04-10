@@ -8,7 +8,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/activities")
+@Path("/api/activities")
 public class ActivityResource {
 
     @Inject
@@ -22,7 +22,7 @@ public class ActivityResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{id}")
+    @Path("/{id}")
     public ActivityDto readActivityById(@PathParam("id") long id) {
         return activityService.getActivityById(id).orElseThrow(NotFoundException::new);
     }
