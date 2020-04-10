@@ -1,0 +1,23 @@
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color:#e9484e;
+    border-radius:4px;
+    color:#ffffff;
+
+    span {
+        display: flex;
+        align-items: center;
+    }
+}
+
+.customer-list {
+    padding: 80px;
+    width: 100%;
+    align-content: space-between;
+}
+
+.customer-edit-link {
+    color:#e9484e;
+}

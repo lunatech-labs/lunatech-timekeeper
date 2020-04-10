@@ -51,10 +51,9 @@ public class ActivityServiceImpl implements ActivityService {
         activity.setName(activityDto.getName());
         activity.setBillale(activityDto.getBillale());
 
-        Customer c = customerService.getCustomerById(activityDto.getCustomerId())
-                .orElseThrow(() -> new IllegalEntityStateException("One Customer is required for activity " + activity.id + " activity name " + activityDto.getName()));
+        Optional<Customer> c = Customer.findByIdOptional(activityDto.getCustomerId());
 
-        activity.setCustomer(c);
+        activity.setCustomer(c.orElseThrow(() -> new IllegalEntityStateException("One Customer is required for activity " + activity.id + " activity name " + activityDto.getName())));
 
         List<Member> members = activityDto.getMembers().stream().map(memberId -> {
                     Optional<Member> m = Member.findByIdOptional(memberId);
