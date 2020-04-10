@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 
 // Ce petit endpoint est pratique pour tester rapidement si Quarkus est bien démarré.
+//TODO remplacer par microprofile - metrics
 @Path("/api/hello")
 public class ExampleResource {
     private static final Logger logger = LoggerFactory.getLogger(ExampleResource.class);
