@@ -1,6 +1,5 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.model.Customer;
 import fr.lunatech.timekeeper.services.CustomerService;
 import fr.lunatech.timekeeper.services.dto.CustomerDto;
 
@@ -20,7 +19,6 @@ public class CustomerResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response newCustomer(CustomerDto customerDto) {
         return Response.ok(customerService.addCustomer(customerDto)).build();
-
     }
 
     @GET
@@ -32,18 +30,16 @@ public class CustomerResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
-
     public CustomerDto readCustomerById(@PathParam("id") long id) {
         return customerService.getCustomerById(id).orElseThrow(NotFoundException::new);
-
     }
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
-    public Optional<Long> updateCustomer(@PathParam("id") long id, CustomerDto customerDto){
-        return customerService.updateCustomer(id, customerDto);
+    public Response updateCustomer(@PathParam("id") long id, CustomerDto customerDto){
+        return Response.ok(customerService.updateCustomer(id, customerDto)).build();
     }
 
 }

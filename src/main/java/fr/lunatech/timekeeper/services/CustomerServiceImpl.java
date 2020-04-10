@@ -25,13 +25,12 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Transactional
     public Optional<Long> updateCustomer(long id, CustomerDto customerDto) {
-
         return getCustomerById(id).map(customerDtoToModify -> {
             Customer customerToModify = from(customerDtoToModify);
             Customer.update(
                     "name=?1, description=?2 where id=?3",
-                    from(customerDto).getName(),
-                    from(customerDto).getDescription(),
+                    from(customerDto).name,
+                    from(customerDto).description,
                     customerToModify.id
             );
             return customerToModify.id;
