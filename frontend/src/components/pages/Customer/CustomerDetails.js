@@ -1,11 +1,12 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Card } from 'antd'
 import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
 import logo from '../../../logo_timekeeper_homepage.png';
 
 const { Meta } = Card;
 
-const CustomerDetails = ({ id, name }) => (
+const CustomerDetails = ({ customer }) => (
     <Card
         style={{ width: 900 }}
         bordered="true"
@@ -21,10 +22,17 @@ const CustomerDetails = ({ id, name }) => (
             src={logo}
             style={{ width: 300 }}
         />}
-        title={name}
-        description={`this is the item number ${id} also called ${name}`}
+        title={customer.name}
+        description={`this is the customer number ${customer.id} also called ${customer.name}`}
         />
     </Card>
 );
+
+CustomerDetails.propTypes = {
+    customer: PropTypes.shape({
+        id: PropTypes.number,
+        name: PropTypes.string
+    })
+};
 
 export default CustomerDetails;

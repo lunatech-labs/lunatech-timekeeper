@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Redirect, Switch, Route } from 'react-router-d
 
 import { useKeycloak } from '@react-keycloak/web'
 
-import HomePage from '../components/pages/Home'
-import LoginPage from '../components/pages/Login'
+import HomePage from '../components/pages/Home/index'
+import LoginPage from '../components/pages/Login/index'
 import CustomersPage from '../components/pages/Customer/index'
 
 import { PrivateRoute } from './utils'
@@ -21,7 +21,7 @@ export const AppRouter = () => {
             <Switch>
                 <PrivateRoute exact path="/home" component={HomePage} />
                 <Route path="/login" component={LoginPage} />
-                <Route exact path="/customers" component={CustomersPage} />
+                <Route path="/customers" component={CustomersPage} />
                 <Redirect from="/" to="/home" />
             </Switch>
         </Router>
