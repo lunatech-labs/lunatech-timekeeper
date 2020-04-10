@@ -13,22 +13,8 @@ public class Member extends PanacheEntity {
     }
 
     @OneToOne
-    private UserTK user;
-    private Role role;
+    public UserTK user;
+    public Role role;
 
-    public UserTK getUser() {
-        return user;
-    }
 
-    public void setUser(UserTK user) {
-        this.user = user;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
 }

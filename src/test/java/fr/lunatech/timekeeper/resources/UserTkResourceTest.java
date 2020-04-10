@@ -42,5 +42,15 @@ class UserTkResourceTest {
                 .body(is("{\"email\":\"sam@gmail.com\",\"id\":1,\"lastname\":\"Huel\",\"profile\":\"Admin\"}"));
     }
 
+    @Test
+    public void testGetUnExistedUserResourceEndpoint() {
+        given()
+                .when().get("/users/4")
+                .then()
+                .statusCode(404);
+
+
+    }
+
 
 }

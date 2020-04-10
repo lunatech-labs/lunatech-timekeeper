@@ -43,7 +43,15 @@ class CustomerResourceTest {
     }
 
     @Test
-    public void testGetAllCustomersWithOutActivitiesEndpoint(){
+    public void testGetUnExistedCustomerResourceEndpoint() {
+        given()
+                .when().get("/customers/4")
+                .then()
+                .statusCode(404);
+    }
+
+    @Test
+    public void testGetAllCustomersWithOutActivitiesEndpoint() {
         given()
                 .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/customers")
                 .then()
@@ -62,7 +70,7 @@ class CustomerResourceTest {
     }
 
     @Test
-    public void testGetAllCustomersWithOutCustomerAndWithOutActivitiesEndpoint(){
+    public void testGetAllCustomersWithOutCustomerAndWithOutActivitiesEndpoint() {
 
         given()
                 .when().get("/customers")

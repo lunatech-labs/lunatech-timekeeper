@@ -6,7 +6,7 @@ import fr.lunatech.timekeeper.services.dto.MemberDto;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.Optional;
+import javax.ws.rs.core.Response;
 
 @Path("/members")
 public class MemberResource {
@@ -16,15 +16,15 @@ public class MemberResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public long newMember(MemberDto memberDto) {
-        return userTkService.addMember(memberDto);
+    public Response newMember(MemberDto memberDto) {
+        return Response.ok(userTkService.addMember(memberDto)).build();
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
-    public Optional<MemberDto> readActivityById(@PathParam("id") long id) {
-        return userTkService.getMemberById(id);
+    public MemberDto readActivityById(@PathParam("id") long id) {
+        return userTkService.getMemberById(id).orElseThrow(NotFoundException::new);
     }
 
 }

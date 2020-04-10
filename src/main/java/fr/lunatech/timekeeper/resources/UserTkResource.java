@@ -6,7 +6,7 @@ import fr.lunatech.timekeeper.services.dto.UserTkDto;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.Optional;
+import javax.ws.rs.core.Response;
 
 @Path("/users")
 public class UserTkResource {
@@ -16,15 +16,15 @@ public class UserTkResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public long newCustomer(UserTkDto userTkDto) {
-        return userTkService.addUserTk(userTkDto);
+    public Response newCustomer(UserTkDto userTkDto) {
+        return Response.ok(userTkService.addUserTk(userTkDto)).build();
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
-    public Optional<UserTkDto> readActivityById(@PathParam("id") long id) {
-        return userTkService.getUserTkById(id);
+    public UserTkDto readActivityById(@PathParam("id") long id) {
+        return userTkService.getUserTkById(id).orElseThrow(NotFoundException::new);
     }
 
 }
