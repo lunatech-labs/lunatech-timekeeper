@@ -31,12 +31,12 @@ class UserTkResourceTest {
     @Test
     public void testPostUserTkResourcesEndpoint() {
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"firstname\":\"Sam\",\"lastname\":\"Huel\",\"email\":\"sam@gmail.com\", \"profile\":\"Admin\"}").post("/users")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"firstname\":\"Sam\",\"lastname\":\"Huel\",\"email\":\"sam@gmail.com\", \"profile\":\"Admin\"}").post("/api/tkusers")
                 .then()
                 .statusCode(200).body(is("1"));
 
         given()
-                .when().get("/users/1")
+                .when().get("/api/tkusers/1")
                 .then()
                 .statusCode(200)
                 .body(is("{\"email\":\"sam@gmail.com\",\"id\":1,\"lastname\":\"Huel\",\"profile\":\"Admin\"}"));
@@ -45,7 +45,7 @@ class UserTkResourceTest {
     @Test
     public void testGetUnExistedUserResourceEndpoint() {
         given()
-                .when().get("/users/4")
+                .when().get("/api/tkusers/4")
                 .then()
                 .statusCode(404);
 

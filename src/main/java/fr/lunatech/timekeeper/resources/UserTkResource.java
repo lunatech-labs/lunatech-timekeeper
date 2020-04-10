@@ -8,7 +8,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/users")
+@Path("/api/tkusers")
 public class UserTkResource {
 
     @Inject
@@ -22,7 +22,7 @@ public class UserTkResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{id}")
+    @Path("/{id}")
     public UserTkDto readActivityById(@PathParam("id") long id) {
         return userTkService.getUserTkById(id).orElseThrow(NotFoundException::new);
     }

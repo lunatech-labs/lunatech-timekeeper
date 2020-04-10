@@ -9,7 +9,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-@Path("/customers")
+@Path("/api/customers")
 public class CustomerResource {
 
     @Inject
@@ -29,7 +29,7 @@ public class CustomerResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{id}")
+    @Path("/{id}")
     public CustomerDto readCustomerById(@PathParam("id") long id) {
         return customerService.getCustomerById(id).orElseThrow(NotFoundException::new);
     }
@@ -37,7 +37,7 @@ public class CustomerResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{id}")
+    @Path("/{id}")
     public Response updateCustomer(@PathParam("id") long id, CustomerDto customerDto){
         return Response.ok(customerService.updateCustomer(id, customerDto)).build();
     }
