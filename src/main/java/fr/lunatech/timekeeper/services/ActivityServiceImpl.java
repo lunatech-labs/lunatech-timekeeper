@@ -41,19 +41,19 @@ public class ActivityServiceImpl implements ActivityService {
 
     private ActivityDto from(Activity activity) {
         return new ActivityDto(
-                Optional.of(activity.id), activity.getName(), activity.getBillale(), activity.getDescription(), activity.getCustomer().id, activity.getMembers().stream().map(m -> m.id).collect(Collectors.toList()));
+                Optional.of(activity.id), activity.name, activity.billale, activity.description, activity.customer.id, activity.members.stream().map(m -> m.id).collect(Collectors.toList()));
     }
 
     private Activity from(ActivityDto activityDto) {
         final Activity activity = new Activity();
 
         activityDto.getId().map(v -> activity.id = v);
-        activity.setName(activityDto.getName());
-        activity.setBillale(activityDto.getBillale());
+        activity.name = activityDto.getName();
+        activity.billale = activityDto.getBillale();
 
         Optional<Customer> c = Customer.findByIdOptional(activityDto.getCustomerId());
 
-        activity.setCustomer(c.orElseThrow(() -> new IllegalEntityStateException("One Customer is required for activity " + activity.id + " activity name " + activityDto.getName())));
+        activity.customer = c.orElseThrow(() -> new IllegalEntityStateException("One Customer is required for activity " + activity.id + " activity name " + activityDto.getName()));
 
         List<Member> members = activityDto.getMembers().stream().map(memberId -> {
                     Optional<Member> m = Member.findByIdOptional(memberId);
@@ -61,7 +61,7 @@ public class ActivityServiceImpl implements ActivityService {
                 }
         ).collect(Collectors.toList());
 
-        activity.setMembers(members);
+        activity.members = members;
 
         return activity;
     }

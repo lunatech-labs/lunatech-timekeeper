@@ -33,12 +33,12 @@ public class CustomerServiceImpl implements CustomerService {
         return customers.stream().map(this::from).collect(Collectors.toList());
     }
 
-    private CustomerDto from(Customer customer){
+    private CustomerDto from(Customer customer) {
         return new CustomerDto(
-                Optional.of(customer.id), customer.getName(), customer.getDescription(), customer.getActivities().stream().map(a -> a.id).collect(Collectors.toList()));
+                Optional.of(customer.id), customer.name, customer.description, customer.activities.stream().map(a -> a.id).collect(Collectors.toList()));
     }
 
-    private Customer from(CustomerDto customerDto){
+    private Customer from(CustomerDto customerDto) {
         Customer customer = new Customer();
 
         List<Activity> activities = customerDto.getActivitiesId().stream().map(activityId -> {
@@ -47,9 +47,9 @@ public class CustomerServiceImpl implements CustomerService {
         }).collect(Collectors.toList());
 
         customerDto.getId().map(v -> customer.id = v);
-        customer.setName(customerDto.getName());
-        customer.setDescription(customerDto.getDescription());
-        customer.setActivities(activities);
+        customer.name = customerDto.getName();
+        customer.description = customerDto.getDescription();
+        customer.activities = activities;
 
         return customer;
     }
