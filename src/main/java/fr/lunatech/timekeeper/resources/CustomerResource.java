@@ -1,5 +1,6 @@
 package fr.lunatech.timekeeper.resources;
 
+import fr.lunatech.timekeeper.model.Customer;
 import fr.lunatech.timekeeper.services.CustomerService;
 import fr.lunatech.timekeeper.services.dto.CustomerDto;
 
@@ -34,5 +35,11 @@ public class CustomerResource {
         return customerService.getCustomerById(id);
     }
 
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("{id}")
+    public Optional<Long> modifyCustomer(@PathParam("id") long id, CustomerDto customerDto){
+        return customerService.updateCustomer(id, customerDto);
+    }
 
 }
