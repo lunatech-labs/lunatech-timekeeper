@@ -6,7 +6,9 @@ import fr.lunatech.timekeeper.services.dto.CustomerDto;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,15 +25,16 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Transactional
     public Optional<Long> updateCustomer(long id, CustomerDto customerDto) {
+
         return getCustomerById(id).map(customerDtoToModify -> {
-            customerDtoToModify.setName(customerDto.getName());
-            customerDtoToModify.setDescription(customerDto.getDescription());
-            customerDtoToModify.setActivitiesId(customerDto.getActivitiesId());
-
-            Customer customer = from(customerDtoToModify);
-            Customer.update(customer.id.toString(),customer);
-
-            return customer.id;
+            Customer customerToModify = from(customerDtoToModify);
+            Customer.update(
+                    "name=?1, description=?2 where id=?3",
+                    from(customerDto).getName(),
+                    from(customerDto).getDescription(),
+                    customerToModify.id
+            );
+            return customerToModify.id;
         });
     }
 

@@ -37,8 +37,9 @@ public class CustomerResource {
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
-    public Optional<Long> modifyCustomer(@PathParam("id") long id, CustomerDto customerDto){
+    public Optional<Long> updateCustomer(@PathParam("id") long id, CustomerDto customerDto){
         return customerService.updateCustomer(id, customerDto);
     }
 
