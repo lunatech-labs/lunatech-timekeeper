@@ -10,12 +10,23 @@ body {
 }
 
 .App-logo {
-  height: 40vmin;
+  height: 25vmin;
   pointer-events: none;
 }
 .App-header {
   background-color: #f8f9fd;
-  min-height: 100vh;
+  min-height: 10vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+  font-family: "Fira Sans",Tahoma,Arial,sans-serif;
+}
+
+.App-body {
+  text-align: center;
+  color: #222;
+  background-color: #f8f9fd;
   display: flex;
   flex-direction: row;
   align-items: center;
