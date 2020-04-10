@@ -1,7 +1,5 @@
 package fr.lunatech.timekeeper.services.dto;
 
-
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,7 +24,6 @@ public class ActivityDto {
     private String name;
     private Boolean billale;
     private String description;
-    //@NotNull
     private Long customerId;
     private List<Long> members;
 
