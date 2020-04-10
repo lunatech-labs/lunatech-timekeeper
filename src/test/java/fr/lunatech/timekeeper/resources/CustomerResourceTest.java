@@ -78,4 +78,25 @@ class CustomerResourceTest {
                 .statusCode(200)
                 .body(is("[]"));
     }
+
+    @Test
+    public void testUpdateCustomerWithOutActivitiesEndpoint(){
+
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/customers")
+                .then()
+                .statusCode(200);
+
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\"}").put("/customers/1")
+                .then()
+                .statusCode(200)
+                .body(is("1"));
+
+        given()
+                .when().get("/customers/1")
+                .then()
+                .statusCode(200)
+                .body(is("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\"}"));
+}
 }
