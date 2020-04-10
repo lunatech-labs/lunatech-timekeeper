@@ -7,7 +7,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class IllegaEntityStateExceptionMapper implements ExceptionMapper<IllegalEntityStateException> {
+public class IllegalEntityStateExceptionMapper implements ExceptionMapper<IllegalEntityStateException> {
 
     @Override
     public Response toResponse(IllegalEntityStateException e) {
