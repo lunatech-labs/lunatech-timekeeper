@@ -1,8 +1,6 @@
 import React from 'react'
 import Keycloak from 'keycloak-js'
 import { KeycloakProvider } from '@react-keycloak/web'
-import TempHeader from './components/atoms/TempHeader';
-import logo from './logo_timekeeper_homepage.png';
 import { AppRouter } from './routes'
 
 import './App.css';
@@ -16,21 +14,22 @@ const keycloak = new Keycloak({
     url: "http://localhost:8082/auth/",
     clientId: "react-timekeeper-client",
     publicClient: "true"
-})
+});
 
 const keycloakProviderInitConfig = {
     onLoad: 'check-sso',
-}
+};
 
 class App extends React.PureComponent {
     onKeycloakEvent = (event, error) => {
         console.log('onKeycloakEvent', event, error)
-    }
+    };
 
     onKeycloakTokens = (tokens) => {
         console.log('onKeycloakTokens', tokens)
-    }
+    };
 
+    // Todo rm div
     render() {
         return (
             <KeycloakProvider
@@ -39,11 +38,8 @@ class App extends React.PureComponent {
                 onEvent={this.onKeycloakEvent}
                 onTokens={this.onKeycloakTokens}
             >
-                <div className="App">
-                    <TempHeader></TempHeader>
-                    <body className="App-body">
-                        <AppRouter />
-                    </body>
+                <div className="App-body">
+                    <AppRouter />
                 </div>
             </KeycloakProvider>
         )

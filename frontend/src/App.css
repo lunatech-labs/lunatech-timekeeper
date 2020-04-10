@@ -24,6 +24,8 @@ body {
 }
 
 .App-body {
+  text-align: center;
+  color: #222;
   background-color: #f8f9fd;
   display: flex;
   flex-direction: row;
