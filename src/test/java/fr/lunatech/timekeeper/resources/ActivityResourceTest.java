@@ -36,7 +36,7 @@ class ActivityResourceTest {
                 .statusCode(200).body(is("1"));
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billale\":true,\"description\":\"New project\", \"customerId\":1, \"members\":[]}").post("/api/activities")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":1, \"members\":[]}").post("/api/activities")
                 .then()
                 .statusCode(200).body(is("2"));
 
@@ -44,44 +44,39 @@ class ActivityResourceTest {
                 .when().get("/api/activities/2")
                 .then()
                 .statusCode(200)
-                .body(is("{\"billale\":true,\"customerId\":1,\"id\":2,\"members\":[],\"name\":\"Pepito\"}"));
+                .body(is("{\"billable\":true,\"customerId\":1,\"description\":\"New project\",\"id\":2,\"members\":[],\"name\":\"Pepito\"}"));
     }
 
     @Test
     public void testPostActivityResourcesWithMemberValidEndpoint() {
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"firstname\":\"Sam\",\"lastname\":\"Huel\",\"email\":\"sam@gmail.com\", \"profile\":\"Admin\"}").post("/api/tkusers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\", \"profiles\":[\"Admin\"]}").post("/api/users")
                 .then()
                 .statusCode(200).body(is("1"));
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"role\":\"Developer\", \"userId\":1}").post("/api/members")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
                 .then()
                 .statusCode(200).body(is("2"));
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billable\":\"true\",\"description\":\"New project\",\"customerId\":2}").post("/api/activities")
                 .then()
                 .statusCode(200).body(is("3"));
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billale\":true,\"description\":\"New project\", \"customerId\":3, \"members\":[2]}").post("/api/activities")
-                .then()
-                .statusCode(200).body(is("4"));
-
-        given()
-                .when().get("/api/activities/4")
+                .when().get("/api/activities/3")
                 .then()
                 .statusCode(200)
-                .body(is("{\"billale\":true,\"customerId\":3,\"id\":4,\"members\":[2],\"name\":\"Pepito\"}"));
+                .body(is("{\"billable\":true,\"customerId\":2,\"description\":\"New project\",\"id\":3,\"members\":[],\"name\":\"Pepito\"}"));
     }
 
     @Test
     public void testPostActivityResourcesWithWrongCustomerIdEndpoint() {
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billale\":true,\"description\":\"New project\", \"customerId\":10, \"members\":[]}").post("/api/activities")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":10, \"members\":[]}").post("/api/activities")
                 .then()
                 .statusCode(400);
 
@@ -96,11 +91,9 @@ class ActivityResourceTest {
                 .statusCode(200).body(is("1"));
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billale\":true,\"description\":\"New project\", \"customerId\":1, \"members\":[1,2]}").post("/api/activities")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":1, \"members\":[1,2]}").post("/api/activities")
                 .then()
                 .statusCode(400);
-
-
     }
 
     @Test
@@ -109,8 +102,6 @@ class ActivityResourceTest {
                 .when().get("/api/activities/4")
                 .then()
                 .statusCode(404);
-
-
     }
 
 }

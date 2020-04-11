@@ -98,5 +98,7 @@ class CustomerResourceTest {
                 .then()
                 .statusCode(200)
                 .body(is("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\"}"));
-}
+    }
+
+
 }

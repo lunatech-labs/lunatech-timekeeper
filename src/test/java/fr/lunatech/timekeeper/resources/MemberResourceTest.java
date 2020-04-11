@@ -32,20 +32,31 @@ class MemberResourceTest {
     public void testPosMemberResourcesEndpoint() {
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"firstname\":\"Sam\",\"lastname\":\"Huel\",\"email\":\"sam@gmail.com\", \"profile\":\"Admin\"}").post("/api/tkusers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\", \"profiles\":[\"Admin\"]}").post("/api/users")
                 .then()
                 .statusCode(200).body(is("1"));
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"role\":\"Developer\", \"userId\":1}").post("/api/members")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
                 .then()
                 .statusCode(200).body(is("2"));
 
         given()
-                .when().get("/api/members/2")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":2, \"members\":[]}").post("/api/activities")
+                .then()
+                .statusCode(200).body(is("3"));
+
+
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"role\":\"Developer\", \"userId\":1}").post("/api/activities/3/members")
+                .then()
+                .statusCode(200).body(is("4"));
+
+        given()
+                .when().get("/api/activities/3/members/4")
                 .then()
                 .statusCode(200)
-                .body(is("{\"id\":2,\"role\":\"Developer\",\"userId\":1}"));
+                .body(is("{\"id\":4,\"role\":\"Developer\",\"userId\":1}"));
     }
 
     @Test
@@ -54,7 +65,7 @@ class MemberResourceTest {
         given()
                 .when().contentType(MediaType.APPLICATION_JSON).body("{\"role\":\"Developer\", \"userId\":12}").post("/api/members")
                 .then()
-                .statusCode(400);
+                .statusCode(404);
     }
 
     @Test
@@ -66,6 +77,5 @@ class MemberResourceTest {
 
 
     }
-
 
 }
