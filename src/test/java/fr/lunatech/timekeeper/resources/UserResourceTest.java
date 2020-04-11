@@ -48,9 +48,45 @@ class UserResourceTest {
                 .when().get("/api/users/4")
                 .then()
                 .statusCode(404);
-
-
     }
 
+    @Test
+    public void testUpdateUserResourcesEndpoint(){
 
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\",\"profiles\":[\"Admin\"]}").post("/api/users")
+                .then()
+                .statusCode(200).body(is("1"));
+
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"firstName\":\"Sam2\",\"lastName\":\"Huel2\",\"email\":\"sam2@gmail.com\",\"profiles\":[\"SimpleUSer\"]}").put("/api/users/1")
+                .then()
+                .statusCode(200).body(is("1"));
+
+        given()
+                .when().get("/api/users/1")
+                .then()
+                .statusCode(200)
+                .body(is("{\"email\":\"sam2@gmail.com\",\"firstName\":\"Sam2\",\"lastName\":\"Huel2\",\"profiles\":[\"SimpleUSer\"],\"id\":1}"));
+    }
+
+    @Test
+    public void testDeleteUserResourcesEndpoint() {
+
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\",\"profiles\":[\"Admin\"]}").post("/api/users")
+                .then()
+                .statusCode(200).body(is("1"));
+
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).delete("/api/users/1")
+                .then()
+                .statusCode(200)
+                .body(is("1"));
+
+        given()
+                .when().get("/api/users/1")
+                .then()
+                .statusCode(404);
+    }
 }

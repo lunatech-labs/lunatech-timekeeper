@@ -32,6 +32,6 @@ public class CustomerResource implements CustomerResourceApi {
 
     @Override
     public Response deleteCustomer(Long id) {
-        return Response.ok(customerService.deleteCustomer(id)).build();
+        return Response.ok(customerService.deleteCustomer(id).orElseThrow(NotFoundException::new)).build();
     }
 }

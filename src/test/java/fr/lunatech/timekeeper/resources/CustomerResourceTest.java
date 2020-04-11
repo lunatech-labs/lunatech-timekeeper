@@ -100,7 +100,7 @@ class CustomerResourceTest {
                 .body(is("{\"name\":\"NewName\",\"activitiesId\":[],\"id\":1}"));
     }
 
-   /* @Test
+    @Test
     public void testDeleteCustomerEndpoint() {
 
         given()
@@ -109,7 +109,7 @@ class CustomerResourceTest {
                 .statusCode(200);
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\"}").delete("/api/customers/1")
+                .when().contentType(MediaType.APPLICATION_JSON).delete("/api/customers/1")
                 .then()
                 .statusCode(200)
                 .body(is("1"));
@@ -118,5 +118,5 @@ class CustomerResourceTest {
                 .when().get("/api/customers/1")
                 .then()
                 .statusCode(404);
-    }*/
+    }
 }
