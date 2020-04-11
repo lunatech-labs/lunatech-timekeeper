@@ -50,7 +50,7 @@ public class ActivityService {
         return ActivityEntity.<ActivityEntity>findByIdOptional(id)
                 .map(entity -> {
                     final Long oldId = entity.id;
-                    if(entity.isPersistent()) {
+                    if (entity.isPersistent()) {
                         entity.delete();
                     }
                     return oldId;
@@ -94,7 +94,7 @@ public class ActivityService {
     }
 
     private List<MemberEntity> membersLink(Activity activity) {
-        if(isNotEmpty(activity.getMembers())) {
+        if (isNotEmpty(activity.getMembers())) {
             return activity.getMembers()
                     .stream()
                     .map(memberId -> MemberEntity.<MemberEntity>findByIdOptional(memberId)

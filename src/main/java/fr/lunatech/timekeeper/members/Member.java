@@ -7,19 +7,6 @@ import java.util.Optional;
 
 public class Member {
 
-    public Member() {
-    }
-
-    public Member(Long userId, Role role) {
-        this(null, userId, role);
-    }
-
-    public Member(Long id, Long userId, Role role) {
-        this.id = id;
-        this.userId = userId;
-        this.role = role;
-    }
-
     private Long id;
     @NotNull
     private Long userId;
@@ -27,6 +14,17 @@ public class Member {
     @Convert(converter = Role.Converter.class)
     @NotNull
     private Role role;
+
+    public Member() {
+    }
+    public Member(Long userId, Role role) {
+        this(null, userId, role);
+    }
+    public Member(Long id, Long userId, Role role) {
+        this.id = id;
+        this.userId = userId;
+        this.role = role;
+    }
 
     public Optional<Long> getId() {
         return Optional.ofNullable(id);

@@ -1,6 +1,5 @@
 package fr.lunatech.timekeeper.authentication;
 
-import fr.lunatech.timekeeper.authentication.JwtUser;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;

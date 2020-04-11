@@ -11,10 +11,6 @@ import java.time.ZonedDateTime;
 @DiscriminatorColumn(name = "durationType", discriminatorType = DiscriminatorType.STRING)
 public class Entry extends PanacheEntity {
 
-    public Entry() {
-    }
-
-
     public ZonedDateTime startDateTime;
     public ZonedDateTime stopDateTime;
     public long duration;
@@ -23,6 +19,8 @@ public class Entry extends PanacheEntity {
     public ActivityEntity activity;
     @OneToOne
     public Task task;
+    public Entry() {
+    }
 
 
 }

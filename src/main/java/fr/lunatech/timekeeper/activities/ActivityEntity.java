@@ -19,9 +19,9 @@ public class ActivityEntity extends PanacheEntity {
     public Boolean billable;
     public String description;
     @ManyToOne
-    @JoinColumn(name="customer_id", nullable=false)
+    @JoinColumn(name = "customer_id", nullable = false)
     public CustomerEntity customer;
-    @OneToMany(mappedBy="activity")
+    @OneToMany(mappedBy = "activity")
     public List<MemberEntity> members;
 
 }

@@ -2,27 +2,10 @@ package fr.lunatech.timekeeper.activities;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 
 public class Activity {
-
-    public Activity() {
-    }
-
-    public Activity(Long id, String name, Boolean billable, String description, long customer, List<Long> members) {
-        this.id = id;
-        this.name = name;
-        this.billable = billable;
-        this.description = description;
-        this.customerId = customer;
-        this.members = members;
-    }
-
-    public Activity(String name, Boolean billable, String description, long customer, List<Long> members) {
-        this(null, name, billable, description, customer, members);
-    }
 
     private Long id;
     @NotNull
@@ -32,6 +15,19 @@ public class Activity {
     @NotNull
     private Long customerId;
     private List<Long> members;
+    public Activity() {
+    }
+    public Activity(Long id, String name, Boolean billable, String description, long customer, List<Long> members) {
+        this.id = id;
+        this.name = name;
+        this.billable = billable;
+        this.description = description;
+        this.customerId = customer;
+        this.members = members;
+    }
+    public Activity(String name, Boolean billable, String description, long customer, List<Long> members) {
+        this(null, name, billable, description, customer, members);
+    }
 
     public Optional<Long> getId() {
         return Optional.ofNullable(id);

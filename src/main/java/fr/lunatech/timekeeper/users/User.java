@@ -2,26 +2,10 @@ package fr.lunatech.timekeeper.users;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import java.util.List;
 import java.util.Optional;
 
 public class User {
-
-    public User() {
-    }
-
-    public User(Long id, String firstName, String lastName, String email, List<Profile> profiles) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.profiles = profiles;
-    }
-
-    public User(String firstName, String lastName, String email, List<Profile> profiles) {
-        this(null, firstName, lastName, email, profiles);
-    }
 
     private Long id;
     @NotEmpty
@@ -32,6 +16,18 @@ public class User {
     private String email;
     @NotNull
     private List<Profile> profiles;
+    public User() {
+    }
+    public User(Long id, String firstName, String lastName, String email, List<Profile> profiles) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.profiles = profiles;
+    }
+    public User(String firstName, String lastName, String email, List<Profile> profiles) {
+        this(null, firstName, lastName, email, profiles);
+    }
 
     public Optional<Long> getId() {
         return Optional.ofNullable(id);

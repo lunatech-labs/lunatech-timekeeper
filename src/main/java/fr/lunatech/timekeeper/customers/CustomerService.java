@@ -45,7 +45,7 @@ public class CustomerService {
         return CustomerEntity.<CustomerEntity>findByIdOptional(id)
                 .map(entity -> {
                     final Long oldId = entity.id;
-                    if(entity.isPersistent()) {
+                    if (entity.isPersistent()) {
                         entity.delete();
                     }
                     return oldId;

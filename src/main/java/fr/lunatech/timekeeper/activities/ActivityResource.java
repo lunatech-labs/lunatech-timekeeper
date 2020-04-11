@@ -1,8 +1,8 @@
 package fr.lunatech.timekeeper.activities;
 
 import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
@@ -22,17 +22,17 @@ public class ActivityResource implements ActivityResourceApi {
     }
 
     @Override
-    public Activity getActivity(@PathParam("id") Long id) {
+    public Activity getActivity(Long id) {
         return activityService.findActivityById(id).orElseThrow(NotFoundException::new);
     }
 
     @Override
-    public Response updateActivity(@PathParam("id") Long id, Activity activity) {
+    public Response updateActivity(Long id, Activity activity) {
         return Response.ok(activityService.updateActivity(id, activity).orElseThrow(NotFoundException::new)).build();
     }
 
     @Override
-    public Response deleteActivity(@PathParam("id") Long id) {
+    public Response deleteActivity(Long id) {
         return Response.ok(activityService.deleteActivity(id).orElseThrow(NotFoundException::new)).build();
     }
 }

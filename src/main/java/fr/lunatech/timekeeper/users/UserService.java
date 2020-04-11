@@ -15,7 +15,6 @@ public class UserService {
 
     private static Logger logger = LoggerFactory.getLogger(UserService.class);
 
-
     Optional<User> findUserById(Long id) {
         final Optional<UserEntity> entity = UserEntity.findByIdOptional(id);
         return entity.map(this::fromEntity);
@@ -46,7 +45,7 @@ public class UserService {
         return UserEntity.<UserEntity>findByIdOptional(id)
                 .map(entity -> {
                     final Long oldId = entity.id;
-                    if(entity.isPersistent()) {
+                    if (entity.isPersistent()) {
                         entity.delete();
                     }
                     return oldId;
