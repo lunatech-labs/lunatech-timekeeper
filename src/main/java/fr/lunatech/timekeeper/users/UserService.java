@@ -10,41 +10,41 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Collections.emptyList;
+import static org.hibernate.internal.util.collections.CollectionHelper.isNotEmpty;
+
 @ApplicationScoped
 public class UserService {
 
     private static Logger logger = LoggerFactory.getLogger(UserService.class);
 
     Optional<User> findUserById(Long id) {
-        final Optional<UserEntity> entity = UserEntity.findByIdOptional(id);
-        return entity.map(this::fromEntity);
+        return UserEntity.<UserEntity>findByIdOptional(id).map(this::fromEntity);
     }
 
     List<User> listAllUsers() {
         try (final Stream<UserEntity> entities = UserEntity.streamAll()) {
-            return entities.map(this::fromEntity)
-                    .collect(Collectors.toList());
+            return entities.map(this::fromEntity).collect(Collectors.toList());
         }
     }
 
     @Transactional
-    Long insertUser(User user) {
-        final UserEntity entity = toEntity(user);
+    Long insertUser(UserMutable user) {
+        final var entity = toEntity(user);
         UserEntity.persist(entity);
         return entity.id;
     }
 
     @Transactional
-    Optional<Long> updateUser(Long id, User user) {
-        return UserEntity.<UserEntity>findByIdOptional(id)
-                .map(entity -> fillEntity(entity, user).id);
+    Optional<Long> updateUser(Long id, UserMutable user) {
+        return UserEntity.<UserEntity>findByIdOptional(id).map(entity -> fillEntity(entity, user).id);
     }
 
     @Transactional
     Optional<Long> deleteUser(Long id) {
         return UserEntity.<UserEntity>findByIdOptional(id)
                 .map(entity -> {
-                    final Long oldId = entity.id;
+                    final var oldId = entity.id;
                     if (entity.isPersistent()) {
                         entity.delete();
                     }
@@ -52,9 +52,8 @@ public class UserService {
                 });
     }
 
-    private UserEntity toEntity(User user) {
-        final UserEntity entity = new UserEntity();
-        entity.id = user.getId().orElse(null);
+    private UserEntity toEntity(UserMutable user) {
+        final var entity = new UserEntity();
         entity.firstName = user.getFirstName();
         entity.lastName = user.getLastName();
         entity.email = user.getEmail();
@@ -62,11 +61,11 @@ public class UserService {
         return entity;
     }
 
-    private UserEntity fillEntity(UserEntity entity, User user) {
+    private UserEntity fillEntity(UserEntity entity, UserMutable user) {
         entity.firstName = user.getFirstName();
         entity.lastName = user.getLastName();
         entity.email = user.getEmail();
-        entity.profiles = user.getProfiles();
+        entity.profiles = isNotEmpty(user.getProfiles()) ? user.getProfiles() : emptyList();
         return entity;
     }
 

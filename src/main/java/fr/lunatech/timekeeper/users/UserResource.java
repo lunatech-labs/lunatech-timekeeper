@@ -16,7 +16,7 @@ public class UserResource implements UserResourceApi {
     }
 
     @Override
-    public Response createUser(User user) {
+    public Response createUser(UserMutable user) {
         return Response.ok(userService.insertUser(user)).build();
     }
 
@@ -26,7 +26,7 @@ public class UserResource implements UserResourceApi {
     }
 
     @Override
-    public Response updateUser(Long id, User user) {
+    public Response updateUser(Long id, UserMutable user) {
         return Response.ok(userService.updateUser(id, user).orElseThrow(NotFoundException::new)).build();
     }
 

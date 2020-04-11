@@ -10,7 +10,7 @@ public interface UserResourceApi {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    Response createUser(User userTkDto);
+    Response createUser(UserMutable user);
 
     @GET
     @Path("/{id}")
@@ -24,7 +24,7 @@ public interface UserResourceApi {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    Response updateUser(@PathParam("id") Long id, User user);
+    Response updateUser(@PathParam("id") Long id, UserMutable user);
 
     @DELETE
     @Path("/{id}")
