@@ -14,7 +14,7 @@ public interface ActivityResourceApi {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    Response createActivity(Activity activity);
+    Response createActivity(ActivityMutable activity);
 
     @GET
     @Path("/{id}")
@@ -24,7 +24,7 @@ public interface ActivityResourceApi {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    Response updateActivity(@PathParam("id") Long id, Activity activity);
+    Response updateActivity(@PathParam("id") Long id, ActivityMutable activity);
 
     @DELETE
     @Path("/{id}")

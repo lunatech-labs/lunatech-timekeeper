@@ -100,5 +100,23 @@ class CustomerResourceTest {
                 .body(is("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\"}"));
     }
 
+   /* @Test
+    public void testDeleteCustomerEndpoint() {
 
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .then()
+                .statusCode(200);
+
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\"}").delete("/api/customers/1")
+                .then()
+                .statusCode(200)
+                .body(is("1"));
+
+        given()
+                .when().get("/api/customers/1")
+                .then()
+                .statusCode(404);
+    }*/
 }

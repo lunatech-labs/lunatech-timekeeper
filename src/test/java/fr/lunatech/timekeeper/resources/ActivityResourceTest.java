@@ -44,7 +44,7 @@ class ActivityResourceTest {
                 .when().get("/api/activities/2")
                 .then()
                 .statusCode(200)
-                .body(is("{\"billable\":true,\"customerId\":1,\"description\":\"New project\",\"id\":2,\"members\":[],\"name\":\"Pepito\"}"));
+                .body(is("{\"billable\":true,\"customerId\":1,\"description\":\"New project\",\"name\":\"Pepito\",\"id\":2,\"membersId\":[]}"));
     }
 
     @Test
@@ -69,7 +69,7 @@ class ActivityResourceTest {
                 .when().get("/api/activities/3")
                 .then()
                 .statusCode(200)
-                .body(is("{\"billable\":true,\"customerId\":2,\"description\":\"New project\",\"id\":3,\"members\":[],\"name\":\"Pepito\"}"));
+                .body(is("{\"billable\":true,\"customerId\":2,\"description\":\"New project\",\"name\":\"Pepito\",\"id\":3,\"membersId\":[]}"));
     }
 
     @Test
@@ -77,21 +77,6 @@ class ActivityResourceTest {
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":10, \"members\":[]}").post("/api/activities")
-                .then()
-                .statusCode(400);
-
-
-    }
-
-    @Test
-    public void testPostActivityResourcesWithWrongMemberIdEndpoint() {
-        given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
-                .then()
-                .statusCode(200).body(is("1"));
-
-        given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":1, \"members\":[1,2]}").post("/api/activities")
                 .then()
                 .statusCode(400);
     }

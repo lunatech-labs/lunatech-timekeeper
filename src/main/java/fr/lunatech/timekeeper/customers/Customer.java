@@ -10,6 +10,7 @@ public class Customer {
     @NotEmpty
     private String name;
     private String description;
+    /* activitiesId is not used to modif customer (read only) */
     private List<Long> activitiesId;
 
     public Customer() {
@@ -54,8 +55,8 @@ public class Customer {
         return activitiesId;
     }
 
-    public void setActivitiesId(List<Long> activitiesId) {
+    /*public void setActivitiesId(List<Long> activitiesId) {
         this.activitiesId = activitiesId;
-    }
+    }*/
 
 }
