@@ -29,4 +29,5 @@ public interface ActivityResourceApi {
     @DELETE
     @Path("/{id}")
     Response deleteActivity(@PathParam("id") Long id);
+
 }
