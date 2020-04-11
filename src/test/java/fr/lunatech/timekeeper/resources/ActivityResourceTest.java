@@ -36,7 +36,7 @@ class ActivityResourceTest {
                 .statusCode(200).body(is("1"));
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":1, \"members\":[]}").post("/api/activities")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":1}").post("/api/activities")
                 .then()
                 .statusCode(200).body(is("2"));
 
@@ -76,7 +76,7 @@ class ActivityResourceTest {
     public void testPostActivityResourcesWithWrongCustomerIdEndpoint() {
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":10, \"members\":[]}").post("/api/activities")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":10}").post("/api/activities")
                 .then()
                 .statusCode(400);
     }
@@ -89,4 +89,56 @@ class ActivityResourceTest {
                 .statusCode(404);
     }
 
+    @Test
+    public void testPutActivityResourcesEndpoint() {
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .then()
+                .statusCode(200).body(is("1"));
+
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":1}").post("/api/activities")
+                .then()
+                .statusCode(200).body(is("2"));
+
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .then()
+                .statusCode(200).body(is("3"));
+
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito2\",\"billable\":false,\"description\":\"New project2\", \"customerId\":3}").put("/api/activities/2")
+                .then()
+                .statusCode(200).body(is("2"));
+
+        given()
+                .when().get("/api/activities/2")
+                .then()
+                .statusCode(200)
+                .body(is("{\"billable\":false,\"customerId\":3,\"description\":\"New project2\",\"name\":\"Pepito2\",\"id\":2,\"membersId\":[]}"));
+    }
+
+    @Test
+    public void testDeleteActivityResourcesEndpoint() {
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .then()
+                .statusCode(200).body(is("1"));
+
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":1}").post("/api/activities")
+                .then()
+                .statusCode(200).body(is("2"));
+
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).delete("/api/activities/2")
+                .then()
+                .statusCode(200)
+                .body(is("2"));
+
+        given()
+                .when().get("/api/activities/1")
+                .then()
+                .statusCode(404);
+    }
 }

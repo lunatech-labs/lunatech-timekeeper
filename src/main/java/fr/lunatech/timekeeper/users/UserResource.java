@@ -35,4 +35,6 @@ public class UserResource implements UserResourceApi {
         return Response.ok(userService.deleteUser(id).orElseThrow(NotFoundException::new)).build();
     }
 
+    //TODO le remove ne doit être accessible que les admins ou ne pas exister
+    //TODO le delete si il reste doit vérifier qu'il n'est pas présent dans un Member ou dans une Entry
 }

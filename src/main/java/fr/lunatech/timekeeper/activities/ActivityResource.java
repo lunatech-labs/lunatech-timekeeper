@@ -34,4 +34,8 @@ public class ActivityResource implements ActivityResourceApi {
     public Response deleteActivity(Long id) {
         return Response.ok(activityService.deleteActivity(id).orElseThrow(NotFoundException::new)).build();
     }
+
+    //TODO à trancher si le delete ne devrait pas disparaitre car trop dangeraux, sinon reservé aux admins et 2 points suivants requis
+    //TODO si ok pour delete : effacer une activité devrait vérifier si des Entry reference celle ci
+    //TODO si ok pour delete : supprimer une activité devrait effacer les membres liés (soit pas SQL cascade soit par un autre mécanisme)
 }

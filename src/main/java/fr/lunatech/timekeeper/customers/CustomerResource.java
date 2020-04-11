@@ -34,4 +34,6 @@ public class CustomerResource implements CustomerResourceApi {
     public Response deleteCustomer(Long id) {
         return Response.ok(customerService.deleteCustomer(id).orElseThrow(NotFoundException::new)).build();
     }
+
+    //TODO delete ne doit etre accessible que par les admins et vérifier qu'unes activités ne pointent vers lui
 }
