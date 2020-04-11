@@ -32,7 +32,7 @@ public class ActivityResource implements ActivityResourceApi {
 
     @Override
     public Response deleteActivity(Long id) {
-        return Response.ok(activityService.deleteActivity(id).orElseThrow(NotFoundException::new)).build();
+        return Response.ok(activityService.deleteActivity(id).orElse(id)).build();
     }
 
     //TODO à trancher si le delete ne devrait pas disparaitre car trop dangeraux, sinon reservé aux admins et 2 points suivants requis

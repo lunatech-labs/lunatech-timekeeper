@@ -143,5 +143,12 @@ class MemberResourceTest {
                 .when().get("/api/activities/3/members/4")
                 .then()
                 .statusCode(404);
+
+        //idempotent?
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).delete("/api/activities/3/members/4")
+                .then()
+                .statusCode(200)
+                .body(is("4"));
     }
 }

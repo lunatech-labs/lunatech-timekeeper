@@ -88,5 +88,12 @@ class UserResourceTest {
                 .when().get("/api/users/1")
                 .then()
                 .statusCode(404);
+
+        //idempotent?
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).delete("/api/users/1")
+                .then()
+                .statusCode(200)
+                .body(is("1"));
     }
 }

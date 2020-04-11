@@ -32,7 +32,7 @@ public class UserResource implements UserResourceApi {
 
     @Override
     public Response deleteUser(Long id) {
-        return Response.ok(userService.deleteUser(id).orElseThrow(NotFoundException::new)).build();
+        return Response.ok(userService.deleteUser(id).orElse(id)).build();
     }
 
     //TODO le remove ne doit être accessible que les admins ou ne pas exister

@@ -118,5 +118,12 @@ class CustomerResourceTest {
                 .when().get("/api/customers/1")
                 .then()
                 .statusCode(404);
+
+        //idempotent?
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).delete("/api/customers/1")
+                .then()
+                .statusCode(200)
+                .body(is("1"));
     }
 }

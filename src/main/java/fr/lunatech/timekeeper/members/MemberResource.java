@@ -34,7 +34,7 @@ public class MemberResource implements MemberResourceApi {
 
     @Override
     public Response removeMemberToActivity(Long activityId, Long id) {
-        return Response.ok(memberService.deleteMember(activityId, id).orElseThrow(NotFoundException::new)).build();
+        return Response.ok(memberService.deleteMember(activityId, id).orElse(id)).build();
     }
 
     //TODO ajouter ou modifier la methode addMemberToActivity pour ajouter plusieurs membres d'un seul coup

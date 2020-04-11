@@ -140,5 +140,12 @@ class ActivityResourceTest {
                 .when().get("/api/activities/1")
                 .then()
                 .statusCode(404);
+
+        //idempotent?
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).delete("/api/activities/2")
+                .then()
+                .statusCode(200)
+                .body(is("2"));
     }
 }
