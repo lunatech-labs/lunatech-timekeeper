@@ -14,7 +14,7 @@ public interface MemberResourceApi {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    Response createMember(@PathParam("activityId") Long activityId, Member member);
+    Response createMember(@PathParam("activityId") Long activityId, MemberMutable member);
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -24,7 +24,7 @@ public interface MemberResourceApi {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    Response updateActivity(@PathParam("activityId") Long activityId, @PathParam("id") Long id, Member member);
+    Response updateActivity(@PathParam("activityId") Long activityId, @PathParam("id") Long id, MemberMutable member);
 
     @DELETE
     @Path("/{id}")

@@ -10,6 +10,7 @@ public class Customer extends CustomerMutable {
     private List<Long> activitiesId;
 
     public Customer() {
+        super();
     }
 
     public Customer(Long id, String name, String description, List<Long> activitiesId) {

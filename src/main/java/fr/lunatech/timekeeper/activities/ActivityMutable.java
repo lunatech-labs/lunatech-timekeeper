@@ -7,6 +7,7 @@ public class ActivityMutable {
 
     @NotNull
     private String name;
+    @NotNull
     private Boolean billable;
     private String description;
     @NotNull
@@ -15,11 +16,11 @@ public class ActivityMutable {
     public ActivityMutable() {
     }
 
-    public ActivityMutable(String name, Boolean billable, String description, long customer) {
+    public ActivityMutable(String name, Boolean billable, String description, Long customerId) {
         this.name = name;
         this.billable = billable;
         this.description = description;
-        this.customerId = customer;
+        this.customerId = customerId;
     }
 
     public String getName() {
@@ -46,7 +47,7 @@ public class ActivityMutable {
         this.description = description;
     }
 
-    public long getCustomerId() {
+    public Long getCustomerId() {
         return customerId;
     }
 

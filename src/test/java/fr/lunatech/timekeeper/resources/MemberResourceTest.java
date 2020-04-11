@@ -56,7 +56,7 @@ class MemberResourceTest {
                 .when().get("/api/activities/3/members/4")
                 .then()
                 .statusCode(200)
-                .body(is("{\"id\":4,\"role\":\"Developer\",\"userId\":1}"));
+                .body(is("{\"role\":\"Developer\",\"userId\":1,\"id\":4}"));
     }
 
     @Test

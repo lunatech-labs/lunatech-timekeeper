@@ -79,7 +79,7 @@ public class ActivityService {
                 entity.billable,
                 entity.description,
                 entity.customer.id,
-                entity.members.stream().map(a -> a.id).collect(Collectors.toList())
+                entity.members != null ? entity.members.stream().map(a -> a.id).collect(Collectors.toList()) : emptyList()
         );
     }
 

@@ -34,14 +34,14 @@ public class MemberService {
     }
 
     @Transactional
-    long insertMember(Long activityId, Member member) {
-        final MemberEntity entity = toEntity(activityId, member);
+    Long insertMember(Long activityId, MemberMutable member) {
+        final var entity = toEntity(activityId, member);
         MemberEntity.persist(entity);
         return entity.id;
     }
 
     @Transactional
-    Optional<Long> updateMember(Long activityId, Long id, Member member) {
+    Optional<Long> updateMember(Long activityId, Long id, MemberMutable member) {
         return MemberEntity.<MemberEntity>findByIdOptional(id)
                 .filter(entity -> matchActivityId(entity, activityId))
                 .map(entity -> fillEntity(activityId, entity, member).id);
@@ -52,7 +52,7 @@ public class MemberService {
         return MemberEntity.<MemberEntity>findByIdOptional(id)
                 .filter(entity -> matchActivityId(entity, activityId))
                 .map(entity -> {
-                    final Long oldId = entity.id;
+                    final var oldId = entity.id;
                     if (entity.isPersistent()) {
                         entity.delete();
                     }
@@ -60,16 +60,15 @@ public class MemberService {
                 });
     }
 
-    private MemberEntity toEntity(Long activityId, Member member) {
-        final MemberEntity entity = new MemberEntity();
-        entity.id = member.getId().orElse(null);
+    private MemberEntity toEntity(Long activityId, MemberMutable member) {
+        final var entity = new MemberEntity();
         entity.user = userLink(member);
         entity.activity = activityLink(activityId, member);
         entity.role = member.getRole();
         return entity;
     }
 
-    private MemberEntity fillEntity(Long activityId, MemberEntity entity, Member member) {
+    private MemberEntity fillEntity(Long activityId, MemberEntity entity, MemberMutable member) {
         entity.user = userLink(member);
         entity.activity = activityLink(activityId, member);
         entity.role = member.getRole();
@@ -84,14 +83,14 @@ public class MemberService {
         );
     }
 
-    private ActivityEntity activityLink(Long activityId, Member member) {
+    private ActivityEntity activityLink(Long activityId, MemberMutable member) {
         return ActivityEntity.<ActivityEntity>findByIdOptional(activityId)
-                .orElseThrow(() -> new IllegalEntityStateException(String.format("One Activity is required for member %s with activityId %s", member.getId(), activityId)));
+                .orElseThrow(() -> new IllegalEntityStateException(String.format("One Activity is required for member. activityId=%s - userId = %s", activityId, member.getUserId())));
     }
 
-    private UserEntity userLink(Member member) {
+    private UserEntity userLink(MemberMutable member) {
         return UserEntity.<UserEntity>findByIdOptional(member.getUserId())
-                .orElseThrow(() -> new IllegalEntityStateException(String.format("One User is required for member %s with userId %s", member.getId(), member.getUserId())));
+                .orElseThrow(() -> new IllegalEntityStateException(String.format("One User is required for member. userId %s", member.getUserId())));
     }
 
     private boolean matchActivityId(MemberEntity entity, Long activityId) {

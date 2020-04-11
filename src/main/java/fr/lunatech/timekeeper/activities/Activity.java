@@ -9,14 +9,15 @@ public class Activity extends ActivityMutable {
     @NotNull
     private Long id;
     @JsonbDateFormat
+    @NotNull
     private List<Long> membersId;
 
     public Activity() {
         super();
     }
 
-    public Activity(Long id, String name, Boolean billable, String description, long customer, List<Long> membersId) {
-        super(name, billable, description, customer);
+    public Activity(Long id, String name, Boolean billable, String description, Long customerId, List<Long> membersId) {
+        super(name, billable, description, customerId);
         this.id = id;
         this.membersId = membersId;
     }

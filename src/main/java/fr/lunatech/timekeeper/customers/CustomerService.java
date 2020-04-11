@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -67,7 +68,7 @@ public class CustomerService {
                 entity.id,
                 entity.name,
                 entity.description,
-                entity.activities.stream().map(a -> a.id).collect(Collectors.toList())
+                entity.activities != null ? entity.activities.stream().map(a -> a.id).collect(Collectors.toList()) : Collections.emptyList()
         );
     }
 }

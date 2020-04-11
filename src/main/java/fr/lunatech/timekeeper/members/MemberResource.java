@@ -16,7 +16,7 @@ public class MemberResource implements MemberResourceApi {
     }
 
     @Override
-    public Response createMember(Long activityId, Member member) {
+    public Response createMember(Long activityId, MemberMutable member) {
         return Response.ok(memberService.insertMember(activityId, member)).build();
     }
 
@@ -26,7 +26,7 @@ public class MemberResource implements MemberResourceApi {
     }
 
     @Override
-    public Response updateActivity(Long activityId, Long id, Member member) {
+    public Response updateActivity(Long activityId, Long id, MemberMutable member) {
         return Response.ok(memberService.updateMember(activityId, id, member).orElseThrow(NotFoundException::new)).build();
     }
 
