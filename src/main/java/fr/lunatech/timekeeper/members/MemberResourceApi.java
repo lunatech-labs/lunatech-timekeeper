@@ -21,4 +21,13 @@ public interface MemberResourceApi {
     @Path("/{id}")
     Member getActivity(@PathParam("activityId") Long activityId, @PathParam("id") Long id);
 
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    Response updateActivity(@PathParam("activityId") Long activityId, @PathParam("id") Long id, Member member);
+
+    @DELETE
+    @Path("/{id}")
+    Response deleteActivity(@PathParam("activityId") Long activityId, @PathParam("id") Long id);
+
 }

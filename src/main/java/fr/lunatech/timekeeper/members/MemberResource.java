@@ -25,4 +25,13 @@ public class MemberResource implements MemberResourceApi {
         return memberService.findMemberById(activityId, id).orElseThrow(NotFoundException::new);
     }
 
+    @Override
+    public Response updateActivity(Long activityId, Long id, Member member) {
+        return Response.ok(memberService.updateMember(activityId, id, member).orElseThrow(NotFoundException::new)).build();
+    }
+
+    @Override
+    public Response deleteActivity(Long activityId, Long id) {
+        return Response.ok(memberService.deleteMember(activityId, id).orElseThrow(NotFoundException::new)).build();
+    }
 }

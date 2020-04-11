@@ -21,13 +21,13 @@ public class MemberService {
 
     Optional<Member> findMemberById(Long activityId, Long id) {
         return MemberEntity.<MemberEntity>findByIdOptional(id)
-                .filter(entity -> entity.activity != null && Objects.equals(entity.activity.id, activityId))
+                .filter(entity -> matchActivityId(entity, activityId))
                 .map(this::fromEntity);
     }
 
     List<Member> listAllMembers(Long activityId) {
         try (final Stream<MemberEntity> entities = MemberEntity.streamAll()) {
-            return entities.filter(entity -> entity.activity != null && Objects.equals(entity.activity.id, activityId))
+            return entities.filter(entity -> matchActivityId(entity, activityId))
                     .map(this::fromEntity)
                     .collect(Collectors.toList());
         }
@@ -40,9 +40,36 @@ public class MemberService {
         return entity.id;
     }
 
+    @Transactional
+    Optional<Long> updateMember(Long activityId, Long id, Member member) {
+        return MemberEntity.<MemberEntity>findByIdOptional(id)
+                .filter(entity -> matchActivityId(entity, activityId))
+                .map(entity -> fillEntity(activityId, entity, member).id);
+    }
+
+    @Transactional
+    Optional<Long> deleteMember(Long activityId, Long id) {
+        return MemberEntity.<MemberEntity>findByIdOptional(id)
+                .filter(entity -> matchActivityId(entity, activityId))
+                .map(entity -> {
+                    final Long oldId = entity.id;
+                    if (entity.isPersistent()) {
+                        entity.delete();
+                    }
+                    return oldId;
+                });
+    }
+
     private MemberEntity toEntity(Long activityId, Member member) {
         final MemberEntity entity = new MemberEntity();
         entity.id = member.getId().orElse(null);
+        entity.user = userLink(member);
+        entity.activity = activityLink(activityId, member);
+        entity.role = member.getRole();
+        return entity;
+    }
+
+    private MemberEntity fillEntity(Long activityId, MemberEntity entity, Member member) {
         entity.user = userLink(member);
         entity.activity = activityLink(activityId, member);
         entity.role = member.getRole();
@@ -67,4 +94,7 @@ public class MemberService {
                 .orElseThrow(() -> new IllegalEntityStateException(String.format("One User is required for member %s with userId %s", member.getId(), member.getUserId())));
     }
 
+    private boolean matchActivityId(MemberEntity entity, Long activityId) {
+        return entity.activity != null && Objects.equals(entity.activity.id, activityId);
+    }
 }
