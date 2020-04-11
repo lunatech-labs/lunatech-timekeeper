@@ -10,24 +10,24 @@ public interface MemberResourceApi {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    List<Member> getAllMembers(@PathParam("activityId") Long activityId);
+    List<Member> getAllMembersOfActivity(@PathParam("activityId") Long activityId);
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    Response createMember(@PathParam("activityId") Long activityId, MemberMutable member);
+    Response addMemberToActivity(@PathParam("activityId") Long activityId, MemberMutable member);
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
-    Member getActivity(@PathParam("activityId") Long activityId, @PathParam("id") Long id);
+    Member getMember(@PathParam("activityId") Long activityId, @PathParam("id") Long id);
 
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    Response updateActivity(@PathParam("activityId") Long activityId, @PathParam("id") Long id, MemberMutable member);
+    Response changeMemberRole(@PathParam("activityId") Long activityId, @PathParam("id") Long id, Role role);
 
     @DELETE
     @Path("/{id}")
-    Response deleteActivity(@PathParam("activityId") Long activityId, @PathParam("id") Long id);
+    Response removeMemberToActivity(@PathParam("activityId") Long activityId, @PathParam("id") Long id);
 
 }

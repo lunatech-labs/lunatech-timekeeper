@@ -41,10 +41,10 @@ public class MemberService {
     }
 
     @Transactional
-    Optional<Long> updateMember(Long activityId, Long id, MemberMutable member) {
+    Optional<Long> changeRole(Long activityId, Long id, Role role) {
         return MemberEntity.<MemberEntity>findByIdOptional(id)
                 .filter(entity -> matchActivityId(entity, activityId))
-                .map(entity -> fillEntity(activityId, entity, member).id);
+                .map(entity -> fillRoleInEntity(entity, role).id);
     }
 
     @Transactional
@@ -68,10 +68,8 @@ public class MemberService {
         return entity;
     }
 
-    private MemberEntity fillEntity(Long activityId, MemberEntity entity, MemberMutable member) {
-        entity.user = userLink(member);
-        entity.activity = activityLink(activityId, member);
-        entity.role = member.getRole();
+    private MemberEntity fillRoleInEntity(MemberEntity entity, Role role) {
+        entity.role = role;
         return entity;
     }
 

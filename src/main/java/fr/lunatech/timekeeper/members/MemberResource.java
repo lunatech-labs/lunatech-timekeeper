@@ -1,6 +1,7 @@
 package fr.lunatech.timekeeper.members;
 
 import javax.inject.Inject;
+import javax.persistence.Convert;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -11,27 +12,28 @@ public class MemberResource implements MemberResourceApi {
     MemberService memberService;
 
     @Override
-    public List<Member> getAllMembers(Long activityId) {
+    public List<Member> getAllMembersOfActivity(Long activityId) {
         return memberService.listAllMembers(activityId);
     }
 
     @Override
-    public Response createMember(Long activityId, MemberMutable member) {
+    public Response addMemberToActivity(Long activityId, MemberMutable member) {
         return Response.ok(memberService.insertMember(activityId, member)).build();
     }
 
     @Override
-    public Member getActivity(Long activityId, Long id) {
+    public Member getMember(Long activityId, Long id) {
         return memberService.findMemberById(activityId, id).orElseThrow(NotFoundException::new);
     }
 
+    @Convert(converter = Role.Converter.class)
     @Override
-    public Response updateActivity(Long activityId, Long id, MemberMutable member) {
-        return Response.ok(memberService.updateMember(activityId, id, member).orElseThrow(NotFoundException::new)).build();
+    public Response changeMemberRole(Long activityId, Long id, Role role) {
+        return Response.ok(memberService.changeRole(activityId, id, role).orElseThrow(NotFoundException::new)).build();
     }
 
     @Override
-    public Response deleteActivity(Long activityId, Long id) {
+    public Response removeMemberToActivity(Long activityId, Long id) {
         return Response.ok(memberService.deleteMember(activityId, id).orElseThrow(NotFoundException::new)).build();
     }
 }
