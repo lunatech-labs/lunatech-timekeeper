@@ -88,6 +88,7 @@ public class ActivityService {
                 .orElseThrow(() -> new IllegalEntityStateException("One Customer is required for an activity. CustomerId=" + activity.getCustomerId() + " - activityName=" + activity.getName()));
     }
 
+    //TODO remove si pas utile (ce qui doit etre le cas)
     /*private List<MemberEntity> membersLink(ActivityMutable activity) {
         if (isNotEmpty(activity.getMembersId())) {
             return activity.getMembersId()

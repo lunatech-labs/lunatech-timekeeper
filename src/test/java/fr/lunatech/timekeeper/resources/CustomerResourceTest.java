@@ -39,7 +39,7 @@ class CustomerResourceTest {
                 .when().get("/api/customers/1")
                 .then()
                 .statusCode(200)
-                .body(is("{\"activitiesId\":[],\"id\":1,\"name\":\"NewClient\"}"));
+                .body(is("{\"name\":\"NewClient\",\"activitiesId\":[],\"id\":1}"));
     }
 
     @Test
@@ -66,7 +66,7 @@ class CustomerResourceTest {
                 .when().get("/api/customers")
                 .then()
                 .statusCode(200)
-                .body(is("[{\"activitiesId\":[],\"id\":1,\"name\":\"NewClient\"},{\"activitiesId\":[],\"id\":2,\"name\":\"NewClient2\"}]"));
+                .body(is("[{\"name\":\"NewClient\",\"activitiesId\":[],\"id\":1},{\"name\":\"NewClient2\",\"activitiesId\":[],\"id\":2}]"));
     }
 
     @Test
@@ -97,7 +97,7 @@ class CustomerResourceTest {
                 .when().get("/api/customers/1")
                 .then()
                 .statusCode(200)
-                .body(is("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\"}"));
+                .body(is("{\"name\":\"NewName\",\"activitiesId\":[],\"id\":1}"));
     }
 
    /* @Test

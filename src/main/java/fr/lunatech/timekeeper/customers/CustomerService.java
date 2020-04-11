@@ -26,14 +26,14 @@ public class CustomerService {
     }
 
     @Transactional
-    Long insertCustomer(Customer customer) {
+    Long insertCustomer(CustomerMutable customer) {
         final var entity = toEntity(customer);
         CustomerEntity.persist(entity);
         return entity.id;
     }
 
     @Transactional
-    Optional<Long> updateCustomer(Long id, Customer customer) {
+    Optional<Long> updateCustomer(Long id, CustomerMutable customer) {
         return CustomerEntity.<CustomerEntity>findByIdOptional(id).map(entity -> fillEntity(entity, customer).id);
     }
 
@@ -49,15 +49,14 @@ public class CustomerService {
                 });
     }
 
-    private CustomerEntity toEntity(Customer customer) {
+    private CustomerEntity toEntity(CustomerMutable customer) {
         final var entity = new CustomerEntity();
-        entity.id = customer.getId().orElse(null);
         entity.name = customer.getName();
         entity.description = customer.getDescription();
         return entity;
     }
 
-    private CustomerEntity fillEntity(CustomerEntity entity, Customer customer) {
+    private CustomerEntity fillEntity(CustomerEntity entity, CustomerMutable customer) {
         entity.name = customer.getName();
         entity.description = customer.getDescription();
         return entity;
@@ -71,5 +70,4 @@ public class CustomerService {
                 entity.activities.stream().map(a -> a.id).collect(Collectors.toList())
         );
     }
-
 }

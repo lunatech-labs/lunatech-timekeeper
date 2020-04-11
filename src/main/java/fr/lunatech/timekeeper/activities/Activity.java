@@ -3,8 +3,6 @@ package fr.lunatech.timekeeper.activities;
 import javax.json.bind.annotation.JsonbDateFormat;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Optional;
-
 
 public class Activity extends ActivityMutable {
 
@@ -23,8 +21,8 @@ public class Activity extends ActivityMutable {
         this.membersId = membersId;
     }
 
-    public Optional<Long> getId() {
-        return Optional.ofNullable(id);
+    public Long getId() {
+        return id;
     }
 
     public void setId(Long id) {

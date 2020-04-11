@@ -14,7 +14,7 @@ public interface CustomerResourceApi {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    Response createCustomer(Customer customerDto);
+    Response createCustomer(CustomerMutable customer);
 
     @GET
     @Path("/{id}")
@@ -24,7 +24,7 @@ public interface CustomerResourceApi {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    Response updateCustomer(@PathParam("id") Long id, Customer customerDto);
+    Response updateCustomer(@PathParam("id") Long id, CustomerMutable customer);
 
     @DELETE
     @Path("/{id}")

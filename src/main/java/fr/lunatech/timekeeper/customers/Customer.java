@@ -1,62 +1,36 @@
 package fr.lunatech.timekeeper.customers;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Optional;
 
-public class Customer {
+public class Customer extends CustomerMutable {
 
+    @NotNull
     private Long id;
-    @NotEmpty
-    private String name;
-    private String description;
-    /* activitiesId is not used to modif customer (read only) */
     private List<Long> activitiesId;
 
     public Customer() {
     }
 
     public Customer(Long id, String name, String description, List<Long> activitiesId) {
+        super(name, description);
         this.id = id;
-        this.name = name;
-        this.description = description;
         this.activitiesId = activitiesId;
     }
 
-    public Customer(String name, String description, List<Long> activitiesId) {
-        this(null, name, description, activitiesId);
-    }
-
-    public Optional<Long> getId() {
-        return Optional.ofNullable(id);
+    public Long getId() {
+        return id;
     }
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public List<Long> getActivitiesId() {
         return activitiesId;
     }
 
-    /*public void setActivitiesId(List<Long> activitiesId) {
+    public void setActivitiesId(List<Long> activitiesId) {
         this.activitiesId = activitiesId;
-    }*/
-
+    }
 }

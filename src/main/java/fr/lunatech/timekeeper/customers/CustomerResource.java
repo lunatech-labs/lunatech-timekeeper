@@ -16,7 +16,7 @@ public class CustomerResource implements CustomerResourceApi {
     }
 
     @Override
-    public Response createCustomer(Customer customer) {
+    public Response createCustomer(CustomerMutable customer) {
         return Response.ok(customerService.insertCustomer(customer)).build();
     }
 
@@ -26,7 +26,7 @@ public class CustomerResource implements CustomerResourceApi {
     }
 
     @Override
-    public Response updateCustomer(Long id, Customer customer) {
+    public Response updateCustomer(Long id, CustomerMutable customer) {
         return Response.ok(customerService.updateCustomer(id, customer).orElseThrow(NotFoundException::new)).build();
     }
 
