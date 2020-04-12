@@ -48,7 +48,10 @@ public class MemberServiceImpl implements MemberService {
     public Optional<Long> changeRole(Long activityId, Long id, Role role) {
         return MemberEntity.<MemberEntity>findByIdOptional(id)
                 .filter(entity -> matchActivityId(entity, activityId))
-                .map(entity -> fillRoleInEntity(entity, role).id);
+                .map(entity -> {
+                    entity.role = role;
+                    return entity.id;
+                });
     }
 
     @Transactional
@@ -70,11 +73,6 @@ public class MemberServiceImpl implements MemberService {
         entity.user = userLink(member);
         entity.activity = activityLink(activityId, member);
         entity.role = member.getRole();
-        return entity;
-    }
-
-    private MemberEntity fillRoleInEntity(MemberEntity entity, Role role) {
-        entity.role = role;
         return entity;
     }
 
