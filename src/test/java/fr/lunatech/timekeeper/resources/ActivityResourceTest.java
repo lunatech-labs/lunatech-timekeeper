@@ -44,7 +44,7 @@ class ActivityResourceTest {
                 .when().get("/api/activities/2")
                 .then()
                 .statusCode(200)
-                .body(is("{\"billable\":true,\"customerId\":1,\"description\":\"New project\",\"name\":\"Pepito\",\"id\":2,\"membersId\":[]}"));
+                .body(is("{\"billable\":true,\"customerId\":1,\"description\":\"New project\",\"id\":2,\"membersId\":[],\"name\":\"Pepito\"}"));
     }
 
     @Test
@@ -69,7 +69,7 @@ class ActivityResourceTest {
                 .when().get("/api/activities/3")
                 .then()
                 .statusCode(200)
-                .body(is("{\"billable\":true,\"customerId\":2,\"description\":\"New project\",\"name\":\"Pepito\",\"id\":3,\"membersId\":[]}"));
+                .body(is("{\"billable\":true,\"customerId\":2,\"description\":\"New project\",\"id\":3,\"membersId\":[],\"name\":\"Pepito\"}"));
     }
 
     @Test
@@ -115,7 +115,7 @@ class ActivityResourceTest {
                 .when().get("/api/activities/2")
                 .then()
                 .statusCode(200)
-                .body(is("{\"billable\":false,\"customerId\":3,\"description\":\"New project2\",\"name\":\"Pepito2\",\"id\":2,\"membersId\":[]}"));
+                .body(is("{\"billable\":false,\"customerId\":3,\"description\":\"New project2\",\"id\":2,\"membersId\":[],\"name\":\"Pepito2\"}"));
     }
 
     @Test

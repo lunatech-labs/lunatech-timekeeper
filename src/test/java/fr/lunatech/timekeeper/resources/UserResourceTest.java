@@ -39,7 +39,7 @@ class UserResourceTest {
                 .when().get("/api/users/1")
                 .then()
                 .statusCode(200)
-                .body(is("{\"email\":\"sam@gmail.com\",\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"profiles\":[\"Admin\"],\"id\":1}"));
+                .body(is("{\"email\":\"sam@gmail.com\",\"firstName\":\"Sam\",\"id\":1,\"lastName\":\"Huel\",\"profiles\":[\"Admin\"]}"));
     }
 
     @Test
@@ -67,7 +67,7 @@ class UserResourceTest {
                 .when().get("/api/users/1")
                 .then()
                 .statusCode(200)
-                .body(is("{\"email\":\"sam2@gmail.com\",\"firstName\":\"Sam2\",\"lastName\":\"Huel2\",\"profiles\":[\"SimpleUSer\"],\"id\":1}"));
+                .body(is("{\"email\":\"sam2@gmail.com\",\"firstName\":\"Sam2\",\"id\":1,\"lastName\":\"Huel2\",\"profiles\":[\"SimpleUSer\"]}"));
     }
 
     @Test

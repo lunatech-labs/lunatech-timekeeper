@@ -56,7 +56,7 @@ class MemberResourceTest {
                 .when().get("/api/activities/3/members/4")
                 .then()
                 .statusCode(200)
-                .body(is("{\"role\":\"Developer\",\"userId\":1,\"id\":4}"));
+                .body(is("{\"id\":4,\"role\":\"Developer\",\"userId\":1}"));
     }
 
     @Test
@@ -107,7 +107,7 @@ class MemberResourceTest {
                 .when().get("/api/activities/3/members/4")
                 .then()
                 .statusCode(200)
-                .body(is("{\"role\":\"TeamLeader\",\"userId\":1,\"id\":4}"));
+                .body(is("{\"id\":4,\"role\":\"TeamLeader\",\"userId\":1}"));
     }
 
     @Test

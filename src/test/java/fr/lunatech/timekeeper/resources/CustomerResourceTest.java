@@ -29,7 +29,7 @@ class CustomerResourceTest {
     }
 
     @Test
-    public void testPostCustomerResourcesWithOutActivitiesEndpoint() {
+    public void testCreateCustomer() {
         given()
                 .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
                 .then()
@@ -39,11 +39,25 @@ class CustomerResourceTest {
                 .when().get("/api/customers/1")
                 .then()
                 .statusCode(200)
-                .body(is("{\"name\":\"NewClient\",\"activitiesId\":[],\"id\":1}"));
+                .body(is("{\"activitiesId\":[],\"id\":1,\"name\":\"NewClient\"}"));
     }
 
     @Test
-    public void testGetUnExistedCustomerResourceEndpoint() {
+    public void testCreateCustomerIgnoreUselessParams() {
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"activitiesId\":[1,2,3],\"id\":9999,\"name\":\"NewClient\"}").post("/api/customers")
+                .then()
+                .statusCode(200);
+
+        given()
+                .when().get("/api/customers/1")
+                .then()
+                .statusCode(200)
+                .body(is("{\"activitiesId\":[],\"id\":1,\"name\":\"NewClient\"}"));
+    }
+    
+    @Test
+    public void testGetCustomerNotFound() {
         given()
                 .when().get("/api/customers/4")
                 .then()
@@ -51,7 +65,7 @@ class CustomerResourceTest {
     }
 
     @Test
-    public void testGetAllCustomersWithOutActivitiesEndpoint() {
+    public void testGetAllCustomers() {
         given()
                 .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
                 .then()
@@ -66,11 +80,11 @@ class CustomerResourceTest {
                 .when().get("/api/customers")
                 .then()
                 .statusCode(200)
-                .body(is("[{\"name\":\"NewClient\",\"activitiesId\":[],\"id\":1},{\"name\":\"NewClient2\",\"activitiesId\":[],\"id\":2}]"));
+                .body(is("[{\"activitiesId\":[],\"id\":1,\"name\":\"NewClient\"},{\"activitiesId\":[],\"id\":2,\"name\":\"NewClient2\"}]"));
     }
 
     @Test
-    public void testGetAllCustomersWithOutCustomerAndWithOutActivitiesEndpoint() {
+    public void testGetAllCustomersEmpty() {
 
         given()
                 .when().get("/api/customers")
@@ -80,7 +94,7 @@ class CustomerResourceTest {
     }
 
     @Test
-    public void testUpdateCustomerWithOutActivitiesEndpoint(){
+    public void testUpdateCustomer(){
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
@@ -97,11 +111,32 @@ class CustomerResourceTest {
                 .when().get("/api/customers/1")
                 .then()
                 .statusCode(200)
-                .body(is("{\"name\":\"NewName\",\"activitiesId\":[],\"id\":1}"));
+                .body(is("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\"}"));
     }
 
     @Test
-    public void testDeleteCustomerEndpoint() {
+    public void testUpdateCustomerIgnoreUselessParams(){
+
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .then()
+                .statusCode(200);
+
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"activitiesId\":[1,2,3],\"id\":9999,\"name\":\"NewName\"}").put("/api/customers/1")
+                .then()
+                .statusCode(200)
+                .body(is("1"));
+
+        given()
+                .when().get("/api/customers/1")
+                .then()
+                .statusCode(200)
+                .body(is("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\"}"));
+    }
+
+    @Test
+    public void testDeleteCustomer() {
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
