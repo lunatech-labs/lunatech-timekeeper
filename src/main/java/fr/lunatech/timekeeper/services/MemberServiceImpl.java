@@ -74,14 +74,14 @@ public class MemberServiceImpl implements MemberService {
         return new MemberResponse(member.id, member.user.id, member.role);
     }
 
-    public Member bind(Member member, Long activityId, MemberCreateRequest request)  {
+    public Member bind(Member member, Long activityId, MemberCreateRequest request) {
         member.activity = getActivityEntity(activityId);
         member.user = getUserEntity(request.getUserId());
         member.role = request.getRole();
         return member;
     }
 
-    public Member bind(Member member, Long activityId, MemberUpdateRequest request)  {
+    public Member bind(Member member, Long activityId, MemberUpdateRequest request) {
         member.activity = getActivityEntity(activityId);
         member.role = request.getRole();
         return member;

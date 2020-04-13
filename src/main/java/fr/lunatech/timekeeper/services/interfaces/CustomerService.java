@@ -9,8 +9,12 @@ import java.util.Optional;
 
 public interface CustomerService {
     Optional<CustomerResponse> findCustomerById(Long id);
-    List<CustomerResponse> listAllCustomers() ;
-    Long createCustomer(CustomerCreateRequest request) ;
+
+    List<CustomerResponse> listAllCustomers();
+
+    Long createCustomer(CustomerCreateRequest request);
+
     Optional<Long> updateCustomer(Long id, CustomerUpdateRequest request);
+
     Optional<Long> deleteCustomer(Long id);
 }

@@ -19,7 +19,7 @@ public class UserDataHealthCheck implements HealthCheck {
     @Override
     public HealthCheckResponse call() {
         HealthCheckResponseBuilder responseBuilder = HealthCheckResponse
-            .named("User datasource health check");
+                .named("User datasource health check");
 
         try {
             final Long count = userService.count();

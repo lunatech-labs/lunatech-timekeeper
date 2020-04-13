@@ -72,7 +72,7 @@ public class ActivityServiceImpl implements ActivityService {
         );
     }
 
-    public Activity bind(Activity activity, ActivityCreateRequest request)  {
+    public Activity bind(Activity activity, ActivityCreateRequest request) {
         activity.name = request.getName();
         activity.billable = request.isBillable();
         activity.description = request.getDescription();
@@ -80,7 +80,7 @@ public class ActivityServiceImpl implements ActivityService {
         return activity;
     }
 
-    public Activity bind(Activity activity, ActivityUpdateRequest request)  {
+    public Activity bind(Activity activity, ActivityUpdateRequest request) {
         activity.name = request.getName();
         activity.billable = request.isBillable();
         activity.description = request.getDescription();

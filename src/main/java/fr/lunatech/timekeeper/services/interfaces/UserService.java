@@ -9,10 +9,16 @@ import java.util.Optional;
 
 public interface UserService {
     Optional<UserResponse> findUserById(Long id);
+
     Optional<UserResponse> findUserByEmail(String email);
+
     List<UserResponse> listAllUsers();
+
     Long count();
+
     Long createUser(UserCreateRequest user);
+
     Optional<Long> updateUser(Long id, UserUpdateRequest user);
+
     Optional<Long> deleteUser(Long id);
 }

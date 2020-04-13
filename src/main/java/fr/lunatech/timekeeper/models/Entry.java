@@ -18,6 +18,7 @@ public class Entry extends PanacheEntity {
     public Activity activity;
     @OneToOne
     public Task task;
+
     public Entry() {
     }
 

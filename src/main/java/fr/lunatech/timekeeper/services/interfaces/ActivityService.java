@@ -9,8 +9,12 @@ import java.util.Optional;
 
 public interface ActivityService {
     Optional<ActivityResponse> findActivityById(Long id);
+
     List<ActivityResponse> listAllActivities();
+
     Long createActivity(ActivityCreateRequest activity);
+
     Optional<Long> updateActivity(Long id, ActivityUpdateRequest activity);
+
     Optional<Long> deleteActivity(Long id);
 }

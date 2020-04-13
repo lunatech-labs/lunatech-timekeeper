@@ -20,6 +20,7 @@ public final class CustomerCreateRequest {
     public String getName() {
         return name;
     }
+
     public String getDescription() {
         return description;
     }

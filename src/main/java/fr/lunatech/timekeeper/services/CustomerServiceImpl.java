@@ -68,13 +68,13 @@ public class CustomerServiceImpl implements CustomerService {
         );
     }
 
-    public Customer bind(Customer customer, CustomerCreateRequest request)  {
+    public Customer bind(Customer customer, CustomerCreateRequest request) {
         customer.name = request.getName();
         customer.description = request.getDescription();
         return customer;
     }
 
-    public Customer bind(Customer customer, CustomerUpdateRequest request)  {
+    public Customer bind(Customer customer, CustomerUpdateRequest request) {
         customer.name = request.getName();
         customer.description = request.getDescription();
         return customer;

@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
         return new UserResponse(user.id, user.firstName, user.lastName, user.email, user.profiles);
     }
 
-    public User bind(User user, UserCreateRequest request)  {
+    public User bind(User user, UserCreateRequest request) {
         user.firstName = request.getFirstName();
         user.lastName = request.getLastName();
         user.email = request.getEmail();
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    public User bind(User user, UserUpdateRequest request)  {
+    public User bind(User user, UserUpdateRequest request) {
         user.firstName = request.getFirstName();
         user.lastName = request.getLastName();
         user.email = request.getEmail();
