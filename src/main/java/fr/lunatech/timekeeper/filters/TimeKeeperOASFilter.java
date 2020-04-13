@@ -1,4 +1,4 @@
-package fr.lunatech.timekeeper.application.filters;
+package fr.lunatech.timekeeper.filters;
 
 import org.eclipse.microprofile.openapi.OASFilter;
 import org.eclipse.microprofile.openapi.models.media.Schema;

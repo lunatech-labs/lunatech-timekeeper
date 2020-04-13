@@ -1,5 +1,7 @@
-package fr.lunatech.timekeeper.authentication;
+package fr.lunatech.timekeeper.resources.apis;
 
+import fr.lunatech.timekeeper.authentication.JwtUser;
+import fr.lunatech.timekeeper.dtos.UserResponse;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -12,11 +14,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-@Path("/api/users")
-public interface JwtUserResourceApi {
+@Path("/api/me")
+public interface AuthenticationResourceApi {
 
     @GET
-    @Path("/me")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Extract current user from JWT",
             description = "Extract the current authenticated user from the JWT token. Endpoint required for the React application.")
@@ -33,6 +34,6 @@ public interface JwtUserResourceApi {
                     responseCode = "401",
                     description = "Invalid JWT token")
     })
-    JwtUser me();
+    UserResponse me();
 
 }

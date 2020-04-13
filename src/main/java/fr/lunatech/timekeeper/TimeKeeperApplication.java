@@ -1,4 +1,4 @@
-package fr.lunatech.timekeeper.application;
+package fr.lunatech.timekeeper;
 
 
 import org.eclipse.microprofile.openapi.annotations.ExternalDocumentation;

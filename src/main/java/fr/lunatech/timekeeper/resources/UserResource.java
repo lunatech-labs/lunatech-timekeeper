@@ -1,7 +1,10 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.models.User;
-import fr.lunatech.timekeeper.services.UserService;
+import fr.lunatech.timekeeper.dtos.UserCreateRequest;
+import fr.lunatech.timekeeper.dtos.UserResponse;
+import fr.lunatech.timekeeper.dtos.UserUpdateRequest;
+import fr.lunatech.timekeeper.resources.apis.UserResourceApi;
+import fr.lunatech.timekeeper.services.interfaces.UserService;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -14,23 +17,23 @@ public class UserResource implements UserResourceApi {
     UserService userService;
 
     @Override
-    public List<User> getAllUsers() {
+    public List<UserResponse> getAllUsers() {
         return userService.listAllUsers();
     }
 
     @Override
-    public Response createUser(User user) {
-        return Response.ok(userService.insertUser(user)).build();
+    public Response createUser(UserCreateRequest request) {
+        return Response.ok(userService.createUser(request)).build();
     }
 
     @Override
-    public User getUser(Long id) {
+    public UserResponse getUser(Long id) {
         return userService.findUserById(id).orElseThrow(NotFoundException::new);
     }
 
     @Override
-    public Response updateUser(Long id, User user) {
-        return Response.ok(userService.updateUser(id, user).orElseThrow(NotFoundException::new)).build();
+    public Response updateUser(Long id, UserUpdateRequest request) {
+        return Response.ok(userService.updateUser(id, request).orElseThrow(NotFoundException::new)).build();
     }
 
     @Override

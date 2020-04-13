@@ -37,7 +37,7 @@ class MemberResourceTest {
                 .statusCode(200).body(is("1"));
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}").post("/api/customers")
                 .then()
                 .statusCode(200).body(is("2"));
 
@@ -84,7 +84,7 @@ class MemberResourceTest {
                 .statusCode(200).body(is("1"));
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}").post("/api/customers")
                 .then()
                 .statusCode(200).body(is("2"));
 
@@ -99,7 +99,7 @@ class MemberResourceTest {
                 .statusCode(200).body(is("4"));
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("\"TeamLeader\"").put("/api/activities/3/members/4")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"role\":\"TeamLeader\"}").put("/api/activities/3/members/4")
                 .then()
                 .statusCode(200).body(is("4"));
 
@@ -119,7 +119,7 @@ class MemberResourceTest {
                 .statusCode(200).body(is("1"));
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}").post("/api/customers")
                 .then()
                 .statusCode(200).body(is("2"));
 

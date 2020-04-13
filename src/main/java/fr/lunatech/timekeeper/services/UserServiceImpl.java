@@ -1,7 +1,10 @@
 package fr.lunatech.timekeeper.services;
 
-import fr.lunatech.timekeeper.entities.UserEntity;
+import fr.lunatech.timekeeper.dtos.UserCreateRequest;
+import fr.lunatech.timekeeper.dtos.UserResponse;
+import fr.lunatech.timekeeper.dtos.UserUpdateRequest;
 import fr.lunatech.timekeeper.models.User;
+import fr.lunatech.timekeeper.services.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,49 +21,66 @@ public class UserServiceImpl implements UserService {
     private static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Override
-    public Optional<User> findUserById(Long id) {
-        return UserEntity.<UserEntity>findByIdOptional(id).map(User::new);
+    public Optional<UserResponse> findUserById(Long id) {
+        return User.<User>findByIdOptional(id).map(this::response);
     }
 
     @Override
-    public List<User> listAllUsers() {
-        try (final Stream<UserEntity> entities = UserEntity.streamAll()) {
-            return entities.map(User::new).collect(Collectors.toList());
+    public Optional<UserResponse> findUserByEmail(String email) {
+        return User.<User>find("email", email).firstResultOptional().map(this::response);
+    }
+
+    @Override
+    public List<UserResponse> listAllUsers() {
+        try (final Stream<User> users = User.streamAll()) {
+            return users.map(this::response).collect(Collectors.toList());
         }
     }
 
     @Transactional
     @Override
-    public Long insertUser(User user) {
-        final var entity = new UserEntity();
-        UserEntity.persist(bind(entity, user));
-        return entity.id;
+    public Long createUser(UserCreateRequest request) {
+        final var user = new User();
+        User.persist(bind(user, request));
+        return user.id;
     }
 
     @Transactional
     @Override
-    public Optional<Long> updateUser(Long id, User user) {
-        return UserEntity.<UserEntity>findByIdOptional(id).map(entity -> bind(entity, user).id);
+    public Optional<Long> updateUser(Long id, UserUpdateRequest request) {
+        return User.<User>findByIdOptional(id).map(user -> bind(user, request).id);
     }
 
     @Transactional
     @Override
     public Optional<Long> deleteUser(Long id) {
-        return UserEntity.<UserEntity>findByIdOptional(id)
-                .map(entity -> {
-                    final var oldId = entity.id;
-                    if (entity.isPersistent()) {
-                        entity.delete();
+        return User.<User>findByIdOptional(id)
+                .map(user -> {
+                    final var oldId = user.id;
+                    if (user.isPersistent()) {
+                        user.delete();
                     }
                     return oldId;
                 });
     }
 
-    private static UserEntity bind(UserEntity entity, User user) {
-        entity.firstName = user.getFirstName();
-        entity.lastName = user.getLastName();
-        entity.email = user.getEmail();
-        entity.profiles = user.getProfiles();
-        return entity;
+    public UserResponse response(User user) {
+        return new UserResponse(user.id, user.firstName, user.lastName, user.email, user.profiles);
+    }
+
+    public User bind(User user, UserCreateRequest request)  {
+        user.firstName = request.getFirstName();
+        user.lastName = request.getLastName();
+        user.email = request.getEmail();
+        user.profiles = request.getProfiles();
+        return user;
+    }
+
+    public User bind(User user, UserUpdateRequest request)  {
+        user.firstName = request.getFirstName();
+        user.lastName = request.getLastName();
+        user.email = request.getEmail();
+        user.profiles = request.getProfiles();
+        return user;
     }
 }

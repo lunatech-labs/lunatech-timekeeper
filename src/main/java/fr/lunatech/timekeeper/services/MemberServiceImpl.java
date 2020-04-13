@@ -1,11 +1,13 @@
 package fr.lunatech.timekeeper.services;
 
-import fr.lunatech.timekeeper.application.errors.IllegalEntityStateException;
-import fr.lunatech.timekeeper.entities.ActivityEntity;
-import fr.lunatech.timekeeper.entities.MemberEntity;
-import fr.lunatech.timekeeper.entities.UserEntity;
+import fr.lunatech.timekeeper.dtos.MemberCreateRequest;
+import fr.lunatech.timekeeper.dtos.MemberResponse;
+import fr.lunatech.timekeeper.dtos.MemberUpdateRequest;
+import fr.lunatech.timekeeper.models.Activity;
 import fr.lunatech.timekeeper.models.Member;
-import fr.lunatech.timekeeper.models.Role;
+import fr.lunatech.timekeeper.models.User;
+import fr.lunatech.timekeeper.models.errors.IllegalEntityStateException;
+import fr.lunatech.timekeeper.services.interfaces.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,73 +25,79 @@ public class MemberServiceImpl implements MemberService {
     private static Logger logger = LoggerFactory.getLogger(MemberServiceImpl.class);
 
     @Override
-    public Optional<Member> findMemberById(Long activityId, Long id) {
-        return MemberEntity.<MemberEntity>findByIdOptional(id)
-                .filter(entity -> matchActivityId(entity, activityId))
-                .map(Member::new);
+    public Optional<MemberResponse> findMemberById(Long activityId, Long id) {
+        return Member.<Member>findByIdOptional(id)
+                .filter(member -> matchActivityId(member, activityId))
+                .map(this::response);
     }
 
     @Override
-    public List<Member> listAllMembers(Long activityId) {
-        try (final Stream<MemberEntity> entities = MemberEntity.streamAll()) {
-            return entities.filter(entity -> matchActivityId(entity, activityId))
-                    .map(Member::new)
+    public List<MemberResponse> listAllMembers(Long activityId) {
+        try (final Stream<Member> members = Member.streamAll()) {
+            return members.filter(member -> matchActivityId(member, activityId))
+                    .map(this::response)
                     .collect(Collectors.toList());
         }
     }
 
     @Transactional
     @Override
-    public Long insertMember(Long activityId, Member member) {
-        final var entity = new MemberEntity();
-        MemberEntity.persist(bind(entity, activityId, member));
-        return entity.id;
+    public Long createMember(Long activityId, MemberCreateRequest request) {
+        final var member = new Member();
+        Member.persist(bind(member, activityId, request));
+        return member.id;
     }
 
     @Transactional
     @Override
-    public Optional<Long> changeRole(Long activityId, Long id, Role role) {
-        return MemberEntity.<MemberEntity>findByIdOptional(id)
-                .filter(entity -> matchActivityId(entity, activityId))
-                .map(entity -> {
-                    entity.role = role;
-                    return entity.id;
-                });
+    public Optional<Long> updateMember(Long activityId, Long id, MemberUpdateRequest request) {
+        return Member.<Member>findByIdOptional(id)
+                .filter(member -> matchActivityId(member, activityId))
+                .map(member -> bind(member, activityId, request).id);
     }
 
     @Transactional
     @Override
     public Optional<Long> deleteMember(Long activityId, Long id) {
-        return MemberEntity.<MemberEntity>findByIdOptional(id)
-                .filter(entity -> matchActivityId(entity, activityId))
-                .map(entity -> {
-                    final var oldId = entity.id;
-                    if (entity.isPersistent()) {
-                        entity.delete();
+        return Member.<Member>findByIdOptional(id)
+                .filter(member -> matchActivityId(member, activityId))
+                .map(member -> {
+                    final var oldId = member.id;
+                    if (member.isPersistent()) {
+                        member.delete();
                     }
                     return oldId;
                 });
     }
 
-    private static MemberEntity bind(MemberEntity entity, Long activityId, Member member)  {
-        entity.user = getUserEntity(member);
-        entity.activity = getActivityEntity(activityId, member);
-        entity.role = member.getRole();
-        return entity;
+    public MemberResponse response(Member member) {
+        return new MemberResponse(member.id, member.user.id, member.role);
     }
 
-
-    private static ActivityEntity getActivityEntity(Long activityId, Member member) {
-        return ActivityEntity.<ActivityEntity>findByIdOptional(activityId)
-                .orElseThrow(() -> new IllegalEntityStateException(String.format("One Activity is required for member. activityId=%s - userId = %s", activityId, member.getUserId())));
+    public Member bind(Member member, Long activityId, MemberCreateRequest request)  {
+        member.activity = getActivityEntity(activityId);
+        member.user = getUserEntity(request.getUserId());
+        member.role = request.getRole();
+        return member;
     }
 
-    private static UserEntity getUserEntity(Member member) {
-        return UserEntity.<UserEntity>findByIdOptional(member.getUserId())
-                .orElseThrow(() -> new IllegalEntityStateException(String.format("One User is required for member. userId %s", member.getUserId())));
+    public Member bind(Member member, Long activityId, MemberUpdateRequest request)  {
+        member.activity = getActivityEntity(activityId);
+        member.role = request.getRole();
+        return member;
     }
 
-    private boolean matchActivityId(MemberEntity entity, Long activityId) {
-        return entity.activity != null && Objects.equals(entity.activity.id, activityId);
+    private static Activity getActivityEntity(Long activityId) {
+        return Activity.<Activity>findByIdOptional(activityId)
+                .orElseThrow(() -> new IllegalEntityStateException(String.format("One Activity is required for member. activityId=%s", activityId)));
+    }
+
+    private static User getUserEntity(Long userId) {
+        return User.<User>findByIdOptional(userId)
+                .orElseThrow(() -> new IllegalEntityStateException(String.format("One User is required for member. userId=%s", userId)));
+    }
+
+    private boolean matchActivityId(Member member, Long activityId) {
+        return member.activity != null && Objects.equals(member.activity.id, activityId);
     }
 }

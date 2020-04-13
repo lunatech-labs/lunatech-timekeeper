@@ -1,4 +1,4 @@
-package fr.lunatech.timekeeper.application.errors;
+package fr.lunatech.timekeeper.models.errors;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;

@@ -31,7 +31,7 @@ class ActivityResourceTest {
     @Test
     public void testPostActivityResourcesEndpoint() {
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}").post("/api/customers")
                 .then()
                 .statusCode(200).body(is("1"));
 
@@ -56,7 +56,7 @@ class ActivityResourceTest {
                 .statusCode(200).body(is("1"));
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}").post("/api/customers")
                 .then()
                 .statusCode(200).body(is("2"));
 
@@ -92,7 +92,7 @@ class ActivityResourceTest {
     @Test
     public void testPutActivityResourcesEndpoint() {
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}").post("/api/customers")
                 .then()
                 .statusCode(200).body(is("1"));
 
@@ -102,12 +102,12 @@ class ActivityResourceTest {
                 .statusCode(200).body(is("2"));
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient2\",\"description\":\"NewDescription2\"}").post("/api/customers")
                 .then()
                 .statusCode(200).body(is("3"));
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito2\",\"billable\":false,\"description\":\"New project2\", \"customerId\":3}").put("/api/activities/2")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito2\",\"billable\":false,\"description\":\"New project2\",\"customerId\":3}").put("/api/activities/2")
                 .then()
                 .statusCode(200).body(is("2"));
 
@@ -121,7 +121,7 @@ class ActivityResourceTest {
     @Test
     public void testDeleteActivityResourcesEndpoint() {
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}").post("/api/customers")
                 .then()
                 .statusCode(200).body(is("1"));
 

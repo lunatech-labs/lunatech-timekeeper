@@ -1,4 +1,4 @@
-package fr.lunatech.timekeeper.entities;
+package fr.lunatech.timekeeper.models;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
@@ -15,7 +15,7 @@ public class Entry extends PanacheEntity {
     public long duration;
     public DurationType durationType;
     @OneToOne
-    public ActivityEntity activity;
+    public Activity activity;
     @OneToOne
     public Task task;
     public Entry() {

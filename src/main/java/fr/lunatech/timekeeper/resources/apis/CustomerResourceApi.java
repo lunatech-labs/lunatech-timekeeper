@@ -1,6 +1,8 @@
-package fr.lunatech.timekeeper.resources;
+package fr.lunatech.timekeeper.resources.apis;
 
-import fr.lunatech.timekeeper.models.Customer;
+import fr.lunatech.timekeeper.dtos.CustomerResponse;
+import fr.lunatech.timekeeper.dtos.CustomerCreateRequest;
+import fr.lunatech.timekeeper.dtos.CustomerUpdateRequest;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -12,21 +14,21 @@ public interface CustomerResourceApi {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    List<Customer> getAllCustomers();
+    List<CustomerResponse> getAllCustomers();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    Response createCustomer(Customer customer);
+    Response createCustomer(CustomerCreateRequest request);
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    Customer getCustomer(@PathParam("id") Long id);
+    CustomerResponse getCustomer(@PathParam("id") Long id);
 
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    Response updateCustomer(@PathParam("id") Long id, Customer customer);
+    Response updateCustomer(@PathParam("id") Long id, CustomerUpdateRequest request);
 
     @DELETE
     @Path("/{id}")

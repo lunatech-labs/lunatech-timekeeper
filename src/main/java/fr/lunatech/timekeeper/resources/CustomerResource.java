@@ -1,7 +1,10 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.models.Customer;
-import fr.lunatech.timekeeper.services.CustomerService;
+import fr.lunatech.timekeeper.resources.apis.CustomerResourceApi;
+import fr.lunatech.timekeeper.dtos.CustomerResponse;
+import fr.lunatech.timekeeper.dtos.CustomerCreateRequest;
+import fr.lunatech.timekeeper.dtos.CustomerUpdateRequest;
+import fr.lunatech.timekeeper.services.interfaces.CustomerService;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -14,23 +17,23 @@ public class CustomerResource implements CustomerResourceApi {
     CustomerService customerService;
 
     @Override
-    public List<Customer> getAllCustomers() {
+    public List<CustomerResponse> getAllCustomers() {
         return customerService.listAllCustomers();
     }
 
     @Override
-    public Response createCustomer(Customer customer) {
-        return Response.ok(customerService.insertCustomer(customer)).build();
+    public Response createCustomer(CustomerCreateRequest request) {
+        return Response.ok(customerService.createCustomer(request)).build();
     }
 
     @Override
-    public Customer getCustomer(Long id) {
+    public CustomerResponse getCustomer(Long id) {
         return customerService.findCustomerById(id).orElseThrow(NotFoundException::new);
     }
 
     @Override
-    public Response updateCustomer(Long id, Customer customer) {
-        return Response.ok(customerService.updateCustomer(id, customer).orElseThrow(NotFoundException::new)).build();
+    public Response updateCustomer(Long id, CustomerUpdateRequest request) {
+        return Response.ok(customerService.updateCustomer(id, request).orElseThrow(NotFoundException::new)).build();
     }
 
     @Override

@@ -31,7 +31,7 @@ class CustomerResourceTest {
     @Test
     public void testCreateCustomer() {
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}").post("/api/customers")
                 .then()
                 .statusCode(200);
 
@@ -39,13 +39,13 @@ class CustomerResourceTest {
                 .when().get("/api/customers/1")
                 .then()
                 .statusCode(200)
-                .body(is("{\"activitiesId\":[],\"id\":1,\"name\":\"NewClient\"}"));
+                .body(is("{\"activitiesId\":[],\"description\":\"NewDescription\",\"id\":1,\"name\":\"NewClient\"}"));
     }
 
     @Test
     public void testCreateCustomerIgnoreUselessParams() {
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"activitiesId\":[1,2,3],\"id\":9999,\"name\":\"NewClient\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"activitiesId\":[1,2,3],\"id\":9999,\"name\":\"NewClient\",\"description\":\"NewDescription\"}").post("/api/customers")
                 .then()
                 .statusCode(200);
 
@@ -53,7 +53,7 @@ class CustomerResourceTest {
                 .when().get("/api/customers/1")
                 .then()
                 .statusCode(200)
-                .body(is("{\"activitiesId\":[],\"id\":1,\"name\":\"NewClient\"}"));
+                .body(is("{\"activitiesId\":[],\"description\":\"NewDescription\",\"id\":1,\"name\":\"NewClient\"}"));
     }
     
     @Test
@@ -67,12 +67,12 @@ class CustomerResourceTest {
     @Test
     public void testGetAllCustomers() {
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}").post("/api/customers")
                 .then()
                 .statusCode(200);
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient2\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient2\",\"description\":\"NewDescription2\"}").post("/api/customers")
                 .then()
                 .statusCode(200);
 
@@ -80,7 +80,7 @@ class CustomerResourceTest {
                 .when().get("/api/customers")
                 .then()
                 .statusCode(200)
-                .body(is("[{\"activitiesId\":[],\"id\":1,\"name\":\"NewClient\"},{\"activitiesId\":[],\"id\":2,\"name\":\"NewClient2\"}]"));
+                .body(is("[{\"activitiesId\":[],\"description\":\"NewDescription\",\"id\":1,\"name\":\"NewClient\"},{\"activitiesId\":[],\"description\":\"NewDescription2\",\"id\":2,\"name\":\"NewClient2\"}]"));
     }
 
     @Test
@@ -97,12 +97,12 @@ class CustomerResourceTest {
     public void testUpdateCustomer(){
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}").post("/api/customers")
                 .then()
                 .statusCode(200);
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\"}").put("/api/customers/1")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\",\"description\":\"NewDescription2\"}").put("/api/customers/1")
                 .then()
                 .statusCode(200)
                 .body(is("1"));
@@ -111,19 +111,19 @@ class CustomerResourceTest {
                 .when().get("/api/customers/1")
                 .then()
                 .statusCode(200)
-                .body(is("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\"}"));
+                .body(is("{\"activitiesId\":[],\"description\":\"NewDescription2\",\"id\":1,\"name\":\"NewName\"}"));
     }
 
     @Test
     public void testUpdateCustomerIgnoreUselessParams(){
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}").post("/api/customers")
                 .then()
                 .statusCode(200);
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"activitiesId\":[1,2,3],\"id\":9999,\"name\":\"NewName\"}").put("/api/customers/1")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"activitiesId\":[1,2,3],\"id\":9999,\"name\":\"NewName\",\"description\":\"NewDescription2\"}").put("/api/customers/1")
                 .then()
                 .statusCode(200)
                 .body(is("1"));
@@ -132,14 +132,14 @@ class CustomerResourceTest {
                 .when().get("/api/customers/1")
                 .then()
                 .statusCode(200)
-                .body(is("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\"}"));
+                .body(is("{\"activitiesId\":[],\"description\":\"NewDescription2\",\"id\":1,\"name\":\"NewName\"}"));
     }
 
     @Test
     public void testDeleteCustomer() {
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}").post("/api/customers")
                 .then()
                 .statusCode(200);
 

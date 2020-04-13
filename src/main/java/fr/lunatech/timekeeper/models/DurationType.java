@@ -1,4 +1,4 @@
-package fr.lunatech.timekeeper.entities;
+package fr.lunatech.timekeeper.models;
 
 public enum DurationType {
 

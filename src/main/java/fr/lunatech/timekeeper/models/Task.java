@@ -1,4 +1,4 @@
-package fr.lunatech.timekeeper.entities;
+package fr.lunatech.timekeeper.models;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 

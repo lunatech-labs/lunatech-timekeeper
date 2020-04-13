@@ -1,8 +1,11 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.models.Member;
+import fr.lunatech.timekeeper.dtos.MemberCreateRequest;
+import fr.lunatech.timekeeper.dtos.MemberResponse;
+import fr.lunatech.timekeeper.dtos.MemberUpdateRequest;
 import fr.lunatech.timekeeper.models.Role;
-import fr.lunatech.timekeeper.services.MemberService;
+import fr.lunatech.timekeeper.resources.apis.MemberResourceApi;
+import fr.lunatech.timekeeper.services.interfaces.MemberService;
 
 import javax.inject.Inject;
 import javax.persistence.Convert;
@@ -16,24 +19,24 @@ public class MemberResource implements MemberResourceApi {
     MemberService memberService;
 
     @Override
-    public List<Member> getAllMembersOfActivity(Long activityId) {
+    public List<MemberResponse> getAllMembersOfActivity(Long activityId) {
         return memberService.listAllMembers(activityId);
     }
 
     @Override
-    public Response addMemberToActivity(Long activityId, Member member) {
-        return Response.ok(memberService.insertMember(activityId, member)).build();
+    public Response addMemberToActivity(Long activityId, MemberCreateRequest request) {
+        return Response.ok(memberService.createMember(activityId, request)).build();
     }
 
     @Override
-    public Member getMember(Long activityId, Long id) {
+    public MemberResponse getMember(Long activityId, Long id) {
         return memberService.findMemberById(activityId, id).orElseThrow(NotFoundException::new);
     }
 
     @Convert(converter = Role.Converter.class)
     @Override
-    public Response changeMemberRole(Long activityId, Long id, Role role) {
-        return Response.ok(memberService.changeRole(activityId, id, role).orElseThrow(NotFoundException::new)).build();
+    public Response updateMember(Long activityId, Long id, MemberUpdateRequest request) {
+        return Response.ok(memberService.updateMember(activityId, id, request).orElseThrow(NotFoundException::new)).build();
     }
 
     @Override

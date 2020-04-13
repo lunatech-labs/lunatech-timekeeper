@@ -1,7 +1,10 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.models.Activity;
-import fr.lunatech.timekeeper.services.ActivityService;
+import fr.lunatech.timekeeper.dtos.ActivityCreateRequest;
+import fr.lunatech.timekeeper.dtos.ActivityResponse;
+import fr.lunatech.timekeeper.dtos.ActivityUpdateRequest;
+import fr.lunatech.timekeeper.resources.apis.ActivityResourceApi;
+import fr.lunatech.timekeeper.services.interfaces.ActivityService;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -14,23 +17,23 @@ public class ActivityResource implements ActivityResourceApi {
     ActivityService activityService;
 
     @Override
-    public List<Activity> getAllActivities() {
+    public List<ActivityResponse> getAllActivities() {
         return activityService.listAllActivities();
     }
 
     @Override
-    public Response createActivity(Activity activity) {
-        return Response.ok(activityService.insertActivity(activity)).build();
+    public Response createActivity(ActivityCreateRequest request) {
+        return Response.ok(activityService.createActivity(request)).build();
     }
 
     @Override
-    public Activity getActivity(Long id) {
+    public ActivityResponse getActivity(Long id) {
         return activityService.findActivityById(id).orElseThrow(NotFoundException::new);
     }
 
     @Override
-    public Response updateActivity(Long id, Activity activity) {
-        return Response.ok(activityService.updateActivity(id, activity).orElseThrow(NotFoundException::new)).build();
+    public Response updateActivity(Long id, ActivityUpdateRequest request) {
+        return Response.ok(activityService.updateActivity(id, request).orElseThrow(NotFoundException::new)).build();
     }
 
     @Override

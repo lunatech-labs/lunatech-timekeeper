@@ -1,9 +1,12 @@
 package fr.lunatech.timekeeper.services;
 
-import fr.lunatech.timekeeper.application.errors.IllegalEntityStateException;
-import fr.lunatech.timekeeper.entities.ActivityEntity;
-import fr.lunatech.timekeeper.entities.CustomerEntity;
+import fr.lunatech.timekeeper.dtos.ActivityCreateRequest;
+import fr.lunatech.timekeeper.dtos.ActivityResponse;
+import fr.lunatech.timekeeper.dtos.ActivityUpdateRequest;
 import fr.lunatech.timekeeper.models.Activity;
+import fr.lunatech.timekeeper.models.Customer;
+import fr.lunatech.timekeeper.models.errors.IllegalEntityStateException;
+import fr.lunatech.timekeeper.services.interfaces.ActivityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,63 +17,79 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Collections.emptyList;
-
 @ApplicationScoped
 public class ActivityServiceImpl implements ActivityService {
 
     private static Logger logger = LoggerFactory.getLogger(ActivityServiceImpl.class);
 
     @Override
-    public Optional<Activity> findActivityById(Long id) {
-        return ActivityEntity.<ActivityEntity>findByIdOptional(id).map(Activity::new);
+    public Optional<ActivityResponse> findActivityById(Long id) {
+        return Activity.<Activity>findByIdOptional(id).map(this::response);
     }
 
     @Override
-    public List<Activity> listAllActivities() {
-        try (final Stream<ActivityEntity> entities = ActivityEntity.streamAll()) {
-            return entities.map(Activity::new).collect(Collectors.toList());
+    public List<ActivityResponse> listAllActivities() {
+        try (final Stream<Activity> activities = Activity.streamAll()) {
+            return activities.map(this::response).collect(Collectors.toList());
         }
     }
 
     @Transactional
     @Override
-    public Long insertActivity(Activity activity) {
-        final var entity = new ActivityEntity();
-        ActivityEntity.persist(bind(entity, activity));
-        return entity.id;
+    public Long createActivity(ActivityCreateRequest request) {
+        final var activity = new Activity();
+        Activity.persist(bind(activity, request));
+        return activity.id;
     }
 
     @Transactional
     @Override
-    public Optional<Long> updateActivity(Long id, Activity activity) {
-        return ActivityEntity.<ActivityEntity>findByIdOptional(id).map(entity -> bind(entity, activity).id);
+    public Optional<Long> updateActivity(Long id, ActivityUpdateRequest request) {
+        return Activity.<Activity>findByIdOptional(id).map(activity -> bind(activity, request).id);
     }
 
     @Transactional
     @Override
     public Optional<Long> deleteActivity(Long id) {
-        return ActivityEntity.<ActivityEntity>findByIdOptional(id)
-                .map(entity -> {
-                    final Long oldId = entity.id;
-                    if (entity.isPersistent()) {
-                        entity.delete();
+        return Activity.<Activity>findByIdOptional(id)
+                .map(activity -> {
+                    final Long oldId = activity.id;
+                    if (activity.isPersistent()) {
+                        activity.delete();
                     }
                     return oldId;
                 });
     }
 
-    private static ActivityEntity bind(ActivityEntity entity, Activity activity)  {
-        entity.name = activity.getName();
-        entity.billable = activity.isBillable();
-        entity.description = activity.getDescription();
-        entity.customer = getCustomerEntity(activity);
-        entity.members = emptyList();
-        return entity;
+    public ActivityResponse response(Activity activity) {
+        return new ActivityResponse(
+                activity.id,
+                activity.name,
+                activity.billable,
+                activity.description,
+                activity.customer.id,
+                activity.members.stream().map(m -> m.id).collect(Collectors.toList())
+        );
     }
 
-    private static CustomerEntity getCustomerEntity(Activity activity) {
-        return CustomerEntity.<CustomerEntity>findByIdOptional(activity.getCustomerId())
-                .orElseThrow(() -> new IllegalEntityStateException("One Customer is required for an activity. CustomerId=" + activity.getCustomerId() + " - activityName=" + activity.getName()));
+    public Activity bind(Activity activity, ActivityCreateRequest request)  {
+        activity.name = request.getName();
+        activity.billable = request.isBillable();
+        activity.description = request.getDescription();
+        activity.customer = getCustomerEntity(request.getCustomerId());
+        return activity;
+    }
+
+    public Activity bind(Activity activity, ActivityUpdateRequest request)  {
+        activity.name = request.getName();
+        activity.billable = request.isBillable();
+        activity.description = request.getDescription();
+        activity.customer = getCustomerEntity(request.getCustomerId());
+        return activity;
+    }
+
+    private static Customer getCustomerEntity(Long customerId) {
+        return Customer.<Customer>findByIdOptional(customerId)
+                .orElseThrow(() -> new IllegalEntityStateException(String.format("One Customer is required for an activity. customerId=%d", customerId)));
     }
 }
