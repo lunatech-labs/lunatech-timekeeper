@@ -1,7 +1,5 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.authentication.JwtUser;
-import fr.lunatech.timekeeper.dtos.UserCreateRequest;
 import fr.lunatech.timekeeper.dtos.UserResponse;
 import fr.lunatech.timekeeper.resources.apis.AuthenticationResourceApi;
 import fr.lunatech.timekeeper.services.interfaces.UserService;
@@ -17,7 +15,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.Collections;
 
 import static java.util.Collections.emptyList;
 

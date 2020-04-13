@@ -37,6 +37,11 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public Long count() {
+        return User.count();
+    }
+
     @Transactional
     @Override
     public Long createUser(UserCreateRequest request) {
