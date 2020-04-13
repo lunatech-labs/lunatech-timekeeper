@@ -3,6 +3,9 @@ package fr.lunatech.timekeeper.resources.apis;
 import fr.lunatech.timekeeper.dtos.UserCreateRequest;
 import fr.lunatech.timekeeper.dtos.UserResponse;
 import fr.lunatech.timekeeper.dtos.UserUpdateRequest;
+import org.eclipse.microprofile.metrics.MetricUnits;
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 
 import javax.ws.rs.*;
@@ -17,6 +20,8 @@ public interface UserResourceApi {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Counted(name = "countGetAllUsers", description = "Counts how many times the getAllUsers method has been invoked")
+    @Timed(name = "timeGetAllUsers", description = "Times how long it takes to invoke the getAllUsers method", unit = MetricUnits.MILLISECONDS)
     List<UserResponse> getAllUsers();
 
     @POST

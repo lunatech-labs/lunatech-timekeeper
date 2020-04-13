@@ -11,6 +11,9 @@ import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
 
 import static io.restassured.RestAssured.given;
+import static javax.ws.rs.core.HttpHeaders.ACCEPT;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.TEXT_HTML;
 import static javax.ws.rs.core.Response.Status.OK;
 
 @QuarkusTest
@@ -30,7 +33,9 @@ class InfrastructureTest {
     @Test
     void shouldPingOpenApi() {
         given()
-                .when().get("/api/openapi")
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/openapi")
                 .then()
                 .statusCode(OK.getStatusCode());
     }
@@ -38,7 +43,9 @@ class InfrastructureTest {
     @Test
     void shouldPingSwaggerUI() {
         given()
-                .when().get("/api/swagger-ui/")
+                .when()
+                .header(ACCEPT, TEXT_HTML)
+                .get("/api/swagger-ui/")
                 .then()
                 .statusCode(OK.getStatusCode());
     }
@@ -46,7 +53,9 @@ class InfrastructureTest {
     @Test
     void shouldPingHealth() {
         given()
-                .when().get("/api/health")
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/health")
                 .then()
                 .statusCode(OK.getStatusCode());
     }
@@ -54,7 +63,9 @@ class InfrastructureTest {
     @Test
     void shouldPingLiveness() {
         given()
-                .when().get("/api/health/live")
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/health/live")
                 .then()
                 .statusCode(OK.getStatusCode());
     }
@@ -62,7 +73,19 @@ class InfrastructureTest {
     @Test
     void shouldPingReadiness() {
         given()
-                .when().get("/api/health/ready")
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/health/ready")
+                .then()
+                .statusCode(OK.getStatusCode());
+    }
+
+    @Test
+    void shouldPingMetrics() {
+        given()
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/metrics")
                 .then()
                 .statusCode(OK.getStatusCode());
     }
