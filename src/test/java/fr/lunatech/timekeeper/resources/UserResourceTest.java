@@ -12,6 +12,8 @@ import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.given;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
@@ -23,77 +25,92 @@ class UserResourceTest {
     Flyway flyway;
 
     @AfterEach
-    public void cleanDB() {
+    void cleanDB() {
         flyway.clean();
         flyway.migrate();
     }
 
     @Test
-    public void testPostUserResourcesEndpoint() {
+    void shouldCreateUser() {
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\",\"profiles\":[\"Admin\"]}").post("/api/users")
+                .when().contentType(MediaType.APPLICATION_JSON)
+                .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\",\"profiles\":[\"Admin\"]}")
+                .post("/api/users")
                 .then()
-                .statusCode(200).body(is("1"));
+                .statusCode(OK.getStatusCode())
+                .body(is("1"));
 
         given()
-                .when().get("/api/users/1")
+                .when()
+                .get("/api/users/1")
                 .then()
-                .statusCode(200)
+                .statusCode(OK.getStatusCode())
                 .body(is("{\"email\":\"sam@gmail.com\",\"firstName\":\"Sam\",\"id\":1,\"lastName\":\"Huel\",\"profiles\":[\"Admin\"]}"));
     }
 
     @Test
-    public void testGetUnExistedUserResourceEndpoint() {
+    void shouldNotFindUnknownUser() {
         given()
-                .when().get("/api/users/4")
+                .when()
+                .get("/api/users/4")
                 .then()
-                .statusCode(404);
+                .statusCode(NOT_FOUND.getStatusCode());
     }
 
     @Test
-    public void testUpdateUserResourcesEndpoint(){
+    void shouldModifyUser(){
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON)
+                .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\",\"profiles\":[\"Admin\"]}")
+                .post("/api/users")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .body(is("1"));
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\",\"profiles\":[\"Admin\"]}").post("/api/users")
+                .when().contentType(MediaType.APPLICATION_JSON)
+                .body("{\"firstName\":\"Sam2\",\"lastName\":\"Huel2\",\"email\":\"sam2@gmail.com\",\"profiles\":[\"SimpleUSer\"]}")
+                .put("/api/users/1")
                 .then()
-                .statusCode(200).body(is("1"));
-
-        given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"firstName\":\"Sam2\",\"lastName\":\"Huel2\",\"email\":\"sam2@gmail.com\",\"profiles\":[\"SimpleUSer\"]}").put("/api/users/1")
-                .then()
-                .statusCode(200).body(is("1"));
-
-        given()
-                .when().get("/api/users/1")
-                .then()
-                .statusCode(200)
-                .body(is("{\"email\":\"sam2@gmail.com\",\"firstName\":\"Sam2\",\"id\":1,\"lastName\":\"Huel2\",\"profiles\":[\"SimpleUSer\"]}"));
-    }
-
-    @Test
-    public void testDeleteUserResourcesEndpoint() {
-
-        given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\",\"profiles\":[\"Admin\"]}").post("/api/users")
-                .then()
-                .statusCode(200).body(is("1"));
-
-        given()
-                .when().contentType(MediaType.APPLICATION_JSON).delete("/api/users/1")
-                .then()
-                .statusCode(200)
+                .statusCode(OK.getStatusCode())
                 .body(is("1"));
 
         given()
                 .when().get("/api/users/1")
                 .then()
-                .statusCode(404);
+                .statusCode(OK.getStatusCode())
+                .body(is("{\"email\":\"sam2@gmail.com\",\"firstName\":\"Sam2\",\"id\":1,\"lastName\":\"Huel2\",\"profiles\":[\"SimpleUSer\"]}"));
+    }
+
+    @Test
+    void shouldRemoveUser() {
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON)
+                .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\",\"profiles\":[\"Admin\"]}")
+                .post("/api/users")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .body(is("1"));
+
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON)
+                .delete("/api/users/1")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .body(is("1"));
+
+        given()
+                .when()
+                .get("/api/users/1")
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode());
 
         //idempotent?
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).delete("/api/users/1")
+                .when().contentType(MediaType.APPLICATION_JSON)
+                .delete("/api/users/1")
                 .then()
-                .statusCode(200)
+                .statusCode(OK.getStatusCode())
                 .body(is("1"));
     }
 }

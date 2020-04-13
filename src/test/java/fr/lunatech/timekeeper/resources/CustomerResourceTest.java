@@ -12,6 +12,8 @@ import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.given;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
@@ -23,142 +25,167 @@ class CustomerResourceTest {
     Flyway flyway;
 
     @AfterEach
-    public void cleanDB() {
+    void cleanDB() {
         flyway.clean();
         flyway.migrate();
     }
 
     @Test
-    public void testCreateCustomer() {
+    void shouldCreateCustomer() {
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON)
+                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .post("/api/customers")
                 .then()
-                .statusCode(200);
+                .statusCode(OK.getStatusCode());
 
         given()
-                .when().get("/api/customers/1")
+                .when()
+                .get("/api/customers/1")
                 .then()
-                .statusCode(200)
+                .statusCode(OK.getStatusCode())
                 .body(is("{\"activitiesId\":[],\"description\":\"NewDescription\",\"id\":1,\"name\":\"NewClient\"}"));
     }
 
     @Test
-    public void testCreateCustomerIgnoreUselessParams() {
+    void shouldCreateCustomerIgnoreUselessParams() {
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"activitiesId\":[1,2,3],\"id\":9999,\"name\":\"NewClient\",\"description\":\"NewDescription\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON)
+                .body("{\"activitiesId\":[1,2,3],\"id\":9999,\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .post("/api/customers")
                 .then()
-                .statusCode(200);
+                .statusCode(OK.getStatusCode());
 
         given()
-                .when().get("/api/customers/1")
+                .when()
+                .get("/api/customers/1")
                 .then()
-                .statusCode(200)
+                .statusCode(OK.getStatusCode())
                 .body(is("{\"activitiesId\":[],\"description\":\"NewDescription\",\"id\":1,\"name\":\"NewClient\"}"));
     }
     
     @Test
-    public void testGetCustomerNotFound() {
+    void shouldNotFindUnknownCustomer() {
         given()
-                .when().get("/api/customers/4")
+                .when()
+                .get("/api/customers/4")
                 .then()
-                .statusCode(404);
+                .statusCode(NOT_FOUND.getStatusCode());
     }
 
     @Test
-    public void testGetAllCustomers() {
+    void shouldFindAllCustomers() {
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON)
+                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .post("/api/customers")
                 .then()
-                .statusCode(200);
+                .statusCode(OK.getStatusCode());
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient2\",\"description\":\"NewDescription2\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON)
+                .body("{\"name\":\"NewClient2\",\"description\":\"NewDescription2\"}")
+                .post("/api/customers")
                 .then()
-                .statusCode(200);
+                .statusCode(OK.getStatusCode());
 
         given()
-                .when().get("/api/customers")
+                .when()
+                .get("/api/customers")
                 .then()
-                .statusCode(200)
+                .statusCode(OK.getStatusCode())
                 .body(is("[{\"activitiesId\":[],\"description\":\"NewDescription\",\"id\":1,\"name\":\"NewClient\"},{\"activitiesId\":[],\"description\":\"NewDescription2\",\"id\":2,\"name\":\"NewClient2\"}]"));
     }
 
     @Test
-    public void testGetAllCustomersEmpty() {
-
+    void shouldFindAllCustomersEmpty() {
         given()
-                .when().get("/api/customers")
+                .when()
+                .get("/api/customers")
                 .then()
-                .statusCode(200)
+                .statusCode(OK.getStatusCode())
                 .body(is("[]"));
     }
 
     @Test
-    public void testUpdateCustomer(){
+    void shouldModifyCustomer(){
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON)
+                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .post("/api/customers")
                 .then()
-                .statusCode(200);
+                .statusCode(OK.getStatusCode());
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\",\"description\":\"NewDescription2\"}").put("/api/customers/1")
+                .when().contentType(MediaType.APPLICATION_JSON)
+                .body("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\",\"description\":\"NewDescription2\"}")
+                .put("/api/customers/1")
                 .then()
-                .statusCode(200)
+                .statusCode(OK.getStatusCode())
                 .body(is("1"));
 
         given()
                 .when().get("/api/customers/1")
                 .then()
-                .statusCode(200)
+                .statusCode(OK.getStatusCode())
                 .body(is("{\"activitiesId\":[],\"description\":\"NewDescription2\",\"id\":1,\"name\":\"NewName\"}"));
     }
 
     @Test
-    public void testUpdateCustomerIgnoreUselessParams(){
+    void shouldModifyCustomerIgnoreUselessParams(){
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON)
+                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .post("/api/customers")
                 .then()
-                .statusCode(200);
+                .statusCode(OK.getStatusCode());
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"activitiesId\":[1,2,3],\"id\":9999,\"name\":\"NewName\",\"description\":\"NewDescription2\"}").put("/api/customers/1")
+                .when().contentType(MediaType.APPLICATION_JSON)
+                .body("{\"activitiesId\":[1,2,3],\"id\":9999,\"name\":\"NewName\",\"description\":\"NewDescription2\"}")
+                .put("/api/customers/1")
                 .then()
-                .statusCode(200)
+                .statusCode(OK.getStatusCode())
                 .body(is("1"));
 
         given()
                 .when().get("/api/customers/1")
                 .then()
-                .statusCode(200)
+                .statusCode(OK.getStatusCode())
                 .body(is("{\"activitiesId\":[],\"description\":\"NewDescription2\",\"id\":1,\"name\":\"NewName\"}"));
     }
 
     @Test
-    public void testDeleteCustomer() {
+    void shouldRemoveCustomer() {
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON)
+                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .post("/api/customers")
                 .then()
-                .statusCode(200);
+                .statusCode(OK.getStatusCode());
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).delete("/api/customers/1")
+                .when().contentType(MediaType.APPLICATION_JSON)
+                .delete("/api/customers/1")
                 .then()
-                .statusCode(200)
+                .statusCode(OK.getStatusCode())
                 .body(is("1"));
 
         given()
-                .when().get("/api/customers/1")
+                .when()
+                .get("/api/customers/1")
                 .then()
-                .statusCode(404);
+                .statusCode(NOT_FOUND.getStatusCode());
 
         //idempotent?
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).delete("/api/customers/1")
+                .when().contentType(MediaType.APPLICATION_JSON)
+                .delete("/api/customers/1")
                 .then()
-                .statusCode(200)
+                .statusCode(OK.getStatusCode())
                 .body(is("1"));
     }
 }
