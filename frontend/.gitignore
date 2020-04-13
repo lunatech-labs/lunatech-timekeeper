@@ -61,3 +61,4 @@ yarn-error.log*
 
 /etc/
 /node/
+/node_modules/
