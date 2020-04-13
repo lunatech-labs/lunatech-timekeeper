@@ -1,0 +1,59 @@
+version: '3'
+services:
+  postgres-keycloak:
+    image: postgres
+    container_name: timekeeper-keycloak-postgres
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+
+  keycloak:
+    image: jboss/keycloak
+    container_name: timekeeper-keycloak
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres-keycloak
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_SCHEMA: public
+      DB_PASSWORD: password
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+    ports:
+      - 8082:8080
+    depends_on:
+      - postgres-keycloak
+    volumes:
+    - ./keycloak:/opt/jboss/keycloak/imports
+    - ./keycloak/themes:/opt/jboss/keycloak/themes
+    command:
+        - "-b 0.0.0.0 -Dkeycloak.import=/opt/jboss/keycloak/imports/realm-export.json"
+
+  postgres:
+    image: postgres:12.2
+    container_name: timekeeper-postgres
+    environment:
+      POSTGRES_DB: timekeeper
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - ./data/pgdata:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+
+  mailhog-timekeeper:
+    container_name: timekeeper-mailhog
+    image: mailhog/mailhog
+    restart: always
+    ports:
+      - 1026:1025
+      - 8026:8025
+
+  monitoring:
+    image: "prom/prometheus"
+    container_name: timekeeper-prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
