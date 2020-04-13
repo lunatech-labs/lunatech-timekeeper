@@ -9,8 +9,11 @@ import fr.lunatech.timekeeper.services.interfaces.MemberService;
 
 import javax.inject.Inject;
 import javax.persistence.Convert;
+import javax.validation.Valid;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.util.List;
 
 public class MemberResource implements MemberResourceApi {
@@ -24,8 +27,10 @@ public class MemberResource implements MemberResourceApi {
     }
 
     @Override
-    public Response addMemberToActivity(Long activityId, MemberCreateRequest request) {
-        return Response.ok(memberService.createMember(activityId, request)).build();
+    public Response addMemberToActivity(Long activityId, @Valid MemberCreateRequest request, UriInfo uriInfo) {
+        final Long memberId = memberService.createMember(activityId, request);
+        final URI uri = uriInfo.getAbsolutePathBuilder().path(memberId.toString()).build();
+        return Response.created(uri).build();
     }
 
     @Override
@@ -35,13 +40,15 @@ public class MemberResource implements MemberResourceApi {
 
     @Convert(converter = Role.Converter.class)
     @Override
-    public Response updateMember(Long activityId, Long id, MemberUpdateRequest request) {
-        return Response.ok(memberService.updateMember(activityId, id, request).orElseThrow(NotFoundException::new)).build();
+    public Response updateMember(Long activityId, Long id, @Valid MemberUpdateRequest request) {
+        memberService.updateMember(activityId, id, request).orElseThrow(NotFoundException::new);
+        return Response.noContent().build();
     }
 
     @Override
     public Response removeMemberToActivity(Long activityId, Long id) {
-        return Response.ok(memberService.deleteMember(activityId, id).orElse(id)).build();
+        memberService.deleteMember(activityId, id);
+        return Response.noContent().build();
     }
 
     //TODO ajouter ou modifier la methode addMemberToActivity pour ajouter plusieurs membres d'un seul coup

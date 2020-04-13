@@ -8,8 +8,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-import static java.util.Collections.emptyList;
-
 public final class UserCreateRequest {
 
     @NotBlank

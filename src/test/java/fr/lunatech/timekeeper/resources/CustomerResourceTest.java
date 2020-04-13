@@ -12,8 +12,8 @@ import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.given;
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
-import static javax.ws.rs.core.Response.Status.OK;
+import static javax.ws.rs.core.Response.Status.*;
+import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
@@ -37,7 +37,8 @@ class CustomerResourceTest {
                 .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
                 .post("/api/customers")
                 .then()
-                .statusCode(OK.getStatusCode());
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/customers/1"));
 
         given()
                 .when()
@@ -54,7 +55,8 @@ class CustomerResourceTest {
                 .body("{\"activitiesId\":[1,2,3],\"id\":9999,\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
                 .post("/api/customers")
                 .then()
-                .statusCode(OK.getStatusCode());
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/customers/1"));
 
         given()
                 .when()
@@ -63,7 +65,7 @@ class CustomerResourceTest {
                 .statusCode(OK.getStatusCode())
                 .body(is("{\"activitiesId\":[],\"description\":\"NewDescription\",\"id\":1,\"name\":\"NewClient\"}"));
     }
-    
+
     @Test
     void shouldNotFindUnknownCustomer() {
         given()
@@ -80,14 +82,16 @@ class CustomerResourceTest {
                 .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
                 .post("/api/customers")
                 .then()
-                .statusCode(OK.getStatusCode());
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/customers/1"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"name\":\"NewClient2\",\"description\":\"NewDescription2\"}")
                 .post("/api/customers")
                 .then()
-                .statusCode(OK.getStatusCode());
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/customers/2"));
 
         given()
                 .when()
@@ -108,22 +112,21 @@ class CustomerResourceTest {
     }
 
     @Test
-    void shouldModifyCustomer(){
-
+    void shouldModifyCustomer() {
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
                 .post("/api/customers")
                 .then()
-                .statusCode(OK.getStatusCode());
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/customers/1"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\",\"description\":\"NewDescription2\"}")
                 .put("/api/customers/1")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("1"));
+                .statusCode(NO_CONTENT.getStatusCode());
 
         given()
                 .when().get("/api/customers/1")
@@ -133,22 +136,21 @@ class CustomerResourceTest {
     }
 
     @Test
-    void shouldModifyCustomerIgnoreUselessParams(){
-
+    void shouldModifyCustomerIgnoreUselessParams() {
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
                 .post("/api/customers")
                 .then()
-                .statusCode(OK.getStatusCode());
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/customers/1"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"activitiesId\":[1,2,3],\"id\":9999,\"name\":\"NewName\",\"description\":\"NewDescription2\"}")
                 .put("/api/customers/1")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("1"));
+                .statusCode(NO_CONTENT.getStatusCode());
 
         given()
                 .when().get("/api/customers/1")
@@ -159,20 +161,19 @@ class CustomerResourceTest {
 
     @Test
     void shouldRemoveCustomer() {
-
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
                 .post("/api/customers")
                 .then()
-                .statusCode(OK.getStatusCode());
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/customers/1"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .delete("/api/customers/1")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("1"));
+                .statusCode(NO_CONTENT.getStatusCode());
 
         given()
                 .when()
@@ -185,7 +186,6 @@ class CustomerResourceTest {
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .delete("/api/customers/1")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("1"));
+                .statusCode(NO_CONTENT.getStatusCode());
     }
 }

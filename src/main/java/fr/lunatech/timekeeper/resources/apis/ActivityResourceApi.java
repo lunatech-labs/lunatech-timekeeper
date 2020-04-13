@@ -3,10 +3,13 @@ package fr.lunatech.timekeeper.resources.apis;
 import fr.lunatech.timekeeper.dtos.ActivityCreateRequest;
 import fr.lunatech.timekeeper.dtos.ActivityResponse;
 import fr.lunatech.timekeeper.dtos.ActivityUpdateRequest;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
 @Path("/api/activities")
@@ -18,7 +21,7 @@ public interface ActivityResourceApi {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    Response createActivity(ActivityCreateRequest request);
+    Response createActivity(@RequestBody ActivityCreateRequest request, @Context UriInfo uriInfo);
 
     @GET
     @Path("/{id}")
@@ -28,7 +31,7 @@ public interface ActivityResourceApi {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    Response updateActivity(@PathParam("id") Long id, ActivityUpdateRequest request);
+    Response updateActivity(@PathParam("id") Long id, @RequestBody ActivityUpdateRequest request);
 
     @DELETE
     @Path("/{id}")

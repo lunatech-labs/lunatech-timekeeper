@@ -1,7 +1,7 @@
 package fr.lunatech.timekeeper.services.interfaces;
 
-import fr.lunatech.timekeeper.dtos.CustomerResponse;
 import fr.lunatech.timekeeper.dtos.CustomerCreateRequest;
+import fr.lunatech.timekeeper.dtos.CustomerResponse;
 import fr.lunatech.timekeeper.dtos.CustomerUpdateRequest;
 
 import java.util.List;

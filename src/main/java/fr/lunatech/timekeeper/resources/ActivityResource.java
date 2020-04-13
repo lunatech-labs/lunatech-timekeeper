@@ -7,8 +7,11 @@ import fr.lunatech.timekeeper.resources.apis.ActivityResourceApi;
 import fr.lunatech.timekeeper.services.interfaces.ActivityService;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.util.List;
 
 public class ActivityResource implements ActivityResourceApi {
@@ -22,8 +25,10 @@ public class ActivityResource implements ActivityResourceApi {
     }
 
     @Override
-    public Response createActivity(ActivityCreateRequest request) {
-        return Response.ok(activityService.createActivity(request)).build();
+    public Response createActivity(@Valid ActivityCreateRequest request, UriInfo uriInfo) {
+        final Long activityId = activityService.createActivity(request);
+        final URI uri = uriInfo.getAbsolutePathBuilder().path(activityId.toString()).build();
+        return Response.created(uri).build();
     }
 
     @Override
@@ -32,13 +37,15 @@ public class ActivityResource implements ActivityResourceApi {
     }
 
     @Override
-    public Response updateActivity(Long id, ActivityUpdateRequest request) {
-        return Response.ok(activityService.updateActivity(id, request).orElseThrow(NotFoundException::new)).build();
+    public Response updateActivity(Long id, @Valid ActivityUpdateRequest request) {
+        activityService.updateActivity(id, request).orElseThrow(NotFoundException::new);
+        return Response.noContent().build();
     }
 
     @Override
     public Response deleteActivity(Long id) {
-        return Response.ok(activityService.deleteActivity(id).orElse(id)).build();
+        activityService.deleteActivity(id);
+        return Response.noContent().build();
     }
 
     //TODO à trancher si le delete ne devrait pas disparaitre car trop dangeraux, sinon reservé aux admins et 2 points suivants requis

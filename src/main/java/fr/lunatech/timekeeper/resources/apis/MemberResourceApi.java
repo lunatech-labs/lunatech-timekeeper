@@ -3,10 +3,13 @@ package fr.lunatech.timekeeper.resources.apis;
 import fr.lunatech.timekeeper.dtos.MemberCreateRequest;
 import fr.lunatech.timekeeper.dtos.MemberResponse;
 import fr.lunatech.timekeeper.dtos.MemberUpdateRequest;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
 @Path("/api/activities/{activityId}/members")
@@ -18,7 +21,7 @@ public interface MemberResourceApi {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    Response addMemberToActivity(@PathParam("activityId") Long activityId, MemberCreateRequest request);
+    Response addMemberToActivity(@PathParam("activityId") Long activityId, @RequestBody MemberCreateRequest request, @Context UriInfo uriInfo);
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -28,7 +31,7 @@ public interface MemberResourceApi {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    Response updateMember(@PathParam("activityId") Long activityId, @PathParam("id") Long id, MemberUpdateRequest request);
+    Response updateMember(@PathParam("activityId") Long activityId, @PathParam("id") Long id, @RequestBody MemberUpdateRequest request);
 
     @DELETE
     @Path("/{id}")

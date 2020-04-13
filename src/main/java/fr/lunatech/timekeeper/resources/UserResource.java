@@ -7,8 +7,11 @@ import fr.lunatech.timekeeper.resources.apis.UserResourceApi;
 import fr.lunatech.timekeeper.services.interfaces.UserService;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.util.List;
 
 public class UserResource implements UserResourceApi {
@@ -22,8 +25,10 @@ public class UserResource implements UserResourceApi {
     }
 
     @Override
-    public Response createUser(UserCreateRequest request) {
-        return Response.ok(userService.createUser(request)).build();
+    public Response createUser(@Valid UserCreateRequest request, UriInfo uriInfo) {
+        final Long userId = userService.createUser(request);
+        final URI uri = uriInfo.getAbsolutePathBuilder().path(userId.toString()).build();
+        return Response.created(uri).build();
     }
 
     @Override
@@ -32,13 +37,15 @@ public class UserResource implements UserResourceApi {
     }
 
     @Override
-    public Response updateUser(Long id, UserUpdateRequest request) {
-        return Response.ok(userService.updateUser(id, request).orElseThrow(NotFoundException::new)).build();
+    public Response updateUser(Long id, @Valid UserUpdateRequest request) {
+        userService.updateUser(id, request).orElseThrow(NotFoundException::new);
+        return Response.noContent().build();
     }
 
     @Override
     public Response deleteUser(Long id) {
-        return Response.ok(userService.deleteUser(id).orElse(id)).build();
+        userService.deleteUser(id);
+        return Response.noContent().build();
     }
 
     //TODO le remove ne doit être accessible que les admins ou ne pas exister

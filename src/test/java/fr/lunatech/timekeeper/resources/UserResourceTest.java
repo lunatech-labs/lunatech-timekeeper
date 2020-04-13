@@ -12,8 +12,8 @@ import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.given;
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
-import static javax.ws.rs.core.Response.Status.OK;
+import static javax.ws.rs.core.Response.Status.*;
+import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
@@ -37,8 +37,8 @@ class UserResourceTest {
                 .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\",\"profiles\":[\"Admin\"]}")
                 .post("/api/users")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("1"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/users/1"));
 
         given()
                 .when()
@@ -58,22 +58,21 @@ class UserResourceTest {
     }
 
     @Test
-    void shouldModifyUser(){
+    void shouldModifyUser() {
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\",\"profiles\":[\"Admin\"]}")
                 .post("/api/users")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("1"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/users/1"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"firstName\":\"Sam2\",\"lastName\":\"Huel2\",\"email\":\"sam2@gmail.com\",\"profiles\":[\"SimpleUSer\"]}")
                 .put("/api/users/1")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("1"));
+                .statusCode(NO_CONTENT.getStatusCode());
 
         given()
                 .when().get("/api/users/1")
@@ -89,15 +88,14 @@ class UserResourceTest {
                 .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\",\"profiles\":[\"Admin\"]}")
                 .post("/api/users")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("1"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/users/1"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .delete("/api/users/1")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("1"));
+                .statusCode(NO_CONTENT.getStatusCode());
 
         given()
                 .when()
@@ -110,7 +108,6 @@ class UserResourceTest {
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .delete("/api/users/1")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("1"));
+                .statusCode(NO_CONTENT.getStatusCode());
     }
 }

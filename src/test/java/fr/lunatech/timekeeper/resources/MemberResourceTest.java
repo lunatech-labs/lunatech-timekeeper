@@ -12,8 +12,8 @@ import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.given;
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
-import static javax.ws.rs.core.Response.Status.OK;
+import static javax.ws.rs.core.Response.Status.*;
+import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
@@ -37,33 +37,32 @@ class MemberResourceTest {
                 .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\", \"profiles\":[\"Admin\"]}")
                 .post("/api/users")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("1"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/users/1"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
                 .post("/api/customers")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("2"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/customers/2"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":2, \"members\":[]}")
                 .post("/api/activities")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("3"));
-
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/activities/3"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"role\":\"Developer\", \"userId\":1}")
                 .post("/api/activities/3/members")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("4"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/activities/3/members/4"));
 
         given()
                 .when()
@@ -99,40 +98,39 @@ class MemberResourceTest {
                 .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\", \"profiles\":[\"Admin\"]}")
                 .post("/api/users")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("1"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/users/1"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
                 .post("/api/customers")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("2"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/customers/2"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":2, \"members\":[]}")
                 .post("/api/activities")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("3"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/activities/3"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"role\":\"Developer\", \"userId\":1}")
                 .post("/api/activities/3/members")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("4"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/activities/3/members/4"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"role\":\"TeamLeader\"}")
                 .put("/api/activities/3/members/4")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("4"));
+                .statusCode(NO_CONTENT.getStatusCode());
 
         given()
                 .when()
@@ -149,39 +147,38 @@ class MemberResourceTest {
                 .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\", \"profiles\":[\"Admin\"]}")
                 .post("/api/users")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("1"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/users/1"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
                 .post("/api/customers")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("2"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/customers/2"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":2, \"members\":[]}")
                 .post("/api/activities")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("3"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/activities/3"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"role\":\"Developer\", \"userId\":1}")
                 .post("/api/activities/3/members")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("4"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/activities/3/members/4"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .delete("/api/activities/3/members/4")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("4"));
+                .statusCode(NO_CONTENT.getStatusCode());
 
         given()
                 .when().get("/api/activities/3/members/4")
@@ -193,7 +190,6 @@ class MemberResourceTest {
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .delete("/api/activities/3/members/4")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("4"));
+                .statusCode(NO_CONTENT.getStatusCode());
     }
 }

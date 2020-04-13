@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.given;
 import static javax.ws.rs.core.Response.Status.*;
+import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
@@ -36,16 +37,16 @@ class ActivityResourceTest {
                 .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
                 .post("/api/customers")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("1"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/customers/1"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":1}")
                 .post("/api/activities")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("2"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/activities/2"));
 
         given()
                 .when().get("/api/activities/2")
@@ -61,24 +62,24 @@ class ActivityResourceTest {
                 .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\", \"profiles\":[\"Admin\"]}")
                 .post("/api/users")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("1"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/users/1"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
                 .post("/api/customers")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("2"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/customers/2"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"name\":\"Pepito\",\"billable\":\"true\",\"description\":\"New project\",\"customerId\":2}")
                 .post("/api/activities")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("3"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/activities/3"));
 
         given()
                 .when().get("/api/activities/3")
@@ -112,32 +113,31 @@ class ActivityResourceTest {
                 .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
                 .post("/api/customers")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("1"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/customers/1"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":1}")
                 .post("/api/activities")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("2"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/activities/2"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"name\":\"NewClient2\",\"description\":\"NewDescription2\"}")
                 .post("/api/customers")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("3"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/customers/3"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"name\":\"Pepito2\",\"billable\":false,\"description\":\"New project2\",\"customerId\":3}")
                 .put("/api/activities/2")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("2"));
+                .statusCode(NO_CONTENT.getStatusCode());
 
         given()
                 .when()
@@ -154,23 +154,22 @@ class ActivityResourceTest {
                 .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
                 .post("/api/customers")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("1"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/customers/1"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":1}")
                 .post("/api/activities")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("2"));
+                .statusCode(CREATED.getStatusCode())
+                .header("Location", endsWith("/api/activities/2"));
 
         given()
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .delete("/api/activities/2")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("2"));
+                .statusCode(NO_CONTENT.getStatusCode());
 
         given()
                 .when()
@@ -183,7 +182,6 @@ class ActivityResourceTest {
                 .when().contentType(MediaType.APPLICATION_JSON)
                 .delete("/api/activities/2")
                 .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("2"));
+                .statusCode(NO_CONTENT.getStatusCode());
     }
 }
