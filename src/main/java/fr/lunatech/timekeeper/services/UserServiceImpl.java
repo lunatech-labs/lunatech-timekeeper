@@ -6,7 +6,10 @@ import fr.lunatech.timekeeper.models.User;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ApplicationScoped
 public class UserServiceImpl implements UserService {
@@ -14,6 +17,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<UserResponse> findUserById(Long id) {
         return User.<User>findByIdOptional(id).map(this::from);
+    }
+
+    @Override
+    public List<UserResponse> findAllUsers() {
+        try (final Stream<User> users = User.streamAll()) {
+            return users.map(this::from).collect(Collectors.toList());
+        }
     }
 
     @Transactional
