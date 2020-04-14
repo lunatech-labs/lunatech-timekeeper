@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -26,6 +27,6 @@ public class User extends PanacheEntity {
     public String email;
     @Column
     @Convert(converter = Profile.ListConverter.class)
-    @NotNull
-    public List<Profile> profiles = emptyList();
+    @NotEmpty
+    public List<Profile> profiles;
 }

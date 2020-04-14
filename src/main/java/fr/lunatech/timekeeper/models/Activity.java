@@ -25,5 +25,5 @@ public class Activity extends PanacheEntity {
     public Customer customer;
     @OneToMany(mappedBy = "activity")
     @NotNull
-    public List<Member> members = emptyList();
+    public List<Member> members;
 }
