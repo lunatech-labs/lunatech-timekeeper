@@ -6,28 +6,27 @@ import fr.lunatech.timekeeper.openapi.MemberResourceApi;
 import fr.lunatech.timekeeper.services.UserService;
 
 import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import javax.validation.Valid;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 
-@Path("/api/members")
 public class MemberResource implements MemberResourceApi {
 
     @Inject
-    UserService userTkService;
+    UserService userService;
 
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response newMember(MemberRequest request) {
-        return Response.ok(userTkService.addMember(request)).build();
+    @Override
+    public Response addMemberToActivity(Long activityId, @Valid MemberRequest request, UriInfo uriInfo) {
+        final Long memberId = userService.addMember(request);
+        final URI uri = uriInfo.getAbsolutePathBuilder().path(memberId.toString()).build();
+        return Response.created(uri).build();
     }
 
-
-    @GET
-    @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public MemberResponse readActivityById(@PathParam("id") long id) {
-        return userTkService.getMemberById(id).orElseThrow(NotFoundException::new);
+    @Override
+    public MemberResponse getMember(Long activityId, Long id) {
+        return userService.getMemberById(id).orElseThrow(NotFoundException::new);
     }
 
 }
