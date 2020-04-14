@@ -8,15 +8,18 @@ import io.quarkus.security.identity.SecurityIdentity;
 import org.jboss.resteasy.annotations.cache.NoCache;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 
 @Path("/api/users")
 public class UserResource implements UserResourceApi {
 
     @Inject
-    UserService userTkService;
+    UserService userService;
 
     @Inject
     SecurityIdentity identity;
@@ -29,17 +32,16 @@ public class UserResource implements UserResourceApi {
         return new JwtUser(identity);
     }
 
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response newCustomer(UserRequest request) {
-        return Response.ok(userTkService.addUser(request)).build();
+    @Override
+    public Response createUser(@Valid UserRequest request, UriInfo uriInfo) {
+        final Long userId = userService.addUser(request);
+        final URI uri = uriInfo.getAbsolutePathBuilder().path(userId.toString()).build();
+        return Response.created(uri).build();
     }
 
-    @GET
-    @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public UserResponse readActivityById(@PathParam("id") long id) {
-        return userTkService.getUserById(id).orElseThrow(NotFoundException::new);
+    @Override
+    public UserResponse getUser(Long id) {
+        return userService.getUserById(id).orElseThrow(NotFoundException::new);
     }
 
 }

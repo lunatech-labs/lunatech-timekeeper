@@ -1,17 +1,25 @@
 package fr.lunatech.timekeeper.dtos;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public final class ActivityResponse {
 
+    @NotNull
     private final Long id;
+    @NotBlank
     private final String name;
+    @NotNull
     private final Boolean billable;
+    @NotNull
     private final String description;
+    @NotNull
     private final Long customerId;
+    @NotNull
     private final List<Long> membersId;
 
-    public ActivityResponse(Long id, String name, Boolean billable, String description, Long customerId, List<Long> membersId) {
+    public ActivityResponse(@NotNull Long id, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull Long customerId, @NotNull List<Long> membersId) {
         this.id = id;
         this.name = name;
         this.billable = billable;
