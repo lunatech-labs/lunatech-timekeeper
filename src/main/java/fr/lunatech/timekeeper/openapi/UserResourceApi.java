@@ -1,5 +1,7 @@
 package fr.lunatech.timekeeper.openapi;
 
+import fr.lunatech.timekeeper.dtos.UserRequest;
+import fr.lunatech.timekeeper.dtos.UserResponse;
 import fr.lunatech.timekeeper.resources.JwtUser;
 import io.quarkus.security.identity.SecurityIdentity;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -11,10 +13,9 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.annotations.cache.NoCache;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path("/api/users")
 public interface UserResourceApi {
@@ -38,5 +39,15 @@ public interface UserResourceApi {
                     description = "Invalid JWT token")
     })
     JwtUser me();
+
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    Response newCustomer(UserRequest userTkDto);
+
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    UserResponse readActivityById(@PathParam("id") long id);
 
 }

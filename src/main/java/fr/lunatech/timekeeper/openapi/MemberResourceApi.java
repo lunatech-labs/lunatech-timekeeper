@@ -1,6 +1,7 @@
 package fr.lunatech.timekeeper.openapi;
 
-import fr.lunatech.timekeeper.services.dto.MemberDto;
+import fr.lunatech.timekeeper.dtos.MemberRequest;
+import fr.lunatech.timekeeper.dtos.MemberResponse;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -11,11 +12,11 @@ public interface MemberResourceApi {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    Response newMember(MemberDto memberDto);
+    Response newMember(MemberRequest request);
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    MemberDto readActivityById(@PathParam("id") long id);
+    MemberResponse readActivityById(@PathParam("id") long id);
 
 }
