@@ -21,13 +21,13 @@ public class ActivityResource implements ActivityResourceApi {
 
     @Override
     public Response createActivity(@Valid ActivityRequest request, UriInfo uriInfo) {
-        final long activityId = activityService.addActivity(request);
+        final long activityId = activityService.createActivity(request);
         final URI uri = uriInfo.getAbsolutePathBuilder().path(Long.toString(activityId)).build();
         return Response.created(uri).build();
     }
 
     @Override
     public ActivityResponse getActivity(Long id) {
-        return activityService.getActivityById(id).orElseThrow(NotFoundException::new);
+        return activityService.findActivityById(id).orElseThrow(NotFoundException::new);
     }
 }

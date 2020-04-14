@@ -20,19 +20,19 @@ public class CustomerResource implements CustomerResourceApi {
 
     @Override
     public List<CustomerResponse> getAllCustomers() {
-        return customerService.getAllCustomers();
+        return customerService.listAllCustomers();
     }
 
     @Override
     public Response createCustomer(@Valid CustomerRequest request, UriInfo uriInfo) {
-        final long customerId = customerService.addCustomer(request);
+        final long customerId = customerService.createCustomer(request);
         final URI uri = uriInfo.getAbsolutePathBuilder().path(Long.toString(customerId)).build();
         return Response.created(uri).build();
     }
 
     @Override
     public CustomerResponse getCustomer(Long id) {
-        return customerService.getCustomerById(id).orElseThrow(NotFoundException::new);
+        return customerService.findCustomerById(id).orElseThrow(NotFoundException::new);
     }
 
     @Override

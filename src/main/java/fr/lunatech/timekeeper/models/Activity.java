@@ -1,5 +1,6 @@
 package fr.lunatech.timekeeper.models;
 
+import fr.lunatech.timekeeper.dtos.ActivityRequest;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
 import javax.persistence.*;
