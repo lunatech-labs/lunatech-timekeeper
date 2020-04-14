@@ -60,24 +60,24 @@ public class MemberServiceImpl implements MemberService {
     }
 
     private Member bind(Member member, Long activityId, MemberRequest request) {
-        member.activity = getActivityEntity(activityId);
-        member.user = getUserEntity(request.getUserId());
+        member.activity = getActivity(activityId);
+        member.user = getUser(request.getUserId());
         member.role = request.getRole();
         return member;
     }
 
     private Member bind(Member member, Long activityId, MemberRoleRequest request) {
-        member.activity = getActivityEntity(activityId);
+        member.activity = getActivity(activityId);
         member.role = request.getRole();
         return member;
     }
 
-    private Activity getActivityEntity(Long activityId) {
+    private Activity getActivity(Long activityId) {
         return Activity.<Activity>findByIdOptional(activityId)
                 .orElseThrow(() -> new IllegalEntityStateException(String.format("One Activity is required for member. activityId=%s", activityId)));
     }
 
-    private User getUserEntity(Long userId) {
+    private User getUser(Long userId) {
         return User.<User>findByIdOptional(userId)
                 .orElseThrow(() -> new IllegalEntityStateException(String.format("One User is required for member. userId=%s", userId)));
     }
