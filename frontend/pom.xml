@@ -43,18 +43,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>npm install prod</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <!-- optional: default phase is "generate-resources" -->
-                        <phase>generate-resources</phase>
-                        <!-- Optional configuration which provides for running any npm command -->
-                        <configuration>
-                            <arguments>ci</arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>npm run build</id>
                         <goals>
                             <goal>npm</goal>
