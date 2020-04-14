@@ -3,16 +3,14 @@ package fr.lunatech.timekeeper.services;
 import fr.lunatech.timekeeper.model.Activity;
 import fr.lunatech.timekeeper.model.Customer;
 import fr.lunatech.timekeeper.model.Member;
-import fr.lunatech.timekeeper.model.UserTK;
-import fr.lunatech.timekeeper.resources.JwtUser;
-import fr.lunatech.timekeeper.services.dto.*;
+import fr.lunatech.timekeeper.services.dto.ActivityDto;
+import fr.lunatech.timekeeper.services.exception.IllegalEntityStateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -43,28 +41,27 @@ public class ActivityServiceImpl implements ActivityService {
 
     private ActivityDto from(Activity activity) {
         return new ActivityDto(
-                Optional.of(activity.id), activity.getName(), activity.getBillale(), activity.getDescription(), activity.getCustomer().id, activity.getMembers().stream().map(m -> m.id).collect(Collectors.toList()));
+                Optional.of(activity.id), activity.name, activity.billale, activity.description, activity.customer.id, activity.members.stream().map(m -> m.id).collect(Collectors.toList()));
     }
 
     private Activity from(ActivityDto activityDto) {
         final Activity activity = new Activity();
 
         activityDto.getId().map(v -> activity.id = v);
-        activity.setName(activityDto.getName());
-        activity.setBillale(activityDto.getBillale());
+        activity.name = activityDto.getName();
+        activity.billale = activityDto.getBillale();
 
-        Customer c = customerService.getCustomerById(activityDto.getCustomerId())
-                .orElseThrow(() -> new IllegalStateException("One Customer is required for activity " + activity.id + " activity name " + activityDto.getName()));
+        Optional<Customer> c = Customer.findByIdOptional(activityDto.getCustomerId());
 
-        activity.setCustomer(c);
+        activity.customer = c.orElseThrow(() -> new IllegalEntityStateException("One Customer is required for activity " + activity.id + " activity name " + activityDto.getName()));
 
         List<Member> members = activityDto.getMembers().stream().map(memberId -> {
                     Optional<Member> m = Member.findByIdOptional(memberId);
-                    return m.orElseThrow(() -> new IllegalStateException("MemberId : " + memberId + " doesn't corresponding to any member"));
+                    return m.orElseThrow(() -> new IllegalEntityStateException("MemberId : " + memberId + " doesn't corresponding to any member"));
                 }
         ).collect(Collectors.toList());
 
-        activity.setMembers(members);
+        activity.members = members;
 
         return activity;
     }

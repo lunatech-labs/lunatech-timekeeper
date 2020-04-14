@@ -31,16 +31,72 @@ class CustomerResourceTest {
     @Test
     public void testPostCustomerResourcesWithOutActivitiesEndpoint() {
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/customers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
                 .then()
                 .statusCode(200);
 
         given()
-                .when().get("/customers/1")
+                .when().get("/api/customers/1")
                 .then()
                 .statusCode(200)
-                .body(is("{\"id\":1,\"activities\":[],\"name\":\"NewClient\"}"));
+                .body(is("{\"activitiesId\":[],\"id\":1,\"name\":\"NewClient\"}"));
     }
 
+    @Test
+    public void testGetUnExistedCustomerResourceEndpoint() {
+        given()
+                .when().get("/api/customers/4")
+                .then()
+                .statusCode(404);
+    }
 
+    @Test
+    public void testGetAllCustomersWithOutActivitiesEndpoint() {
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .then()
+                .statusCode(200);
+
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient2\"}").post("/api/customers")
+                .then()
+                .statusCode(200);
+
+        given()
+                .when().get("/api/customers")
+                .then()
+                .statusCode(200)
+                .body(is("[{\"activitiesId\":[],\"id\":1,\"name\":\"NewClient\"},{\"activitiesId\":[],\"id\":2,\"name\":\"NewClient2\"}]"));
+    }
+
+    @Test
+    public void testGetAllCustomersWithOutCustomerAndWithOutActivitiesEndpoint() {
+
+        given()
+                .when().get("/api/customers")
+                .then()
+                .statusCode(200)
+                .body(is("[]"));
+    }
+
+    @Test
+    public void testUpdateCustomerWithOutActivitiesEndpoint(){
+
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .then()
+                .statusCode(200);
+
+        given()
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\"}").put("/api/customers/1")
+                .then()
+                .statusCode(200)
+                .body(is("1"));
+
+        given()
+                .when().get("/api/customers/1")
+                .then()
+                .statusCode(200)
+                .body(is("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\"}"));
+}
 }
