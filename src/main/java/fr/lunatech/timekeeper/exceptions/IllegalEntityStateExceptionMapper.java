@@ -1,6 +1,6 @@
-package fr.lunatech.timekeeper.resources.handlers;
+package fr.lunatech.timekeeper.exceptions;
 
-import fr.lunatech.timekeeper.services.exception.IllegalEntityStateException;
+import fr.lunatech.timekeeper.exceptions.IllegalEntityStateException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
