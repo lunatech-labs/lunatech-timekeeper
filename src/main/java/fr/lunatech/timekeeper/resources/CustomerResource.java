@@ -6,9 +6,11 @@ import fr.lunatech.timekeeper.openapi.CustomerResourceApi;
 import fr.lunatech.timekeeper.services.CustomerService;
 
 import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import javax.validation.Valid;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.util.List;
 
 public class CustomerResource implements CustomerResourceApi {
@@ -16,20 +18,26 @@ public class CustomerResource implements CustomerResourceApi {
     @Inject
     CustomerService customerService;
 
-    public List<CustomerResponse> readAllCustomers() {
+    @Override
+    public List<CustomerResponse> getAllCustomers() {
         return customerService.getAllCustomers();
     }
 
-    public Response newCustomer(CustomerRequest request) {
-        return Response.ok(customerService.addCustomer(request)).build();
+    @Override
+    public Response createCustomer(@Valid CustomerRequest request, UriInfo uriInfo) {
+        final long customerId = customerService.addCustomer(request);
+        final URI uri = uriInfo.getAbsolutePathBuilder().path(Long.toString(customerId)).build();
+        return Response.created(uri).build();
     }
 
-    public CustomerResponse readCustomerById(@PathParam("id") long id) {
+    @Override
+    public CustomerResponse getCustomer(Long id) {
         return customerService.getCustomerById(id).orElseThrow(NotFoundException::new);
     }
 
-    public Response updateCustomer(@PathParam("id") long id, CustomerRequest request){
-        return Response.ok(customerService.updateCustomer(id, request).orElseThrow(NotFoundException::new)).build();
+    @Override
+    public Response updateCustomer(Long id, @Valid CustomerRequest request) {
+        customerService.updateCustomer(id, request).orElseThrow(NotFoundException::new);
+        return Response.noContent().build();
     }
-
 }
