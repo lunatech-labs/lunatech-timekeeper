@@ -3,6 +3,7 @@ package fr.lunatech.timekeeper.services;
 import fr.lunatech.timekeeper.dtos.UserRequest;
 import fr.lunatech.timekeeper.dtos.UserResponse;
 import fr.lunatech.timekeeper.models.User;
+import fr.lunatech.timekeeper.services.interfaces.UserService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
