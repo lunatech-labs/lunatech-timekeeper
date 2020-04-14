@@ -2,7 +2,7 @@ package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.dtos.MemberRequest;
 import fr.lunatech.timekeeper.dtos.MemberResponse;
-import fr.lunatech.timekeeper.dtos.MemberRoleRequest;
+import fr.lunatech.timekeeper.dtos.MemberUpdateRequest;
 import fr.lunatech.timekeeper.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.models.Activity;
 import fr.lunatech.timekeeper.models.Member;
@@ -49,10 +49,24 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public Optional<Long> updateMember(Long activityId, Long id, MemberRoleRequest request) {
+    public Optional<Long> updateMember(Long activityId, Long id, MemberUpdateRequest request) {
         return Member.<Member>findByIdOptional(id)
                 .filter(member -> matchActivityId(member, activityId))
                 .map(member -> bind(member, activityId, request).id);
+    }
+
+    @Transactional
+    @Override
+    public Optional<Long> deleteMember(Long activityId, Long id) {
+        return Member.<Member>findByIdOptional(id)
+                .filter(member -> matchActivityId(member, activityId))
+                .map(member -> {
+                    final var oldId = member.id;
+                    if (member.isPersistent()) {
+                        member.delete();
+                    }
+                    return oldId;
+                });
     }
 
     private MemberResponse from(Member member) {
@@ -66,7 +80,7 @@ public class MemberServiceImpl implements MemberService {
         return member;
     }
 
-    private Member bind(Member member, Long activityId, MemberRoleRequest request) {
+    private Member bind(Member member, Long activityId, MemberUpdateRequest request) {
         member.activity = getActivity(activityId);
         member.role = request.getRole();
         return member;

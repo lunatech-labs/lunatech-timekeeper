@@ -50,4 +50,9 @@ public interface UserResourceApi {
     @Produces(MediaType.APPLICATION_JSON)
     UserResponse getUser(@PathParam("id") Long id);
 
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    Response updateUser(@PathParam("id") Long id, @RequestBody UserRequest request);
+
 }

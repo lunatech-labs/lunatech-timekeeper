@@ -24,6 +24,12 @@ public class UserServiceImpl implements UserService {
         return user.id;
     }
 
+    @Transactional
+    @Override
+    public Optional<Long> updateUser(Long id, UserRequest request) {
+        return User.<User>findByIdOptional(id).map(user -> bind(user, request).id);
+    }
+
     private UserResponse from(User user) {
         return new UserResponse(user.id, user.firstName, user.lastName, user.email, user.profiles);
     }

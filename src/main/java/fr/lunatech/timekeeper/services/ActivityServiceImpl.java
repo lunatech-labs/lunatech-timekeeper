@@ -31,6 +31,12 @@ public class ActivityServiceImpl implements ActivityService {
         return activity.id;
     }
 
+    @Transactional
+    @Override
+    public Optional<Long> updateActivity(Long id, ActivityRequest request) {
+        return Activity.<Activity>findByIdOptional(id).map(activity -> bind(activity, request).id);
+    }
+
     private ActivityResponse from(Activity activity) {
         return new ActivityResponse(
                 activity.id,

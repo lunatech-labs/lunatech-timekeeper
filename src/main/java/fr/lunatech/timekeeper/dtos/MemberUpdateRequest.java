@@ -5,13 +5,13 @@ import fr.lunatech.timekeeper.models.Role;
 import javax.json.bind.annotation.JsonbCreator;
 import javax.validation.constraints.NotNull;
 
-public final class MemberRoleRequest {
+public final class MemberUpdateRequest {
 
     @NotNull
     private final Role role;
 
     @JsonbCreator
-    public MemberRoleRequest(@NotNull Role role) {
+    public MemberUpdateRequest(@NotNull Role role) {
         this.role = role;
     }
 
