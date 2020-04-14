@@ -46,11 +46,11 @@ public class ActivityServiceImpl implements ActivityService {
         activity.name = request.getName();
         activity.billable = request.isBillable();
         activity.description = request.getDescription();
-        activity.customer = getCustomerEntity(request.getCustomerId());
+        activity.customer = getCustomer(request.getCustomerId());
         return activity;
     }
 
-    private Customer getCustomerEntity(Long customerId) {
+    private Customer getCustomer(Long customerId) {
         return Customer.<Customer>findByIdOptional(customerId)
                 .orElseThrow(() -> new IllegalEntityStateException(String.format("One Customer is required for an activity. customerId=%d", customerId)));
     }
