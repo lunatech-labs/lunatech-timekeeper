@@ -1,5 +1,6 @@
 package fr.lunatech.timekeeper.resources;
 
+import fr.lunatech.timekeeper.openapi.UserTkResourceApi;
 import fr.lunatech.timekeeper.services.UserTkService;
 import fr.lunatech.timekeeper.services.dto.UserTkDto;
 
@@ -8,8 +9,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/users")
-public class UserTkResource {
+@Path("/api/tkusers")
+public class UserTkResource implements UserTkResourceApi {
 
     @Inject
     UserTkService userTkService;
@@ -21,8 +22,8 @@ public class UserTkResource {
     }
 
     @GET
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{id}")
     public UserTkDto readActivityById(@PathParam("id") long id) {
         return userTkService.getUserTkById(id).orElseThrow(NotFoundException::new);
     }

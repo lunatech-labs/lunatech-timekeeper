@@ -32,17 +32,17 @@ class MemberResourceTest {
     public void testPosMemberResourcesEndpoint() {
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"firstname\":\"Sam\",\"lastname\":\"Huel\",\"email\":\"sam@gmail.com\", \"profile\":\"Admin\"}").post("/users")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"firstname\":\"Sam\",\"lastname\":\"Huel\",\"email\":\"sam@gmail.com\", \"profile\":\"Admin\"}").post("/api/tkusers")
                 .then()
                 .statusCode(200).body(is("1"));
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"role\":\"Developer\", \"userId\":1}").post("/members")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"role\":\"Developer\", \"userId\":1}").post("/api/members")
                 .then()
                 .statusCode(200).body(is("2"));
 
         given()
-                .when().get("/members/2")
+                .when().get("/api/members/2")
                 .then()
                 .statusCode(200)
                 .body(is("{\"id\":2,\"role\":\"Developer\",\"userId\":1}"));
@@ -52,7 +52,7 @@ class MemberResourceTest {
     public void testPosMemberResourcesWithWrongUserIdEndpoint() {
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"role\":\"Developer\", \"userId\":12}").post("/members")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"role\":\"Developer\", \"userId\":12}").post("/api/members")
                 .then()
                 .statusCode(400);
     }
@@ -60,7 +60,7 @@ class MemberResourceTest {
     @Test
     public void testGetUnExistedMemberResourceEndpoint() {
         given()
-                .when().get("/members/4")
+                .when().get("/api/members/4")
                 .then()
                 .statusCode(404);
 
