@@ -1,6 +1,7 @@
 package fr.lunatech.timekeeper.openapi;
 
-import fr.lunatech.timekeeper.services.dto.ActivityDto;
+import fr.lunatech.timekeeper.dtos.ActivityRequest;
+import fr.lunatech.timekeeper.dtos.ActivityResponse;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -11,11 +12,11 @@ public interface ActivityResourceApi {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    Response newCustomer(ActivityDto activity);
+    Response newCustomer(ActivityRequest request);
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    ActivityDto readActivityById(@PathParam("id") long id);
+    ActivityResponse readActivityById(@PathParam("id") long id);
 
 }

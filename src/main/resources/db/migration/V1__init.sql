@@ -1,126 +1,94 @@
-CREATE SEQUENCE hibernate_sequence;
+create sequence hibernate_sequence;
 
--- public.customer definition
-
--- Drop table
-
--- DROP TABLE public.customer;
-
-CREATE TABLE public.customer (
-	id int8 NOT NULL,
-	description varchar(255) NULL,
-	name varchar(255) NULL,
-	CONSTRAINT customer_pkey PRIMARY KEY (id)
+create table customers
+(
+    id int8 not null
+        constraint customers_pkey
+            primary key,
+    description varchar(255),
+    name varchar(255)
 );
 
-
--- public.task definition
-
--- Drop table
-
--- DROP TABLE public.task;
-
-CREATE TABLE public.task (
-	id int8 NOT NULL,
-	category varchar(255) NULL,
-	name varchar(255) NULL,
-	CONSTRAINT task_pkey PRIMARY KEY (id)
+create table activities
+(
+    id int8 not null
+        constraint activities_pkey
+            primary key,
+    billable bool,
+    description varchar(255),
+    name varchar(255),
+    customer_id int8 not null
+        constraint fkeds7272usjbk8laufntn26ooc
+            references customers
 );
 
-
--- public.usertk definition
-
--- Drop table
-
--- DROP TABLE public.usertk;
-
-CREATE TABLE public.usertk (
-	id int8 NOT NULL,
-	email varchar(255) NULL,
-	firstname varchar(255) NULL,
-	lastname varchar(255) NULL,
-	profile int4 NULL,
-	CONSTRAINT usertk_pkey PRIMARY KEY (id)
+create table flyway_schema_history
+(
+    installed_rank int4 not null
+        constraint flyway_schema_history_pk
+            primary key,
+    version varchar(50),
+    description varchar(200) not null,
+    type varchar(20) not null,
+    script varchar(1000) not null,
+    checksum int4,
+    installed_by varchar(100) not null,
+    installed_on timestamp(6) default now() not null,
+    execution_time int4 not null,
+    success bool not null
 );
 
+create index flyway_schema_history_s_idx
+    on flyway_schema_history (success);
 
--- public.activity definition
-
--- Drop table
-
--- DROP TABLE public.activity;
-
-CREATE TABLE public.activity (
-	id int8 NOT NULL,
-	billale bool NULL,
-	description varchar(255) NULL,
-	name varchar(255) NULL,
-	customer_id int8 NULL,
-	CONSTRAINT activity_pkey PRIMARY KEY (id),
-	CONSTRAINT activity_customer_id_FK FOREIGN KEY (customer_id) REFERENCES customer(id)
+create table task
+(
+    id int8 not null
+        constraint task_pkey
+            primary key,
+    category varchar(255),
+    name varchar(255)
 );
 
-
--- public.customer_activity definition
-
--- Drop table
-
--- DROP TABLE public.customer_activity;
-
-CREATE TABLE public.customer_activity (
-	customer_id int8 NOT NULL,
-	activities_id int8 NOT NULL,
-	CONSTRAINT customer_activity_activities_id_UNIQUE UNIQUE (activities_id),
-	CONSTRAINT customer_activity_activity_id_FK FOREIGN KEY (activities_id) REFERENCES activity(id),
-	CONSTRAINT customer_activity_customer_id_FK FOREIGN KEY (customer_id) REFERENCES customer(id)
+create table entry
+(
+    durationtype varchar(31) not null,
+    id int8 not null
+        constraint entry_pkey
+            primary key,
+    duration int8 not null,
+    startdatetime timestamp(6),
+    stopdatetime timestamp(6),
+    activity_id int8
+        constraint fkk6uif1x0tevuau7ihho4sluxg
+            references activities,
+    task_id int8
+        constraint fk5nk4rhn8vvuf2lyk9o69pq6g1
+            references task
 );
 
-
--- public.entry definition
-
--- Drop table
-
--- DROP TABLE public.entry;
-
-CREATE TABLE public.entry (
-	durationtype varchar(31) NOT NULL,
-	id int8 NOT NULL,
-	duration int8 NOT NULL,
-	startdatetime timestamp NULL,
-	stopdatetime timestamp NULL,
-	activity_id int8 NULL,
-	task_id int8 NULL,
-	CONSTRAINT entry_pkey PRIMARY KEY (id),
-	CONSTRAINT entry_activity_id_FK FOREIGN KEY (activity_id) REFERENCES activity(id),
-	CONSTRAINT entry_task_id_FK FOREIGN KEY (task_id) REFERENCES task(id)
+create table users
+(
+    id int8 not null
+        constraint users_pkey
+            primary key,
+    email varchar(255),
+    firstname varchar(255),
+    lastname varchar(255),
+    profiles varchar(255)
 );
 
-
--- public."member" definition
-
--- Drop table
-
--- DROP TABLE public."member";
-
-CREATE TABLE public.member (
-	id int8 NOT NULL,
-	role int4 NULL,
-	user_id int8 NULL,
-	CONSTRAINT member_pkey PRIMARY KEY (id),
-	CONSTRAINT member_user_id_FK FOREIGN KEY (user_id) REFERENCES usertk(id)
+create table members
+(
+    id int8 not null
+        constraint members_pkey
+            primary key,
+    role int4,
+    activity_id int8 not null
+        constraint fksxaqdp2g912rcesikq3wqbwem
+            references activities,
+    user_id int8
+        constraint fkpj3n6wh5muoeakc485whgs3x5
+            references users
 );
 
-
--- public.activity_member definition
-
--- Drop table
-
--- DROP TABLE public.activity_member;
-
-CREATE TABLE public.activity_member (
-	activity_id int8 NOT NULL,
-	members_id int8 NOT NULL,
-	CONSTRAINT activity_member_PK UNIQUE (members_id),
-	CONSTRAINT activity_member_members_id_FK FOREIGN KEY (members_id) REFERENCES member(id),
-	CONSTRAINT activity_member_activity_id_FK FOREIGN KEY (activity_id) REFERENCES activity(id)
-);

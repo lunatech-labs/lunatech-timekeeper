@@ -31,12 +31,12 @@ class ActivityResourceTest {
     @Test
     public void testPostActivityResourcesEndpoint() {
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\",\"description\":\"\"}").post("/api/customers")
                 .then()
                 .statusCode(200).body(is("1"));
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billale\":true,\"description\":\"New project\", \"customerId\":1, \"members\":[]}").post("/api/activities")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":1, \"members\":[]}").post("/api/activities")
                 .then()
                 .statusCode(200).body(is("2"));
 
