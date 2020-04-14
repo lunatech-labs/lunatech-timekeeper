@@ -13,12 +13,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.List;
 
 @Path("/api/activities")
 public class ActivityResource implements ActivityResourceApi {
 
     @Inject
     ActivityService activityService;
+
+    @Override
+    public List<ActivityResponse> getAllActivities() {
+        return activityService.listAllActivities();
+    }
 
     @Override
     public Response createActivity(@Valid ActivityRequest request, UriInfo uriInfo) {

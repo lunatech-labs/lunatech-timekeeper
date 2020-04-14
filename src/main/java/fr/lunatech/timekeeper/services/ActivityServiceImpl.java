@@ -10,8 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ApplicationScoped
 public class ActivityServiceImpl implements ActivityService {
@@ -21,6 +23,13 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public Optional<ActivityResponse> findActivityById(Long id) {
         return Activity.<Activity>findByIdOptional(id).map(this::from);
+    }
+
+    @Override
+    public List<ActivityResponse> listAllActivities() {
+        try (final Stream<Activity> activities = Activity.streamAll()) {
+            return activities.map(this::from).collect(Collectors.toList());
+        }
     }
 
     @Transactional

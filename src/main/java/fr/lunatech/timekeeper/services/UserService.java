@@ -9,5 +9,4 @@ public interface UserService {
     Long createUser(UserRequest request) ;
     Optional<UserResponse> findUserById(Long id);
     Optional<Long> updateUser(Long id, UserRequest user);
-
 }
