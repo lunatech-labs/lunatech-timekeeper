@@ -1,4 +1,4 @@
-package fr.lunatech.timekeeper.openapi;
+package fr.lunatech.timekeeper.resources.openapi;
 
 import fr.lunatech.timekeeper.dtos.ActivityRequest;
 import fr.lunatech.timekeeper.dtos.ActivityResponse;
