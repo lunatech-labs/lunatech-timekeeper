@@ -1,6 +1,7 @@
 package fr.lunatech.timekeeper.openapi;
 
-import fr.lunatech.timekeeper.services.dto.CustomerDto;
+import fr.lunatech.timekeeper.dtos.CustomerRequest;
+import fr.lunatech.timekeeper.dtos.CustomerResponse;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -12,20 +13,20 @@ public interface CustomerResourceApi {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    List<CustomerDto> readAllCustomers();
+    List<CustomerResponse> readAllCustomers();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    Response newCustomer(CustomerDto customerDto);
+    Response newCustomer(CustomerRequest request);
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    CustomerDto readCustomerById(@PathParam("id") long id);
+    CustomerResponse readCustomerById(@PathParam("id") long id);
 
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    Response updateCustomer(@PathParam("id") long id, CustomerDto customerDto);
+    Response updateCustomer(@PathParam("id") long id, CustomerRequest request);
 
 }

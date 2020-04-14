@@ -1,6 +1,5 @@
-package fr.lunatech.timekeeper.model;
+package fr.lunatech.timekeeper.models;
 
-import fr.lunatech.timekeeper.model.enums.DurationType;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
 import javax.persistence.*;

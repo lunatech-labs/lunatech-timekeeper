@@ -1,16 +1,16 @@
 package fr.lunatech.timekeeper.services;
 
-import fr.lunatech.timekeeper.services.dto.*;
-
+import fr.lunatech.timekeeper.dtos.ActivityRequest;
+import fr.lunatech.timekeeper.dtos.ActivityResponse;
 
 import java.util.Optional;
 
 public interface ActivityService {
 
 
-    long addActivity(ActivityDto activity);
+    long addActivity(ActivityRequest request);
 
-    Optional<ActivityDto> getActivityById(long id);
+    Optional<ActivityResponse> getActivityById(long id);
 
 
 }
