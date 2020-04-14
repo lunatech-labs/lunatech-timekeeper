@@ -2,10 +2,7 @@ package fr.lunatech.timekeeper.openapi;
 
 import fr.lunatech.timekeeper.dtos.UserRequest;
 import fr.lunatech.timekeeper.dtos.UserResponse;
-import fr.lunatech.timekeeper.resources.JwtUser;
 import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.media.Content;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
@@ -29,16 +26,13 @@ public interface UserResourceApi {
     @APIResponses(value = {
             @APIResponse(
                     responseCode = "200",
-                    description = "Bookings retrieved",
-                    content = @Content(
-                            schema = @Schema(
-                                    implementation = JwtUser.class))
+                    description = "User retrieved"
             ),
             @APIResponse(
-                    responseCode = "401",
+                    responseCode = "403",
                     description = "Invalid JWT token")
     })
-    JwtUser me();
+    UserResponse me();
 
 
     @POST
