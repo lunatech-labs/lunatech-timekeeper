@@ -1,21 +1,17 @@
 import React, { useCallback } from 'react'
 import { Redirect, withRouter } from 'react-router-dom'
 import { withKeycloak } from '@react-keycloak/web'
+import { Button, Layout, Row, Col, Typography } from "antd";
 
-import Logo from '../img/logo.png'
-import LoginBackground from '../img/login_Background.png'
+import Logo from '../../../img/logo.png'
+import LoginBackground from '../../../img/login_Background.png'
 
 import 'antd/dist/antd.css';
 import './Login.css'
 
-import { Button } from "antd";
-import { Layout } from 'antd';
-import { Row, Col } from 'antd';
-import { Typography } from 'antd';
 
 const { Content } = Layout;
 const { Title, Paragraph } = Typography;
-
 
 const LoginPage = withRouter(
     withKeycloak(({ keycloak, location }) => {
@@ -24,7 +20,7 @@ const LoginPage = withRouter(
 
         const login = useCallback(() => {
             keycloak.login()
-        }, [keycloak])
+        }, [keycloak]);
 
         return (
             <Layout>
@@ -42,10 +38,6 @@ const LoginPage = withRouter(
                             <Button type="primary" onClick={login} danger>
                                 Login
                             </Button>
-
-
-
-
 
                         </Col>
                         <Col className="login_RightPart" span={15}>
