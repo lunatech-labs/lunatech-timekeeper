@@ -1,14 +1,11 @@
 package fr.lunatech.timekeeper.models;
 
-import fr.lunatech.timekeeper.dtos.ActivityRequest;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-
-import static java.util.Collections.emptyList;
 
 @Entity
 @Table(name = "activities")
