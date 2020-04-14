@@ -16,6 +16,11 @@ public class UserServiceImpl implements UserService {
         return User.<User>findByIdOptional(id).map(this::from);
     }
 
+    @Override
+    public Optional<UserResponse> findUserByEmail(String email) {
+        return User.<User>find("email", email).firstResultOptional().map(this::from);
+    }
+
     @Transactional
     @Override
     public Long createUser(UserRequest request) {
