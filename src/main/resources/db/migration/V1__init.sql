@@ -18,28 +18,9 @@ create table activities
     description varchar(255),
     name varchar(255),
     customer_id int8 not null
-        constraint fkeds7272usjbk8laufntn26ooc
+        constraint fk_activities_customer_id
             references customers
 );
-
-create table flyway_schema_history
-(
-    installed_rank int4 not null
-        constraint flyway_schema_history_pk
-            primary key,
-    version varchar(50),
-    description varchar(200) not null,
-    type varchar(20) not null,
-    script varchar(1000) not null,
-    checksum int4,
-    installed_by varchar(100) not null,
-    installed_on timestamp(6) default now() not null,
-    execution_time int4 not null,
-    success bool not null
-);
-
-create index flyway_schema_history_s_idx
-    on flyway_schema_history (success);
 
 create table task
 (
@@ -60,10 +41,10 @@ create table entry
     startdatetime timestamp(6),
     stopdatetime timestamp(6),
     activity_id int8
-        constraint fkk6uif1x0tevuau7ihho4sluxg
+        constraint fk_entry_activity_id
             references activities,
     task_id int8
-        constraint fk5nk4rhn8vvuf2lyk9o69pq6g1
+        constraint fk_entry_task_id
             references task
 );
 
@@ -85,10 +66,10 @@ create table members
             primary key,
     role int4,
     activity_id int8 not null
-        constraint fksxaqdp2g912rcesikq3wqbwem
+        constraint fk_members_activity_id
             references activities,
     user_id int8
-        constraint fkpj3n6wh5muoeakc485whgs3x5
+        constraint fk_members_user_id
             references users
 );
 

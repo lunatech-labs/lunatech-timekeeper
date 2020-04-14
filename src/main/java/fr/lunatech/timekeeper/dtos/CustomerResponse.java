@@ -1,15 +1,21 @@
 package fr.lunatech.timekeeper.dtos;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public final class CustomerResponse {
 
+    @NotNull
     private final Long id;
+    @NotBlank
     private final String name;
+    @NotNull
     private final String description;
+    @NotNull
     private final List<Long> activitiesId;
 
-    public CustomerResponse(Long id, String name, String description, List<Long> activitiesId) {
+    public CustomerResponse(@NotNull Long id, @NotBlank String name, @NotNull String description, @NotNull List<Long> activitiesId) {
         this.id = id;
         this.name = name;
         this.description = description;
