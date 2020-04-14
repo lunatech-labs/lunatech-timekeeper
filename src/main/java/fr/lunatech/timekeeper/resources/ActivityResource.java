@@ -1,8 +1,9 @@
 package fr.lunatech.timekeeper.resources;
 
+import fr.lunatech.timekeeper.dtos.ActivityRequest;
+import fr.lunatech.timekeeper.dtos.ActivityResponse;
 import fr.lunatech.timekeeper.openapi.ActivityResourceApi;
 import fr.lunatech.timekeeper.services.ActivityService;
-import fr.lunatech.timekeeper.services.dto.ActivityDto;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -17,14 +18,14 @@ public class ActivityResource implements ActivityResourceApi {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response newCustomer(ActivityDto activity) {
-        return Response.ok(activityService.addActivity(activity)).build();
+    public Response newCustomer(ActivityRequest request) {
+        return Response.ok(activityService.addActivity(request)).build();
     }
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ActivityDto readActivityById(@PathParam("id") long id) {
+    public ActivityResponse readActivityById(@PathParam("id") long id) {
         return activityService.getActivityById(id).orElseThrow(NotFoundException::new);
     }
 

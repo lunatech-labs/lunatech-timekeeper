@@ -1,7 +1,7 @@
 package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.openapi.MemberResourceApi;
-import fr.lunatech.timekeeper.services.UserTkService;
+import fr.lunatech.timekeeper.services.UserService;
 import fr.lunatech.timekeeper.services.dto.MemberDto;
 
 import javax.inject.Inject;
@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response;
 public class MemberResource implements MemberResourceApi {
 
     @Inject
-    UserTkService userTkService;
+    UserService userTkService;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

@@ -1,8 +1,9 @@
 package fr.lunatech.timekeeper.resources;
 
+import fr.lunatech.timekeeper.dtos.CustomerRequest;
+import fr.lunatech.timekeeper.dtos.CustomerResponse;
 import fr.lunatech.timekeeper.openapi.CustomerResourceApi;
 import fr.lunatech.timekeeper.services.CustomerService;
-import fr.lunatech.timekeeper.services.dto.CustomerDto;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -18,29 +19,29 @@ public class CustomerResource implements CustomerResourceApi {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<CustomerDto> readAllCustomers() {
+    public List<CustomerResponse> readAllCustomers() {
         return customerService.getAllCustomers();
     }
 
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response newCustomer(CustomerDto customerDto) {
-        return Response.ok(customerService.addCustomer(customerDto)).build();
+    public Response newCustomer(CustomerRequest request) {
+        return Response.ok(customerService.addCustomer(request)).build();
     }
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public CustomerDto readCustomerById(@PathParam("id") long id) {
+    public CustomerResponse readCustomerById(@PathParam("id") long id) {
         return customerService.getCustomerById(id).orElseThrow(NotFoundException::new);
     }
 
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateCustomer(@PathParam("id") long id, CustomerDto customerDto){
-        return Response.ok(customerService.updateCustomer(id, customerDto).orElseThrow(NotFoundException::new)).build();
+    public Response updateCustomer(@PathParam("id") long id, CustomerRequest request){
+        return Response.ok(customerService.updateCustomer(id, request).orElseThrow(NotFoundException::new)).build();
     }
 
 }
