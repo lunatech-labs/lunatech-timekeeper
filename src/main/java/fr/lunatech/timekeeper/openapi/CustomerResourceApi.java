@@ -2,10 +2,13 @@ package fr.lunatech.timekeeper.openapi;
 
 import fr.lunatech.timekeeper.dtos.CustomerRequest;
 import fr.lunatech.timekeeper.dtos.CustomerResponse;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
 @Path("/api/customers")
@@ -13,20 +16,20 @@ public interface CustomerResourceApi {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    List<CustomerResponse> readAllCustomers();
+    List<CustomerResponse> getAllCustomers();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    Response newCustomer(CustomerRequest request);
+    Response createCustomer(@RequestBody CustomerRequest request, @Context UriInfo uriInfo);
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    CustomerResponse readCustomerById(@PathParam("id") long id);
+    CustomerResponse getCustomer(@PathParam("id") Long id);
 
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    Response updateCustomer(@PathParam("id") long id, CustomerRequest request);
+    Response updateCustomer(@PathParam("id") Long id, @RequestBody CustomerRequest request);
 
 }
