@@ -44,4 +44,9 @@ public class UserResource implements UserResourceApi {
         return userService.findUserById(id).orElseThrow(NotFoundException::new);
     }
 
+    @Override
+    public Response updateUser(Long id, @Valid UserRequest request) {
+        userService.updateUser(id, request).orElseThrow(NotFoundException::new);
+        return Response.noContent().build();
+    }
 }
