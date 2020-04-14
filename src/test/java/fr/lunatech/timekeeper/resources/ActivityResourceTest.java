@@ -31,7 +31,7 @@ class ActivityResourceTest {
     @Test
     public void testPostActivityResourcesEndpoint() {
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\",\"description\":\"\"}").post("/api/customers")
                 .then()
                 .statusCode(200).body(is("1"));
 
