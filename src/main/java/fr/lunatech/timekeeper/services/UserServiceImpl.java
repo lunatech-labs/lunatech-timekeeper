@@ -19,8 +19,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public Long createUser(UserRequest request) {
-        final var user = new User();
-        User.persist(bind(user, request));
+        final var user = bind(request);
+        User.persist(user);
         return user.id;
     }
 
@@ -40,5 +40,9 @@ public class UserServiceImpl implements UserService {
         user.email = request.getEmail();
         user.profiles = request.getProfiles();
         return user;
+    }
+
+    private User bind(UserRequest request) {
+        return bind(new User(), request);
     }
 }
