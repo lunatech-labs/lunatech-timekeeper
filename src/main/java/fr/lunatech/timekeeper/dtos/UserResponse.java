@@ -4,6 +4,7 @@ import fr.lunatech.timekeeper.models.Profile;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -18,10 +19,10 @@ public final class UserResponse {
     @NotBlank
     @Email
     private final String email;
-    @NotNull
+    @NotEmpty
     private final List<Profile> profiles;
 
-    public UserResponse(@NotNull Long id, @NotBlank String firstName, @NotBlank String lastName, @NotBlank @Email String email, @NotNull List<Profile> profiles) {
+    public UserResponse(@NotNull Long id, @NotBlank String firstName, @NotBlank String lastName, @NotBlank @Email String email, @NotEmpty List<Profile> profiles) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
