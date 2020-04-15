@@ -6,7 +6,6 @@ import LinkButton from "../../atoms/LinkButton";
 
 import './Customer.scss'
 
-
 const CustomerList = ({list, logo, activities}) => {
     const activitiesIdToActivities = (activitiesId) => {
         return activities.filter(activity => activitiesId.includes(activity.id)).map(activity => activity.name);
