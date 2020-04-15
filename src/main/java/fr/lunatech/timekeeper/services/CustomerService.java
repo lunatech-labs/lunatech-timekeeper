@@ -11,5 +11,4 @@ public interface CustomerService {
     List<CustomerResponse> listAllCustomers();
     Long createCustomer(CustomerRequest request);
     Optional<Long> updateCustomer(Long id, CustomerRequest request);
-
 }
