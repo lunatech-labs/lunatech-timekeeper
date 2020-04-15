@@ -4,8 +4,8 @@ import fr.lunatech.timekeeper.dtos.MemberRequest;
 import fr.lunatech.timekeeper.dtos.MemberResponse;
 import fr.lunatech.timekeeper.dtos.MemberUpdateRequest;
 import fr.lunatech.timekeeper.models.Role;
-import fr.lunatech.timekeeper.openapi.MemberResourceApi;
-import fr.lunatech.timekeeper.services.MemberService;
+import fr.lunatech.timekeeper.resources.openapi.MemberResourceApi;
+import fr.lunatech.timekeeper.services.interfaces.MemberService;
 
 import javax.inject.Inject;
 import javax.persistence.Convert;

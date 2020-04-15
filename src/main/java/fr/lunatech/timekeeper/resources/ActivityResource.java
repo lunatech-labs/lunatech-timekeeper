@@ -2,14 +2,13 @@ package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.dtos.ActivityRequest;
 import fr.lunatech.timekeeper.dtos.ActivityResponse;
-import fr.lunatech.timekeeper.openapi.ActivityResourceApi;
-import fr.lunatech.timekeeper.services.ActivityService;
-import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import fr.lunatech.timekeeper.resources.openapi.ActivityResourceApi;
+import fr.lunatech.timekeeper.services.interfaces.ActivityService;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;

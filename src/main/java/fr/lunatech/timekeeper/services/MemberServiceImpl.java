@@ -7,6 +7,7 @@ import fr.lunatech.timekeeper.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.models.Activity;
 import fr.lunatech.timekeeper.models.Member;
 import fr.lunatech.timekeeper.models.User;
+import fr.lunatech.timekeeper.services.interfaces.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
