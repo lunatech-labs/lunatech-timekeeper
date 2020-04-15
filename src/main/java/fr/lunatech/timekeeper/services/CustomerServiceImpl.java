@@ -1,7 +1,7 @@
 package fr.lunatech.timekeeper.services;
 
-import fr.lunatech.timekeeper.dtos.CustomerRequest;
-import fr.lunatech.timekeeper.dtos.CustomerResponse;
+import fr.lunatech.timekeeper.services.dtos.CustomerRequest;
+import fr.lunatech.timekeeper.services.dtos.CustomerResponse;
 import fr.lunatech.timekeeper.models.Customer;
 import fr.lunatech.timekeeper.services.interfaces.CustomerService;
 
@@ -30,8 +30,8 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional
     @Override
     public Long createCustomer(CustomerRequest request) {
-        final var customer = new Customer();
-        Customer.persist(bind(customer, request));
+        final var customer = bind(request);
+        Customer.persist(customer);
         return customer.id;
     }
 
@@ -54,5 +54,9 @@ public class CustomerServiceImpl implements CustomerService {
         customer.name = request.getName();
         customer.description = request.getDescription();
         return customer;
+    }
+
+    private Customer bind(CustomerRequest request) {
+        return bind(new Customer(), request);
     }
 }

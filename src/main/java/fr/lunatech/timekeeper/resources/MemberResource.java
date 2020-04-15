@@ -1,8 +1,8 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.dtos.MemberRequest;
-import fr.lunatech.timekeeper.dtos.MemberResponse;
-import fr.lunatech.timekeeper.dtos.MemberUpdateRequest;
+import fr.lunatech.timekeeper.services.dtos.MemberRequest;
+import fr.lunatech.timekeeper.services.dtos.MemberResponse;
+import fr.lunatech.timekeeper.services.dtos.MemberUpdateRequest;
 import fr.lunatech.timekeeper.models.Role;
 import fr.lunatech.timekeeper.resources.openapi.MemberResourceApi;
 import fr.lunatech.timekeeper.services.interfaces.MemberService;
@@ -51,6 +51,6 @@ public class MemberResource implements MemberResourceApi {
         return Response.noContent().build();
     }
 
-    //TODO ajouter ou modifier la methode addMemberToActivity pour ajouter plusieurs membres d'un seul coup
-    //TODO ajouter une methode pour modifier la liste des membres d'un seul coup
+    //TODO add or modify addMemberToActivity method to add multiple users at the same time
+    //TODO add a method to update all activity members at the same time
 }
