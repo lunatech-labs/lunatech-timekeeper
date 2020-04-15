@@ -9,16 +9,31 @@ const NewCustomer = ({ }) => (
         wrapperCol={{span: 14}}
         layout="horizontal"
     >
-        <Form.Item label="Name">
+        <Form.Item
+            label="Name"
+            name="name"
+            rules={[
+                {
+                    required: true,
+                },
+            ]}
+        >
             <Input placeholder="New customer's name"/>
         </Form.Item>
-        <Form.Item label="Description">
-                <TextArea
-                    rows={4}
-                    placeholder="New customer's description"
-                />
+        <Form.Item
+            label="Description"
+            name="description"
+        >
+            <TextArea
+                rows={4}
+                placeholder="New customer's description"
+            />
         </Form.Item>
-        <Button className="btn save">Save</Button>
+        <Form.Item >
+            <Button className="btn save" htmlType="submit">
+                Submit
+            </Button>
+        </Form.Item>
     </Form>
 );
 
