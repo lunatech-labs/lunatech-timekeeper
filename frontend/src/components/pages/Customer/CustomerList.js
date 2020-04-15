@@ -1,13 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {List, Avatar } from 'antd';
-import { EditOutlined, MoreOutlined } from '@ant-design/icons';
+import {Avatar, List} from 'antd';
+import {EditOutlined, MoreOutlined} from '@ant-design/icons';
 import LinkButton from "../../atoms/LinkButton";
 
 import './Customer.scss'
 
-const CustomerList = ({ list, logo }) => {
 
+const CustomerList = ({list, logo, activities}) => {
+    const activitiesIdToActivities = (activitiesId) => {
+        return activities.filter(activity => activitiesId.includes(activity.id)).map(activity => activity.name);
+    };
     return (
         <React.Fragment>
             <List
@@ -21,24 +24,24 @@ const CustomerList = ({ list, logo }) => {
                                 to={`/customers/${item.id}`}
                                 shape="circle"
                                 className="customer-edit-link"
-                                icon={<EditOutlined />}
+                                icon={<EditOutlined/>}
                             />,
                             <LinkButton
                                 to={`/customers/${item.id}`}
                                 shape="circle"
                                 className="customer-more-link"
-                                icon={<MoreOutlined />}
+                                icon={<MoreOutlined/>}
                             />
                         ]}
                     >
                         <List.Item.Meta
                             avatar={
-                                <Avatar src={logo} />
+                                <Avatar src={logo}/>
                             }
                             title={item.name}
-                            description="is a great user ..."
+                            description={item.description}
                         />
-                        <div> something </div>
+                        <div>{activitiesIdToActivities(item.activitiesId).join(" | ")}</div>
                     </List.Item>
                 )}
             />
@@ -53,10 +56,15 @@ CustomerList.propTypes = {
     list: PropTypes.arrayOf(
         PropTypes.shape({
             id: PropTypes.number,
-            name: PropTypes.string
+            name: PropTypes.string,
+            activitiesId: PropTypes.arrayOf(PropTypes.number)
         })
     ),
-    logo: PropTypes.string
+    logo: PropTypes.string,
+    activities: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.number,
+        name: PropTypes.string
+    }))
 };
 
 export default CustomerList;
