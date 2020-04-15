@@ -1,4 +1,4 @@
-package fr.lunatech.timekeeper.exceptions;
+package fr.lunatech.timekeeper.resources.handlers;
 
 import fr.lunatech.timekeeper.exceptions.IllegalEntityStateException;
 

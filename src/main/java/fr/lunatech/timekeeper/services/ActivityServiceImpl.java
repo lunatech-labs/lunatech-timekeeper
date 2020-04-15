@@ -5,6 +5,7 @@ import fr.lunatech.timekeeper.dtos.ActivityResponse;
 import fr.lunatech.timekeeper.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.models.Activity;
 import fr.lunatech.timekeeper.models.Customer;
+import fr.lunatech.timekeeper.services.interfaces.ActivityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +37,7 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public Long createActivity(ActivityRequest request) {
         final var activity = bind(request);
-        Activity.persist(request);
+        Activity.persist(activity);
         return activity.id;
     }
 

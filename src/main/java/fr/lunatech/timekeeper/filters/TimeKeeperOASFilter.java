@@ -1,4 +1,4 @@
-package fr.lunatech.timekeeper.openapi;
+package fr.lunatech.timekeeper.filters;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
