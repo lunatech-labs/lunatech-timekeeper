@@ -51,6 +51,6 @@ public class MemberResource implements MemberResourceApi {
         return Response.noContent().build();
     }
 
-    //TODO ajouter ou modifier la methode addMemberToActivity pour ajouter plusieurs membres d'un seul coup
-    //TODO ajouter une methode pour modifier la liste des membres d'un seul coup
+    //TODO add or modify addMemberToActivity method to add multiple users at the same time
+    //TODO add a method to update all activity members at the same time
 }

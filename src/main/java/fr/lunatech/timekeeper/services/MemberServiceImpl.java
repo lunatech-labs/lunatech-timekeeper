@@ -42,8 +42,8 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public Long createMember(Long activityId, MemberRequest request) {
-        final var member = new Member();
-        Member.persist(bind(member, activityId, request));
+        final var member = bind(activityId, request);
+        Member.persist(member);
         return member.id;
     }
 
@@ -73,7 +73,8 @@ public class MemberServiceImpl implements MemberService {
         return new MemberResponse(member.id, member.user.id, member.role);
     }
 
-    private Member bind(Member member, Long activityId, MemberRequest request) {
+    private Member bind(Long activityId, MemberRequest request) {
+        final var member = new Member();
         member.activity = getActivity(activityId);
         member.user = getUser(request.getUserId());
         member.role = request.getRole();
