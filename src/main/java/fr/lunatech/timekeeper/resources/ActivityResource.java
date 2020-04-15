@@ -1,7 +1,7 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.dtos.ActivityRequest;
-import fr.lunatech.timekeeper.dtos.ActivityResponse;
+import fr.lunatech.timekeeper.services.dtos.ActivityRequest;
+import fr.lunatech.timekeeper.services.dtos.ActivityResponse;
 import fr.lunatech.timekeeper.resources.openapi.ActivityResourceApi;
 import fr.lunatech.timekeeper.services.interfaces.ActivityService;
 

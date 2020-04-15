@@ -1,7 +1,7 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.dtos.UserRequest;
-import fr.lunatech.timekeeper.dtos.UserResponse;
+import fr.lunatech.timekeeper.services.dtos.UserRequest;
+import fr.lunatech.timekeeper.services.dtos.UserResponse;
 import fr.lunatech.timekeeper.resources.openapi.UserResourceApi;
 import fr.lunatech.timekeeper.services.interfaces.UserService;
 import io.quarkus.security.identity.SecurityIdentity;

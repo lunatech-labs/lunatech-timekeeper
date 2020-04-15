@@ -1,4 +1,4 @@
-package fr.lunatech.timekeeper.dtos;
+package fr.lunatech.timekeeper.services.dtos;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
