@@ -1,4 +1,4 @@
-package fr.lunatech.timekeeper.exceptions;
+package fr.lunatech.timekeeper.services.exceptions;
 
 public class IllegalEntityStateException extends BusinessException {
 

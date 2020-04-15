@@ -1,9 +1,9 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.dtos.CustomerRequest;
-import fr.lunatech.timekeeper.dtos.CustomerResponse;
-import fr.lunatech.timekeeper.openapi.CustomerResourceApi;
-import fr.lunatech.timekeeper.services.CustomerService;
+import fr.lunatech.timekeeper.services.dtos.CustomerRequest;
+import fr.lunatech.timekeeper.services.dtos.CustomerResponse;
+import fr.lunatech.timekeeper.resources.openapi.CustomerResourceApi;
+import fr.lunatech.timekeeper.services.interfaces.CustomerService;
 
 import javax.inject.Inject;
 import javax.validation.Valid;

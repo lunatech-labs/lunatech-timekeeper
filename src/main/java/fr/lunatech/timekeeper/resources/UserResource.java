@@ -1,9 +1,9 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.dtos.UserRequest;
-import fr.lunatech.timekeeper.dtos.UserResponse;
-import fr.lunatech.timekeeper.openapi.UserResourceApi;
-import fr.lunatech.timekeeper.services.UserService;
+import fr.lunatech.timekeeper.services.dtos.UserRequest;
+import fr.lunatech.timekeeper.services.dtos.UserResponse;
+import fr.lunatech.timekeeper.resources.openapi.UserResourceApi;
+import fr.lunatech.timekeeper.services.interfaces.UserService;
 import io.quarkus.security.identity.SecurityIdentity;
 import org.jboss.resteasy.annotations.cache.NoCache;
 
@@ -50,4 +50,9 @@ public class UserResource implements UserResourceApi {
         return userService.findUserById(id).orElseThrow(NotFoundException::new);
     }
 
+    @Override
+    public Response updateUser(Long id, @Valid UserRequest request) {
+        userService.updateUser(id, request).orElseThrow(NotFoundException::new);
+        return Response.noContent().build();
+    }
 }

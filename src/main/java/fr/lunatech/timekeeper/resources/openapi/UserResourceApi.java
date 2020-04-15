@@ -1,7 +1,7 @@
-package fr.lunatech.timekeeper.openapi;
+package fr.lunatech.timekeeper.resources.openapi;
 
-import fr.lunatech.timekeeper.dtos.UserRequest;
-import fr.lunatech.timekeeper.dtos.UserResponse;
+import fr.lunatech.timekeeper.services.dtos.UserRequest;
+import fr.lunatech.timekeeper.services.dtos.UserResponse;
 import fr.lunatech.timekeeper.resources.JwtUser;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -53,5 +53,10 @@ public interface UserResourceApi {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     UserResponse getUser(@PathParam("id") Long id);
+
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    Response updateUser(@PathParam("id") Long id, @RequestBody UserRequest request);
 
 }

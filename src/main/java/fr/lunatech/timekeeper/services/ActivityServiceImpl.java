@@ -1,17 +1,20 @@
 package fr.lunatech.timekeeper.services;
 
-import fr.lunatech.timekeeper.dtos.ActivityRequest;
-import fr.lunatech.timekeeper.dtos.ActivityResponse;
-import fr.lunatech.timekeeper.exceptions.IllegalEntityStateException;
+import fr.lunatech.timekeeper.services.dtos.ActivityRequest;
+import fr.lunatech.timekeeper.services.dtos.ActivityResponse;
+import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.models.Activity;
 import fr.lunatech.timekeeper.models.Customer;
+import fr.lunatech.timekeeper.services.interfaces.ActivityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ApplicationScoped
 public class ActivityServiceImpl implements ActivityService {
@@ -23,12 +26,25 @@ public class ActivityServiceImpl implements ActivityService {
         return Activity.<Activity>findByIdOptional(id).map(this::from);
     }
 
+    @Override
+    public List<ActivityResponse> listAllActivities() {
+        try (final Stream<Activity> activities = Activity.streamAll()) {
+            return activities.map(this::from).collect(Collectors.toList());
+        }
+    }
+
     @Transactional
     @Override
     public Long createActivity(ActivityRequest request) {
-        final var activity = new Activity();
-        Activity.persist(bind(activity, request));
+        final var activity = bind(request);
+        Activity.persist(activity);
         return activity.id;
+    }
+
+    @Transactional
+    @Override
+    public Optional<Long> updateActivity(Long id, ActivityRequest request) {
+        return Activity.<Activity>findByIdOptional(id).map(activity -> bind(activity, request).id);
     }
 
     private ActivityResponse from(Activity activity) {
@@ -46,11 +62,15 @@ public class ActivityServiceImpl implements ActivityService {
         activity.name = request.getName();
         activity.billable = request.isBillable();
         activity.description = request.getDescription();
-        activity.customer = getCustomerEntity(request.getCustomerId());
+        activity.customer = getCustomer(request.getCustomerId());
         return activity;
     }
 
-    private Customer getCustomerEntity(Long customerId) {
+    private Activity bind(ActivityRequest request) {
+        return bind(new Activity(), request);
+    }
+
+    private Customer getCustomer(Long customerId) {
         return Customer.<Customer>findByIdOptional(customerId)
                 .orElseThrow(() -> new IllegalEntityStateException(String.format("One Customer is required for an activity. customerId=%d", customerId)));
     }
