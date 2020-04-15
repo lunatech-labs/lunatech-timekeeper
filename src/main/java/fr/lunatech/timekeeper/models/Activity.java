@@ -7,8 +7,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-import static java.util.Collections.emptyList;
-
 @Entity
 @Table(name = "activities")
 public class Activity extends PanacheEntity {
