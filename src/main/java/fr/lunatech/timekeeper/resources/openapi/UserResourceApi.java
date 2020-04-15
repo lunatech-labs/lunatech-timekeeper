@@ -1,4 +1,4 @@
-package fr.lunatech.timekeeper.openapi;
+package fr.lunatech.timekeeper.resources.openapi;
 
 import fr.lunatech.timekeeper.dtos.UserRequest;
 import fr.lunatech.timekeeper.dtos.UserResponse;
@@ -13,6 +13,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.util.List;
 
 @Path("/api/users")
 public interface UserResourceApi {
@@ -34,6 +35,9 @@ public interface UserResourceApi {
     })
     UserResponse me();
 
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    List<UserResponse> getAllUsers();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

@@ -1,12 +1,16 @@
 package fr.lunatech.timekeeper.services;
 
-import fr.lunatech.timekeeper.dtos.UserRequest;
-import fr.lunatech.timekeeper.dtos.UserResponse;
+import fr.lunatech.timekeeper.services.dtos.UserRequest;
+import fr.lunatech.timekeeper.services.dtos.UserResponse;
 import fr.lunatech.timekeeper.models.User;
+import fr.lunatech.timekeeper.services.interfaces.UserService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ApplicationScoped
 public class UserServiceImpl implements UserService {
@@ -21,11 +25,18 @@ public class UserServiceImpl implements UserService {
         return User.<User>find("email", email).firstResultOptional().map(this::from);
     }
 
+    @Override
+    public List<UserResponse> findAllUsers() {
+        try (final Stream<User> users = User.streamAll()) {
+            return users.map(this::from).collect(Collectors.toList());
+        }
+    }
+
     @Transactional
     @Override
     public Long createUser(UserRequest request) {
-        final var user = new User();
-        User.persist(bind(user, request));
+        final var user = bind(request);
+        User.persist(user);
         return user.id;
     }
 
@@ -45,5 +56,9 @@ public class UserServiceImpl implements UserService {
         user.email = request.getEmail();
         user.profiles = request.getProfiles();
         return user;
+    }
+
+    private User bind(UserRequest request) {
+        return bind(new User(), request);
     }
 }

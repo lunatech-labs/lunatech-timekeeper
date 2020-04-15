@@ -1,8 +1,8 @@
-package fr.lunatech.timekeeper.openapi;
+package fr.lunatech.timekeeper.resources.openapi;
 
-import fr.lunatech.timekeeper.dtos.MemberRequest;
-import fr.lunatech.timekeeper.dtos.MemberResponse;
-import fr.lunatech.timekeeper.dtos.MemberUpdateRequest;
+import fr.lunatech.timekeeper.services.dtos.MemberRequest;
+import fr.lunatech.timekeeper.services.dtos.MemberResponse;
+import fr.lunatech.timekeeper.services.dtos.MemberUpdateRequest;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 
 import javax.ws.rs.*;

@@ -1,12 +1,13 @@
 package fr.lunatech.timekeeper.services;
 
-import fr.lunatech.timekeeper.dtos.MemberRequest;
-import fr.lunatech.timekeeper.dtos.MemberResponse;
-import fr.lunatech.timekeeper.dtos.MemberUpdateRequest;
-import fr.lunatech.timekeeper.exceptions.IllegalEntityStateException;
+import fr.lunatech.timekeeper.services.dtos.MemberRequest;
+import fr.lunatech.timekeeper.services.dtos.MemberResponse;
+import fr.lunatech.timekeeper.services.dtos.MemberUpdateRequest;
+import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.models.Activity;
 import fr.lunatech.timekeeper.models.Member;
 import fr.lunatech.timekeeper.models.User;
+import fr.lunatech.timekeeper.services.interfaces.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,8 +43,8 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public Long createMember(Long activityId, MemberRequest request) {
-        final var member = new Member();
-        Member.persist(bind(member, activityId, request));
+        final var member = bind(activityId, request);
+        Member.persist(member);
         return member.id;
     }
 
@@ -73,7 +74,8 @@ public class MemberServiceImpl implements MemberService {
         return new MemberResponse(member.id, member.user.id, member.role);
     }
 
-    private Member bind(Member member, Long activityId, MemberRequest request) {
+    private Member bind(Long activityId, MemberRequest request) {
+        final var member = new Member();
         member.activity = getActivity(activityId);
         member.user = getUser(request.getUserId());
         member.role = request.getRole();
