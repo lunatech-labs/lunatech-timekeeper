@@ -9,9 +9,13 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-import javax.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.given;
+import static javax.ws.rs.core.HttpHeaders.ACCEPT;
+import static javax.ws.rs.core.HttpHeaders.LOCATION;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.Response.Status.*;
+import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
@@ -23,80 +27,154 @@ class CustomerResourceTest {
     Flyway flyway;
 
     @AfterEach
-    public void cleanDB() {
+    void cleanDB() {
         flyway.clean();
         flyway.migrate();
     }
 
     @Test
-    public void testPostCustomerResourcesWithOutActivitiesEndpoint() {
+    void shouldCreateCustomer() {
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .post("/api/customers")
                 .then()
-                .statusCode(200);
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/customers/1"));
 
         given()
-                .when().get("/api/customers/1")
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/customers/1")
                 .then()
-                .statusCode(200)
-                .body(is("{\"activitiesId\":[],\"id\":1,\"name\":\"NewClient\"}"));
+                .statusCode(OK.getStatusCode())
+                .body(is("{\"activitiesId\":[],\"description\":\"NewDescription\",\"id\":1,\"name\":\"NewClient\"}"));
     }
 
     @Test
-    public void testGetUnExistedCustomerResourceEndpoint() {
+    void shouldCreateCustomerIgnoreUselessParams() {
         given()
-                .when().get("/api/customers/4")
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"activitiesId\":[1,2,3],\"id\":9999,\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .post("/api/customers")
                 .then()
-                .statusCode(404);
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/customers/1"));
+
+        given()
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/customers/1")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .body(is("{\"activitiesId\":[],\"description\":\"NewDescription\",\"id\":1,\"name\":\"NewClient\"}"));
     }
 
     @Test
-    public void testGetAllCustomersWithOutActivitiesEndpoint() {
+    void shouldNotFindUnknownCustomer() {
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/customers/4")
                 .then()
-                .statusCode(200);
-
-        given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient2\"}").post("/api/customers")
-                .then()
-                .statusCode(200);
-
-        given()
-                .when().get("/api/customers")
-                .then()
-                .statusCode(200)
-                .body(is("[{\"activitiesId\":[],\"id\":1,\"name\":\"NewClient\"},{\"activitiesId\":[],\"id\":2,\"name\":\"NewClient2\"}]"));
+                .statusCode(NOT_FOUND.getStatusCode());
     }
 
     @Test
-    public void testGetAllCustomersWithOutCustomerAndWithOutActivitiesEndpoint() {
+    void shouldFindAllCustomers() {
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .post("/api/customers")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/customers/1"));
 
         given()
-                .when().get("/api/customers")
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"name\":\"NewClient2\",\"description\":\"NewDescription2\"}")
+                .post("/api/customers")
                 .then()
-                .statusCode(200)
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/customers/2"));
+
+        given()
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/customers")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .body(is("[{\"activitiesId\":[],\"description\":\"NewDescription\",\"id\":1,\"name\":\"NewClient\"},{\"activitiesId\":[],\"description\":\"NewDescription2\",\"id\":2,\"name\":\"NewClient2\"}]"));
+    }
+
+    @Test
+    void shouldFindAllCustomersEmpty() {
+        given()
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/customers")
+                .then()
+                .statusCode(OK.getStatusCode())
                 .body(is("[]"));
     }
 
     @Test
-    public void testUpdateCustomerWithOutActivitiesEndpoint(){
+    void shouldModifyCustomer() {
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .post("/api/customers")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/customers/1"));
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"name\":\"NewClient\"}").post("/api/customers")
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\",\"description\":\"NewDescription2\"}")
+                .put("/api/customers/1")
                 .then()
-                .statusCode(200);
+                .statusCode(NO_CONTENT.getStatusCode());
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\"}").put("/api/customers/1")
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/customers/1")
                 .then()
-                .statusCode(200)
-                .body(is("1"));
+                .statusCode(OK.getStatusCode())
+                .body(is("{\"activitiesId\":[],\"description\":\"NewDescription2\",\"id\":1,\"name\":\"NewName\"}"));
+    }
+
+    @Test
+    void shouldModifyCustomerIgnoreUselessParams() {
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .post("/api/customers")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/customers/1"));
 
         given()
-                .when().get("/api/customers/1")
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"activitiesId\":[1,2,3],\"id\":9999,\"name\":\"NewName\",\"description\":\"NewDescription2\"}")
+                .put("/api/customers/1")
                 .then()
-                .statusCode(200)
-                .body(is("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\"}"));
-}
+                .statusCode(NO_CONTENT.getStatusCode());
+
+        given()
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/customers/1")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .body(is("{\"activitiesId\":[],\"description\":\"NewDescription2\",\"id\":1,\"name\":\"NewName\"}"));
+    }
 }

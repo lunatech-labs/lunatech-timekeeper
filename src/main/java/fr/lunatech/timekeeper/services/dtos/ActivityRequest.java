@@ -1,34 +1,33 @@
-package fr.lunatech.timekeeper.dtos;
+package fr.lunatech.timekeeper.services.dtos;
 
-import java.util.List;
+import javax.json.bind.annotation.JsonbCreator;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
-public final class ActivityResponse {
+public final class ActivityRequest {
 
-    private final Long id;
+    @NotBlank
     private final String name;
+    @NotNull
     private final Boolean billable;
+    @NotNull
     private final String description;
+    @NotNull
     private final Long customerId;
-    private final List<Long> membersId;
 
-    public ActivityResponse(Long id, String name, Boolean billable, String description, Long customerId, List<Long> membersId) {
-        this.id = id;
+    @JsonbCreator
+    public ActivityRequest(@NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull Long customerId) {
         this.name = name;
         this.billable = billable;
         this.description = description;
         this.customerId = customerId;
-        this.membersId = membersId;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getName() {
         return name;
     }
 
-    public Boolean getBillable() {
+    public Boolean isBillable() {
         return billable;
     }
 
@@ -38,9 +37,5 @@ public final class ActivityResponse {
 
     public Long getCustomerId() {
         return customerId;
-    }
-
-    public List<Long> getMembersId() {
-        return membersId;
     }
 }
