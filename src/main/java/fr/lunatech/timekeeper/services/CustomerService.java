@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CustomerService {
+    Optional<CustomerResponse> findCustomerById(Long id);
+    List<CustomerResponse> listAllCustomers();
+    Long createCustomer(CustomerRequest request);
+    Optional<Long> updateCustomer(Long id, CustomerRequest request);
 
-    long addCustomer(CustomerRequest request);
-    Optional<CustomerResponse> getCustomerById(long id);
-    List<CustomerResponse> getAllCustomers();
-    Optional<Long> updateCustomer(long id, CustomerRequest request);
 }

@@ -34,14 +34,14 @@ public class UserResource implements UserResourceApi {
 
     @Override
     public Response createUser(@Valid UserRequest request, UriInfo uriInfo) {
-        final Long userId = userService.addUser(request);
+        final Long userId = userService.createUser(request);
         final URI uri = uriInfo.getAbsolutePathBuilder().path(userId.toString()).build();
         return Response.created(uri).build();
     }
 
     @Override
     public UserResponse getUser(Long id) {
-        return userService.getUserById(id).orElseThrow(NotFoundException::new);
+        return userService.findUserById(id).orElseThrow(NotFoundException::new);
     }
 
 }

@@ -1,4 +1,4 @@
-package fr.lunatech.timekeeper.services.exception;
+package fr.lunatech.timekeeper.exceptions;
 
 public abstract class BusinessException extends RuntimeException{
 
