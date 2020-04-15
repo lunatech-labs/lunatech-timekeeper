@@ -43,7 +43,7 @@ public interface UserResourceApi {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    List<UserResponse> getAllUser();
+    List<UserResponse> getAllUsers();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

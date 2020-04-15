@@ -34,7 +34,7 @@ public class UserResource implements UserResourceApi {
     }
 
     @Override
-    public List<UserResponse> getAllUser() {
+    public List<UserResponse> getAllUsers() {
         return userService.findAllUsers();
     }
 
