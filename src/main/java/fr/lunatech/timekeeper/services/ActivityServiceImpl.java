@@ -1,8 +1,8 @@
 package fr.lunatech.timekeeper.services;
 
-import fr.lunatech.timekeeper.dtos.ActivityRequest;
-import fr.lunatech.timekeeper.dtos.ActivityResponse;
-import fr.lunatech.timekeeper.exceptions.IllegalEntityStateException;
+import fr.lunatech.timekeeper.services.dtos.ActivityRequest;
+import fr.lunatech.timekeeper.services.dtos.ActivityResponse;
+import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.models.Activity;
 import fr.lunatech.timekeeper.models.Customer;
 import fr.lunatech.timekeeper.services.interfaces.ActivityService;
@@ -36,8 +36,8 @@ public class ActivityServiceImpl implements ActivityService {
     @Transactional
     @Override
     public Long createActivity(ActivityRequest request) {
-        final var activity = new Activity();
-        Activity.persist(bind(activity, request));
+        final var activity = bind(request);
+        Activity.persist(activity);
         return activity.id;
     }
 
@@ -64,6 +64,10 @@ public class ActivityServiceImpl implements ActivityService {
         activity.description = request.getDescription();
         activity.customer = getCustomer(request.getCustomerId());
         return activity;
+    }
+
+    private Activity bind(ActivityRequest request) {
+        return bind(new Activity(), request);
     }
 
     private Customer getCustomer(Long customerId) {

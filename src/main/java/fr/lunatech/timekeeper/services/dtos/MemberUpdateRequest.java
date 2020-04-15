@@ -1,4 +1,4 @@
-package fr.lunatech.timekeeper.dtos;
+package fr.lunatech.timekeeper.services.dtos;
 
 import fr.lunatech.timekeeper.models.Role;
 

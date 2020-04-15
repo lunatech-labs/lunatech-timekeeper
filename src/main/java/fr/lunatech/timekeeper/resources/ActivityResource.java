@@ -1,13 +1,14 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.dtos.ActivityRequest;
-import fr.lunatech.timekeeper.dtos.ActivityResponse;
+import fr.lunatech.timekeeper.services.dtos.ActivityRequest;
+import fr.lunatech.timekeeper.services.dtos.ActivityResponse;
 import fr.lunatech.timekeeper.resources.openapi.ActivityResourceApi;
 import fr.lunatech.timekeeper.services.interfaces.ActivityService;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.ws.rs.*;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
