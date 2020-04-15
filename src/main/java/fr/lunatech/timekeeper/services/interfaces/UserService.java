@@ -1,7 +1,7 @@
 package fr.lunatech.timekeeper.services.interfaces;
 
-import fr.lunatech.timekeeper.dtos.UserRequest;
-import fr.lunatech.timekeeper.dtos.UserResponse;
+import fr.lunatech.timekeeper.services.dtos.UserRequest;
+import fr.lunatech.timekeeper.services.dtos.UserResponse;
 
 import java.util.Optional;
 
