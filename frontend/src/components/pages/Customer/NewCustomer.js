@@ -3,7 +3,7 @@ import {Button, Form, Input } from 'antd'
 
 const { TextArea } = Input;
 
-const NewCustomer = ({axiosInstance}) => {
+const NewCustomer = ({ axiosInstance }) => {
 
     const postCustomer = values => {
         axiosInstance.post('/api/customers', {
