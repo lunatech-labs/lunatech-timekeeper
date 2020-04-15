@@ -9,9 +9,15 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.util.List;
 
 @Path("/api/activities")
 public interface ActivityResourceApi {
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    List<ActivityResponse> getAllActivities();
+
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
