@@ -21,6 +21,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<UserResponse> findUserByEmail(String email) {
+        return User.<User>find("email", email).firstResultOptional().map(this::from);
+    }
+
+    @Override
     public List<UserResponse> findAllUsers() {
         try (final Stream<User> users = User.streamAll()) {
             return users.map(this::from).collect(Collectors.toList());

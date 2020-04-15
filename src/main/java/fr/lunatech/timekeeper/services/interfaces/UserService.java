@@ -10,5 +10,6 @@ public interface UserService {
     Long createUser(UserRequest request);
     List<UserResponse> findAllUsers();
     Optional<UserResponse> findUserById(Long id);
+    Optional<UserResponse> findUserByEmail(String email);
     Optional<Long> updateUser(Long id, UserRequest user);
 }
