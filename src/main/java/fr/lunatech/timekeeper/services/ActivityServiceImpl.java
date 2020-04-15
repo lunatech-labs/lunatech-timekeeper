@@ -1,8 +1,8 @@
 package fr.lunatech.timekeeper.services;
 
-import fr.lunatech.timekeeper.dtos.ActivityRequest;
-import fr.lunatech.timekeeper.dtos.ActivityResponse;
-import fr.lunatech.timekeeper.exceptions.IllegalEntityStateException;
+import fr.lunatech.timekeeper.services.dtos.ActivityRequest;
+import fr.lunatech.timekeeper.services.dtos.ActivityResponse;
+import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.models.Activity;
 import fr.lunatech.timekeeper.models.Customer;
 import fr.lunatech.timekeeper.services.interfaces.ActivityService;
