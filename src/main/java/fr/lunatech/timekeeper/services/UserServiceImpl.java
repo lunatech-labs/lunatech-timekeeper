@@ -46,6 +46,11 @@ public class UserServiceImpl implements UserService {
         return User.<User>findByIdOptional(id).map(user -> bind(user, request).id);
     }
 
+    @Override
+    public Long count() {
+        return User.count();
+    }
+
     private UserResponse from(User user) {
         return new UserResponse(user.id, user.firstName, user.lastName, user.email, user.profiles);
     }

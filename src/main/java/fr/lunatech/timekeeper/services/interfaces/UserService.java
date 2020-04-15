@@ -12,4 +12,5 @@ public interface UserService {
     Optional<UserResponse> findUserById(Long id);
     Optional<UserResponse> findUserByEmail(String email);
     Optional<Long> updateUser(Long id, UserRequest user);
+    Long count();
 }

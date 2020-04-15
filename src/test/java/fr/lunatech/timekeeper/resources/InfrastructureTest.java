@@ -49,4 +49,34 @@ class InfrastructureTest {
                 .then()
                 .statusCode(OK.getStatusCode());
     }
+
+    @Test
+    void shouldPingHealth() {
+        given()
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/health")
+                .then()
+                .statusCode(OK.getStatusCode());
+    }
+
+    @Test
+    void shouldPingLiveness() {
+        given()
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/health/live")
+                .then()
+                .statusCode(OK.getStatusCode());
+    }
+
+    @Test
+    void shouldPingReadiness() {
+        given()
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/health/ready")
+                .then()
+                .statusCode(OK.getStatusCode());
+    }
 }
