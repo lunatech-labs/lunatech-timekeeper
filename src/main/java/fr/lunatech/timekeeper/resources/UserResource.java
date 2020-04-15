@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.List;
 
 @Path("/api/users")
 public class UserResource implements UserResourceApi {
@@ -30,6 +31,11 @@ public class UserResource implements UserResourceApi {
     @NoCache
     public JwtUser me() {
         return new JwtUser(identity);
+    }
+
+    @Override
+    public List<UserResponse> getAllUsers() {
+        return userService.findAllUsers();
     }
 
     @Override
