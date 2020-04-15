@@ -7,7 +7,7 @@ const { TextArea } = Input;
 const NewCustomer = ({ }) => {
     const axiosInstance = useAxios('http://localhost:8080');
 
-    const postUser = values => {
+    const postCustomer = values => {
         axiosInstance.post('/api/customers', {
             'name': values.name,
             'description': values.description
@@ -31,7 +31,7 @@ const NewCustomer = ({ }) => {
             labelCol={{span: 4}}
             wrapperCol={{span: 14}}
             layout="horizontal"
-            onFinish={postUser}
+            onFinish={postCustomer}
         >
             <Form.Item
                 label="Name"
