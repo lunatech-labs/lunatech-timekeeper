@@ -1,11 +1,9 @@
 import React from 'react'
 import {Button, Form, Input } from 'antd'
-import {useAxios} from "../../../utils/hooks";
 
 const { TextArea } = Input;
 
-const NewCustomer = ({ }) => {
-    const axiosInstance = useAxios('http://localhost:8080');
+const NewCustomer = ({axiosInstance}) => {
 
     const postCustomer = values => {
         axiosInstance.post('/api/customers', {
