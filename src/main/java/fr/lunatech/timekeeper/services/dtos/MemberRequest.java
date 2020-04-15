@@ -1,26 +1,21 @@
-package fr.lunatech.timekeeper.dtos;
+package fr.lunatech.timekeeper.services.dtos;
 
 import fr.lunatech.timekeeper.models.Role;
 
+import javax.json.bind.annotation.JsonbCreator;
 import javax.validation.constraints.NotNull;
 
-public final class MemberResponse {
+public final class MemberRequest {
 
-    @NotNull
-    private final Long id;
     @NotNull
     private final Long userId;
     @NotNull
     private final Role role;
 
-    public MemberResponse(@NotNull Long id, @NotNull Long userId, @NotNull Role role) {
-        this.id = id;
+    @JsonbCreator
+    public MemberRequest(@NotNull Long userId, @NotNull Role role) {
         this.userId = userId;
         this.role = role;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public Long getUserId() {
