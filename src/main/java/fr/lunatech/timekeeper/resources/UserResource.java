@@ -32,10 +32,7 @@ public class UserResource implements UserResourceApi {
     public UserResponse me() {
         if (identity.getPrincipal() instanceof io.quarkus.oidc.runtime.OidcJwtCallerPrincipal) {
             final var jwtCallerPrincipal = (io.quarkus.oidc.runtime.OidcJwtCallerPrincipal) identity.getPrincipal();
-            //final String name = identity.getPrincipal().getName();
             final String email = jwtCallerPrincipal.getClaims().getClaimValueAsString("email");
-            //final String firstName = jwtCallerPrincipal.getClaims().getClaimValueAsString("given_name");
-            //final String lastName = jwtCallerPrincipal.getClaims().getClaimValueAsString("family_name");
             return userService.findUserByEmail(email).orElseThrow(() -> new NotAuthorizedException("invalid_client"));
         } else {
             throw new NotAuthorizedException("invalid_token");
