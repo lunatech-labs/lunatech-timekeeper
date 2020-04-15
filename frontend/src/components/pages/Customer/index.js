@@ -1,21 +1,42 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import { useLocation } from "react-router-dom";
 import CustomerList from './CustomerList';
 import logo from '../../../logo_timekeeper_homepage.png';
 import CustomerDetails from "./CustomerDetails";
 import MainContainer from "../../container/MainContainer";
 import NewCustomer from "./NewCustomer";
+import {useAxios} from "../../../utils/hooks";
 
 const list = [{"id": 1, "name": "Paul"}, {"id": 2, "name": "Nicolas"},
     {"id":3, "name": "Marie"}, {"id": 4, "name": "Stephan"}, {"id": 5, "name": "Camille"}];
 
+
 const CustomersPage = ({ }) => {
+    const [customers, setCustomers] = useState([]);
+    const apiEndpoint = useAxios('http://localhost:8080');
     const { pathname } = useLocation();
     const selectedCustomer = pathname.split('/').length > 2
         ? pathname.split('/')[2] === 'new'
             ? 'new'
             : list.find(c => c.id = pathname.split('/')[2])
         : null;
+    useEffect(() => {
+        if(!apiEndpoint) {
+            return;
+        }
+        const getCustomerList = () => {
+            const fetchData = async () => {
+                const result = await apiEndpoint.get('/api/customers');
+                setCustomers(result.data);
+            };
+            fetchData();
+        };
+
+        if(!selectedCustomer) {
+            getCustomerList();
+        }
+        return () => setCustomers([]);
+    }, [apiEndpoint, selectedCustomer]);
 
     return (
         selectedCustomer
@@ -32,7 +53,7 @@ const CustomersPage = ({ }) => {
                 )
             : (
                 <MainContainer title="All customers">
-                    <CustomerList list={list} logo={logo}/>
+                    <CustomerList list={customers} logo={logo}/>
                 </MainContainer>
             )
     )
