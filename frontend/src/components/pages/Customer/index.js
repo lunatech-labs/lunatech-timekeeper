@@ -11,6 +11,21 @@ const list = [{"id": 1, "name": "Paul"}, {"id": 2, "name": "Nicolas"},
     {"id":3, "name": "Marie"}, {"id": 4, "name": "Stephan"}, {"id": 5, "name": "Camille"}];
 
 
+const getCustomerList = (axios, setState) => {
+    const fetchData = async () => {
+        const result = await axios.get('/api/customers');
+        setState(result.data);
+    };
+    fetchData();
+};
+const getActivityList = (axios, setState) => {
+    const fetchData = async () => {
+        const result = await axios.get('/api/activities');
+        setState(result.data);
+    };
+    fetchData();
+};
+
 const CustomersPage = ({ }) => {
     const [customers, setCustomers] = useState([]);
     const [activities, setActivities] = useState([]);
@@ -21,28 +36,15 @@ const CustomersPage = ({ }) => {
             ? 'new'
             : list.find(c => c.id = pathname.split('/')[2])
         : null;
-    const getCustomerList = () => {
-        const fetchData = async () => {
-            const result = await apiEndpoint.get('/api/customers');
-            setCustomers(result.data);
-        };
-        fetchData();
-    };
-    const getActivities = () => {
-        const fetchData = async () => {
-            const result = await apiEndpoint.get('/api/activities');
-            setActivities(result.data);
-        };
-        fetchData();
-    };
+
     useEffect(() => {
         if(!apiEndpoint) {
             return;
         }
 
         if(!selectedCustomer) {
-            getCustomerList();
-            getActivities();
+            getCustomerList(apiEndpoint,l => setCustomers(l));
+            getActivityList(apiEndpoint,l => setActivities(l));
         }
         return () => {
             setCustomers([]);
