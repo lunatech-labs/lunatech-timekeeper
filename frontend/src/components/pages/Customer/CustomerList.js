@@ -8,7 +8,7 @@ import './Customer.scss'
 
 const CustomerList = ({list, logo, activities}) => {
     const activitiesIdToActivities = (activitiesId) => {
-        return activities.filter(activity => activitiesId.includes(activity.id)).map(activity => activity.name);
+        return activities.filter(activity => activitiesId.includes(activity.id));
     };
     return (
         <React.Fragment>
@@ -40,7 +40,7 @@ const CustomerList = ({list, logo, activities}) => {
                             title={item.name}
                             description={item.description}
                         />
-                        <div>{activitiesIdToActivities(item.activitiesId).join(" | ")}</div>
+                        <div>{activitiesIdToActivities(item.activitiesId).map(activity => activity.name).join(" | ")}</div>
                     </List.Item>
                 )}
             />
