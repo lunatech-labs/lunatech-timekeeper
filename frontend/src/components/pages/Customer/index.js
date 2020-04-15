@@ -13,6 +13,7 @@ const list = [{"id": 1, "name": "Paul"}, {"id": 2, "name": "Nicolas"},
 
 const CustomersPage = ({ }) => {
     const [customers, setCustomers] = useState([]);
+    const [activities, setActivities] = useState([]);
     const apiEndpoint = useAxios('http://localhost:8080');
     const { pathname } = useLocation();
     const selectedCustomer = pathname.split('/').length > 2
@@ -20,22 +21,33 @@ const CustomersPage = ({ }) => {
             ? 'new'
             : list.find(c => c.id = pathname.split('/')[2])
         : null;
+    const getCustomerList = () => {
+        const fetchData = async () => {
+            const result = await apiEndpoint.get('/api/customers');
+            setCustomers(result.data);
+        };
+        fetchData();
+    };
+    const getActivities = () => {
+        const fetchData = async () => {
+            const result = await apiEndpoint.get('/api/activities');
+            setActivities(result.data);
+        };
+        fetchData();
+    };
     useEffect(() => {
         if(!apiEndpoint) {
             return;
         }
-        const getCustomerList = () => {
-            const fetchData = async () => {
-                const result = await apiEndpoint.get('/api/customers');
-                setCustomers(result.data);
-            };
-            fetchData();
-        };
 
         if(!selectedCustomer) {
             getCustomerList();
+            getActivities();
         }
-        return () => setCustomers([]);
+        return () => {
+            setCustomers([]);
+            setActivities([]);
+        }
     }, [apiEndpoint, selectedCustomer]);
 
     return (
@@ -53,7 +65,7 @@ const CustomersPage = ({ }) => {
                 )
             : (
                 <MainContainer title="All customers">
-                    <CustomerList list={customers} logo={logo}/>
+                    <CustomerList list={customers} logo={logo} activities={activities}/>
                 </MainContainer>
             )
     )
