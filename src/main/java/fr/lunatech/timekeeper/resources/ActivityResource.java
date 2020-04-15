@@ -7,7 +7,8 @@ import fr.lunatech.timekeeper.services.interfaces.ActivityService;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.ws.rs.*;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
