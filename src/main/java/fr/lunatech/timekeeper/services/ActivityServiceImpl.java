@@ -37,7 +37,7 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public Long createActivity(ActivityRequest request) {
         final var activity = bind(request);
-        Activity.persist(request);
+        Activity.persist(activity);
         return activity.id;
     }
 
