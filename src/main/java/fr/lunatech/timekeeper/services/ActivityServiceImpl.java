@@ -26,9 +26,15 @@ public class ActivityServiceImpl implements ActivityService {
     @Transactional
     @Override
     public Long createActivity(ActivityRequest request) {
-        final var activity = new Activity();
-        Activity.persist(bind(activity, request));
+        final var activity = bind(request);
+        Activity.persist(request);
         return activity.id;
+    }
+
+    @Transactional
+    @Override
+    public Optional<Long> updateActivity(Long id, ActivityRequest request) {
+        return Activity.<Activity>findByIdOptional(id).map(activity -> bind(activity, request).id);
     }
 
     private ActivityResponse from(Activity activity) {
@@ -48,6 +54,10 @@ public class ActivityServiceImpl implements ActivityService {
         activity.description = request.getDescription();
         activity.customer = getCustomer(request.getCustomerId());
         return activity;
+    }
+
+    private Activity bind(ActivityRequest request) {
+        return bind(new Activity(), request);
     }
 
     private Customer getCustomer(Long customerId) {

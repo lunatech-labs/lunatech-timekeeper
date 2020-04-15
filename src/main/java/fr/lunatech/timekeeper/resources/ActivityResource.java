@@ -4,11 +4,12 @@ import fr.lunatech.timekeeper.dtos.ActivityRequest;
 import fr.lunatech.timekeeper.dtos.ActivityResponse;
 import fr.lunatech.timekeeper.openapi.ActivityResourceApi;
 import fr.lunatech.timekeeper.services.ActivityService;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
@@ -29,5 +30,11 @@ public class ActivityResource implements ActivityResourceApi {
     @Override
     public ActivityResponse getActivity(Long id) {
         return activityService.findActivityById(id).orElseThrow(NotFoundException::new);
+    }
+
+    @Override
+    public Response updateActivity(Long id, @Valid ActivityRequest request) {
+        activityService.updateActivity(id, request).orElseThrow(NotFoundException::new);
+        return Response.noContent().build();
     }
 }

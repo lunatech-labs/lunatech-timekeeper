@@ -19,9 +19,15 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public Long createUser(UserRequest request) {
-        final var user = new User();
-        User.persist(bind(user, request));
+        final var user = bind(request);
+        User.persist(user);
         return user.id;
+    }
+
+    @Transactional
+    @Override
+    public Optional<Long> updateUser(Long id, UserRequest request) {
+        return User.<User>findByIdOptional(id).map(user -> bind(user, request).id);
     }
 
     private UserResponse from(User user) {
@@ -34,5 +40,9 @@ public class UserServiceImpl implements UserService {
         user.email = request.getEmail();
         user.profiles = request.getProfiles();
         return user;
+    }
+
+    private User bind(UserRequest request) {
+        return bind(new User(), request);
     }
 }

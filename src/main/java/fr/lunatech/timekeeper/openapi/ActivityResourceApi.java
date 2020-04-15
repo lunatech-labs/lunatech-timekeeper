@@ -21,4 +21,10 @@ public interface ActivityResourceApi {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     ActivityResponse getActivity(@PathParam("id") Long id);
+
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    Response updateActivity(@PathParam("id") Long id, @RequestBody ActivityRequest request);
+
 }
