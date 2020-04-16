@@ -1,4 +1,4 @@
-package fr.lunatech.timekeeper.dtos;
+package fr.lunatech.timekeeper.services.dtos;
 
 import javax.json.bind.annotation.JsonbCreator;
 import javax.validation.constraints.NotBlank;

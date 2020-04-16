@@ -1,7 +1,7 @@
 package fr.lunatech.timekeeper.services;
 
-import fr.lunatech.timekeeper.dtos.CustomerRequest;
-import fr.lunatech.timekeeper.dtos.CustomerResponse;
+import fr.lunatech.timekeeper.services.dtos.CustomerRequest;
+import fr.lunatech.timekeeper.services.dtos.CustomerResponse;
 import fr.lunatech.timekeeper.models.Customer;
 import fr.lunatech.timekeeper.services.interfaces.CustomerService;
 

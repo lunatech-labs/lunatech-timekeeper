@@ -1,7 +1,7 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.dtos.UserRequest;
-import fr.lunatech.timekeeper.dtos.UserResponse;
+import fr.lunatech.timekeeper.services.dtos.UserRequest;
+import fr.lunatech.timekeeper.services.dtos.UserResponse;
 import fr.lunatech.timekeeper.resources.openapi.UserResourceApi;
 import fr.lunatech.timekeeper.services.interfaces.UserService;
 import io.quarkus.security.identity.SecurityIdentity;
@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.List;
 
 @Path("/api/users")
 public class UserResource implements UserResourceApi {
@@ -28,8 +29,19 @@ public class UserResource implements UserResourceApi {
     @Path("/me")
     @Produces(MediaType.APPLICATION_JSON)
     @NoCache
-    public JwtUser me() {
-        return new JwtUser(identity);
+    public UserResponse me() {
+        if (identity.getPrincipal() instanceof io.quarkus.oidc.runtime.OidcJwtCallerPrincipal) {
+            final var jwtCallerPrincipal = (io.quarkus.oidc.runtime.OidcJwtCallerPrincipal) identity.getPrincipal();
+            final String email = jwtCallerPrincipal.getClaims().getClaimValueAsString("email");
+            return userService.findUserByEmail(email).orElseThrow(() -> new NotAuthorizedException("invalid_client"));
+        } else {
+            throw new NotAuthorizedException("invalid_token");
+        }
+    }
+
+    @Override
+    public List<UserResponse> getAllUsers() {
+        return userService.findAllUsers();
     }
 
     @Override

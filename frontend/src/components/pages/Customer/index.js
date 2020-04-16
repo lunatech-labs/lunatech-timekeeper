@@ -59,6 +59,7 @@ const CustomersPage = ({ }) => {
                 ? (
                     <MainContainer title="Add new customer">
                         <NewCustomer list={customers} logo={logo}/>
+                        <NewCustomer list={list} logo={logo} axiosInstance={axiosInstance}/>
                     </MainContainer>
                 )
                 : (
