@@ -7,8 +7,7 @@ import BtnLogout from "../BtnLogout/BtnLogout";
 
 const { Sider: SidebarLeft } = Layout;
 
-const Sidebar = ({ }) => {
-
+const Sidebar = () => {
     return (
         <SidebarLeft width={200} className="site-layout-background" collapsed={false}>
             <Logo />

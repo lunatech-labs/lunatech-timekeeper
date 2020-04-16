@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import {Button, Menu} from "antd";
+import React  from 'react';
+import { Button } from "antd";
 import './BtnLogout.less';
 import {useKeycloak} from "@react-keycloak/web";
 
-const BtnLogout = ({ }) => {
+const BtnLogout = ( ) => {
     const { keycloak } = useKeycloak();
 
     return (
