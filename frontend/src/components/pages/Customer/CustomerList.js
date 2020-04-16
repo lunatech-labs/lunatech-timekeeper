@@ -24,13 +24,13 @@ const CustomerList = ({customers, logo, activities}) => {
                                 to={`/customers/${item.id}`}
                                 shape="circle"
                                 className="customer-edit-link"
-                                icon={<EditOutlined/>}
+                                icon={<EditOutlined />}
                             />,
                             <LinkButton
                                 to={`/customers/${item.id}`}
                                 shape="circle"
                                 className="customer-more-link"
-                                icon={<MoreOutlined/>}
+                                icon={<MoreOutlined />}
                             />
                         ]}
                     >

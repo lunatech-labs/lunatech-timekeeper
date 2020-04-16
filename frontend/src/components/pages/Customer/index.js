@@ -48,8 +48,8 @@ const CustomersPage = ({ }) => {
         }
 
         if(!selectedCustomer) {
-            getCustomerList(apiEndpoint,customers => setCustomers(customers));
-            getActivityList(apiEndpoint,activities => setActivities(activities));
+            getCustomerList(apiEndpoint, setCustomers);
+            getActivityList(apiEndpoint, setActivities);
         }
     }, [apiEndpoint, selectedCustomer]);
 
