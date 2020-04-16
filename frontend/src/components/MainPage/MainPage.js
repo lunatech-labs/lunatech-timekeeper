@@ -1,13 +1,13 @@
 import React from 'react'
 import { Layout } from "antd";
-import './Container.scss'
-import ContainerSider from "./ContainerSider";
+import './MainPage.scss'
+import SidebarLeft from "../SidebarLeft/SidebarLeft";
 
 const { Header, Content, Footer } = Layout;
 
-const MainContainer = ({ children, title, ...rest }) => (
+const MainPage = ({ children, title, ...rest }) => (
     <Layout>
-        <ContainerSider {...rest} />
+        <SidebarLeft {...rest} />
         <Layout>
             <Header className="header">
                 <p>{title}</p>
@@ -20,4 +20,4 @@ const MainContainer = ({ children, title, ...rest }) => (
     </Layout>
 );
 
-export default MainContainer
+export default MainPage

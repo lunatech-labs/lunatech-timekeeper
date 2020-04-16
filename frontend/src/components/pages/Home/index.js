@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react'
 import { useKeycloak } from '@react-keycloak/web'
 import { useAxios } from '../../../utils/hooks'
 import FakeContent from "./FakeContent";
-import MainContainer from "../../container/MainContainer";
+import MainPage from "../../MainPage/MainPage";
 
 const fake = true;
 
@@ -28,7 +28,7 @@ export default () => {
     }, [axiosInstance]);
 
     return (
-        <MainContainer title="Welcome">
+        <MainPage title="Welcome Geoffroy">
             {fake && (
                 <FakeContent
                     keycloak={keycloak}
@@ -38,6 +38,6 @@ export default () => {
                     loadedUsers={loadedUsers}
                 />
             )}
-        </MainContainer>
+        </MainPage>
     )
 }
