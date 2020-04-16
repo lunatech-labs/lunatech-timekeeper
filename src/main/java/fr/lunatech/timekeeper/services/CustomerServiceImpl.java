@@ -1,72 +1,62 @@
 package fr.lunatech.timekeeper.services;
 
-import fr.lunatech.timekeeper.model.Activity;
-import fr.lunatech.timekeeper.model.Customer;
-import fr.lunatech.timekeeper.services.dto.CustomerDto;
+import fr.lunatech.timekeeper.services.dtos.CustomerRequest;
+import fr.lunatech.timekeeper.services.dtos.CustomerResponse;
+import fr.lunatech.timekeeper.models.Customer;
+import fr.lunatech.timekeeper.services.interfaces.CustomerService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ApplicationScoped
 public class CustomerServiceImpl implements CustomerService {
 
-    @Transactional
-    public long addCustomer(CustomerDto customerDto) {
-        Customer customer = from(customerDto);
+    @Override
+    public Optional<CustomerResponse> findCustomerById(Long id) {
+        return Customer.<Customer>findByIdOptional(id).map(this::response);
+    }
 
+    @Override
+    public List<CustomerResponse> listAllCustomers() {
+        try (final Stream<Customer> customers = Customer.streamAll()) {
+            return customers.map(this::response).collect(Collectors.toList());
+        }
+    }
+
+    @Transactional
+    @Override
+    public Long createCustomer(CustomerRequest request) {
+        final var customer = bind(request);
         Customer.persist(customer);
         return customer.id;
     }
 
     @Transactional
-    public Optional<Long> updateCustomer(long id, CustomerDto customerDto) {
-        return getCustomerById(id).map(customerDtoToModify -> {
-            Customer customerToModify = from(customerDtoToModify);
-            Customer.update(
-                    "name=?1, description=?2 where id=?3",
-                    from(customerDto).name,
-                    from(customerDto).description,
-                    customerToModify.id
-            );
-            return customerToModify.id;
-        });
-    }
-
     @Override
-    public Optional<CustomerDto> getCustomerById(long id) {
-        Optional<Customer> customerOptional = Customer.findByIdOptional(id);
-        return customerOptional.map(this::from);
+    public Optional<Long> updateCustomer(Long id, CustomerRequest request) {
+        return Customer.<Customer>findByIdOptional(id).map(customer -> bind(customer, request).id);
     }
 
-    @Override
-    public List<CustomerDto> getAllCustomers() {
-        List<Customer> customers = Customer.listAll();
-        return customers.stream().map(this::from).collect(Collectors.toList());
+    private CustomerResponse response(Customer customer) {
+        return new CustomerResponse(
+                customer.id,
+                customer.name,
+                customer.description,
+                customer.activities.stream().map(a -> a.id).collect(Collectors.toList())
+        );
     }
 
-    private CustomerDto from(Customer customer) {
-        return new CustomerDto(
-                Optional.of(customer.id), customer.name, customer.description, customer.activities.stream().map(a -> a.id).collect(Collectors.toList()));
-    }
-
-    private Customer from(CustomerDto customerDto) {
-        Customer customer = new Customer();
-
-        List<Activity> activities = customerDto.getActivitiesId().stream().map(activityId -> {
-            Optional<Activity> a = Activity.findByIdOptional(activityId);
-            return a.orElseThrow(() -> new IllegalStateException("One activity's id doesn't match in database"));
-        }).collect(Collectors.toList());
-
-        customerDto.getId().map(v -> customer.id = v);
-        customer.name = customerDto.getName();
-        customer.description = customerDto.getDescription();
-        customer.activities = activities;
-
+    private Customer bind(Customer customer, CustomerRequest request) {
+        customer.name = request.getName();
+        customer.description = request.getDescription();
         return customer;
+    }
+
+    private Customer bind(CustomerRequest request) {
+        return bind(new Customer(), request);
     }
 }

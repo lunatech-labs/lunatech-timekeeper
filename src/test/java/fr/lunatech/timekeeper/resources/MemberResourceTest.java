@@ -9,9 +9,13 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-import javax.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.given;
+import static javax.ws.rs.core.HttpHeaders.ACCEPT;
+import static javax.ws.rs.core.HttpHeaders.LOCATION;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.Response.Status.*;
+import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
@@ -23,49 +27,285 @@ class MemberResourceTest {
     Flyway flyway;
 
     @AfterEach
-    public void cleanDB() {
+    void cleanDB() {
         flyway.clean();
         flyway.migrate();
     }
 
     @Test
-    public void testPosMemberResourcesEndpoint() {
+    void shouldAddMemberToActivity() {
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\", \"profiles\":[\"Admin\"]}")
+                .post("/api/users")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/users/1"));
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"firstname\":\"Sam\",\"lastname\":\"Huel\",\"email\":\"sam@gmail.com\", \"profile\":\"Admin\"}").post("/api/tkusers")
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .post("/api/customers")
                 .then()
-                .statusCode(200).body(is("1"));
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/customers/2"));
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"role\":\"Developer\", \"userId\":1}").post("/api/members")
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":2, \"members\":[]}")
+                .post("/api/activities")
                 .then()
-                .statusCode(200).body(is("2"));
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/activities/3"));
 
         given()
-                .when().get("/api/members/2")
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"role\":\"Developer\", \"userId\":1}")
+                .post("/api/activities/3/members")
                 .then()
-                .statusCode(200)
-                .body(is("{\"id\":2,\"role\":\"Developer\",\"userId\":1}"));
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/activities/3/members/4"));
+
+        given()
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/activities/3/members/4")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .body(is("{\"id\":4,\"role\":\"Developer\",\"userId\":1}"));
+    }
+
+
+    @Test
+    void shouldFindAllMembers() {
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\", \"profiles\":[\"Admin\"]}")
+                .post("/api/users")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/users/1"));
+
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .post("/api/customers")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/customers/2"));
+
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":2, \"members\":[]}")
+                .post("/api/activities")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/activities/3"));
+
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"role\":\"Developer\", \"userId\":1}")
+                .post("/api/activities/3/members")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/activities/3/members/4"));
+
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"role\":\"Developer\", \"userId\":1}")
+                .post("/api/activities/3/members")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/activities/3/members/5"));
+
+        given()
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/activities/3/members")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .body(is("[{\"id\":4,\"role\":\"Developer\",\"userId\":1},{\"id\":5,\"role\":\"Developer\",\"userId\":1}]"));
     }
 
     @Test
-    public void testPosMemberResourcesWithWrongUserIdEndpoint() {
+    void shouldFindAllMembersEmpty() {
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\", \"profiles\":[\"Admin\"]}")
+                .post("/api/users")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/users/1"));
 
         given()
-                .when().contentType(MediaType.APPLICATION_JSON).body("{\"role\":\"Developer\", \"userId\":12}").post("/api/members")
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .post("/api/customers")
                 .then()
-                .statusCode(400);
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/customers/2"));
+
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":2, \"members\":[]}")
+                .post("/api/activities")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/activities/3"));
+
+        given()
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/activities/3/members")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .body(is("[]"));
     }
 
     @Test
-    public void testGetUnExistedMemberResourceEndpoint() {
+    void shouldNotAddMemberToActivityWithUnknownUser() {
         given()
-                .when().get("/api/members/4")
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"role\":\"Developer\", \"userId\":12}")
+                .post("/api/members")
                 .then()
-                .statusCode(404);
-
-
+                .statusCode(NOT_FOUND.getStatusCode());
     }
 
+    @Test
+    void shouldNotFindUnknownMember() {
+        given()
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/members/4")
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode());
+    }
 
+    @Test
+    void shouldModifyMember() {
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\", \"profiles\":[\"Admin\"]}")
+                .post("/api/users")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/users/1"));
+
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .post("/api/customers")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/customers/2"));
+
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":2, \"members\":[]}")
+                .post("/api/activities")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/activities/3"));
+
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"role\":\"Developer\", \"userId\":1}")
+                .post("/api/activities/3/members")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/activities/3/members/4"));
+
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"role\":\"TeamLeader\"}")
+                .put("/api/activities/3/members/4")
+                .then()
+                .statusCode(NO_CONTENT.getStatusCode());
+
+        given()
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/activities/3/members/4")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .body(is("{\"id\":4,\"role\":\"TeamLeader\",\"userId\":1}"));
+    }
+
+    @Test
+    void shouldRemoveMember() {
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\", \"profiles\":[\"Admin\"]}")
+                .post("/api/users")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/users/1"));
+
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .post("/api/customers")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/customers/2"));
+
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":2, \"members\":[]}")
+                .post("/api/activities")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/activities/3"));
+
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"role\":\"Developer\", \"userId\":1}")
+                .post("/api/activities/3/members")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/activities/3/members/4"));
+
+        given()
+                .when()
+                .delete("/api/activities/3/members/4")
+                .then()
+                .statusCode(NO_CONTENT.getStatusCode());
+
+        given()
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/activities/3/members/4")
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode());
+
+        //idempotent?
+        given()
+                .when()
+                .delete("/api/activities/3/members/4")
+                .then()
+                .statusCode(NO_CONTENT.getStatusCode());
+    }
 }

@@ -1,24 +1,26 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.openapi.UserResourceApi;
+import fr.lunatech.timekeeper.services.dtos.UserRequest;
+import fr.lunatech.timekeeper.services.dtos.UserResponse;
+import fr.lunatech.timekeeper.resources.openapi.UserResourceApi;
+import fr.lunatech.timekeeper.services.interfaces.UserService;
 import io.quarkus.security.identity.SecurityIdentity;
 import org.jboss.resteasy.annotations.cache.NoCache;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.validation.Valid;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
+import java.util.List;
 
-/**
- * This resource is used by the react front-end to retrive the current authenticated user.
- * React contacts Quarkus with a JWT token. Quarkus checks with Keycloak, extract the user from the JWT Token and
- * returns the User as a JSON object to React.
- *
- * @author Nicolas Martignole
- */
 @Path("/api/users")
 public class UserResource implements UserResourceApi {
+
+    @Inject
+    UserService userService;
 
     @Inject
     SecurityIdentity identity;
@@ -27,8 +29,36 @@ public class UserResource implements UserResourceApi {
     @Path("/me")
     @Produces(MediaType.APPLICATION_JSON)
     @NoCache
-    public JwtUser me() {
-        return new JwtUser(identity);
+    public UserResponse me() {
+        if (identity.getPrincipal() instanceof io.quarkus.oidc.runtime.OidcJwtCallerPrincipal) {
+            final var jwtCallerPrincipal = (io.quarkus.oidc.runtime.OidcJwtCallerPrincipal) identity.getPrincipal();
+            final String email = jwtCallerPrincipal.getClaims().getClaimValueAsString("email");
+            return userService.findUserByEmail(email).orElseThrow(() -> new NotAuthorizedException("invalid_client"));
+        } else {
+            throw new NotAuthorizedException("invalid_token");
+        }
     }
 
+    @Override
+    public List<UserResponse> getAllUsers() {
+        return userService.findAllUsers();
+    }
+
+    @Override
+    public Response createUser(@Valid UserRequest request, UriInfo uriInfo) {
+        final Long userId = userService.createUser(request);
+        final URI uri = uriInfo.getAbsolutePathBuilder().path(userId.toString()).build();
+        return Response.created(uri).build();
+    }
+
+    @Override
+    public UserResponse getUser(Long id) {
+        return userService.findUserById(id).orElseThrow(NotFoundException::new);
+    }
+
+    @Override
+    public Response updateUser(Long id, @Valid UserRequest request) {
+        userService.updateUser(id, request).orElseThrow(NotFoundException::new);
+        return Response.noContent().build();
+    }
 }
