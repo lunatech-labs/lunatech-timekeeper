@@ -21,6 +21,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<UserResponse> findUserByEmail(String email) {
+        return User.<User>find("email", email).firstResultOptional().map(this::from);
+    }
+
+    @Override
     public List<UserResponse> findAllUsers() {
         try (final Stream<User> users = User.streamAll()) {
             return users.map(this::from).collect(Collectors.toList());
@@ -39,6 +44,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<Long> updateUser(Long id, UserRequest request) {
         return User.<User>findByIdOptional(id).map(user -> bind(user, request).id);
+    }
+
+    @Override
+    public Long count() {
+        return User.count();
     }
 
     private UserResponse from(User user) {

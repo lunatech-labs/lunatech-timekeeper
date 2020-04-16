@@ -29,8 +29,14 @@ public class UserResource implements UserResourceApi {
     @Path("/me")
     @Produces(MediaType.APPLICATION_JSON)
     @NoCache
-    public JwtUser me() {
-        return new JwtUser(identity);
+    public UserResponse me() {
+        if (identity.getPrincipal() instanceof io.quarkus.oidc.runtime.OidcJwtCallerPrincipal) {
+            final var jwtCallerPrincipal = (io.quarkus.oidc.runtime.OidcJwtCallerPrincipal) identity.getPrincipal();
+            final String email = jwtCallerPrincipal.getClaims().getClaimValueAsString("email");
+            return userService.findUserByEmail(email).orElseThrow(() -> new NotAuthorizedException("invalid_client"));
+        } else {
+            throw new NotAuthorizedException("invalid_token");
+        }
     }
 
     @Override
