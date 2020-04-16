@@ -21,7 +21,7 @@ export const AppRouter = () => {
             <Switch>
                 <PrivateRoute exact path="/home" component={HomePage} />
                 <Route path="/login" component={LoginPage} />
-                <Route path="/customers" component={CustomersPage} />
+                <PrivateRoute path="/customers" component={CustomersPage} />
                 <Redirect from="/" to="/home" />
             </Switch>
         </Router>
