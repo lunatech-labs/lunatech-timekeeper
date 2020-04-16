@@ -1,19 +1,22 @@
-import React, { Component } from 'react';
-import {Link} from "react-router-dom";
+import React, {Component} from 'react';
+import {Link, withRouter} from "react-router-dom";
 import {Menu} from "antd";
 import './MenuSidebar.less';
+import PropTypes from "prop-types";
 
-import {DesktopOutlined, PieChartOutlined, TeamOutlined, UserOutlined} from "@ant-design/icons";
-import LinkButton from "../atoms/LinkButton";
-
-const { SubMenu } = Menu;
+import {DesktopOutlined, PieChartOutlined} from "@ant-design/icons";
 
 class MenuSidebar extends Component {
+    static propTypes = {
+        location: PropTypes.object.isRequired,
+    };
+
     render() {
+        const {location} = this.props;
         return (
-            <Menu defaultSelectedKeys={['1']} mode="inline">
-                <Menu.Item key="1">
-                    <PieChartOutlined />
+            <Menu defaultSelectedKeys={['/home']} mode="inline" selectedKeys={[location.pathname]}>
+                <Menu.Item key="/home">
+                    <PieChartOutlined/>
                     <Link
                         to="/home"
                         className="sider-link"
@@ -23,45 +26,20 @@ class MenuSidebar extends Component {
                         Home
                     </Link>
                 </Menu.Item>
-                <Menu.Item key="2">
-                    <DesktopOutlined />
-                    <LinkButton
+                <Menu.Item key="/customers">
+                    <DesktopOutlined/>
+                    <Link
                         to="/customers"
                         className="sider-link"
                         type="link"
                         ghost
                     >
                         Customers
-                    </LinkButton>
+                    </Link>
                 </Menu.Item>
-                <SubMenu
-                    key="sub1"
-                    title={
-                        <span>
-                            <UserOutlined />
-                            <span>User</span>
-                        </span>
-                    }
-                >
-                    <Menu.Item key="3">Tom</Menu.Item>
-                    <Menu.Item key="4">Bill</Menu.Item>
-                    <Menu.Item key="5">Alex</Menu.Item>
-                </SubMenu>
-                <SubMenu
-                    key="sub2"
-                    title={
-                        <span>
-                            <TeamOutlined />
-                            <span>Team</span>
-                        </span>
-                    }
-                >
-                    <Menu.Item key="6">Team 1</Menu.Item>
-                    <Menu.Item key="8">Team 2</Menu.Item>
-                </SubMenu>
             </Menu>
         )
     }
 }
 
-export default MenuSidebar;
+export default withRouter(MenuSidebar);

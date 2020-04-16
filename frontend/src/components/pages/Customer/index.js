@@ -35,7 +35,7 @@ const selectCustomer = (pathname, customers) => {
     }
 };
 
-const CustomersPage = ({ }) => {
+const CustomersPage = () => {
     const [customers, setCustomers] = useState([]);
     const [activities, setActivities] = useState([]);
     const apiEndpoint = useAxios('http://localhost:8080');
