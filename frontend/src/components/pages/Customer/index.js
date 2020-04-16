@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import { useLocation } from "react-router-dom";
 import CustomerList from './CustomerList';
 import logo from '../../../logo_timekeeper_homepage.png';
@@ -7,24 +7,58 @@ import MainPage from "../../MainPage/MainPage";
 import NewCustomer from "./NewCustomer";
 import {useAxios} from "../../../utils/hooks";
 
-const list = [{"id": 1, "name": "Paul"}, {"id": 2, "name": "Nicolas"},
-    {"id":3, "name": "Marie"}, {"id": 4, "name": "Stephan"}, {"id": 5, "name": "Camille"}];
+const getCustomerList = (axios, setState) => {
+    const fetchData = async () => {
+        const result = await axios.get('/api/customers');
+        setState(result.data);
+    };
+    fetchData();
+};
+const getActivityList = (axios, setState) => {
+    const fetchData = async () => {
+        const result = await axios.get('/api/activities');
+        setState(result.data);
+    };
+    fetchData();
+};
+
+const selectCustomer = (pathname, customers) => {
+    const splitPathname = pathname.split('/');
+    if(splitPathname.length > 2) {
+        if(splitPathname[2] === 'new') {
+            return 'new';
+        } else {
+            return customers.find(c => c.id = splitPathname[2]);
+        }
+    } else {
+        return null;
+    }
+};
 
 const CustomersPage = ({ }) => {
-    const axiosInstance = useAxios('http://localhost:8080');
+    const [customers, setCustomers] = useState([]);
+    const [activities, setActivities] = useState([]);
+    const apiEndpoint = useAxios('http://localhost:8080');
     const { pathname } = useLocation();
-    const selectedCustomer = pathname.split('/').length > 2
-        ? pathname.split('/')[2] === 'new'
-            ? 'new'
-            : list.find(c => c.id = pathname.split('/')[2])
-        : null;
+    const selectedCustomer = selectCustomer(pathname, customers);
+
+    useEffect(() => {
+        if(!apiEndpoint) {
+            return;
+        }
+
+        if(!selectedCustomer) {
+            getCustomerList(apiEndpoint, setCustomers);
+            getActivityList(apiEndpoint, setActivities);
+        }
+    }, [apiEndpoint, selectedCustomer]);
 
     return (
         selectedCustomer
             ? selectedCustomer === 'new'
                 ? (
                     <MainPage title="Add new customer">
-                        <NewCustomer list={list} logo={logo}/>
+                        <NewCustomer list={customers} logo={logo} axiosInstance={apiEndpoint}/>
                     </MainPage>
                 )
                 : (
@@ -34,7 +68,7 @@ const CustomersPage = ({ }) => {
                 )
             : (
                 <MainPage title="All customers">
-                    <CustomerList list={list} logo={logo}/>
+                    <CustomerList customers={customers} logo={logo} activities={activities}/>
                 </MainPage>
             )
     )
