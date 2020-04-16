@@ -6,16 +6,17 @@ import LinkButton from "../../atoms/LinkButton";
 
 import './Customer.scss'
 
-const CustomerList = ({list, logo, activities}) => {
+const CustomerList = ({customers, logo, activities}) => {
     const activitiesIdToActivities = (activitiesId) => {
         return activities.filter(activity => activitiesId.includes(activity.id));
     };
+    const renderActivities = (activitiesId) => activitiesIdToActivities(activitiesId).map(activity => activity.name).join(" | ");
     return (
         <React.Fragment>
             <List
                 className="customer-list"
                 itemLayout="horizontal"
-                dataSource={list}
+                dataSource={customers}
                 renderItem={item => (
                     <List.Item
                         actions={[
@@ -40,7 +41,7 @@ const CustomerList = ({list, logo, activities}) => {
                             title={item.name}
                             description={item.description}
                         />
-                        <div>{activitiesIdToActivities(item.activitiesId).map(activity => activity.name).join(" | ")}</div>
+                        <div>{renderActivities(item.activitiesId)}</div>
                     </List.Item>
                 )}
             />
@@ -52,7 +53,7 @@ const CustomerList = ({list, logo, activities}) => {
 };
 
 CustomerList.propTypes = {
-    list: PropTypes.arrayOf(
+    customers: PropTypes.arrayOf(
         PropTypes.shape({
             id: PropTypes.number,
             name: PropTypes.string,
