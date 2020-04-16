@@ -62,7 +62,7 @@ create table public.members (
 	id int8 NOT null
 	    constraint members_pkey
 	        primary key,
-	"role" int4 null,
+	role int4,
 	user_id int8 not null
 	    constraint fk_members_user_id
 	        references users,
