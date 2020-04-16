@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react'
 import { useLocation } from "react-router-dom";
 import CustomerList from './CustomerList';
 import logo from '../../../logo_timekeeper_homepage.png';
-import CustomerDetails from "./CustomerDetails";
 import MainPage from "../../MainPage/MainPage";
 import NewCustomer from "./NewCustomer";
+import UpdateCustomer from "./UpdateCustomer";
 import {useAxios} from "../../../utils/hooks";
 
 const getCustomerList = (axios, setState) => {
@@ -24,11 +24,11 @@ const getActivityList = (axios, setState) => {
 
 const selectCustomer = (pathname, customers) => {
     const splitPathname = pathname.split('/');
-    if(splitPathname.length > 2) {
+    if(splitPathname && splitPathname.length > 2) {
         if(splitPathname[2] === 'new') {
             return 'new';
         } else {
-            return customers.find(c => c.id = splitPathname[2]);
+            return customers.find(c => c.id.toString() === splitPathname[2]);
         }
     } else {
         return null;
@@ -62,8 +62,8 @@ const CustomersPage = ({ }) => {
                     </MainPage>
                 )
                 : (
-                    <MainPage title={`About ${selectedCustomer.name}`}>
-                        <CustomerDetails customer={selectedCustomer}/>
+                    <MainPage title={`Edit ${selectedCustomer.name}`}>
+                        <UpdateCustomer customer={selectedCustomer} axiosInstance={apiEndpoint} />
                     </MainPage>
                 )
             : (
