@@ -19,11 +19,6 @@ const FakeContent = ({ keycloak, callApi, loadedUsers, componentSize, onFormLayo
 
             <div className="userPanel">User is {!keycloak.authenticated ? 'NOT ' : ''} authenticated</div>
 
-            {!!keycloak.authenticated && (
-                <Button onClick={() => keycloak.logout()} className="btn logout">
-                    Logout
-                </Button>
-            )}
 
             <Button onClick={callApi} className="btn load">
                 Load user profile

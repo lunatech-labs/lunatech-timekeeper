@@ -1,21 +1,21 @@
 import React from 'react'
 import {Layout} from "antd";
-import './Container.scss'
+import './SidebarLeft.scss'
 import Logo from "../Logo/Logo";
 import MenuSidebar from "../MenuSidebar/MenuSidebar";
 import BtnLogout from "../BtnLogout/BtnLogout";
 
-const { Sider } = Layout;
+const { Sider: SidebarLeft } = Layout;
 
-const ContainerSider = ({ }) => {
+const Sidebar = ({ }) => {
 
     return (
-        <Sider width={200} className="site-layout-background" collapsed={false}>
+        <SidebarLeft width={200} className="site-layout-background" collapsed={false}>
             <Logo />
             <MenuSidebar/>
             <BtnLogout/>
-        </Sider>
+        </SidebarLeft>
     )
 };
 
-export default ContainerSider
+export default Sidebar
