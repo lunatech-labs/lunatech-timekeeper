@@ -1,68 +1,77 @@
 package fr.lunatech.timekeeper.services;
 
-import fr.lunatech.timekeeper.model.Activity;
-import fr.lunatech.timekeeper.model.Customer;
-import fr.lunatech.timekeeper.model.Member;
-import fr.lunatech.timekeeper.services.dto.ActivityDto;
-import fr.lunatech.timekeeper.services.exception.IllegalEntityStateException;
+import fr.lunatech.timekeeper.services.dtos.ActivityRequest;
+import fr.lunatech.timekeeper.services.dtos.ActivityResponse;
+import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
+import fr.lunatech.timekeeper.models.Activity;
+import fr.lunatech.timekeeper.models.Customer;
+import fr.lunatech.timekeeper.services.interfaces.ActivityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ApplicationScoped
 public class ActivityServiceImpl implements ActivityService {
 
     private static Logger logger = LoggerFactory.getLogger(ActivityServiceImpl.class);
 
-    @Inject
-    CustomerService customerService;
+    @Override
+    public Optional<ActivityResponse> findActivityById(Long id) {
+        return Activity.<Activity>findByIdOptional(id).map(this::from);
+    }
+
+    @Override
+    public List<ActivityResponse> listAllActivities() {
+        try (final Stream<Activity> activities = Activity.streamAll()) {
+            return activities.map(this::from).collect(Collectors.toList());
+        }
+    }
 
     @Transactional
     @Override
-    public long addActivity(ActivityDto activityDto) {
-        Activity act = from(activityDto);
-        Activity.persist(act);
-        return act.id;
+    public Long createActivity(ActivityRequest request) {
+        final var activity = bind(request);
+        Activity.persist(activity);
+        return activity.id;
     }
 
+    @Transactional
     @Override
-    public Optional<ActivityDto> getActivityById(long id) {
-
-        Optional<Activity> activity = Activity.findByIdOptional(id);
-
-        return activity.map(this::from);
+    public Optional<Long> updateActivity(Long id, ActivityRequest request) {
+        return Activity.<Activity>findByIdOptional(id).map(activity -> bind(activity, request).id);
     }
 
-    private ActivityDto from(Activity activity) {
-        return new ActivityDto(
-                Optional.of(activity.id), activity.name, activity.billale, activity.description, activity.customer.id, activity.members.stream().map(m -> m.id).collect(Collectors.toList()));
+    private ActivityResponse from(Activity activity) {
+        return new ActivityResponse(
+                activity.id,
+                activity.name,
+                activity.billable,
+                activity.description,
+                activity.customer.id,
+                activity.members.stream().map(m -> m.id).collect(Collectors.toList())
+        );
     }
 
-    private Activity from(ActivityDto activityDto) {
-        final Activity activity = new Activity();
-
-        activityDto.getId().map(v -> activity.id = v);
-        activity.name = activityDto.getName();
-        activity.billale = activityDto.getBillale();
-
-        Optional<Customer> c = Customer.findByIdOptional(activityDto.getCustomerId());
-
-        activity.customer = c.orElseThrow(() -> new IllegalEntityStateException("One Customer is required for activity " + activity.id + " activity name " + activityDto.getName()));
-
-        List<Member> members = activityDto.getMembers().stream().map(memberId -> {
-                    Optional<Member> m = Member.findByIdOptional(memberId);
-                    return m.orElseThrow(() -> new IllegalEntityStateException("MemberId : " + memberId + " doesn't corresponding to any member"));
-                }
-        ).collect(Collectors.toList());
-
-        activity.members = members;
-
+    private Activity bind(Activity activity, ActivityRequest request) {
+        activity.name = request.getName();
+        activity.billable = request.isBillable();
+        activity.description = request.getDescription();
+        activity.customer = getCustomer(request.getCustomerId());
         return activity;
+    }
+
+    private Activity bind(ActivityRequest request) {
+        return bind(new Activity(), request);
+    }
+
+    private Customer getCustomer(Long customerId) {
+        return Customer.<Customer>findByIdOptional(customerId)
+                .orElseThrow(() -> new IllegalEntityStateException(String.format("One Customer is required for an activity. customerId=%d", customerId)));
     }
 }
