@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import CustomerList from './CustomerList';
 import logo from '../../../logo_timekeeper_homepage.png';
 import CustomerDetails from "./CustomerDetails";
-import MainContainer from "../../container/MainContainer";
+import MainPage from "../../MainPage/MainPage";
 import NewCustomer from "./NewCustomer";
 import {useAxios} from "../../../utils/hooks";
 
@@ -57,19 +57,19 @@ const CustomersPage = ({ }) => {
         selectedCustomer
             ? selectedCustomer === 'new'
                 ? (
-                    <MainContainer title="Add new customer">
+                    <MainPage title="Add new customer">
                         <NewCustomer list={customers} logo={logo} axiosInstance={apiEndpoint}/>
-                    </MainContainer>
+                    </MainPage>
                 )
                 : (
-                    <MainContainer title={`About ${selectedCustomer.name}`}>
+                    <MainPage title={`About ${selectedCustomer.name}`}>
                         <CustomerDetails customer={selectedCustomer}/>
-                    </MainContainer>
+                    </MainPage>
                 )
             : (
-                <MainContainer title="All customers">
+                <MainPage title="All customers">
                     <CustomerList customers={customers} logo={logo} activities={activities}/>
-                </MainContainer>
+                </MainPage>
             )
     )
 };

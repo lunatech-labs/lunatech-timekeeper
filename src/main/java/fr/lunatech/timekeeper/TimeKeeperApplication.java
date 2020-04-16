@@ -21,7 +21,9 @@ import javax.ws.rs.core.Application;
         },
         externalDocs = @ExternalDocumentation(url = "https://lunatech.atlassian.net/wiki/spaces/INTRANET/pages/1609695253/Timekeeper", description = "Lunatech doc about TimeKeeper on Confluence")
 )
-// See documentation https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations
+/**
+ * See documentation https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations
+ */
 public class TimeKeeperApplication extends Application {
 
 }
