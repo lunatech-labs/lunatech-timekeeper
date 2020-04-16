@@ -5,17 +5,17 @@ import Logo from "../Logo/Logo";
 import MenuSidebar from "../MenuSidebar/MenuSidebar";
 import BtnLogout from "../BtnLogout/BtnLogout";
 
-const { Sider } = Layout;
+const { Sider: Sidebar } = Layout;
 
-const ContainerSider = ({ }) => {
+const Sidebar = ({ }) => {
 
     return (
-        <Sider width={200} className="site-layout-background" collapsed={false}>
+        <Sidebar width={200} className="site-layout-background" collapsed={false}>
             <Logo />
             <MenuSidebar/>
             <BtnLogout/>
-        </Sider>
+        </Sidebar>
     )
 };
 
-export default ContainerSider
+export default Sidebar

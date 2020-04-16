@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import CustomerList from './CustomerList';
 import logo from '../../../logo_timekeeper_homepage.png';
 import CustomerDetails from "./CustomerDetails";
-import MainContainer from "../../container/MainContainer";
+import MainPage from "../../MainPage/MainPage";
 import NewCustomer from "./NewCustomer";
 
 const list = [{"id": 1, "name": "Paul"}, {"id": 2, "name": "Nicolas"},
@@ -21,19 +21,19 @@ const CustomersPage = ({ }) => {
         selectedCustomer
             ? selectedCustomer === 'new'
                 ? (
-                    <MainContainer title="Add new customer">
+                    <MainPage title="Add new customer">
                         <NewCustomer list={list} logo={logo}/>
-                    </MainContainer>
+                    </MainPage>
                 )
                 : (
-                    <MainContainer title={`About ${selectedCustomer.name}`}>
+                    <MainPage title={`About ${selectedCustomer.name}`}>
                         <CustomerDetails customer={selectedCustomer}/>
-                    </MainContainer>
+                    </MainPage>
                 )
             : (
-                <MainContainer title="All customers">
+                <MainPage title="All customers">
                     <CustomerList list={list} logo={logo}/>
-                </MainContainer>
+                </MainPage>
             )
     )
 };
