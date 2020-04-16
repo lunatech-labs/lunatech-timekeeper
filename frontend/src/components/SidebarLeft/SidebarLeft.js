@@ -1,20 +1,20 @@
 import React from 'react'
 import {Layout} from "antd";
-import './Container.scss'
+import './SidebarLeft.scss'
 import Logo from "../Logo/Logo";
 import MenuSidebar from "../MenuSidebar/MenuSidebar";
 import BtnLogout from "../BtnLogout/BtnLogout";
 
-const { Sider: Sidebar } = Layout;
+const { Sider: SidebarLeft } = Layout;
 
 const Sidebar = ({ }) => {
 
     return (
-        <Sidebar width={200} className="site-layout-background" collapsed={false}>
+        <SidebarLeft width={200} className="site-layout-background" collapsed={false}>
             <Logo />
             <MenuSidebar/>
             <BtnLogout/>
-        </Sidebar>
+        </SidebarLeft>
     )
 };
 

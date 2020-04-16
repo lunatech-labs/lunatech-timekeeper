@@ -1,0 +1,17 @@
+.sider-logo {
+    font-family: 'Montserrat', sans-serif!important;
+    font-weight: 700;
+    font-size: 16px;
+    color: white;
+    width: 100%;
+    height: 64px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid rgba(216, 216, 216, .1);
+    &:hover {color: white;}
+    img {
+        width: 30px;
+        margin-right: 10px;
+    }
+}
