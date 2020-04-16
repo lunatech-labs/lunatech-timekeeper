@@ -17,7 +17,7 @@ import java.util.List;
 
 import static fr.lunatech.timekeeper.models.Profile.Admin;
 import static fr.lunatech.timekeeper.models.Profile.User;
-import static fr.lunatech.timekeeper.resources.TestUtils.toJson;
+import static fr.lunatech.timekeeper.resources.TestUtils.*;
 import static io.restassured.RestAssured.given;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT;
 import static javax.ws.rs.core.HttpHeaders.LOCATION;
@@ -43,16 +43,17 @@ class UserResourceTest {
     @Test
     void shouldCreateUser() {
 
-        final List<Profile> profiles = new ArrayList<>();
-        profiles.add(Admin);
-        final UserRequest user = new UserRequest("Sam", "Huel", "sam@gmail.com", profiles);
+        final List<Profile> profilesExpected = new ArrayList<>();
+        profilesExpected.add(Admin);
 
-        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", profiles, new ArrayList<Long>());
+        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+
+        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", profilesExpected, new ArrayList<Long>());
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(toJson(user))
+                .body(user)
                 .post("/api/users")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -80,18 +81,18 @@ class UserResourceTest {
     @Test
     void shouldModifyUser() {
 
-        final List<Profile> profiles1 = new ArrayList<>();
-        profiles1.add(Admin);
-        final List<Profile> profiles2 = new ArrayList<>();
-        profiles2.add(User);
-        final UserRequest user1 = new UserRequest("Sam", "Huel", "sam@gmail.com", profiles1);
-        final UserRequest user2 = new UserRequest("Sam2", "Huel2", "sam2@gmail.com", profiles2);
+        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+        final UserRequest user2 = createUserRequest("Sam2", "Huel2", "sam2@gmail.com", User);
 
-        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam2", "Huel2", "sam2@gmail.com", profiles2, new ArrayList<Long>());
+        final List<Profile> profileExpected = new ArrayList<>();
+        profileExpected.add(User);
+
+        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam2", "Huel2", "sam2@gmail.com", profileExpected, new ArrayList<Long>());
+
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(toJson(user1))
+                .body(user1)
                 .post("/api/users")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -100,7 +101,7 @@ class UserResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(toJson(user2))
+                .body(user2)
                 .put("/api/users/1")
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
@@ -117,24 +118,23 @@ class UserResourceTest {
     @Test
     void shouldFindAllUsers() {
 
-        final List<Profile> profiles1 = new ArrayList<>();
-        profiles1.add(Admin);
-        final List<Profile> profiles2 = new ArrayList<>();
-        profiles2.add(User);
-        final UserRequest user1 = new UserRequest("Sam", "Huel", "sam@gmail.com", profiles1);
-        final UserRequest user2 = new UserRequest("Sam2", "Huel2", "sam2@gmail.com", profiles2);
+        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+        final UserRequest user2 = createUserRequest("Sam2", "Huel2", "sam2@gmail.com", User);
 
-        final UserResponse expectedUserResponse1 = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", profiles1, new ArrayList<Long>());
-        final UserResponse expectedUserResponse2 = new UserResponse(2L, "Sam2", "Huel2", "sam2@gmail.com", profiles2, new ArrayList<Long>());
+        final List<Profile> profileExpected1 = new ArrayList<>();
+        profileExpected1.add(Admin);
+        final List<Profile> profileExpected2 = new ArrayList<>();
+        profileExpected2.add(User);
 
-        final List<UserResponse> expectedResponse = new ArrayList<>();
-        expectedResponse.add(expectedUserResponse1);
-        expectedResponse.add(expectedUserResponse2);
+        final UserResponse expectedUserResponse1 = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", profileExpected1, new ArrayList<Long>());
+        final UserResponse expectedUserResponse2 = new UserResponse(2L, "Sam2", "Huel2", "sam2@gmail.com", profileExpected2, new ArrayList<Long>());
+
+
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(toJson(user1))
+                .body(user1)
                 .post("/api/users")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -142,7 +142,7 @@ class UserResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(toJson(user2))
+                .body(user2)
                 .post("/api/users")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -153,7 +153,7 @@ class UserResourceTest {
                 .get("/api/users")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is(toJson(expectedResponse)));
+                .body(is(TestUtils.<UserResponse>listOfTasJson(expectedUserResponse1,expectedUserResponse2)));
     }
 
     @Test

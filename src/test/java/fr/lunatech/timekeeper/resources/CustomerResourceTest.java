@@ -1,5 +1,7 @@
 package fr.lunatech.timekeeper.resources;
 
+import fr.lunatech.timekeeper.services.dtos.CustomerRequest;
+import fr.lunatech.timekeeper.services.dtos.CustomerResponse;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -9,7 +11,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 
+import static fr.lunatech.timekeeper.resources.TestUtils.toJson;
 import static io.restassured.RestAssured.given;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT;
 import static javax.ws.rs.core.HttpHeaders.LOCATION;
@@ -34,10 +38,14 @@ class CustomerResourceTest {
 
     @Test
     void shouldCreateCustomer() {
+
+        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
+        final CustomerResponse expectedCustomer = new CustomerResponse(1L, "NewClient", "NewDescription", new ArrayList<Long>());
+
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .body(customer)
                 .post("/api/customers")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -49,7 +57,7 @@ class CustomerResourceTest {
                 .get("/api/customers/1")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("{\"activitiesId\":[],\"description\":\"NewDescription\",\"id\":1,\"name\":\"NewClient\"}"));
+                .body(is(toJson(expectedCustomer)));
     }
 
     @Test
@@ -84,10 +92,16 @@ class CustomerResourceTest {
 
     @Test
     void shouldFindAllCustomers() {
+
+        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
+        final CustomerRequest customer2 = new CustomerRequest("NewClient2", "NewDescription2");
+        final CustomerResponse expectedCustomer = new CustomerResponse(1L, "NewClient", "NewDescription", new ArrayList<Long>());
+        final CustomerResponse expectedCustomer2 = new CustomerResponse(2L, "NewClient2", "NewDescription2", new ArrayList<Long>());
+
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .body(customer)
                 .post("/api/customers")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -96,7 +110,7 @@ class CustomerResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"NewClient2\",\"description\":\"NewDescription2\"}")
+                .body(customer2)
                 .post("/api/customers")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -108,7 +122,7 @@ class CustomerResourceTest {
                 .get("/api/customers")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("[{\"activitiesId\":[],\"description\":\"NewDescription\",\"id\":1,\"name\":\"NewClient\"},{\"activitiesId\":[],\"description\":\"NewDescription2\",\"id\":2,\"name\":\"NewClient2\"}]"));
+                .body(is(TestUtils.<CustomerResponse>listOfTasJson(expectedCustomer, expectedCustomer2)));
     }
 
     @Test
@@ -124,10 +138,16 @@ class CustomerResourceTest {
 
     @Test
     void shouldModifyCustomer() {
+
+        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
+        final CustomerRequest customer2 = new CustomerRequest("NewClient", "NewDescription2");
+
+        final CustomerResponse expectedCustomer2 = new CustomerResponse(1L, "NewClient", "NewDescription2", new ArrayList<Long>());
+
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .body(customer)
                 .post("/api/customers")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -136,7 +156,7 @@ class CustomerResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\",\"description\":\"NewDescription2\"}")
+                .body(customer2)
                 .put("/api/customers/1")
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
@@ -147,11 +167,12 @@ class CustomerResourceTest {
                 .get("/api/customers/1")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("{\"activitiesId\":[],\"description\":\"NewDescription2\",\"id\":1,\"name\":\"NewName\"}"));
+                .body(is(toJson(expectedCustomer2)));
     }
 
     @Test
     void shouldModifyCustomerIgnoreUselessParams() {
+
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
