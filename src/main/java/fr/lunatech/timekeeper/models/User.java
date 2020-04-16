@@ -2,10 +2,7 @@ package fr.lunatech.timekeeper.models;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -29,4 +26,7 @@ public class User extends PanacheEntity {
     @Convert(converter = Profile.ListConverter.class)
     @NotEmpty
     public List<Profile> profiles;
+    @OneToMany(mappedBy = "user")
+    @NotNull
+    public List<Member> members;
 }
