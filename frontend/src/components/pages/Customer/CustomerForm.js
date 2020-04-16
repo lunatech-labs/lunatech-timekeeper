@@ -19,12 +19,26 @@ const CustomerForm = ({customer, axiosInstance, isNew}) => {
             })
     }
 
+    const putForm = values => {
+        axiosInstance.put(`/api/customers/${customer.id}`, {
+            'name': values.name,
+            'description': values.description
+        })
+            .then(res => {
+                switch (res.status) {
+                    case 204:
+                        //TODO Action is case of 204
+                        break;
+                }
+            })
+    }
+
     return (
         <Form
             labelCol={{span: 4}}
             wrapperCol={{span: 14}}
             layout="horizontal"
-            onFinish={(isNew && postForm)}
+            onFinish={(isNew ? postForm : putForm)}
             initialValues={customer}
         >
             <Form.Item
