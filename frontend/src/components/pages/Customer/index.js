@@ -58,8 +58,7 @@ const CustomersPage = ({ }) => {
             ? selectedCustomer === 'new'
                 ? (
                     <MainContainer title="Add new customer">
-                        <NewCustomer list={customers} logo={logo}/>
-                        <NewCustomer list={list} logo={logo} axiosInstance={axiosInstance}/>
+                        <NewCustomer list={customers} logo={logo} axiosInstance={apiEndpoint}/>
                     </MainContainer>
                 )
                 : (
