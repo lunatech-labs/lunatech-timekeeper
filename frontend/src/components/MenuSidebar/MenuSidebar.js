@@ -11,7 +11,7 @@ const { SubMenu } = Menu;
 class MenuSidebar extends Component {
     render() {
         return (
-            <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" className="tk_Menu">
+            <Menu defaultSelectedKeys={['1']} mode="inline">
                 <Menu.Item key="1">
                     <PieChartOutlined />
                     <Link

@@ -1,6 +1,7 @@
 import React from 'react'
 import {Breadcrumb, Button, Cascader, DatePicker, Divider, Form, Input, PageHeader, Select, TreeSelect} from "antd";
 import ShowUser from "../../ShowUser";
+import './index.less';
 
 const FakeContent = ({ keycloak, callApi, loadedUsers, componentSize, onFormLayoutChange }) => {
 
