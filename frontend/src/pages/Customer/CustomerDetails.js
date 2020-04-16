@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Card } from 'antd'
 import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
-import logo from '../../../logo_timekeeper_homepage.png';
+import logo from '../../img/logo_timekeeper_homepage.png';
 
 const { Meta } = Card;
 

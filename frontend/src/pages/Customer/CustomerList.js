@@ -2,9 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {Avatar, List} from 'antd';
 import {EditOutlined, MoreOutlined} from '@ant-design/icons';
-import LinkButton from "../../atoms/LinkButton";
-
-import './Customer.scss'
+import {Link} from "react-router-dom";
+import './Customer.less'
 
 const CustomerList = ({customers, logo, activities}) => {
     const activitiesIdToActivities = (activitiesId) => {
@@ -20,13 +19,13 @@ const CustomerList = ({customers, logo, activities}) => {
                 renderItem={item => (
                     <List.Item
                         actions={[
-                            <LinkButton
+                            <Link
                                 to={`/customers/${item.id}`}
                                 shape="circle"
                                 className="customer-edit-link"
                                 icon={<EditOutlined />}
                             />,
-                            <LinkButton
+                            <Link
                                 to={`/customers/${item.id}`}
                                 shape="circle"
                                 className="customer-more-link"
@@ -45,9 +44,9 @@ const CustomerList = ({customers, logo, activities}) => {
                     </List.Item>
                 )}
             />
-            <LinkButton to="/customers/new" className="btn customer-new">
+            <Link to="/customers/new" className="btn customer-new" type="button">
                 Add a customer
-            </LinkButton>
+            </Link>
         </React.Fragment>
     )
 };

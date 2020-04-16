@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react'
 import { useLocation } from "react-router-dom";
 import CustomerList from './CustomerList';
-import logo from '../../../logo_timekeeper_homepage.png';
+import logo from '../../img/logo_timekeeper_homepage.png';
 import CustomerDetails from "./CustomerDetails";
-import MainPage from "../../MainPage/MainPage";
+import MainPage from "../MainPage/MainPage";
 import NewCustomer from "./NewCustomer";
-import {useAxios} from "../../../utils/hooks";
+import {useAxios} from "../../utils/hooks";
 
 const getCustomerList = (axios, setState) => {
     const fetchData = async () => {
@@ -35,7 +35,7 @@ const selectCustomer = (pathname, customers) => {
     }
 };
 
-const CustomersPage = ({ }) => {
+const CustomersPage = () => {
     const [customers, setCustomers] = useState([]);
     const [activities, setActivities] = useState([]);
     const apiEndpoint = useAxios('http://localhost:8080');
