@@ -1,5 +1,5 @@
 import React from 'react'
-import {Layout} from "antd";
+import {Layout, Space} from "antd";
 import './SidebarLeft.less'
 import Logo from "../Logo/Logo";
 import MenuSidebar from "../MenuSidebar/MenuSidebar";
@@ -12,7 +12,9 @@ const Sidebar = () => {
         <SidebarLeft width={200} className="site-layout-background" collapsed={false}>
             <Logo />
             <MenuSidebar/>
+
             <BtnLogout/>
+
         </SidebarLeft>
     )
 };

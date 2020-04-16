@@ -9,7 +9,7 @@ const BtnLogout = ( ) => {
     return (
         <React.Fragment>
             {!!keycloak.authenticated && (
-                <Button onClick={() => keycloak.logout()} className="btn logout">
+                <Button onClick={() => keycloak.logout()} type="primary" danger>
                     Logout
                 </Button>
             )}

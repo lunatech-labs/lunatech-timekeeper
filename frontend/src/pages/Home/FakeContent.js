@@ -1,6 +1,6 @@
 import React from 'react'
 import {Breadcrumb, Button, Cascader, DatePicker, Divider, Form, Input, PageHeader, Select, TreeSelect} from "antd";
-import ShowUser from "../../ShowUser";
+import ShowUser from "../../components/ShowUser/ShowUser";
 import './index.less';
 
 const FakeContent = ({ keycloak, callApi, loadedUsers, componentSize, onFormLayoutChange }) => {
@@ -21,7 +21,7 @@ const FakeContent = ({ keycloak, callApi, loadedUsers, componentSize, onFormLayo
             <div className="userPanel">User is {!keycloak.authenticated ? 'NOT ' : ''} authenticated</div>
 
 
-            <Button onClick={callApi} className="btn load">
+            <Button onClick={callApi} type="primary">
                 Load user profile
             </Button>
 
