@@ -1,6 +1,5 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.models.Profile;
 import fr.lunatech.timekeeper.models.Role;
 import fr.lunatech.timekeeper.services.dtos.*;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -13,10 +12,8 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static fr.lunatech.timekeeper.models.Profile.Admin;
+import static fr.lunatech.timekeeper.resources.TestUtils.*;
 import static io.restassured.RestAssured.given;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT;
 import static javax.ws.rs.core.HttpHeaders.LOCATION;
@@ -24,7 +21,6 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.Response.Status.*;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
-import static fr.lunatech.timekeeper.resources.TestUtils.toJson;
 
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
@@ -43,22 +39,18 @@ class MemberResourceTest {
     @Test
     void shouldAddMemberToActivity() {
 
-        final List<Profile> profiles = new ArrayList<>();
-        profiles.add(Admin);
-        final UserRequest user = new UserRequest("Sam", "Huel", "sam@gmail.com", profiles);
+        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
 
-        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", profiles, new ArrayList<Long>());
+        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
+        final ActivityRequest activity = new ActivityRequest("Pepito", true, "New project", 2L);
+        final MemberRequest member = new MemberRequest(1L, Role.Developer);
 
-        final CustomerRequest customer = new CustomerRequest("NewClient","NewDescription");
-        final ActivityRequest activity = new ActivityRequest("Pepito",true,"New project",2L);
-        final MemberRequest member = new MemberRequest(1L,Role.Developer);
-
-        final MemberResponse expectedMember = new MemberResponse(4L,1L,Role.Developer);
+        final MemberResponse expectedMember = new MemberResponse(4L, 1L, Role.Developer);
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(toJson(user))
+                .body(user)
                 .post("/api/users")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -67,7 +59,7 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(toJson(customer))
+                .body(customer)
                 .post("/api/customers")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -76,7 +68,7 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(toJson(activity))
+                .body(activity)
                 .post("/api/activities")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -85,7 +77,7 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(toJson(member))
+                .body(member)
                 .post("/api/activities/3/members")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -100,13 +92,22 @@ class MemberResourceTest {
                 .body(is(toJson(expectedMember)));
     }
 
-
     @Test
     void shouldFindAllMembers() {
+
+        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+
+        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
+        final ActivityRequest activity = new ActivityRequest("Pepito", true, "New project", 2L);
+        final MemberRequest member = new MemberRequest(1L, Role.Developer);
+
+        final MemberResponse expectedMember1 = new MemberResponse(4L, 1L, Role.Developer);
+        final MemberResponse expectedMember2 = new MemberResponse(5L, 1L, Role.Developer);
+
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\", \"profiles\":[\"Admin\"]}")
+                .body(user)
                 .post("/api/users")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -115,7 +116,7 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .body(customer)
                 .post("/api/customers")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -124,7 +125,7 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":2, \"members\":[]}")
+                .body(activity)
                 .post("/api/activities")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -133,7 +134,7 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"role\":\"Developer\", \"userId\":1}")
+                .body(member)
                 .post("/api/activities/3/members")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -142,7 +143,7 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"role\":\"Developer\", \"userId\":1}")
+                .body(member)
                 .post("/api/activities/3/members")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -154,15 +155,20 @@ class MemberResourceTest {
                 .get("/api/activities/3/members")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("[{\"id\":4,\"role\":\"Developer\",\"userId\":1},{\"id\":5,\"role\":\"Developer\",\"userId\":1}]"));
+                .body(is(TestUtils.<MemberResponse>listOfTasJson(expectedMember1, expectedMember2)));
     }
 
     @Test
     void shouldFindAllMembersEmpty() {
+        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+
+        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
+        final ActivityRequest activity = new ActivityRequest("Pepito", true, "New project", 2L);
+
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\", \"profiles\":[\"Admin\"]}")
+                .body(user)
                 .post("/api/users")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -171,7 +177,7 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .body(customer)
                 .post("/api/customers")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -180,7 +186,7 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":2, \"members\":[]}")
+                .body(activity)
                 .post("/api/activities")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -192,7 +198,7 @@ class MemberResourceTest {
                 .get("/api/activities/3/members")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("[]"));
+                .body(is(listOfTasJson()));
     }
 
     @Test
@@ -218,10 +224,20 @@ class MemberResourceTest {
 
     @Test
     void shouldModifyMember() {
+
+        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+
+        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
+        final ActivityRequest activity = new ActivityRequest("Pepito", true, "New project", 2L);
+
+        final MemberRequest member = new MemberRequest(1L, Role.Developer);
+
+        final MemberResponse expectedMember = new MemberResponse(4L, 1L, Role.TeamLeader);
+
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\", \"profiles\":[\"Admin\"]}")
+                .body(user)
                 .post("/api/users")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -230,7 +246,7 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .body(customer)
                 .post("/api/customers")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -239,7 +255,7 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":2, \"members\":[]}")
+                .body(activity)
                 .post("/api/activities")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -248,7 +264,7 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"role\":\"Developer\", \"userId\":1}")
+                .body(member)
                 .post("/api/activities/3/members")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -257,7 +273,7 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"role\":\"TeamLeader\"}")
+                .body("{\"role\":\"" + Role.TeamLeader + "\"}")
                 .put("/api/activities/3/members/4")
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
@@ -268,15 +284,23 @@ class MemberResourceTest {
                 .get("/api/activities/3/members/4")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("{\"id\":4,\"role\":\"TeamLeader\",\"userId\":1}"));
+                .body(is(toJson(expectedMember)));
     }
 
     @Test
     void shouldRemoveMember() {
+
+        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+
+        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
+        final ActivityRequest activity = new ActivityRequest("Pepito", true, "New project", 2L);
+
+        final MemberRequest member = new MemberRequest(1L, Role.Developer);
+
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\", \"profiles\":[\"Admin\"]}")
+                .body(user)
                 .post("/api/users")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -285,7 +309,7 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .body(customer)
                 .post("/api/customers")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -294,7 +318,7 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":2, \"members\":[]}")
+                .body(activity)
                 .post("/api/activities")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -303,7 +327,7 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"role\":\"Developer\", \"userId\":1}")
+                .body(member)
                 .post("/api/activities/3/members")
                 .then()
                 .statusCode(CREATED.getStatusCode())

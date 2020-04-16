@@ -1,5 +1,9 @@
 package fr.lunatech.timekeeper.resources;
 
+import fr.lunatech.timekeeper.services.dtos.ActivityRequest;
+import fr.lunatech.timekeeper.services.dtos.ActivityResponse;
+import fr.lunatech.timekeeper.services.dtos.CustomerRequest;
+import fr.lunatech.timekeeper.services.dtos.UserRequest;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -9,7 +13,11 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 
+import static fr.lunatech.timekeeper.models.Profile.Admin;
+import static fr.lunatech.timekeeper.resources.TestUtils.createUserRequest;
+import static fr.lunatech.timekeeper.resources.TestUtils.toJson;
 import static io.restassured.RestAssured.given;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT;
 import static javax.ws.rs.core.HttpHeaders.LOCATION;
@@ -34,10 +42,16 @@ class ActivityResourceTest {
 
     @Test
     void shouldCreateActivity() {
+
+        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
+        final ActivityRequest activity = new ActivityRequest("Pepito", true, "New project", 1L);
+
+        final ActivityResponse expectedActivity = new ActivityResponse(2L, "Pepito", true, "New project", 1L, new ArrayList<Long>());
+
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .body(customer)
                 .post("/api/customers")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -46,7 +60,7 @@ class ActivityResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":1}")
+                .body(activity)
                 .post("/api/activities")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -58,15 +72,18 @@ class ActivityResourceTest {
                 .get("/api/activities/2")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("{\"billable\":true,\"customerId\":1,\"description\":\"New project\",\"id\":2,\"membersId\":[],\"name\":\"Pepito\"}"));
+                .body(is(toJson(expectedActivity)));
     }
 
     @Test
     void shouldNotCreateActivityWithUnknownCustomer() {
+
+        final ActivityRequest activity = new ActivityRequest("Pepito", true, "New project", 10L);
+
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":10}")
+                .body(activity)
                 .post("/api/activities")
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
@@ -84,10 +101,18 @@ class ActivityResourceTest {
 
     @Test
     void shouldFindAllActivities() {
+        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
+        final ActivityRequest activity = new ActivityRequest("Pepito", true, "New project", 2L);
+        final ActivityRequest activity1 = new ActivityRequest("Pepito", true, "New project", 2L);
+
+        final ActivityResponse expectedActivity = new ActivityResponse(3L, "Pepito", true, "New project", 2L, new ArrayList<Long>());
+        final ActivityResponse expectedActivity1 = new ActivityResponse(4L, "Pepito", true, "New project", 2L, new ArrayList<Long>());
+
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\", \"profiles\":[\"Admin\"]}")
+                .body(user)
                 .post("/api/users")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -96,7 +121,7 @@ class ActivityResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .body(customer)
                 .post("/api/customers")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -105,7 +130,7 @@ class ActivityResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"Pepito\",\"billable\":\"true\",\"description\":\"New project\",\"customerId\":2}")
+                .body(activity)
                 .post("/api/activities")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -114,7 +139,7 @@ class ActivityResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"Pepito\",\"billable\":\"true\",\"description\":\"New project\",\"customerId\":2}")
+                .body(activity1)
                 .post("/api/activities")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -126,7 +151,7 @@ class ActivityResourceTest {
                 .get("/api/activities")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("[{\"billable\":true,\"customerId\":2,\"description\":\"New project\",\"id\":3,\"membersId\":[],\"name\":\"Pepito\"},{\"billable\":true,\"customerId\":2,\"description\":\"New project\",\"id\":4,\"membersId\":[],\"name\":\"Pepito\"}]"));
+                .body(is(TestUtils.<ActivityResponse>listOfTasJson(expectedActivity, expectedActivity1)));
     }
 
     @Test
@@ -142,10 +167,18 @@ class ActivityResourceTest {
 
     @Test
     void shouldModifyActivity() {
+
+        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
+        final CustomerRequest customer1 = new CustomerRequest("NewClient2", "NewDescription2");
+        final ActivityRequest activity = new ActivityRequest("Pepito", true, "New project", 1L);
+        final ActivityRequest activity1 = new ActivityRequest("Pepito2", false, "New project2", 3L);
+
+        final ActivityResponse expectedActivity = new ActivityResponse(2L, "Pepito2", false, "New project2", 3L, new ArrayList<Long>());
+
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .body(customer)
                 .post("/api/customers")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -154,7 +187,7 @@ class ActivityResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":1}")
+                .body(activity)
                 .post("/api/activities")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -163,7 +196,7 @@ class ActivityResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"NewClient2\",\"description\":\"NewDescription2\"}")
+                .body(customer1)
                 .post("/api/customers")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -172,7 +205,7 @@ class ActivityResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"Pepito2\",\"billable\":false,\"description\":\"New project2\",\"customerId\":3}")
+                .body(activity1)
                 .put("/api/activities/2")
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
@@ -183,6 +216,6 @@ class ActivityResourceTest {
                 .get("/api/activities/2")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("{\"billable\":false,\"customerId\":3,\"description\":\"New project2\",\"id\":2,\"membersId\":[],\"name\":\"Pepito2\"}"));
+                .body(is(toJson(expectedActivity)));
     }
 }
