@@ -52,10 +52,10 @@ create TABLE public.users (
 	id int8 NOT NULL
 	    constraint users_pkey
             primary key,
-	email varchar(255),
-	firstname varchar(255),
-	lastname varchar(255),
-	profiles varchar(255)
+	email varchar(255) not null,
+	firstname varchar(255) not null,
+	lastname varchar(255) not null,
+	profiles varchar(255) NULL
 );
 
 create table public.members (
