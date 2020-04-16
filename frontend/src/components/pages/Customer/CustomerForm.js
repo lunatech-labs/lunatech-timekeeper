@@ -12,13 +12,9 @@ const CustomerForm = ({customer, axiosInstance, isNew}) => {
             .then(res => {
                 switch (res.status) {
                     case 201:
-                        console.log("201: Created");
-                        break;
-                    case 400:
-                        console.log("400: Bad Request");
+                        //TODO Action in case of 201
                         break;
                     default:
-                        console.log("Default");
                 }
             })
     }
@@ -27,7 +23,7 @@ const CustomerForm = ({customer, axiosInstance, isNew}) => {
         if (isNew) {
             postForm(values);
         } else {
-            console.log("PUT");
+            //TODO Put method
         }
 
     };
