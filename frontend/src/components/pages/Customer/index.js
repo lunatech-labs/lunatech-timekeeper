@@ -3,9 +3,8 @@ import { useLocation } from "react-router-dom";
 import CustomerList from './CustomerList';
 import logo from '../../../logo_timekeeper_homepage.png';
 import MainPage from "../../MainPage/MainPage";
-import NewCustomer from "./NewCustomer";
-import UpdateCustomer from "./UpdateCustomer";
 import {useAxios} from "../../../utils/hooks";
+import CustomerForm from "./CustomerForm";
 
 const getCustomerList = (axios, setState) => {
     const fetchData = async () => {
@@ -58,12 +57,12 @@ const CustomersPage = ({ }) => {
             ? selectedCustomer === 'new'
                 ? (
                     <MainPage title="Add new customer">
-                        <NewCustomer list={customers} logo={logo} axiosInstance={apiEndpoint}/>
+                        <CustomerForm axiosInstance={apiEndpoint} isNew={true} />
                     </MainPage>
                 )
                 : (
                     <MainPage title={`Edit ${selectedCustomer.name}`}>
-                        <UpdateCustomer customer={selectedCustomer} axiosInstance={apiEndpoint} />
+                        <CustomerForm customer={selectedCustomer} axiosInstance={apiEndpoint} isNew={false} />
                     </MainPage>
                 )
             : (

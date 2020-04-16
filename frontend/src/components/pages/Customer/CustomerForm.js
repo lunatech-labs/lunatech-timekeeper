@@ -19,22 +19,12 @@ const CustomerForm = ({customer, axiosInstance, isNew}) => {
             })
     }
 
-    const submitForm = values => {
-        if (isNew) {
-            postForm(values);
-        } else {
-            //TODO Put method
-        }
-
-    };
-
-    console.log(customer)
     return (
         <Form
             labelCol={{span: 4}}
             wrapperCol={{span: 14}}
             layout="horizontal"
-            onFinish={submitForm}
+            onFinish={(isNew && postForm)}
             initialValues={customer}
         >
             <Form.Item
