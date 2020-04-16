@@ -1,5 +1,8 @@
 package fr.lunatech.timekeeper.resources;
 
+import fr.lunatech.timekeeper.models.Profile;
+import fr.lunatech.timekeeper.models.Role;
+import fr.lunatech.timekeeper.services.dtos.*;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -10,6 +13,10 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static fr.lunatech.timekeeper.models.Profile.Admin;
 import static io.restassured.RestAssured.given;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT;
 import static javax.ws.rs.core.HttpHeaders.LOCATION;
@@ -17,6 +24,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.Response.Status.*;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
+import static fr.lunatech.timekeeper.resources.TestUtils.toJson;
 
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
@@ -34,10 +42,23 @@ class MemberResourceTest {
 
     @Test
     void shouldAddMemberToActivity() {
+
+        final List<Profile> profiles = new ArrayList<>();
+        profiles.add(Admin);
+        final UserRequest user = new UserRequest("Sam", "Huel", "sam@gmail.com", profiles);
+
+        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", profiles, new ArrayList<Long>());
+
+        final CustomerRequest customer = new CustomerRequest("NewClient","NewDescription");
+        final ActivityRequest activity = new ActivityRequest("Pepito",true,"New project",2L);
+        final MemberRequest member = new MemberRequest(1L,Role.Developer);
+
+        final MemberResponse expectedMember = new MemberResponse(4L,1L,Role.Developer);
+
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\", \"profiles\":[\"Admin\"]}")
+                .body(toJson(user))
                 .post("/api/users")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -46,7 +67,7 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .body(toJson(customer))
                 .post("/api/customers")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -55,7 +76,7 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"Pepito\",\"billable\":true,\"description\":\"New project\", \"customerId\":2, \"members\":[]}")
+                .body(toJson(activity))
                 .post("/api/activities")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -64,7 +85,7 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"role\":\"Developer\", \"userId\":1}")
+                .body(toJson(member))
                 .post("/api/activities/3/members")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -76,7 +97,7 @@ class MemberResourceTest {
                 .get("/api/activities/3/members/4")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("{\"id\":4,\"role\":\"Developer\",\"userId\":1}"));
+                .body(is(toJson(expectedMember)));
     }
 
 

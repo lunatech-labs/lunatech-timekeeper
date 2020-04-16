@@ -1,8 +1,8 @@
 package fr.lunatech.timekeeper.services;
 
+import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.services.dtos.UserRequest;
 import fr.lunatech.timekeeper.services.dtos.UserResponse;
-import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.services.interfaces.UserService;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private UserResponse from(User user) {
-        return new UserResponse(user.id, user.firstName, user.lastName, user.email, user.profiles);
+        return new UserResponse(user.id, user.firstName, user.lastName, user.email, user.profiles, user.members.stream().map(m -> m.id).collect(Collectors.toList()));
     }
 
     private User bind(User user, UserRequest request) {
