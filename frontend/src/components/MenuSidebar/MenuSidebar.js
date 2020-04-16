@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {Link} from "react-router-dom";
 import {Menu} from "antd";
-import './MenuSidebar.scss';
+import './MenuSidebar.less';
 
 import {DesktopOutlined, PieChartOutlined, TeamOutlined, UserOutlined} from "@ant-design/icons";
 import LinkButton from "../atoms/LinkButton";

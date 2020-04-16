@@ -1,6 +1,6 @@
 import React from 'react'
 import { Layout } from "antd";
-import './MainPage.scss'
+import './MainPage.less'
 import SidebarLeft from "../SidebarLeft/SidebarLeft";
 
 const { Header, Content, Footer } = Layout;

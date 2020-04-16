@@ -1,6 +1,6 @@
 import React from 'react'
 import {Layout} from "antd";
-import './SidebarLeft.scss'
+import './SidebarLeft.less'
 import Logo from "../Logo/Logo";
 import MenuSidebar from "../MenuSidebar/MenuSidebar";
 import BtnLogout from "../BtnLogout/BtnLogout";

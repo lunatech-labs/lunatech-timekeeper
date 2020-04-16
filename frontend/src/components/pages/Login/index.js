@@ -6,9 +6,7 @@ import { Button, Layout, Row, Col, Typography } from "antd";
 import Logo from '../../../img/logo.png'
 import LoginBackground from '../../../img/login_Background.png'
 
-import 'antd/dist/antd.css';
-import './Login.css'
-
+import './Login.less'
 
 const { Content } = Layout;
 const { Title, Paragraph } = Typography;

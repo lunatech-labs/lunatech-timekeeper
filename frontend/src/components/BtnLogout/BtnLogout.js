@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {Button, Menu} from "antd";
-import './BtnLogout.scss';
+import './BtnLogout.less';
 import {useKeycloak} from "@react-keycloak/web";
 
 const BtnLogout = ({ }) => {

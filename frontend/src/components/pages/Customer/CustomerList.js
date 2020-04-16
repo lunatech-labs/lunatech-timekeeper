@@ -4,7 +4,7 @@ import {Avatar, List} from 'antd';
 import {EditOutlined, MoreOutlined} from '@ant-design/icons';
 import LinkButton from "../../atoms/LinkButton";
 
-import './Customer.scss'
+import './Customer.less'
 
 const CustomerList = ({customers, logo, activities}) => {
     const activitiesIdToActivities = (activitiesId) => {
