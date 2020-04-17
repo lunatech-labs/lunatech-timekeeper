@@ -1,9 +1,31 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
+import {useParams} from "react-router-dom";
 import {Button, Form, Input} from 'antd'
+import {useAxios} from "../../utils/hooks";
 
 const {TextArea} = Input;
 
-const CustomerForm = ({customer, axiosInstance, isNew}) => {
+const getCustomer = (axios, setState, id) => {
+    console.log("test")
+    const fetchData = async () => {
+        const result = await axios.get(`/api/customers/${id}`);
+        setState(result.data);
+    };
+    fetchData();
+};
+
+const CustomerForm = ({ axiosInstance, isNew}) => {
+    const params = useParams();
+    const [customer, setCustomer] = useState();
+    console.log(customer)
+    useEffect(() => {
+        if(!axiosInstance) {
+            return;
+        }
+        if(!isNew && params.id) {
+            getCustomer(axiosInstance, setCustomer, params.id)
+        }
+    }, [axiosInstance, params])
     const postForm = values => {
         axiosInstance.post('/api/customers', {
             'name': values.name,
@@ -18,7 +40,6 @@ const CustomerForm = ({customer, axiosInstance, isNew}) => {
                 }
             })
     }
-
     const putForm = values => {
         axiosInstance.put(`/api/customers/${customer.id}`, {
             'name': values.name,

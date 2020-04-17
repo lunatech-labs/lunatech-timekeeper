@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Avatar, List, Button} from 'antd';
-import {EditOutlined, MoreOutlined} from '@ant-design/icons';
+import {Avatar, List} from 'antd';
 import {Link} from "react-router-dom";
 import './Customer.less'
 
@@ -12,6 +11,9 @@ const CustomerList = ({customers, logo, activities}) => {
     const renderActivities = (activitiesId) => activitiesIdToActivities(activitiesId).map(activity => activity.name).join(" | ");
     return (
         <React.Fragment>
+            <Link to="/customers/new" type="primary" >
+                Add a customer
+            </Link>
             <List
                 className="customer-list"
                 itemLayout="horizontal"
@@ -19,18 +21,9 @@ const CustomerList = ({customers, logo, activities}) => {
                 renderItem={item => (
                     <List.Item
                         actions={[
-                            <Link
-                                to={`/customers/${item.id}`}
-                                shape="circle"
-                                className="customer-edit-link"
-                                icon={<EditOutlined />}
-                            />,
-                            <Link
-                                to={`/customers/${item.id}`}
-                                shape="circle"
-                                className="customer-more-link"
-                                icon={<MoreOutlined />}
-                            />
+                            <Link to={`/customers/${item.id}`} type="primary">
+                                Edit
+                            </Link>
                         ]}
                     >
                         <List.Item.Meta
@@ -44,9 +37,6 @@ const CustomerList = ({customers, logo, activities}) => {
                     </List.Item>
                 )}
             />
-            <Link to="/customers/new" type="primary" >
-                Add a customer
-            </Link>
         </React.Fragment>
     )
 };
