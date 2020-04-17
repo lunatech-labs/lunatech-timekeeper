@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
-import {Button, Menu} from "antd";
-import './BtnLogout.scss';
+import React  from 'react';
+import { Button } from "antd";
+import './BtnLogout.less';
 import {useKeycloak} from "@react-keycloak/web";
 
-const BtnLogout = ({ }) => {
+const BtnLogout = ( ) => {
     const { keycloak } = useKeycloak();
 
     return (
         <React.Fragment>
             {!!keycloak.authenticated && (
-                <Button onClick={() => keycloak.logout()} className="btn logout">
+                <Button onClick={() => keycloak.logout()} type="primary" danger>
                     Logout
                 </Button>
             )}

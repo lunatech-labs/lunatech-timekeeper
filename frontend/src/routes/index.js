@@ -3,9 +3,9 @@ import { BrowserRouter as Router, Redirect, Switch, Route } from 'react-router-d
 
 import { useKeycloak } from '@react-keycloak/web'
 
-import HomePage from '../components/pages/Home/index'
-import LoginPage from '../components/pages/Login/index'
-import CustomersPage from '../components/pages/Customer/index'
+import HomePage from '../pages/Home/index'
+import LoginPage from '../pages/Login/index'
+import CustomersPage from '../pages/Customer/index'
 
 import { PrivateRoute } from './utils'
 

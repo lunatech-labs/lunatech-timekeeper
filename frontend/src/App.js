@@ -3,7 +3,7 @@ import Keycloak from 'keycloak-js'
 import { KeycloakProvider } from '@react-keycloak/web'
 import { AppRouter } from './routes'
 
-import './App.css';
+import './App.less';
 
 const keycloak = new Keycloak({
     // Il est possible de configurer via des variables d'environement pour la PROD

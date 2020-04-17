@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react'
 import { useKeycloak } from '@react-keycloak/web'
-import { useAxios } from '../../../utils/hooks'
+import { useAxios } from '../../utils/hooks'
 import FakeContent from "./FakeContent";
-import MainPage from "../../MainPage/MainPage";
+import MainPage from "../MainPage/MainPage";
 
 const fake = true;
 
