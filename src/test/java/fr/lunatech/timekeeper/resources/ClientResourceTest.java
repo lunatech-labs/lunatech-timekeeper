@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
 import java.util.ArrayList;
 
-import static fr.lunatech.timekeeper.resources.TestUtils.toJson;
+import static fr.lunatech.timekeeper.resources.utils.TestUtils.toJson;
 import static io.restassured.RestAssured.given;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT;
 import static javax.ws.rs.core.HttpHeaders.LOCATION;
