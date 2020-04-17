@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react';
 import {
     MenuUnfoldOutlined,
     MenuFoldOutlined,
@@ -7,7 +7,7 @@ import {Layout} from "antd";
 
 const { Header } = Layout;
 
-const HeaderL = ({ collapsed, toggle }) => {
+const TopBar = ({ collapsed, toggle }) => {
     return (
         <Header className="site-layout-background" style={{ padding: 0 }}>
             {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
@@ -18,4 +18,4 @@ const HeaderL = ({ collapsed, toggle }) => {
     )
 };
 
-export default HeaderL
+export default TopBar
