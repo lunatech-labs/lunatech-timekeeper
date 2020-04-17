@@ -4,7 +4,7 @@ import javax.json.bind.annotation.JsonbCreator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-public final class ActivityRequest {
+public final class ProjectRequest {
 
     @NotBlank
     private final String name;
@@ -13,14 +13,14 @@ public final class ActivityRequest {
     @NotNull
     private final String description;
     @NotNull
-    private final Long customerId;
+    private final Long clientId;
 
     @JsonbCreator
-    public ActivityRequest(@NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull Long customerId) {
+    public ProjectRequest(@NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull Long clientId) {
         this.name = name;
         this.billable = billable;
         this.description = description;
-        this.customerId = customerId;
+        this.clientId = clientId;
     }
 
     public String getName() {
@@ -35,7 +35,7 @@ public final class ActivityRequest {
         return description;
     }
 
-    public Long getCustomerId() {
-        return customerId;
+    public Long getClientId() {
+        return clientId;
     }
 }

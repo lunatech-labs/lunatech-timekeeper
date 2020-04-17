@@ -12,29 +12,29 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
-@Path("/api/activities/{activityId}/members")
+@Path("/api/projects/{projectId}/members")
 public interface MemberResourceApi {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    List<MemberResponse> getAllMembersOfActivity(@PathParam("activityId") Long activityId);
+    List<MemberResponse> getAllMembersOfProject(@PathParam("projectId") Long projectId);
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    Response addMemberToActivity(@PathParam("activityId") Long activityId, @RequestBody MemberRequest request, @Context UriInfo uriInfo);
+    Response addMemberToProject(@PathParam("projectId") Long projectId, @RequestBody MemberRequest request, @Context UriInfo uriInfo);
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
-    MemberResponse getMember(@PathParam("activityId") Long activityId, @PathParam("id") Long id);
+    MemberResponse getMember(@PathParam("projectId") Long projectId, @PathParam("id") Long id);
 
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    Response updateMember(@PathParam("activityId") Long activityId, @PathParam("id") Long id, @RequestBody MemberUpdateRequest request);
+    Response updateMember(@PathParam("projectId") Long projectId, @PathParam("id") Long id, @RequestBody MemberUpdateRequest request);
 
     @DELETE
     @Path("/{id}")
-    Response removeMemberToActivity(@PathParam("activityId") Long activityId, @PathParam("id") Long id);
+    Response removeMemberToProject(@PathParam("projectId") Long projectId, @PathParam("id") Long id);
 
 }

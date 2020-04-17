@@ -19,7 +19,7 @@ public class Entry extends PanacheEntity {
     public long duration;
     public DurationType durationType;
     @OneToOne
-    public Activity activity;
+    public Project project;
     @OneToOne
     public Task task;
 

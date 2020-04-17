@@ -1,8 +1,8 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.services.dtos.ActivityRequest;
-import fr.lunatech.timekeeper.services.dtos.ActivityResponse;
-import fr.lunatech.timekeeper.services.dtos.CustomerRequest;
+import fr.lunatech.timekeeper.services.dtos.ProjectRequest;
+import fr.lunatech.timekeeper.services.dtos.ProjectResponse;
+import fr.lunatech.timekeeper.services.dtos.ClientRequest;
 import fr.lunatech.timekeeper.services.dtos.UserRequest;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
@@ -29,7 +29,7 @@ import static org.hamcrest.CoreMatchers.is;
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
 @Tag("integration")
-class ActivityResourceTest {
+class ProjectResourceTest {
 
     @Inject
     Flyway flyway;
@@ -41,73 +41,73 @@ class ActivityResourceTest {
     }
 
     @Test
-    void shouldCreateActivity() {
+    void shouldCreateProject() {
 
-        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
-        final ActivityRequest activity = new ActivityRequest("Pepito", true, "New project", 1L);
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L);
 
-        final ActivityResponse expectedActivity = new ActivityResponse(2L, "Pepito", true, "New project", 1L, new ArrayList<Long>());
-
-        given()
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(customer)
-                .post("/api/customers")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/1"));
+        final ProjectResponse expectedProject = new ProjectResponse(2L, "Pepito", true, "New project", 1L, new ArrayList<Long>());
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(activity)
-                .post("/api/activities")
+                .body(client)
+                .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/activities/2"));
+                .header(LOCATION, endsWith("/api/clients/1"));
+
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body(project)
+                .post("/api/projects")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/projects/2"));
 
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/activities/2")
+                .get("/api/projects/2")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is(toJson(expectedActivity)));
+                .body(is(toJson(expectedProject)));
     }
 
     @Test
-    void shouldNotCreateActivityWithUnknownCustomer() {
+    void shouldNotCreateProjectWithUnknownClient() {
 
-        final ActivityRequest activity = new ActivityRequest("Pepito", true, "New project", 10L);
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 10L);
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(activity)
-                .post("/api/activities")
+                .body(project)
+                .post("/api/projects")
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
     }
 
     @Test
-    void shouldNotFindUnknownActivity() {
+    void shouldNotFindUnknownProject() {
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/activities/4")
+                .get("/api/projects/4")
                 .then()
                 .statusCode(NOT_FOUND.getStatusCode());
     }
 
     @Test
-    void shouldFindAllActivities() {
+    void shouldFindAllProjects() {
         final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
-        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
-        final ActivityRequest activity = new ActivityRequest("Pepito", true, "New project", 2L);
-        final ActivityRequest activity1 = new ActivityRequest("Pepito", true, "New project", 2L);
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
+        final ProjectRequest project1 = new ProjectRequest("Pepito", true, "New project", 2L);
 
-        final ActivityResponse expectedActivity = new ActivityResponse(3L, "Pepito", true, "New project", 2L, new ArrayList<Long>());
-        final ActivityResponse expectedActivity1 = new ActivityResponse(4L, "Pepito", true, "New project", 2L, new ArrayList<Long>());
+        final ProjectResponse expectedProject = new ProjectResponse(3L, "Pepito", true, "New project", 2L, new ArrayList<Long>());
+        final ProjectResponse expectedProject1 = new ProjectResponse(4L, "Pepito", true, "New project", 2L, new ArrayList<Long>());
 
         given()
                 .when()
@@ -121,101 +121,101 @@ class ActivityResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(customer)
-                .post("/api/customers")
+                .body(client)
+                .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/2"));
+                .header(LOCATION, endsWith("/api/clients/2"));
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(activity)
-                .post("/api/activities")
+                .body(project)
+                .post("/api/projects")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/activities/3"));
+                .header(LOCATION, endsWith("/api/projects/3"));
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(activity1)
-                .post("/api/activities")
+                .body(project1)
+                .post("/api/projects")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/activities/4"));
+                .header(LOCATION, endsWith("/api/projects/4"));
 
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/activities")
+                .get("/api/projects")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is(TestUtils.<ActivityResponse>listOfTasJson(expectedActivity, expectedActivity1)));
+                .body(is(TestUtils.<ProjectResponse>listOfTasJson(expectedProject, expectedProject1)));
     }
 
     @Test
-    void shouldFindAllActivitiesEmpty() {
+    void shouldFindAllProjectsEmpty() {
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/activities")
+                .get("/api/projects")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .body(is("[]"));
     }
 
     @Test
-    void shouldModifyActivity() {
+    void shouldModifyProject() {
 
-        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
-        final CustomerRequest customer1 = new CustomerRequest("NewClient2", "NewDescription2");
-        final ActivityRequest activity = new ActivityRequest("Pepito", true, "New project", 1L);
-        final ActivityRequest activity1 = new ActivityRequest("Pepito2", false, "New project2", 3L);
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
+        final ClientRequest client1 = new ClientRequest("NewClient2", "NewDescription2");
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L);
+        final ProjectRequest project1 = new ProjectRequest("Pepito2", false, "New project2", 3L);
 
-        final ActivityResponse expectedActivity = new ActivityResponse(2L, "Pepito2", false, "New project2", 3L, new ArrayList<Long>());
+        final ProjectResponse expectedProject = new ProjectResponse(2L, "Pepito2", false, "New project2", 3L, new ArrayList<Long>());
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(customer)
-                .post("/api/customers")
+                .body(client)
+                .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/1"));
+                .header(LOCATION, endsWith("/api/clients/1"));
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(activity)
-                .post("/api/activities")
+                .body(project)
+                .post("/api/projects")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/activities/2"));
+                .header(LOCATION, endsWith("/api/projects/2"));
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(customer1)
-                .post("/api/customers")
+                .body(client1)
+                .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/3"));
+                .header(LOCATION, endsWith("/api/clients/3"));
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(activity1)
-                .put("/api/activities/2")
+                .body(project1)
+                .put("/api/projects/2")
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/activities/2")
+                .get("/api/projects/2")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is(toJson(expectedActivity)));
+                .body(is(toJson(expectedProject)));
     }
 }
