@@ -1,5 +1,5 @@
 import React from 'react'
-import {Layout, Space} from "antd";
+import {Layout} from "antd";
 import './SidebarLeft.less'
 import Logo from "../Logo/Logo";
 import MenuSidebar from "../MenuSidebar/MenuSidebar";
