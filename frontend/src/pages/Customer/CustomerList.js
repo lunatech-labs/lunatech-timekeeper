@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Avatar, List} from 'antd';
+import {Avatar, List, Button} from 'antd';
 import {EditOutlined, MoreOutlined} from '@ant-design/icons';
 import {Link} from "react-router-dom";
 import './Customer.less'
@@ -44,7 +44,7 @@ const CustomerList = ({customers, logo, activities}) => {
                     </List.Item>
                 )}
             />
-            <Link to="/customers/new" className="btn customer-new" type="button">
+            <Link to="/customers/new" type="primary" >
                 Add a customer
             </Link>
         </React.Fragment>

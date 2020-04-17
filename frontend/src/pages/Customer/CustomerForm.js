@@ -1,35 +1,31 @@
 import React from 'react'
-import {Button, Form, Input } from 'antd'
+import {Button, Form, Input} from 'antd'
 
-const { TextArea } = Input;
+const {TextArea} = Input;
 
-const NewCustomer = ({ axiosInstance }) => {
-
-    const postCustomer = values => {
+const CustomerForm = ({customer, axiosInstance, isNew}) => {
+    const postForm = values => {
         axiosInstance.post('/api/customers', {
             'name': values.name,
             'description': values.description
         })
             .then(res => {
-                switch(res.status){
+                switch (res.status) {
                     case 201:
-                        console.log("201: Created");
-                        break;
-                    case 400:
-                        console.log("400: Bad Request");
+                        //TODO Action in case of 201
                         break;
                     default:
-                        console.log("Default");
                 }
             })
-    };
+    }
 
     return (
         <Form
             labelCol={{span: 4}}
             wrapperCol={{span: 14}}
             layout="horizontal"
-            onFinish={postCustomer}
+            onFinish={(isNew && postForm)}
+            initialValues={customer}
         >
             <Form.Item
                 label="Name"
@@ -40,7 +36,9 @@ const NewCustomer = ({ axiosInstance }) => {
                     },
                 ]}
             >
-                <Input placeholder="New customer's name"/>
+                <Input
+                    placeholder="New customer's name"
+                />
             </Form.Item>
             <Form.Item
                 label="Description"
@@ -51,7 +49,7 @@ const NewCustomer = ({ axiosInstance }) => {
                     placeholder="New customer's description"
                 />
             </Form.Item>
-            <Form.Item >
+            <Form.Item>
                 <Button className="btn save" htmlType="submit">
                     Submit
                 </Button>
@@ -60,4 +58,4 @@ const NewCustomer = ({ axiosInstance }) => {
     )
 };
 
-export default NewCustomer;
+export default CustomerForm;
