@@ -2,7 +2,7 @@ package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.services.dtos.ProjectRequest;
 import fr.lunatech.timekeeper.services.dtos.ProjectResponse;
-import fr.lunatech.timekeeper.services.dtos.CustomerRequest;
+import fr.lunatech.timekeeper.services.dtos.ClientRequest;
 import fr.lunatech.timekeeper.services.dtos.UserRequest;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
@@ -43,7 +43,7 @@ class ProjectResourceTest {
     @Test
     void shouldCreateProject() {
 
-        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L);
 
         final ProjectResponse expectedproject = new ProjectResponse(2L, "Pepito", true, "New project", 1L, new ArrayList<Long>());
@@ -51,11 +51,11 @@ class ProjectResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(customer)
-                .post("/api/customers")
+                .body(client)
+                .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/1"));
+                .header(LOCATION, endsWith("/api/clients/1"));
 
         given()
                 .when()
@@ -76,7 +76,7 @@ class ProjectResourceTest {
     }
 
     @Test
-    void shouldNotCreateProjectWithUnknownCustomer() {
+    void shouldNotCreateProjectWithUnknownClient() {
 
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 10L);
 
@@ -102,7 +102,7 @@ class ProjectResourceTest {
     @Test
     void shouldFindAllProjects() {
         final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
-        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
         final ProjectRequest project1 = new ProjectRequest("Pepito", true, "New project", 2L);
 
@@ -121,11 +121,11 @@ class ProjectResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(customer)
-                .post("/api/customers")
+                .body(client)
+                .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/2"));
+                .header(LOCATION, endsWith("/api/clients/2"));
 
         given()
                 .when()
@@ -168,8 +168,8 @@ class ProjectResourceTest {
     @Test
     void shouldModifyProject() {
 
-        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
-        final CustomerRequest customer1 = new CustomerRequest("NewClient2", "NewDescription2");
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
+        final ClientRequest client1 = new ClientRequest("NewClient2", "NewDescription2");
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L);
         final ProjectRequest project1 = new ProjectRequest("Pepito2", false, "New project2", 3L);
 
@@ -178,11 +178,11 @@ class ProjectResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(customer)
-                .post("/api/customers")
+                .body(client)
+                .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/1"));
+                .header(LOCATION, endsWith("/api/clients/1"));
 
         given()
                 .when()
@@ -196,11 +196,11 @@ class ProjectResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(customer1)
-                .post("/api/customers")
+                .body(client1)
+                .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/3"));
+                .header(LOCATION, endsWith("/api/clients/3"));
 
         given()
                 .when()

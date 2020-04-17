@@ -1,9 +1,9 @@
 create sequence hibernate_sequence;
 
-create table customers
+create table clients
 (
     id int8 not null
-        constraint customers_pkey
+        constraint clients_pkey
             primary key,
     description varchar(255),
     name varchar(255)
@@ -17,9 +17,9 @@ create table projects
     billable bool,
     description varchar(255),
     name varchar(255),
-    customer_id int8 not null
-        constraint fk_projects_customer_id
-            references customers
+    client_id int8 not null
+        constraint fk_projects_client_id
+            references clients
 );
 
 create table task

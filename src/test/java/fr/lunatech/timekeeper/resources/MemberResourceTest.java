@@ -41,7 +41,7 @@ class MemberResourceTest {
 
         final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
 
-        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
         final MemberRequest member = new MemberRequest(1L, Role.Developer);
 
@@ -59,11 +59,11 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(customer)
-                .post("/api/customers")
+                .body(client)
+                .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/2"));
+                .header(LOCATION, endsWith("/api/clients/2"));
 
         given()
                 .when()
@@ -97,7 +97,7 @@ class MemberResourceTest {
 
         final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
 
-        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
         final MemberRequest member = new MemberRequest(1L, Role.Developer);
 
@@ -116,11 +116,11 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(customer)
-                .post("/api/customers")
+                .body(client)
+                .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/2"));
+                .header(LOCATION, endsWith("/api/clients/2"));
 
         given()
                 .when()
@@ -162,7 +162,7 @@ class MemberResourceTest {
     void shouldFindAllMembersEmpty() {
         final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
 
-        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
 
         given()
@@ -177,11 +177,11 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(customer)
-                .post("/api/customers")
+                .body(client)
+                .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/2"));
+                .header(LOCATION, endsWith("/api/clients/2"));
 
         given()
                 .when()
@@ -227,7 +227,7 @@ class MemberResourceTest {
 
         final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
 
-        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
 
         final MemberRequest member = new MemberRequest(1L, Role.Developer);
@@ -246,11 +246,11 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(customer)
-                .post("/api/customers")
+                .body(client)
+                .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/2"));
+                .header(LOCATION, endsWith("/api/clients/2"));
 
         given()
                 .when()
@@ -292,7 +292,7 @@ class MemberResourceTest {
 
         final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
 
-        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
 
         final MemberRequest member = new MemberRequest(1L, Role.Developer);
@@ -309,11 +309,11 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(customer)
-                .post("/api/customers")
+                .body(client)
+                .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/2"));
+                .header(LOCATION, endsWith("/api/clients/2"));
 
         given()
                 .when()
