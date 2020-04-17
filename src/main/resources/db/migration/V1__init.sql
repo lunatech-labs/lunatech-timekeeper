@@ -48,28 +48,27 @@ create table entry
             references task
 );
 
-create table users
-(
-    id int8 not null
-        constraint users_pkey
+create TABLE public.users (
+	id int8 NOT NULL
+	    constraint users_pkey
             primary key,
-    email varchar(255),
-    firstname varchar(255),
-    lastname varchar(255),
-    profiles varchar(255)
+	email varchar(255) not null,
+	firstname varchar(255) not null,
+	lastname varchar(255) not null,
+	profiles varchar(255) NULL
 );
 
-create table members
-(
-    id int8 not null
-        constraint members_pkey
-            primary key,
-    role int4,
-    activity_id int8 not null
+create table public.members (
+	id int8 NOT null
+	    constraint members_pkey
+	        primary key,
+	role int4,
+	user_id int8 not null
+	    constraint fk_members_user_id
+	        references users,
+	activity_id int8 not null
         constraint fk_members_activity_id
-            references activities,
-    user_id int8
-        constraint fk_members_user_id
-            references users
+            references activities
 );
+
 

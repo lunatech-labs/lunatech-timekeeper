@@ -1,5 +1,8 @@
 package fr.lunatech.timekeeper.resources;
 
+import fr.lunatech.timekeeper.models.Profile;
+import fr.lunatech.timekeeper.services.dtos.UserRequest;
+import fr.lunatech.timekeeper.services.dtos.UserResponse;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -9,7 +12,12 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
+import static fr.lunatech.timekeeper.models.Profile.Admin;
+import static fr.lunatech.timekeeper.models.Profile.User;
+import static fr.lunatech.timekeeper.resources.TestUtils.*;
 import static io.restassured.RestAssured.given;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT;
 import static javax.ws.rs.core.HttpHeaders.LOCATION;
@@ -34,10 +42,18 @@ class UserResourceTest {
 
     @Test
     void shouldCreateUser() {
+
+        final List<Profile> profilesExpected = new ArrayList<>();
+        profilesExpected.add(Admin);
+
+        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+
+        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", profilesExpected, new ArrayList<Long>());
+
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\",\"profiles\":[\"Admin\"]}")
+                .body(user)
                 .post("/api/users")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -49,7 +65,7 @@ class UserResourceTest {
                 .get("/api/users/1")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("{\"email\":\"sam@gmail.com\",\"firstName\":\"Sam\",\"id\":1,\"lastName\":\"Huel\",\"profiles\":[\"Admin\"]}"));
+                .body(is(toJson(expectedUserResponse)));
     }
 
     @Test
@@ -64,10 +80,19 @@ class UserResourceTest {
 
     @Test
     void shouldModifyUser() {
+
+        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+        final UserRequest user2 = createUserRequest("Sam2", "Huel2", "sam2@gmail.com", User);
+
+        final List<Profile> profileExpected = new ArrayList<>();
+        profileExpected.add(User);
+
+        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam2", "Huel2", "sam2@gmail.com", profileExpected, new ArrayList<Long>());
+
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\",\"profiles\":[\"Admin\"]}")
+                .body(user1)
                 .post("/api/users")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -76,7 +101,7 @@ class UserResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"firstName\":\"Sam2\",\"lastName\":\"Huel2\",\"email\":\"sam2@gmail.com\",\"profiles\":[\"User\"]}")
+                .body(user2)
                 .put("/api/users/1")
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
@@ -87,15 +112,29 @@ class UserResourceTest {
                 .get("/api/users/1")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("{\"email\":\"sam2@gmail.com\",\"firstName\":\"Sam2\",\"id\":1,\"lastName\":\"Huel2\",\"profiles\":[\"User\"]}"));
+                .body(is(toJson(expectedUserResponse)));
     }
 
     @Test
     void shouldFindAllUsers() {
+
+        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+        final UserRequest user2 = createUserRequest("Sam2", "Huel2", "sam2@gmail.com", User);
+
+        final List<Profile> profileExpected1 = new ArrayList<>();
+        profileExpected1.add(Admin);
+        final List<Profile> profileExpected2 = new ArrayList<>();
+        profileExpected2.add(User);
+
+        final UserResponse expectedUserResponse1 = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", profileExpected1, new ArrayList<Long>());
+        final UserResponse expectedUserResponse2 = new UserResponse(2L, "Sam2", "Huel2", "sam2@gmail.com", profileExpected2, new ArrayList<Long>());
+
+
+
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"firstName\":\"Sam\",\"lastName\":\"Huel\",\"email\":\"sam@gmail.com\",\"profiles\":[\"Admin\"]}")
+                .body(user1)
                 .post("/api/users")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -103,7 +142,7 @@ class UserResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"firstName\":\"Sam2\",\"lastName\":\"Huel2\",\"email\":\"sam2@gmail.com\",\"profiles\":[\"Admin\"]}")
+                .body(user2)
                 .post("/api/users")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -114,8 +153,9 @@ class UserResourceTest {
                 .get("/api/users")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("[{\"email\":\"sam@gmail.com\",\"firstName\":\"Sam\",\"id\":1,\"lastName\":\"Huel\",\"profiles\":[\"Admin\"]},{\"email\":\"sam2@gmail.com\",\"firstName\":\"Sam2\",\"id\":2,\"lastName\":\"Huel2\",\"profiles\":[\"Admin\"]}]"));
+                .body(is(TestUtils.<UserResponse>listOfTasJson(expectedUserResponse1,expectedUserResponse2)));
     }
+
     @Test
     void shouldFindAllUsersEmpty() {
         given()
@@ -124,6 +164,6 @@ class UserResourceTest {
                 .get("/api/users")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("[]"));
+                .body(is(toJson(new ArrayList<UserResponse>())));
     }
 }
