@@ -5,7 +5,7 @@ import { useKeycloak } from '@react-keycloak/web'
 
 import HomePage from '../pages/Home/index'
 import LoginPage from '../pages/Login/index'
-import CustomersPage from '../pages/Customer/index'
+import ClientsPage from '../pages/Client/index'
 
 import { PrivateRoute } from './utils'
 
@@ -21,7 +21,7 @@ export const AppRouter = () => {
             <Switch>
                 <PrivateRoute exact path="/home" component={HomePage} />
                 <Route path="/login" component={LoginPage} />
-                <PrivateRoute path="/customers" component={CustomersPage} />
+                <PrivateRoute path="/clients" component={ClientsPage} />
                 <Redirect from="/" to="/home" />
             </Switch>
         </Router>

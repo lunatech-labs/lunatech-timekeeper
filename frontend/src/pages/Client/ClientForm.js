@@ -3,9 +3,9 @@ import {Button, Form, Input} from 'antd'
 
 const {TextArea} = Input;
 
-const CustomerForm = ({customer, axiosInstance, isNew}) => {
+const ClientForm = ({client, axiosInstance, isNew}) => {
     const postForm = values => {
-        axiosInstance.post('/api/customers', {
+        axiosInstance.post('/api/clients', {
             'name': values.name,
             'description': values.description
         })
@@ -25,7 +25,7 @@ const CustomerForm = ({customer, axiosInstance, isNew}) => {
             wrapperCol={{span: 14}}
             layout="horizontal"
             onFinish={(isNew && postForm)}
-            initialValues={customer}
+            initialValues={client}
         >
             <Form.Item
                 label="Name"
@@ -37,7 +37,7 @@ const CustomerForm = ({customer, axiosInstance, isNew}) => {
                 ]}
             >
                 <Input
-                    placeholder="New customer's name"
+                    placeholder="New client's name"
                 />
             </Form.Item>
             <Form.Item
@@ -46,7 +46,7 @@ const CustomerForm = ({customer, axiosInstance, isNew}) => {
             >
                 <TextArea
                     rows={4}
-                    placeholder="New customer's description"
+                    placeholder="New client's description"
                 />
             </Form.Item>
             <Form.Item>
@@ -58,4 +58,4 @@ const CustomerForm = ({customer, axiosInstance, isNew}) => {
     )
 };
 
-export default CustomerForm;
+export default ClientForm;
