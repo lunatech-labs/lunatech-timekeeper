@@ -46,7 +46,7 @@ class ProjectResourceTest {
         final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L);
 
-        final ProjectResponse expectedproject = new ProjectResponse(2L, "Pepito", true, "New project", 1L, new ArrayList<Long>());
+        final ProjectResponse expectedProject = new ProjectResponse(2L, "Pepito", true, "New project", 1L, new ArrayList<Long>());
 
         given()
                 .when()
@@ -72,7 +72,7 @@ class ProjectResourceTest {
                 .get("/api/projects/2")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is(toJson(expectedproject)));
+                .body(is(toJson(expectedProject)));
     }
 
     @Test
@@ -106,8 +106,8 @@ class ProjectResourceTest {
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
         final ProjectRequest project1 = new ProjectRequest("Pepito", true, "New project", 2L);
 
-        final ProjectResponse expectedproject = new ProjectResponse(3L, "Pepito", true, "New project", 2L, new ArrayList<Long>());
-        final ProjectResponse expectedproject1 = new ProjectResponse(4L, "Pepito", true, "New project", 2L, new ArrayList<Long>());
+        final ProjectResponse expectedProject = new ProjectResponse(3L, "Pepito", true, "New project", 2L, new ArrayList<Long>());
+        final ProjectResponse expectedProject1 = new ProjectResponse(4L, "Pepito", true, "New project", 2L, new ArrayList<Long>());
 
         given()
                 .when()
@@ -151,7 +151,7 @@ class ProjectResourceTest {
                 .get("/api/projects")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is(TestUtils.<ProjectResponse>listOfTasJson(expectedproject, expectedproject1)));
+                .body(is(TestUtils.<ProjectResponse>listOfTasJson(expectedProject, expectedProject1)));
     }
 
     @Test
@@ -173,7 +173,7 @@ class ProjectResourceTest {
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L);
         final ProjectRequest project1 = new ProjectRequest("Pepito2", false, "New project2", 3L);
 
-        final ProjectResponse expectedproject = new ProjectResponse(2L, "Pepito2", false, "New project2", 3L, new ArrayList<Long>());
+        final ProjectResponse expectedProject = new ProjectResponse(2L, "Pepito2", false, "New project2", 3L, new ArrayList<Long>());
 
         given()
                 .when()
@@ -216,6 +216,6 @@ class ProjectResourceTest {
                 .get("/api/projects/2")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is(toJson(expectedproject)));
+                .body(is(toJson(expectedProject)));
     }
 }

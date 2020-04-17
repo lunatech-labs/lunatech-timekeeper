@@ -20,16 +20,16 @@ public interface ProjectResourceApi {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    Response createproject(@RequestBody ProjectRequest request, @Context UriInfo uriInfo);
+    Response createProject(@RequestBody ProjectRequest request, @Context UriInfo uriInfo);
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    ProjectResponse getproject(@PathParam("id") Long id);
+    ProjectResponse getProject(@PathParam("id") Long id);
 
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    Response updateproject(@PathParam("id") Long id, @RequestBody ProjectRequest request);
+    Response updateProject(@PathParam("id") Long id, @RequestBody ProjectRequest request);
 
 }

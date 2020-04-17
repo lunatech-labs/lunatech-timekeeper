@@ -27,14 +27,14 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Optional<MemberResponse> findMemberById(Long projectId, Long id) {
         return Member.<Member>findByIdOptional(id)
-                .filter(member -> matchprojectId(member, projectId))
+                .filter(member -> matchProjectId(member, projectId))
                 .map(this::from);
     }
 
     @Override
     public List<MemberResponse> listAllMembers(Long projectId) {
         try (final Stream<Member> members = Member.streamAll()) {
-            return members.filter(member -> matchprojectId(member, projectId))
+            return members.filter(member -> matchProjectId(member, projectId))
                     .map(this::from)
                     .collect(Collectors.toList());
         }
@@ -52,7 +52,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Optional<Long> updateMember(Long projectId, Long id, MemberUpdateRequest request) {
         return Member.<Member>findByIdOptional(id)
-                .filter(member -> matchprojectId(member, projectId))
+                .filter(member -> matchProjectId(member, projectId))
                 .map(member -> bind(member, projectId, request).id);
     }
 
@@ -60,7 +60,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Optional<Long> deleteMember(Long projectId, Long id) {
         return Member.<Member>findByIdOptional(id)
-                .filter(member -> matchprojectId(member, projectId))
+                .filter(member -> matchProjectId(member, projectId))
                 .map(member -> {
                     final var oldId = member.id;
                     if (member.isPersistent()) {
@@ -76,19 +76,19 @@ public class MemberServiceImpl implements MemberService {
 
     private Member bind(Long projectId, MemberRequest request) {
         final var member = new Member();
-        member.project = getproject(projectId);
+        member.project = getProject(projectId);
         member.user = getUser(request.getUserId());
         member.role = request.getRole();
         return member;
     }
 
     private Member bind(Member member, Long projectId, MemberUpdateRequest request) {
-        member.project = getproject(projectId);
+        member.project = getProject(projectId);
         member.role = request.getRole();
         return member;
     }
 
-    private Project getproject(Long projectId) {
+    private Project getProject(Long projectId) {
         return Project.<Project>findByIdOptional(projectId)
                 .orElseThrow(() -> new IllegalEntityStateException(String.format("One project is required for member. projectId=%s", projectId)));
     }
@@ -98,7 +98,7 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(() -> new IllegalEntityStateException(String.format("One User is required for member. userId=%s", userId)));
     }
 
-    private boolean matchprojectId(Member member, Long projectId) {
+    private boolean matchProjectId(Member member, Long projectId) {
         return member.project != null && Objects.equals(member.project.id, projectId);
     }
 }
