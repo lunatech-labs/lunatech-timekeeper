@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Avatar, List, Button} from 'antd';
+import {Avatar, List} from 'antd';
 import {EditOutlined, MoreOutlined} from '@ant-design/icons';
 import {Link} from "react-router-dom";
-import './Customer.less'
+import './Client.less'
 
-const CustomerList = ({customers, logo, activities}) => {
+const ClientList = ({clients, logo, activities}) => {
     const activitiesIdToActivities = (activitiesId) => {
         return activities.filter(activity => activitiesId.includes(activity.id));
     };
@@ -13,22 +13,19 @@ const CustomerList = ({customers, logo, activities}) => {
     return (
         <React.Fragment>
             <List
-                className="customer-list"
                 itemLayout="horizontal"
-                dataSource={customers}
+                dataSource={clients}
                 renderItem={item => (
                     <List.Item
                         actions={[
                             <Link
-                                to={`/customers/${item.id}`}
+                                to={`/clients/${item.id}`}
                                 shape="circle"
-                                className="customer-edit-link"
                                 icon={<EditOutlined />}
                             />,
                             <Link
-                                to={`/customers/${item.id}`}
+                                to={`/clients/${item.id}`}
                                 shape="circle"
-                                className="customer-more-link"
                                 icon={<MoreOutlined />}
                             />
                         ]}
@@ -44,15 +41,15 @@ const CustomerList = ({customers, logo, activities}) => {
                     </List.Item>
                 )}
             />
-            <Link to="/customers/new" type="primary" >
-                Add a customer
+            <Link to="/clients/new" type="primary" >
+                Add a Client
             </Link>
         </React.Fragment>
     )
 };
 
-CustomerList.propTypes = {
-    customers: PropTypes.arrayOf(
+ClientList.propTypes = {
+    clients: PropTypes.arrayOf(
         PropTypes.shape({
             id: PropTypes.number,
             name: PropTypes.string,
@@ -66,4 +63,4 @@ CustomerList.propTypes = {
     }))
 };
 
-export default CustomerList;
+export default ClientList;
