@@ -14,14 +14,14 @@ class MenuSidebar extends Component {
     render() {
         const {location} = this.props;
         return (
-            <Menu defaultSelectedKeys={['/home']} mode="inline" selectedKeys={[location.pathname]}  theme="dark">
+            <Menu defaultSelectedKeys={['/home']} mode="inline" selectedKeys={[location.pathname]}>
                 <Menu.Item key="/home">
-                    <PieChartOutlined/>
-                    <Link to="/home">Home</Link>
+                    <PieChartOutlined />
+                    <span><Link to="/home">Home</Link></span>
                 </Menu.Item>
                 <Menu.Item key="/customers">
                     <DesktopOutlined/>
-                    <Link to="/customers">Customers</Link>
+                    <span><Link to="/customers">Customers</Link></span>
                 </Menu.Item>
             </Menu>
         )
