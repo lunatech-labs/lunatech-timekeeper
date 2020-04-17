@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import { useLocation } from "react-router-dom";
 import CustomerList from './CustomerList';
-import MainPage from "../../MainPage/MainPage";
 import CustomerForm from "./CustomerForm";
 import logo from '../../img/logo_timekeeper_homepage.png';
 import MainPage from "../MainPage/MainPage";
