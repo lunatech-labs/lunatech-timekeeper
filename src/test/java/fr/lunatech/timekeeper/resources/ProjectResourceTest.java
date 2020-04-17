@@ -1,8 +1,8 @@
 package fr.lunatech.timekeeper.resources;
 
+import fr.lunatech.timekeeper.services.dtos.ClientRequest;
 import fr.lunatech.timekeeper.services.dtos.ProjectRequest;
 import fr.lunatech.timekeeper.services.dtos.ProjectResponse;
-import fr.lunatech.timekeeper.services.dtos.ClientRequest;
 import fr.lunatech.timekeeper.services.dtos.UserRequest;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
