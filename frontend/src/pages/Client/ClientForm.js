@@ -1,7 +1,21 @@
 import React from 'react'
-import {Button, Form, Input} from 'antd'
+import {Button, Form, Input, PageHeader} from 'antd'
 
 const {TextArea} = Input;
+
+const tailLayout = {
+    wrapperCol: {
+        offset: 4,
+        span: 16,
+    },
+};
+
+function getPageTitle(isNewClient) {
+    if (isNewClient) {
+        return "Create a new Client";
+    }
+    return "Update an existing Client";
+}
 
 const ClientForm = ({client, axiosInstance, isNew}) => {
     const postForm = values => {
@@ -17,44 +31,47 @@ const ClientForm = ({client, axiosInstance, isNew}) => {
                     default:
                 }
             })
-    }
+    };
 
     return (
-        <Form
-            labelCol={{span: 4}}
-            wrapperCol={{span: 14}}
-            layout="horizontal"
-            onFinish={(isNew && postForm)}
-            initialValues={client}
-        >
-            <Form.Item
-                label="Name"
-                name="name"
-                rules={[
-                    {
-                        required: true,
-                    },
-                ]}
+        <React.Fragment>
+            <PageHeader title="Clients" subTitle={getPageTitle(isNew)} />
+            <Form
+                labelCol={{span: 4}}
+                wrapperCol={{span: 14}}
+                layout="horizontal"
+                onFinish={(isNew && postForm)}
+                initialValues={client}
             >
-                <Input
-                    placeholder="New client's name"
-                />
-            </Form.Item>
-            <Form.Item
-                label="Description"
-                name="description"
-            >
-                <TextArea
-                    rows={4}
-                    placeholder="New client's description"
-                />
-            </Form.Item>
-            <Form.Item>
-                <Button className="btn save" htmlType="submit">
-                    Submit
-                </Button>
-            </Form.Item>
-        </Form>
+                <Form.Item
+                    label="Name"
+                    name="name"
+                    rules={[
+                        {
+                            required: true,
+                        },
+                    ]}
+                >
+                    <Input
+                        placeholder="Client's name"
+                    />
+                </Form.Item>
+                <Form.Item
+                    label="Description"
+                    name="description"
+                >
+                    <TextArea
+                        rows={4}
+                        placeholder="A short description about this client"
+                    />
+                </Form.Item>
+                <Form.Item {...tailLayout}>
+                    <Button type="primary" htmlType="submit">
+                        Submit
+                    </Button>
+                </Form.Item>
+            </Form>
+        </React.Fragment>
     )
 };
 
