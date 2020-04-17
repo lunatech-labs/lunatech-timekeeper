@@ -44,9 +44,9 @@ const CustomerList = ({customers, logo, activities}) => {
                     </List.Item>
                 )}
             />
-            <Button to="/customers/new" type="primary" >
+            <Link to="/customers/new" type="primary" >
                 Add a customer
-            </Button>
+            </Link>
         </React.Fragment>
     )
 };
