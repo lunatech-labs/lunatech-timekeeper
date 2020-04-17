@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Avatar, List} from 'antd';
+import {Avatar, Button, List, PageHeader} from 'antd';
 import {EditOutlined, MoreOutlined} from '@ant-design/icons';
 import {Link} from "react-router-dom";
 import './Client.less'
@@ -12,22 +12,19 @@ const ClientList = ({clients, logo, activities}) => {
     const renderActivities = (activitiesId) => activitiesIdToActivities(activitiesId).map(activity => activity.name).join(" | ");
     return (
         <React.Fragment>
+            <PageHeader title="Clients" subTitle={clients.length} />
             <List
                 itemLayout="horizontal"
                 dataSource={clients}
                 renderItem={item => (
                     <List.Item
                         actions={[
-                            <Link
-                                to={`/clients/${item.id}`}
-                                shape="circle"
-                                icon={<EditOutlined />}
-                            />,
-                            <Link
-                                to={`/clients/${item.id}`}
-                                shape="circle"
-                                icon={<MoreOutlined />}
-                            />
+                            <Link to={`/clients/${item.id}`}>
+                                <Button type="default" icon={<EditOutlined/>}>Edit</Button>
+                            </Link>,
+                            <Link to={`/clients/${item.id}`}>
+                                <Button type="default" icon={<MoreOutlined />}/>
+                            </Link>
                         ]}
                     >
                         <List.Item.Meta
@@ -41,8 +38,8 @@ const ClientList = ({clients, logo, activities}) => {
                     </List.Item>
                 )}
             />
-            <Link to="/clients/new" type="primary" >
-                Add a Client
+            <Link to="/clients/new">
+                <Button type="primary">Create new client</Button>
             </Link>
         </React.Fragment>
     )
