@@ -7,7 +7,7 @@ Why another Toggl you might ask…
 That’s a good question.
 
 We know that there is a lot of open-source solution or SaaS solution (à la Toggl). We decided to bootstrap this project with only one objective : we want to learn.
-We want to learn to design a product, to do workshop and brainstorming. We also want to demonstrate what kind of work we’re able to offer to our customer. Have a look at the various workshops we did in Chessy. 
+We want to learn to design a product, to do workshop and brainstorming. We also want to demonstrate what kind of work we’re able to offer to our client. Have a look at the various workshops we did in Chessy. 
 Our main purpose is to build a cool playground where we can learn, experiment and build a great tool. 
 Toggl is a good tool. We’ve been using it since 2016. However there is some requirements that are not and will never be cover by this tool.
 
