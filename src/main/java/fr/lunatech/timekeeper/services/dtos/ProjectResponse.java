@@ -15,16 +15,16 @@ public final class ProjectResponse {
     @NotNull
     private final String description;
     @NotNull
-    private final Long customerId;
+    private final Long clientId;
     @NotNull
     private final List<Long> membersId;
 
-    public ProjectResponse(@NotNull Long id, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull Long customerId, @NotNull List<Long> membersId) {
+    public ProjectResponse(@NotNull Long id, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull Long clientId, @NotNull List<Long> membersId) {
         this.id = id;
         this.name = name;
         this.billable = billable;
         this.description = description;
-        this.customerId = customerId;
+        this.clientId = clientId;
         this.membersId = membersId;
     }
 
@@ -44,8 +44,8 @@ public final class ProjectResponse {
         return description;
     }
 
-    public Long getCustomerId() {
-        return customerId;
+    public Long getClientId() {
+        return clientId;
     }
 
     public List<Long> getMembersId() {

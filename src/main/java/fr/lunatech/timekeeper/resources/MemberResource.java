@@ -51,6 +51,6 @@ public class MemberResource implements MemberResourceApi {
         return Response.noContent().build();
     }
 
-    //TODO add or modify addMemberToproject method to add multiple users at the same time
+    //TODO add or modify addMemberToProject method to add multiple users at the same time
     //TODO add a method to update all project members at the same time
 }

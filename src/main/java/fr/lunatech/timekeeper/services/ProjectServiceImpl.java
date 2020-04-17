@@ -1,6 +1,6 @@
 package fr.lunatech.timekeeper.services;
 
-import fr.lunatech.timekeeper.models.Customer;
+import fr.lunatech.timekeeper.models.Client;
 import fr.lunatech.timekeeper.models.Project;
 import fr.lunatech.timekeeper.services.dtos.ProjectRequest;
 import fr.lunatech.timekeeper.services.dtos.ProjectResponse;
@@ -53,7 +53,7 @@ public class ProjectServiceImpl implements ProjectService {
                 project.name,
                 project.billable,
                 project.description,
-                project.customer.id,
+                project.client.id,
                 project.members.stream().map(m -> m.id).collect(Collectors.toList())
         );
     }
@@ -62,7 +62,7 @@ public class ProjectServiceImpl implements ProjectService {
         project.name = request.getName();
         project.billable = request.isBillable();
         project.description = request.getDescription();
-        project.customer = getCustomer(request.getCustomerId());
+        project.client = getClient(request.getClientId());
         return project;
     }
 
@@ -70,8 +70,8 @@ public class ProjectServiceImpl implements ProjectService {
         return bind(new Project(), request);
     }
 
-    private Customer getCustomer(Long customerId) {
-        return Customer.<Customer>findByIdOptional(customerId)
-                .orElseThrow(() -> new IllegalEntityStateException(String.format("One Customer is required for an project. customerId=%d", customerId)));
+    private Client getClient(Long clientId) {
+        return Client.<Client>findByIdOptional(clientId)
+                .orElseThrow(() -> new IllegalEntityStateException(String.format("One Client is required for an project. clientId=%d", clientId)));
     }
 }
