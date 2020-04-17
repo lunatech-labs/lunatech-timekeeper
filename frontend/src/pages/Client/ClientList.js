@@ -5,11 +5,11 @@ import {EditOutlined, MoreOutlined} from '@ant-design/icons';
 import {Link} from "react-router-dom";
 import './Client.less'
 
-const ClientList = ({clients, logo, activities}) => {
-    const activitiesIdToActivities = (activitiesId) => {
-        return activities.filter(activity => activitiesId.includes(activity.id));
+const ClientList = ({clients, logo, projects}) => {
+    const projectsIdToProjects = (projectsId) => {
+        return projects.filter(project => projectsId.includes(project.id));
     };
-    const renderActivities = (activitiesId) => activitiesIdToActivities(activitiesId).map(activity => activity.name).join(" | ");
+    const renderProjects = (projectsId) => projectsIdToProjects(projectsId).map(project => project.name).join(" | ");
     return (
         <React.Fragment>
             <PageHeader title="Clients" subTitle={clients.length} />
@@ -34,7 +34,7 @@ const ClientList = ({clients, logo, activities}) => {
                             title={item.name}
                             description={item.description}
                         />
-                        <div>{renderActivities(item.activitiesId)}</div>
+                        <div>{renderProjects(item.projectsId)}</div>
                     </List.Item>
                 )}
             />
@@ -50,11 +50,11 @@ ClientList.propTypes = {
         PropTypes.shape({
             id: PropTypes.number,
             name: PropTypes.string,
-            activitiesId: PropTypes.arrayOf(PropTypes.number)
+            projectsId: PropTypes.arrayOf(PropTypes.number)
         })
     ),
     logo: PropTypes.string,
-    activities: PropTypes.arrayOf(PropTypes.shape({
+    projects: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.number,
         name: PropTypes.string
     }))

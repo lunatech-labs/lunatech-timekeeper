@@ -13,9 +13,9 @@ const getClientList = (axios, setState) => {
     };
     fetchData();
 };
-const getActivityList = (axios, setState) => {
+const getProjectList = (axios, setState) => {
     const fetchData = async () => {
-        const result = await axios.get('/api/activities');
+        const result = await axios.get('/api/projects');
         setState(result.data);
     };
     fetchData();
@@ -36,7 +36,7 @@ const selectClient = (pathname, clients) => {
 
 const ClientsPage = () => {
     const [clients, setClients] = useState([]);
-    const [activities, setActivities] = useState([]);
+    const [projects, setProjects] = useState([]);
     const apiEndpoint = useAxios('http://localhost:8080');
     const { pathname } = useLocation();
     const selectedClient = selectClient(pathname, clients);
@@ -48,7 +48,7 @@ const ClientsPage = () => {
 
         if(!selectedClient) {
             getClientList(apiEndpoint, setClients);
-            getActivityList(apiEndpoint, setActivities);
+            getProjectList(apiEndpoint, setProjects);
         }
     }, [apiEndpoint, selectedClient]);
 
@@ -67,7 +67,7 @@ const ClientsPage = () => {
                 )
             : (
                 <MainPage title="All clients">
-                    <ClientList clients={clients} logo={logo} activities={activities}/>
+                    <ClientList clients={clients} logo={logo} projects={projects}/>
                 </MainPage>
             )
     )
