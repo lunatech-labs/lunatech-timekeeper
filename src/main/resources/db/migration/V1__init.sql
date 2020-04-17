@@ -1,25 +1,25 @@
 create sequence hibernate_sequence;
 
-create table customers
+create table clients
 (
     id int8 not null
-        constraint customers_pkey
+        constraint clients_pkey
             primary key,
     description varchar(255),
     name varchar(255)
 );
 
-create table activities
+create table projects
 (
     id int8 not null
-        constraint activities_pkey
+        constraint projects_pkey
             primary key,
     billable bool,
     description varchar(255),
     name varchar(255),
-    customer_id int8 not null
-        constraint fk_activities_customer_id
-            references customers
+    client_id int8 not null
+        constraint fk_projects_client_id
+            references clients
 );
 
 create table task
@@ -40,9 +40,9 @@ create table entry
     duration int8 not null,
     startdatetime timestamp(6),
     stopdatetime timestamp(6),
-    activity_id int8
-        constraint fk_entry_activity_id
-            references activities,
+    project_id int8
+        constraint fk_entry_project_id
+            references projects,
     task_id int8
         constraint fk_entry_task_id
             references task
@@ -66,9 +66,9 @@ create table public.members (
 	user_id int8 not null
 	    constraint fk_members_user_id
 	        references users,
-	activity_id int8 not null
-        constraint fk_members_activity_id
-            references activities
+	project_id int8 not null
+        constraint fk_members_project_id
+            references projects
 );
 
 

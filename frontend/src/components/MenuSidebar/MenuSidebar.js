@@ -19,9 +19,9 @@ class MenuSidebar extends Component {
                     <PieChartOutlined/>
                     <Link to="/home">Home</Link>
                 </Menu.Item>
-                <Menu.Item key="/customers">
+                <Menu.Item key="/clients">
                     <DesktopOutlined/>
-                    <Link to="/customers">Customers</Link>
+                    <Link to="/clients">Clients</Link>
                 </Menu.Item>
             </Menu>
         )

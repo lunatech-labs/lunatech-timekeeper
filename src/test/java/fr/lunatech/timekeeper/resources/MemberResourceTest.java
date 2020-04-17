@@ -37,12 +37,12 @@ class MemberResourceTest {
     }
 
     @Test
-    void shouldAddMemberToActivity() {
+    void shouldAddMemberToProject() {
 
         final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
 
-        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
-        final ActivityRequest activity = new ActivityRequest("Pepito", true, "New project", 2L);
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
         final MemberRequest member = new MemberRequest(1L, Role.Developer);
 
         final MemberResponse expectedMember = new MemberResponse(4L, 1L, Role.Developer);
@@ -59,34 +59,34 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(customer)
-                .post("/api/customers")
+                .body(client)
+                .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/2"));
+                .header(LOCATION, endsWith("/api/clients/2"));
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(activity)
-                .post("/api/activities")
+                .body(project)
+                .post("/api/projects")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/activities/3"));
+                .header(LOCATION, endsWith("/api/projects/3"));
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(member)
-                .post("/api/activities/3/members")
+                .post("/api/projects/3/members")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/activities/3/members/4"));
+                .header(LOCATION, endsWith("/api/projects/3/members/4"));
 
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/activities/3/members/4")
+                .get("/api/projects/3/members/4")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .body(is(toJson(expectedMember)));
@@ -97,8 +97,8 @@ class MemberResourceTest {
 
         final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
 
-        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
-        final ActivityRequest activity = new ActivityRequest("Pepito", true, "New project", 2L);
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
         final MemberRequest member = new MemberRequest(1L, Role.Developer);
 
         final MemberResponse expectedMember1 = new MemberResponse(4L, 1L, Role.Developer);
@@ -116,43 +116,43 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(customer)
-                .post("/api/customers")
+                .body(client)
+                .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/2"));
+                .header(LOCATION, endsWith("/api/clients/2"));
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(activity)
-                .post("/api/activities")
+                .body(project)
+                .post("/api/projects")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/activities/3"));
-
-        given()
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(member)
-                .post("/api/activities/3/members")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/activities/3/members/4"));
+                .header(LOCATION, endsWith("/api/projects/3"));
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(member)
-                .post("/api/activities/3/members")
+                .post("/api/projects/3/members")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/activities/3/members/5"));
+                .header(LOCATION, endsWith("/api/projects/3/members/4"));
+
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body(member)
+                .post("/api/projects/3/members")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/projects/3/members/5"));
 
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/activities/3/members")
+                .get("/api/projects/3/members")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .body(is(TestUtils.<MemberResponse>listOfTasJson(expectedMember1, expectedMember2)));
@@ -162,8 +162,8 @@ class MemberResourceTest {
     void shouldFindAllMembersEmpty() {
         final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
 
-        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
-        final ActivityRequest activity = new ActivityRequest("Pepito", true, "New project", 2L);
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
 
         given()
                 .when()
@@ -177,32 +177,32 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(customer)
-                .post("/api/customers")
+                .body(client)
+                .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/2"));
+                .header(LOCATION, endsWith("/api/clients/2"));
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(activity)
-                .post("/api/activities")
+                .body(project)
+                .post("/api/projects")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/activities/3"));
+                .header(LOCATION, endsWith("/api/projects/3"));
 
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/activities/3/members")
+                .get("/api/projects/3/members")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .body(is(listOfTasJson()));
     }
 
     @Test
-    void shouldNotAddMemberToActivityWithUnknownUser() {
+    void shouldNotAddMemberToprojectWithUnknownUser() {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
@@ -227,8 +227,8 @@ class MemberResourceTest {
 
         final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
 
-        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
-        final ActivityRequest activity = new ActivityRequest("Pepito", true, "New project", 2L);
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
 
         final MemberRequest member = new MemberRequest(1L, Role.Developer);
 
@@ -246,42 +246,42 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(customer)
-                .post("/api/customers")
+                .body(client)
+                .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/2"));
+                .header(LOCATION, endsWith("/api/clients/2"));
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(activity)
-                .post("/api/activities")
+                .body(project)
+                .post("/api/projects")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/activities/3"));
+                .header(LOCATION, endsWith("/api/projects/3"));
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(member)
-                .post("/api/activities/3/members")
+                .post("/api/projects/3/members")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/activities/3/members/4"));
+                .header(LOCATION, endsWith("/api/projects/3/members/4"));
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body("{\"role\":\"" + Role.TeamLeader + "\"}")
-                .put("/api/activities/3/members/4")
+                .put("/api/projects/3/members/4")
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/activities/3/members/4")
+                .get("/api/projects/3/members/4")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .body(is(toJson(expectedMember)));
@@ -292,8 +292,8 @@ class MemberResourceTest {
 
         final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
 
-        final CustomerRequest customer = new CustomerRequest("NewClient", "NewDescription");
-        final ActivityRequest activity = new ActivityRequest("Pepito", true, "New project", 2L);
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
 
         final MemberRequest member = new MemberRequest(1L, Role.Developer);
 
@@ -309,47 +309,47 @@ class MemberResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(customer)
-                .post("/api/customers")
+                .body(client)
+                .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/2"));
+                .header(LOCATION, endsWith("/api/clients/2"));
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(activity)
-                .post("/api/activities")
+                .body(project)
+                .post("/api/projects")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/activities/3"));
+                .header(LOCATION, endsWith("/api/projects/3"));
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(member)
-                .post("/api/activities/3/members")
+                .post("/api/projects/3/members")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/activities/3/members/4"));
+                .header(LOCATION, endsWith("/api/projects/3/members/4"));
 
         given()
                 .when()
-                .delete("/api/activities/3/members/4")
+                .delete("/api/projects/3/members/4")
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/activities/3/members/4")
+                .get("/api/projects/3/members/4")
                 .then()
                 .statusCode(NOT_FOUND.getStatusCode());
 
         //idempotent?
         given()
                 .when()
-                .delete("/api/activities/3/members/4")
+                .delete("/api/projects/3/members/4")
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
     }

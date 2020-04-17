@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MemberService {
-    Optional<MemberResponse> findMemberById(Long activityId, Long id);
-    List<MemberResponse> listAllMembers(Long activityId);
-    Long createMember(Long activityId, MemberRequest request);
-    Optional<Long> updateMember(Long activityId, Long id, MemberUpdateRequest request);
-    Optional<Long> deleteMember(Long activityId, Long id);
+    Optional<MemberResponse> findMemberById(Long projectId, Long id);
+    List<MemberResponse> listAllMembers(Long projectId);
+    Long createMember(Long projectId, MemberRequest request);
+    Optional<Long> updateMember(Long projectId, Long id, MemberUpdateRequest request);
+    Optional<Long> deleteMember(Long projectId, Long id);
 }
