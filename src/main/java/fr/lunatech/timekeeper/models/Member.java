@@ -16,7 +16,7 @@ public class Member extends PanacheEntity {
     @NotNull
     public Role role;
     @ManyToOne
-    @JoinColumn(name = "activity_id", nullable = false)
+    @JoinColumn(name = "project_id", nullable = false)
     @NotNull
-    public Activity activity;
+    public Project project;
 }

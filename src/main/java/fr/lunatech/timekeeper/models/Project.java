@@ -8,8 +8,8 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
-@Table(name = "activities")
-public class Activity extends PanacheEntity {
+@Table(name = "projects")
+public class Project extends PanacheEntity {
 
     @NotBlank
     public String name;
@@ -21,7 +21,7 @@ public class Activity extends PanacheEntity {
     @JoinColumn(name = "customer_id", nullable = false)
     @NotNull
     public Customer customer;
-    @OneToMany(mappedBy = "activity")
+    @OneToMany(mappedBy = "project")
     @NotNull
     public List<Member> members;
 }

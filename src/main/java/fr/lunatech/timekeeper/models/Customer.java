@@ -9,8 +9,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-import static java.util.Collections.emptyList;
-
 @Entity
 @Table(name = "customers")
 public class Customer extends PanacheEntity {
@@ -21,5 +19,5 @@ public class Customer extends PanacheEntity {
     public String description;
     @OneToMany(mappedBy = "customer")
     @NotNull
-    public List<Activity> activities;
+    public List<Project> projects;
 }

@@ -1,7 +1,7 @@
 package fr.lunatech.timekeeper.resources.openapi;
 
-import fr.lunatech.timekeeper.services.dtos.ActivityRequest;
-import fr.lunatech.timekeeper.services.dtos.ActivityResponse;
+import fr.lunatech.timekeeper.services.dtos.ProjectRequest;
+import fr.lunatech.timekeeper.services.dtos.ProjectResponse;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 
 import javax.ws.rs.*;
@@ -11,26 +11,25 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
-@Path("/api/activities")
-public interface ActivityResourceApi {
+@Path("/api/projects")
+public interface ProjectResourceApi {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    List<ActivityResponse> getAllActivities();
-
+    List<ProjectResponse> getAllProjects();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    Response createActivity(@RequestBody ActivityRequest request, @Context UriInfo uriInfo);
+    Response createproject(@RequestBody ProjectRequest request, @Context UriInfo uriInfo);
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    ActivityResponse getActivity(@PathParam("id") Long id);
+    ProjectResponse getproject(@PathParam("id") Long id);
 
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    Response updateActivity(@PathParam("id") Long id, @RequestBody ActivityRequest request);
+    Response updateproject(@PathParam("id") Long id, @RequestBody ProjectRequest request);
 
 }
