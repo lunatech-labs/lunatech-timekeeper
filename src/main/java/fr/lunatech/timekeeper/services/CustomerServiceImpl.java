@@ -46,7 +46,7 @@ public class CustomerServiceImpl implements CustomerService {
                 customer.id,
                 customer.name,
                 customer.description,
-                customer.activities.stream().map(a -> a.id).collect(Collectors.toList())
+                customer.projects.stream().map(a -> a.id).collect(Collectors.toList())
         );
     }
 

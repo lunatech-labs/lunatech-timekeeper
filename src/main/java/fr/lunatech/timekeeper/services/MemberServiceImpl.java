@@ -4,7 +4,7 @@ import fr.lunatech.timekeeper.services.dtos.MemberRequest;
 import fr.lunatech.timekeeper.services.dtos.MemberResponse;
 import fr.lunatech.timekeeper.services.dtos.MemberUpdateRequest;
 import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
-import fr.lunatech.timekeeper.models.Activity;
+import fr.lunatech.timekeeper.models.Project;
 import fr.lunatech.timekeeper.models.Member;
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.services.interfaces.MemberService;
@@ -25,16 +25,16 @@ public class MemberServiceImpl implements MemberService {
     private static Logger logger = LoggerFactory.getLogger(MemberServiceImpl.class);
 
     @Override
-    public Optional<MemberResponse> findMemberById(Long activityId, Long id) {
+    public Optional<MemberResponse> findMemberById(Long projectId, Long id) {
         return Member.<Member>findByIdOptional(id)
-                .filter(member -> matchActivityId(member, activityId))
+                .filter(member -> matchprojectId(member, projectId))
                 .map(this::from);
     }
 
     @Override
-    public List<MemberResponse> listAllMembers(Long activityId) {
+    public List<MemberResponse> listAllMembers(Long projectId) {
         try (final Stream<Member> members = Member.streamAll()) {
-            return members.filter(member -> matchActivityId(member, activityId))
+            return members.filter(member -> matchprojectId(member, projectId))
                     .map(this::from)
                     .collect(Collectors.toList());
         }
@@ -42,25 +42,25 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public Long createMember(Long activityId, MemberRequest request) {
-        final var member = bind(activityId, request);
+    public Long createMember(Long projectId, MemberRequest request) {
+        final var member = bind(projectId, request);
         Member.persist(member);
         return member.id;
     }
 
     @Transactional
     @Override
-    public Optional<Long> updateMember(Long activityId, Long id, MemberUpdateRequest request) {
+    public Optional<Long> updateMember(Long projectId, Long id, MemberUpdateRequest request) {
         return Member.<Member>findByIdOptional(id)
-                .filter(member -> matchActivityId(member, activityId))
-                .map(member -> bind(member, activityId, request).id);
+                .filter(member -> matchprojectId(member, projectId))
+                .map(member -> bind(member, projectId, request).id);
     }
 
     @Transactional
     @Override
-    public Optional<Long> deleteMember(Long activityId, Long id) {
+    public Optional<Long> deleteMember(Long projectId, Long id) {
         return Member.<Member>findByIdOptional(id)
-                .filter(member -> matchActivityId(member, activityId))
+                .filter(member -> matchprojectId(member, projectId))
                 .map(member -> {
                     final var oldId = member.id;
                     if (member.isPersistent()) {
@@ -74,23 +74,23 @@ public class MemberServiceImpl implements MemberService {
         return new MemberResponse(member.id, member.user.id, member.role);
     }
 
-    private Member bind(Long activityId, MemberRequest request) {
+    private Member bind(Long projectId, MemberRequest request) {
         final var member = new Member();
-        member.activity = getActivity(activityId);
+        member.project = getproject(projectId);
         member.user = getUser(request.getUserId());
         member.role = request.getRole();
         return member;
     }
 
-    private Member bind(Member member, Long activityId, MemberUpdateRequest request) {
-        member.activity = getActivity(activityId);
+    private Member bind(Member member, Long projectId, MemberUpdateRequest request) {
+        member.project = getproject(projectId);
         member.role = request.getRole();
         return member;
     }
 
-    private Activity getActivity(Long activityId) {
-        return Activity.<Activity>findByIdOptional(activityId)
-                .orElseThrow(() -> new IllegalEntityStateException(String.format("One Activity is required for member. activityId=%s", activityId)));
+    private Project getproject(Long projectId) {
+        return Project.<Project>findByIdOptional(projectId)
+                .orElseThrow(() -> new IllegalEntityStateException(String.format("One project is required for member. projectId=%s", projectId)));
     }
 
     private User getUser(Long userId) {
@@ -98,7 +98,7 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(() -> new IllegalEntityStateException(String.format("One User is required for member. userId=%s", userId)));
     }
 
-    private boolean matchActivityId(Member member, Long activityId) {
-        return member.activity != null && Objects.equals(member.activity.id, activityId);
+    private boolean matchprojectId(Member member, Long projectId) {
+        return member.project != null && Objects.equals(member.project.id, projectId);
     }
 }

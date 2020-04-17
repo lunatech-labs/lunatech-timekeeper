@@ -65,7 +65,7 @@ class CustomerResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"activitiesId\":[1,2,3],\"id\":9999,\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .body("{\"projectsId\":[1,2,3],\"id\":9999,\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
                 .post("/api/customers")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -77,7 +77,7 @@ class CustomerResourceTest {
                 .get("/api/customers/1")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("{\"activitiesId\":[],\"description\":\"NewDescription\",\"id\":1,\"name\":\"NewClient\"}"));
+                .body(is("{\"description\":\"NewDescription\",\"id\":1,\"name\":\"NewClient\",\"projectId\":[]}"));
     }
 
     @Test
@@ -185,7 +185,7 @@ class CustomerResourceTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"activitiesId\":[1,2,3],\"id\":9999,\"name\":\"NewName\",\"description\":\"NewDescription2\"}")
+                .body("{\"projectsId\":[1,2,3],\"id\":9999,\"name\":\"NewName\",\"description\":\"NewDescription2\"}")
                 .put("/api/customers/1")
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
@@ -196,6 +196,6 @@ class CustomerResourceTest {
                 .get("/api/customers/1")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("{\"activitiesId\":[],\"description\":\"NewDescription2\",\"id\":1,\"name\":\"NewName\"}"));
+                .body(is("{\"description\":\"NewDescription2\",\"id\":1,\"name\":\"NewName\",\"projectId\":[]}"));
     }
 }

@@ -22,35 +22,35 @@ public class MemberResource implements MemberResourceApi {
     MemberService memberService;
 
     @Override
-    public List<MemberResponse> getAllMembersOfActivity(Long activityId) {
-        return memberService.listAllMembers(activityId);
+    public List<MemberResponse> getAllMembersOfProject(Long projectId) {
+        return memberService.listAllMembers(projectId);
     }
 
     @Override
-    public Response addMemberToActivity(Long activityId, @Valid MemberRequest request, UriInfo uriInfo) {
-        final Long memberId = memberService.createMember(activityId, request);
+    public Response addMemberToProject(Long projectId, @Valid MemberRequest request, UriInfo uriInfo) {
+        final Long memberId = memberService.createMember(projectId, request);
         final URI uri = uriInfo.getAbsolutePathBuilder().path(memberId.toString()).build();
         return Response.created(uri).build();
     }
 
     @Override
-    public MemberResponse getMember(Long activityId, Long id) {
-        return memberService.findMemberById(activityId, id).orElseThrow(NotFoundException::new);
+    public MemberResponse getMember(Long projectId, Long id) {
+        return memberService.findMemberById(projectId, id).orElseThrow(NotFoundException::new);
     }
 
     @Convert(converter = Role.Converter.class)
     @Override
-    public Response updateMember(Long activityId, Long id, @Valid MemberUpdateRequest request) {
-        memberService.updateMember(activityId, id, request).orElseThrow(NotFoundException::new);
+    public Response updateMember(Long projectId, Long id, @Valid MemberUpdateRequest request) {
+        memberService.updateMember(projectId, id, request).orElseThrow(NotFoundException::new);
         return Response.noContent().build();
     }
 
     @Override
-    public Response removeMemberToActivity(Long activityId, Long id) {
-        memberService.deleteMember(activityId, id);
+    public Response removeMemberToProject(Long projectId, Long id) {
+        memberService.deleteMember(projectId, id);
         return Response.noContent().build();
     }
 
-    //TODO add or modify addMemberToActivity method to add multiple users at the same time
-    //TODO add a method to update all activity members at the same time
+    //TODO add or modify addMemberToproject method to add multiple users at the same time
+    //TODO add a method to update all project members at the same time
 }

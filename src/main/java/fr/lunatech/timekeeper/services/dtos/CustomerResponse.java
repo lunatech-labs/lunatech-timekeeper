@@ -13,13 +13,13 @@ public final class CustomerResponse {
     @NotNull
     private final String description;
     @NotNull
-    private final List<Long> activitiesId;
+    private final List<Long> projectsId;
 
-    public CustomerResponse(@NotNull Long id, @NotBlank String name, @NotNull String description, @NotNull List<Long> activitiesId) {
+    public CustomerResponse(@NotNull Long id, @NotBlank String name, @NotNull String description, @NotNull List<Long> projectsId) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.activitiesId = activitiesId;
+        this.projectsId = projectsId;
     }
 
     public Long getId() {
@@ -34,7 +34,7 @@ public final class CustomerResponse {
         return description;
     }
 
-    public List<Long> getActivitiesId() {
-        return activitiesId;
+    public List<Long> getProjectId() {
+        return projectsId;
     }
 }
