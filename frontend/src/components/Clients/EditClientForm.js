@@ -10,14 +10,8 @@ const tailLayout = {
     },
 };
 
-function getPageTitle(isNewClient) {
-    if (isNewClient) {
-        return "Create a new Client";
-    }
-    return "Update an existing Client";
-}
 
-const ClientForm = ({client, axiosInstance, isNew}) => {
+const EditClientForm = ({client, axiosInstance, isNew}) => {
     const postForm = values => {
         axiosInstance.post('/api/clients', {
             'name': values.name,
@@ -35,7 +29,7 @@ const ClientForm = ({client, axiosInstance, isNew}) => {
 
     return (
         <React.Fragment>
-            <PageHeader title="Clients" subTitle={getPageTitle(isNew)} />
+            <PageHeader title="Clients" subTitle="Edit a client" />
             <Form
                 labelCol={{span: 4}}
                 wrapperCol={{span: 14}}
@@ -75,4 +69,4 @@ const ClientForm = ({client, axiosInstance, isNew}) => {
     )
 };
 
-export default ClientForm;
+export default EditClientForm;

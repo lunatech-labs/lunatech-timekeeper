@@ -11,12 +11,15 @@ export default () => {
     const [loadedUsers, setData] = useState({ users: [] });
 
     const [componentSize, setComponentSize] = useState('small');
+
     const onFormLayoutChange = ({ size }) => {
         setComponentSize(size);
     };
 
-    const { keycloak } = useKeycloak();
+    const keycloak = useKeycloak();
+
     const axiosInstance = useAxios('http://localhost:8080');
+
     // see https://github.com/panz3r/jwt-checker-server for a quick implementation
     const callApi = useCallback(() => {
         const fetchData = async () => {

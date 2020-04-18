@@ -29,7 +29,6 @@ class App extends React.PureComponent {
         console.log('onKeycloakTokens', tokens)
     };
 
-    // Todo rm div
     render() {
         return (
             <KeycloakProvider
@@ -38,9 +37,7 @@ class App extends React.PureComponent {
                 onEvent={this.onKeycloakEvent}
                 onTokens={this.onKeycloakTokens}
             >
-                <div className="App-body">
                     <AppRouter />
-                </div>
             </KeycloakProvider>
         )
     }

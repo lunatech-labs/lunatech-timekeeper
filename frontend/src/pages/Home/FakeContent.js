@@ -27,69 +27,7 @@ const FakeContent = ({ keycloak, callApi, loadedUsers, componentSize, onFormLayo
 
             <Divider/>
             <ShowUser user={loadedUsers}/>
-            <Divider/>
 
-            <Form
-                labelCol={{span: 4}}
-                wrapperCol={{span: 14}}
-                layout="horizontal"
-                initialValues={{size: componentSize}}
-                onValuesChange={onFormLayoutChange}
-                size={componentSize}
-            >
-                <Form.Item label="Input">
-                    <Input placeholder="Enter your TimeKeeper entry"/>
-                </Form.Item>
-                <Form.Item label="Select">
-                    <Select>
-                        <Select.Option value="demo">DARVA - Agira</Select.Option>
-                        <Select.Option value="demo">DARVA - Sinapps</Select.Option>
-                        <Select.Option value="demo">Disney - Guest profile</Select.Option>
-                    </Select>
-                </Form.Item>
-                <Form.Item label="TreeSelect">
-                    <TreeSelect
-                        treeData={[
-                            {
-                                title: 'Darva',
-                                value: 'darva',
-                                children: [
-                                    {
-                                        title: 'Agira',
-                                        value: 'Sinapps',
-                                    },
-                                ],
-                            },
-                        ]}
-                    />
-                </Form.Item>
-                <Form.Item label="Cascader">
-                    <Cascader
-                        options={[
-                            {
-                                value: 'rc',
-                                label: 'RiskControl',
-                                children: [
-                                    {
-                                        value: 'project1',
-                                        label: 'Impact',
-                                    }, {
-                                        value: 'project2',
-                                        label: 'SPS',
-                                    }
-                                ],
-                            },
-                        ]}
-                    />
-                </Form.Item>
-                <Form.Item label="DatePicker">
-                    <DatePicker/>
-                </Form.Item>
-                <Form.Item label="Button">
-                    <Button type="primary">Save</Button>
-                    <Button type="danger">Cancel</Button>
-                </Form.Item>
-            </Form>
         </React.Fragment>
     )
 };
