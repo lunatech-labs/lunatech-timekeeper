@@ -9,13 +9,14 @@ import javax.validation.constraints.NotNull;
 @Table(name = "members")
 public class Member extends PanacheEntity {
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     @NotNull
     public User user;
     @NotNull
     public Role role;
     @ManyToOne
-    @JoinColumn(name = "activity_id", nullable = false)
+    @JoinColumn(name = "project_id", nullable = false)
     @NotNull
-    public Activity activity;
+    public Project project;
 }

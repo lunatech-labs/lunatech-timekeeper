@@ -1,5 +1,7 @@
 package fr.lunatech.timekeeper.resources;
 
+import fr.lunatech.timekeeper.services.dtos.ClientRequest;
+import fr.lunatech.timekeeper.services.dtos.ClientResponse;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -9,7 +11,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 
+import static fr.lunatech.timekeeper.resources.TestUtils.toJson;
 import static io.restassured.RestAssured.given;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT;
 import static javax.ws.rs.core.HttpHeaders.LOCATION;
@@ -21,7 +25,7 @@ import static org.hamcrest.CoreMatchers.is;
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
 @Tag("integration")
-class CustomerResourceTest {
+class ClientResourceTest {
 
     @Inject
     Flyway flyway;
@@ -33,148 +37,165 @@ class CustomerResourceTest {
     }
 
     @Test
-    void shouldCreateCustomer() {
+    void shouldCreateClient() {
+
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
+        final ClientResponse expectedClient = new ClientResponse(1L, "NewClient", "NewDescription", new ArrayList<Long>());
+
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
-                .post("/api/customers")
+                .body(client)
+                .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/1"));
+                .header(LOCATION, endsWith("/api/clients/1"));
 
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/customers/1")
+                .get("/api/clients/1")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("{\"activitiesId\":[],\"description\":\"NewDescription\",\"id\":1,\"name\":\"NewClient\"}"));
+                .body(is(toJson(expectedClient)));
     }
 
     @Test
-    void shouldCreateCustomerIgnoreUselessParams() {
+    void shouldCreateClientIgnoreUselessParams() {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"activitiesId\":[1,2,3],\"id\":9999,\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
-                .post("/api/customers")
+                .body("{\"projectsId\":[1,2,3],\"id\":9999,\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/1"));
+                .header(LOCATION, endsWith("/api/clients/1"));
 
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/customers/1")
+                .get("/api/clients/1")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("{\"activitiesId\":[],\"description\":\"NewDescription\",\"id\":1,\"name\":\"NewClient\"}"));
+                .body(is("{\"description\":\"NewDescription\",\"id\":1,\"name\":\"NewClient\",\"projectId\":[]}"));
     }
 
     @Test
-    void shouldNotFindUnknownCustomer() {
+    void shouldNotFindUnknownClient() {
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/customers/4")
+                .get("/api/clients/4")
                 .then()
                 .statusCode(NOT_FOUND.getStatusCode());
     }
 
     @Test
-    void shouldFindAllCustomers() {
-        given()
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
-                .post("/api/customers")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/1"));
+    void shouldFindAllClients() {
+
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
+        final ClientRequest client2 = new ClientRequest("NewClient2", "NewDescription2");
+        final ClientResponse expectedClient = new ClientResponse(1L, "NewClient", "NewDescription", new ArrayList<Long>());
+        final ClientResponse expectedClient2 = new ClientResponse(2L, "NewClient2", "NewDescription2", new ArrayList<Long>());
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"NewClient2\",\"description\":\"NewDescription2\"}")
-                .post("/api/customers")
+                .body(client)
+                .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/2"));
+                .header(LOCATION, endsWith("/api/clients/1"));
+
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body(client2)
+                .post("/api/clients")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/clients/2"));
 
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/customers")
+                .get("/api/clients")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("[{\"activitiesId\":[],\"description\":\"NewDescription\",\"id\":1,\"name\":\"NewClient\"},{\"activitiesId\":[],\"description\":\"NewDescription2\",\"id\":2,\"name\":\"NewClient2\"}]"));
+                .body(is(TestUtils.<ClientResponse>listOfTasJson(expectedClient, expectedClient2)));
     }
 
     @Test
-    void shouldFindAllCustomersEmpty() {
+    void shouldFindAllClientsEmpty() {
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/customers")
+                .get("/api/clients")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .body(is("[]"));
     }
 
     @Test
-    void shouldModifyCustomer() {
-        given()
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
-                .post("/api/customers")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/1"));
+    void shouldModifyClient() {
+
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
+        final ClientRequest client2 = new ClientRequest("NewClient", "NewDescription2");
+
+        final ClientResponse expectedClient2 = new ClientResponse(1L, "NewClient", "NewDescription2", new ArrayList<Long>());
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"activitiesId\":[],\"id\":1,\"name\":\"NewName\",\"description\":\"NewDescription2\"}")
-                .put("/api/customers/1")
+                .body(client)
+                .post("/api/clients")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/clients/1"));
+
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body(client2)
+                .put("/api/clients/1")
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/customers/1")
+                .get("/api/clients/1")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("{\"activitiesId\":[],\"description\":\"NewDescription2\",\"id\":1,\"name\":\"NewName\"}"));
+                .body(is(toJson(expectedClient2)));
     }
 
     @Test
-    void shouldModifyCustomerIgnoreUselessParams() {
-        given()
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
-                .post("/api/customers")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/customers/1"));
+    void shouldModifyClientIgnoreUselessParams() {
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"activitiesId\":[1,2,3],\"id\":9999,\"name\":\"NewName\",\"description\":\"NewDescription2\"}")
-                .put("/api/customers/1")
+                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .post("/api/clients")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/clients/1"));
+
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body("{\"projectsId\":[1,2,3],\"id\":9999,\"name\":\"NewName\",\"description\":\"NewDescription2\"}")
+                .put("/api/clients/1")
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/customers/1")
+                .get("/api/clients/1")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("{\"activitiesId\":[],\"description\":\"NewDescription2\",\"id\":1,\"name\":\"NewName\"}"));
+                .body(is("{\"description\":\"NewDescription2\",\"id\":1,\"name\":\"NewName\",\"projectId\":[]}"));
     }
 }

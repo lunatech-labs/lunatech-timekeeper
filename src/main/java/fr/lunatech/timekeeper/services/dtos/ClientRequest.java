@@ -4,7 +4,7 @@ import javax.json.bind.annotation.JsonbCreator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-public final class CustomerRequest {
+public final class ClientRequest {
 
     @NotBlank
     private final String name;
@@ -12,7 +12,7 @@ public final class CustomerRequest {
     private final String description;
 
     @JsonbCreator
-    public CustomerRequest(@NotBlank String name, @NotNull String description) {
+    public ClientRequest(@NotBlank String name, @NotNull String description) {
         this.name = name;
         this.description = description;
     }

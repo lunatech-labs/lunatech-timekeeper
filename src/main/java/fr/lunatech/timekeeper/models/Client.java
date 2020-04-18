@@ -9,17 +9,15 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-import static java.util.Collections.emptyList;
-
 @Entity
-@Table(name = "customers")
-public class Customer extends PanacheEntity {
+@Table(name = "clients")
+public class Client extends PanacheEntity {
 
     @NotBlank
     public String name;
     @NotNull
     public String description;
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "client")
     @NotNull
-    public List<Activity> activities;
+    public List<Project> projects;
 }
