@@ -18,7 +18,6 @@ const ClientForm = () => {
     const [clientCreated, setClientCreated] = useState(false);
 
     const postForm = useCallback( values => {
-
         apiEndpoint.post('/api/clients', {
             'name': values.name,
             'description': values.description
@@ -29,19 +28,28 @@ const ClientForm = () => {
                         setClientCreated(true);
                         message.success('Client created');
                         break;
+                    case 400:
+                        setClientCreated(false);
+                        message.error('Invalid client, please check your form');
+                        break;
+                    case 401:
+                        setClientCreated(false);
+                        message.error('Unauthorized : your role cannot create a new Client');
+                        break;
+                    case 500:
+                        setClientCreated(false);
+                        message.error('Server error, something went wrong on the backend side');
+                        break;
                     default:
                 }
             })
     }, [apiEndpoint]);
 
-
     if (clientCreated) {
         return (
             <React.Fragment>
                 <PageHeader title="Clients" subTitle="Create a new Timekeeper client"/>
-                <div>
-                   <Redirect to="/clients"/>
-                </div>
+                <Redirect to="/clients"/>
             </React.Fragment>
         )
     }
