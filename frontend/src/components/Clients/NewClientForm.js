@@ -41,6 +41,9 @@ const ClientForm = () => {
                         message.error('Server error, something went wrong on the backend side');
                         break;
                     default:
+                        console.log('Invalid HTTP Code ');
+                        console.log(res.status);
+                        message.error('HTTP Code not handled ');
                 }
             })
     }, [apiEndpoint]);
@@ -48,7 +51,6 @@ const ClientForm = () => {
     if (clientCreated) {
         return (
             <React.Fragment>
-                <PageHeader title="Clients" subTitle="Create a new Timekeeper client"/>
                 <Redirect to="/clients"/>
             </React.Fragment>
         )
