@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import {Breadcrumb, Divider, PageHeader} from "antd";
-import ShowUser from "../../components/ShowUser/ShowUser";
+import ShowUser from "../../components/Users/ShowUser";
 import './index.less';
 import {useAxios} from "../../utils/hooks";
 

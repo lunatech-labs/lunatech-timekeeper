@@ -1,20 +1,20 @@
 import React  from 'react';
-import { Button } from "antd";
+import { Button } from 'antd';
 import './BtnLogout.less';
-import {useKeycloak} from "@react-keycloak/web";
+import {useKeycloak} from '@react-keycloak/web';
 
 const BtnLogout = ( ) => {
-    const { keycloak } = useKeycloak();
+  const { keycloak } = useKeycloak();
 
-    return (
-        <React.Fragment>
-            {!!keycloak.authenticated && (
-                <Button onClick={() => keycloak.logout()} type="primary" className="logoutButton">
+  return (
+    <React.Fragment>
+      {!!keycloak.authenticated && (
+        <Button onClick={() => keycloak.logout()} type="primary" className="logoutButton">
                     Logout
-                </Button>
-            )}
-        </React.Fragment>
-    )
-}
+        </Button>
+      )}
+    </React.Fragment>
+  );
+};
 
 export default BtnLogout;

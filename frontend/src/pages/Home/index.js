@@ -1,11 +1,13 @@
-import React from 'react'
-import ShowUserPage from "./ShowUserPage.jsx";
-import MainPage from "../MainPage/MainPage";
+import React from 'react';
+import ShowUserPage from './ShowUserPage.jsx';
+import MainPage from '../MainPage/MainPage';
 
-export default () => {
-    return (
-        <MainPage>
-            <ShowUserPage/>
-        </MainPage>
-    )
-}
+const HomePage = () => {
+  return (
+    <MainPage>
+      <ShowUserPage/>
+    </MainPage>
+  );
+};
+
+export default HomePage;
