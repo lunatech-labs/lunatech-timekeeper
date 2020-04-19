@@ -3,6 +3,7 @@ import { Descriptions } from 'antd';
 import PropTypes from 'prop-types';
 
 class ShowUser extends Component {
+
   render() {
     return (
       <Descriptions title="User Info"
@@ -23,5 +24,3 @@ ShowUser.propTypes = {
 };
 
 export default ShowUser;
-
-

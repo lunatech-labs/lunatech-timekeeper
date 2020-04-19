@@ -2,7 +2,7 @@
   "name": "timekeeper-frontend",
   "version": "0.1.0",
   "private": true,
-  "description": "Timekeeper react frontend",
+  "description": "Timekeeper - frontend",
   "bugs": "https://lunatech.atlassian.net/jira/software/projects/TK/boards/8",
   "repository": "https://github.com/lunatech-labs/lunatech-timekeeper",
   "main": "index.js",
