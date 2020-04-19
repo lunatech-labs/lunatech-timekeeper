@@ -5,12 +5,11 @@ import SidebarLeft from "../../components/SidebarLeft/SidebarLeft";
 
 const { Header, Content, Footer } = Layout;
 
-const MainPage = ({ children, title, ...rest }) => (
+const MainPage = ({ children, ...rest }) => (
     <Layout>
         <SidebarLeft {...rest} />
         <Layout>
             <Header className="header">
-                <p>{title}</p>
             </Header>
             <Content className="mainContent">
                 {children}

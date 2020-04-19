@@ -1,15 +1,47 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react'
 import PropTypes from 'prop-types';
 import {Avatar, Button, List, PageHeader} from 'antd';
 import {EditOutlined, MoreOutlined} from '@ant-design/icons';
 import {Link} from "react-router-dom";
-import './Client.less'
+import {useAxios} from "../../utils/hooks";
+import logo from '../../img/logo_timekeeper_homepage.png';
 
-const ClientList = ({clients, logo, projects}) => {
+const getClientList = (axios, setState) => {
+    const fetchData = async () => {
+        const result = await axios.get('/api/clients');
+        setState(result.data);
+    };
+    fetchData();
+};
+const getProjectList = (axios, setState) => {
+    const fetchData = async () => {
+        const result = await axios.get('/api/projects');
+        setState(result.data);
+    };
+    fetchData();
+};
+
+const ClientList = () => {
+
+    const [clients, setClients] = useState([]);
+    const [projects, setProjects] = useState([]);
+    const apiEndpoint = useAxios('http://localhost:8080');
+
+    useEffect(() => {
+        if (!apiEndpoint) {
+            return;
+        }
+        getClientList(apiEndpoint, setClients);
+        getProjectList(apiEndpoint, setProjects);
+    }, [apiEndpoint]);
+
+
     const projectsIdToProjects = (projectsId) => {
         return projects.filter(project => projectsId.includes(project.id));
     };
+
     const renderProjects = (projectsId) => projectsIdToProjects(projectsId).map(project => project.name).join(" | ");
+
     return (
         <React.Fragment>
             <PageHeader title="Clients" subTitle={clients.length} />
