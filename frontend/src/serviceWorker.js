@@ -1,3 +1,7 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-restricted-globals */
+/* eslint-disable no-underscore-dangle */
+
 // This optional code is used to register a service worker.
 // register() is not called by default.
 
