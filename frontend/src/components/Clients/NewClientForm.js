@@ -58,7 +58,7 @@ const ClientForm = () => {
 
     return (
         <React.Fragment>
-            <PageHeader title="Clients" subTitle="Create a new Timekeeper client"/>
+            <PageHeader title="Clients" subTitle="Create a new client"/>
             <Form
                 labelCol={{span: 4}}
                 wrapperCol={{span: 14}}
