@@ -48,7 +48,6 @@ frontend/coverage
 # production
 frontend/build
 # misc
-.DS_Store
 frontend/.env.local
 frontend/.env.development.local
 frontend/.env.test.local
@@ -57,4 +56,9 @@ frontend/.env.production.local
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Ignored. AntD Pro ignore those 2 files
+frontend/yarn.lock
+frontend/package-lock.json
+
 # Frontend -- END
