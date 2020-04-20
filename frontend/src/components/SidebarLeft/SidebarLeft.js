@@ -1,22 +1,20 @@
-import React from 'react';
-import {Layout} from 'antd';
-import './SidebarLeft.less';
-import Logo from '../Logo/Logo';
-import MenuSidebar from '../MenuSidebar/MenuSidebar';
-import BtnLogout from '../BtnLogout/BtnLogout';
+import React, { Component } from 'react';
+import {Layout} from "antd";
+import './SidebarLeft.less'
+import Logo from "../Logo/Logo";
+import MenuSidebar from "../MenuSidebar/MenuSidebar";
+import BtnLogout from "../BtnLogout/BtnLogout";
 
-const { Sider: SidebarLeft } = Layout;
+const { Sider } = Layout;
 
-const Sidebar = () => {
-  return (
-    <SidebarLeft width={200} className="site-layout-background" collapsed={false}>
-      <Logo />
-      <MenuSidebar/>
-
-      <BtnLogout/>
-
-    </SidebarLeft>
-  );
+const SidebarLeft = ({ collapsed }) => {
+    return (
+        <Sider width={240} className="site-layout-background" trigger={null} collapsible collapsed={collapsed}>
+            <Logo />
+            <MenuSidebar/>
+            <BtnLogout/>
+        </Sider>
+    )
 };
 
-export default Sidebar;
+export default SidebarLeft;
