@@ -2,7 +2,9 @@
   "name": "timekeeper-frontend",
   "version": "0.1.0",
   "private": true,
-  "description": "Timekeeper react",
+  "description": "Timekeeper - frontend",
+  "bugs": "https://lunatech.atlassian.net/jira/software/projects/TK/boards/8",
+  "repository": "https://github.com/lunatech-labs/lunatech-timekeeper",
   "main": "index.js",
   "dependencies": {
     "@ant-design/icons": "latest",
@@ -14,7 +16,7 @@
     "axios": "^0.19.2",
     "babel-plugin-import": "^1.13.0",
     "customize-cra": "^0.9.1",
-    "keycloak-js": "^8.0.2",
+    "keycloak-js": "latest",
     "less": "^3.11.1",
     "less-loader": "^5.0.0",
     "node-sass": "^4.13.1",
@@ -23,13 +25,15 @@
     "react-app-rewired": "^2.1.5",
     "react-dom": "^16.13.0",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.4.1"
+    "react-scripts": "3.4.1",
+    "dayjs": "^1.8.18"
   },
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
-    "eject": "react-scripts eject"
+    "lint": "npx eslint src",
+    "lint-fix": "npx eslint src --fix"
   },
   "resolutions": {
     "url-parse": "1.4.3"
@@ -48,5 +52,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0"
+  },
+  "engines": {
+    "node": ">=10.15.3",
+    "yarn": "^1.22.4"
   }
 }

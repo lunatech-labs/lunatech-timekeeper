@@ -1,74 +1,45 @@
-# Frontend
+# Timekeeper React Frontend
 
-React
+# Pre-requisites 
 
-## I am a backend developer and I do not want to install Node and npm
-
-Easy : 
-
-    mvn clean install
-
-### Yes but what if I want to run the frontend?
-
-Then npm is required with node. Use `brew install` 
-   
-You can then install npm `serve` with sudo (required only once) :
-
-    sudo npm install -g serve   
-   
-You can then start the React application from the frontend folder : 
-    
-    serve -s build  
-    
-This starts the frontend on http://localhost:5000/    
-    
-## I am a frontend developer, should I use it? 
-
-No.
-Install node and npm then use 
-
-    npm start
-
-This starts a local node server and the TimeKeeper React app should be on http://localhost:3000/
-
-On my Mac I relies on :
+`npm` must be installed
 
     npm 6.9.0 installed with brew install npm
     node v10.15.3 installed with brew install node
 
-# The long version     
+You can also use `yarn`. 
 
-This project relies on `frontend-maven-plugin`(https://github.com/eirslett/frontend-maven-plugin)
-The Maven plugin downloads/installs Node and NPM locally for your project, runs npm install, and then any combination of Bower, Grunt, Gulp, Jspm, Karma, or Webpack. It's supposed to work on Windows, OS X and Linux.
+Do not commit package-lock.json to Git, or yarn.lock.
 
-This is interesting to build the application to `frontend/build` folder.
+If you encounter errors with node on Mac OS X : [check this stackoverflow question](https://stackoverflow.com/questions/44363066/error-cannot-find-module-lib-utils-unsupported-js-while-using-ionic)
 
-#### What is this plugin meant to do?
-- Let you keep your frontend and backend builds as separate as possible, by
-reducing the amount of interaction between them to the bare minimum; using only 1 plugin.
-- Let you use Node.js and its libraries in your build process without installing Node/NPM
-globally for your build system
-- Let you ensure that the version of Node and NPM being run is the same in every build environment
+## Environment Prepare
 
-#### What is this plugin not meant to do?
-- Not meant to replace the developer version of Node - frontend developers will still install Node on their
-laptops, but backend developers can run a clean build without even installing Node on their computer.
-- Not meant to install Node for production uses. The Node usage is intended as part of a frontend build,
-running common javascript tasks such as minification, obfuscation, compression, packaging, testing etc.
+Install `node_modules`:
 
-**Notice:** _This plugin does not support already installed Node or npm versions. Use the `exec-maven-plugin` instead._
+```bash
+npm install
+```
 
-## Requirements
+or
 
-* _Maven 3_ 
-* _Java 1.8_
+```bash
+yarn install
+```
 
-## Development with React and NPM
+## Development 
 
-I am a frontend developer, how should I develop?
+```bash
+npm start
+```
+or
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+```bash
+yarn start
+```
 
+This starts a local node server and the TimeKeeper React app should be on http://localhost:3000/
+    
 ## Available Scripts
 
 In the project directory, you can run:
@@ -86,6 +57,15 @@ You will also see any lint errors in the console.
 Launches the test runner in the interactive watch mode.<br />
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
+### `npm lint`
+
+Launches the ESLint code check
+
+### `npm lint-fix`
+
+Launches the ESLint code check and fix simple typos, tabs, semi-colon, etc.
+
+
 ### `npm run build`
 
 Builds the app for production to the `build` folder.<br />
@@ -95,16 +75,6 @@ The build is minified and the filenames include the hashes.<br />
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
 ## Learn More
 
