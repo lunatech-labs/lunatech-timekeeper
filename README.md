@@ -2,7 +2,7 @@
 
 [![Codeship Status for lunatech-labs/lunatech-timekeeper](https://app.codeship.com/projects/352930a0-589d-0138-5f43-3e74b59257eb/status?branch=develop)](https://app.codeship.com/projects/391390)
 
-![Frontend Tests](https://github.com/lunatech-labs/lunatech-timekeeper/workflows/Yarn%20frontend%20CI/badge.svg)
+![Yarn frontend CI on develop](https://github.com/lunatech-labs/lunatech-timekeeper/workflows/Yarn%20frontend%20CI/badge.svg?branch=develop)
 
 Why another Toggl you might ask… 
 
