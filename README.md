@@ -4,7 +4,7 @@
 
 ![Quarkus on develop](https://github.com/lunatech-labs/lunatech-timekeeper/workflows/Java%20CI%20with%20Maven/badge.svg?branch=develop)
 
-![Frontend on develop](https://github.com/lunatech-labs/lunatech-timekeeper/workflows/Yarn%20frontend%20CI/badge.svg?branch=develop)
+![Frontend CI](https://github.com/lunatech-labs/lunatech-timekeeper/workflows/Frontend%20CI/badge.svg?branch=develop)
 
 Why another Toggl you might ask… 
 
