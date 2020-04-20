@@ -1,24 +1,27 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Layout } from 'antd';
 import './MainPage.less';
 import SidebarLeft from '../../components/SidebarLeft/SidebarLeft';
+import TopBar from '../../components/TopBar/TopBar';
 import PropTypes from 'prop-types';
 
-const { Header, Content, Footer } = Layout;
+const { Content, Footer } = Layout;
 
-const MainPage = ({ children, ...rest }) => (
-  <Layout>
-    <SidebarLeft {...rest} />
+const MainPage = ({ children, ...rest }) => {
+  const [collapsed, toggle] = useState(false);
+  return (
     <Layout>
-      <Header className="header">
-      </Header>
-      <Content className="mainContent">
-        {children}
-      </Content>
-      <Footer className="footerTk">Time Keeper v0.1 ©2020 Created by Lunatech</Footer>
+      <SidebarLeft collapsed={collapsed} {...rest} />
+      <Layout className="site-layout">
+        <TopBar collapsed={collapsed} toggle={() => toggle(!collapsed)} />
+        <Content className="mainContent">
+          {children}
+        </Content>
+        <Footer className="footerTk">Time Keeper v0.1 ©2020 Created by Lunatech</Footer>
+      </Layout>
     </Layout>
-  </Layout>
-);
+  );
+};
 
 MainPage.propTypes = {
   children: PropTypes.object.isRequired
