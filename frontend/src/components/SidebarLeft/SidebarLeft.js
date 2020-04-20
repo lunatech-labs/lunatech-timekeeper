@@ -4,6 +4,7 @@ import './SidebarLeft.less';
 import Logo from '../Logo/Logo';
 import MenuSidebar from '../MenuSidebar/MenuSidebar';
 import BtnLogout from '../BtnLogout/BtnLogout';
+import PropTypes from 'prop-types';
 
 const { Sider } = Layout;
 
@@ -17,5 +18,10 @@ const SidebarLeft = ({ collapsed }) => {
     </Sider>
   );
 };
+
+SidebarLeft.propTypes = {
+  collapsed: PropTypes.bool.isRequired
+};
+
 
 export default SidebarLeft;
