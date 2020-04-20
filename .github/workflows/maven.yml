@@ -1,6 +1,6 @@
 # Build the Quarkus part of Timekeeper, except the frontend
 # This Github action should not trigger if I commit a file under ./frontend folder
-name: Java CI with Maven
+name: Quarkus CI on develop
 
 on:
   push:
