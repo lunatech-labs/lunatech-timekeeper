@@ -1,17 +1,29 @@
 .sider-logo {
-    font-family: 'Montserrat', sans-serif!important;
-    font-weight: 700;
-    font-size: 16px;
-    color: white;
     width: 100%;
     height: 64px;
-    display: inline-flex;
+    border-bottom: 1px solid rgba(216, 216, 216, .1);
+    display: flex;
     align-items: center;
     justify-content: center;
-    border-bottom: 1px solid rgba(216, 216, 216, .1);
-    &:hover {color: white;}
-    img {
-        width: 30px;
-        margin-right: 10px;
+    a {
+        display: flex;
+        align-items: center;
+        img {width: 30px;}
+        h1 {
+            font-family: 'Montserrat', sans-serif!important;
+            font-weight: 700;
+            font-size: 16px;
+            color: white;
+            margin-bottom: 0;
+            margin-left: 10px;
+        }
+    }
+}
+.ant-layout-sider-collapsed {
+    .sider-logo {
+        h1 {
+            display: none;
+            transition: font-size 0.15s cubic-bezier(0.215, 0.61, 0.355, 1), margin 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
     }
 }
