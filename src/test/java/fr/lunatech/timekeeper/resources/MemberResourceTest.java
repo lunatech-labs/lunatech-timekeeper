@@ -1,6 +1,7 @@
 package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.models.Role;
+import fr.lunatech.timekeeper.resources.utils.TestUtils;
 import fr.lunatech.timekeeper.services.dtos.*;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
@@ -13,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
 
 import static fr.lunatech.timekeeper.models.Profile.Admin;
-import static fr.lunatech.timekeeper.resources.TestUtils.*;
+import static fr.lunatech.timekeeper.resources.utils.TestUtils.*;
 import static io.restassured.RestAssured.given;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT;
 import static javax.ws.rs.core.HttpHeaders.LOCATION;
