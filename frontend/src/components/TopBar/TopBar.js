@@ -5,6 +5,7 @@ import {
 } from '@ant-design/icons';
 import {Layout} from 'antd';
 import './TopBar.less';
+import PropTypes from 'prop-types';
 
 const { Header } = Layout;
 
@@ -17,6 +18,11 @@ const TopBar = ({ collapsed, toggle }) => {
       })}
     </Header>
   );
+};
+
+TopBar.propTypes = {
+  collapsed: PropTypes.bool.isRequired,
+  toggle: PropTypes.bool.isRequired
 };
 
 export default TopBar;
