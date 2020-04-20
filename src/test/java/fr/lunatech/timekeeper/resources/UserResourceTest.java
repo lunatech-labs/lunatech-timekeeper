@@ -1,6 +1,7 @@
 package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.models.Profile;
+import fr.lunatech.timekeeper.resources.utils.TestUtils;
 import fr.lunatech.timekeeper.services.dtos.UserRequest;
 import fr.lunatech.timekeeper.services.dtos.UserResponse;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -17,7 +18,7 @@ import java.util.List;
 
 import static fr.lunatech.timekeeper.models.Profile.Admin;
 import static fr.lunatech.timekeeper.models.Profile.User;
-import static fr.lunatech.timekeeper.resources.TestUtils.*;
+import static fr.lunatech.timekeeper.resources.utils.TestUtils.*;
 import static io.restassured.RestAssured.given;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT;
 import static javax.ws.rs.core.HttpHeaders.LOCATION;

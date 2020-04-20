@@ -21,14 +21,27 @@ public class TestUtils {
         return new UserRequest(firstName, lastName, email, p);
     }
 
+    @SafeVarargs
     public static <T> List<T> listOf(T... elements) {
         return Arrays.<T>asList(elements);
 
     }
 
+
+
     @SafeVarargs
     public static <T> String listOfTasJson(T... elements) {
         return toJson(Arrays.<T>asList(elements));
+
+    }
+
+
+    public static <T> String listOfTasJson(List<T> elements) {
+        return toJson(elements);
+
+    }
+    public static <T> String listOfTasJson(io.vavr.collection.List<T> elements) {
+        return toJson(elements.asJava());
 
     }
 }
