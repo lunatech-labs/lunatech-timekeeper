@@ -10,14 +10,18 @@ class MenuSidebar extends Component {
     render() {
         const {location} = this.props;
         return (
-            <Menu defaultSelectedKeys={['/home']} mode="inline" selectedKeys={[location.pathname]}  theme="dark">
-                <Menu.Item key="/home">
-                    <PieChartOutlined/>
-                    <span><Link to="/home">Home</Link></span>
+            <Menu id="tk_Menu" defaultSelectedKeys={['/home']} mode="inline" selectedKeys={[location.pathname]} theme="dark">
+                <Menu.Item className="tk_MenuItem" key="/home">
+                    <Link to="/home">
+                        <PieChartOutlined/>
+                        <span>Home</span>
+                    </Link>
                 </Menu.Item>
-                <Menu.Item key="/clients">
-                    <DesktopOutlined/>
-                    <span><Link to="/clients">Clients</Link></span>
+                <Menu.Item className="tk_MenuItem" key="/clients">
+                    <Link to="/clients">
+                        <DesktopOutlined/>
+                        <span>Clients</span>
+                    </Link>
                 </Menu.Item>
             </Menu>
         );
