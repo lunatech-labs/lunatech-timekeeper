@@ -17,8 +17,6 @@ export const useAxios = (baseURL) => {
       },
     });
 
-    localStorage.setItem('x-auth-token', keycloak.token);
-
     setAxiosInstance({ instance });
 
     return () => {
