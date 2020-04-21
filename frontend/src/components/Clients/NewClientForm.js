@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Form, Input, message, PageHeader} from 'antd';
+import {Button, Form,  Input, message, Alert, PageHeader} from 'antd';
 import {Redirect} from 'react-router-dom';
 import {useTimeKeeperAPIPost} from '../../utils/services';
 
@@ -27,13 +27,58 @@ const ClientForm = () => {
     );
   }
 
-  if (timeKeeperAPIPost.error) {
-    return (
-        <React.Fragment>
-          <h1>Client error</h1>
-        </React.Fragment>
-    );
-  }
+    if (timeKeeperAPIPost.error) {
+        const { response } = timeKeeperAPIPost.error;
+        const { status, url } = response;
+        const  errMsg  =  `Server error HTTP Code:${status}  for url: ${url}`;
+        return (
+            <React.Fragment>
+                <PageHeader title="Clients" subTitle="Create a new client"/>
+                <Alert
+                    message="Unable to save the new Client"
+                    description={errMsg}
+                    type="error"
+                    closable
+                    style={{marginBottom: 10}}
+                />
+                <Form
+                    labelCol={{span: 4}}
+                    wrapperCol={{span: 14}}
+                    layout="horizontal"
+                    onFinish={timeKeeperAPIPost.run}
+                >
+                    <Form.Item
+                        label="Name"
+                        name="name"
+                        rules={[
+                            {
+                                required: true,
+                            },
+                        ]}
+                    >
+                        <Input
+                            placeholder="Client's name"
+                        />
+                    </Form.Item>
+                    <Form.Item
+                        label="Description"
+                        name="description"
+                    >
+                        <TextArea
+                            rows={4}
+                            placeholder="A short description about this client"
+                        />
+                    </Form.Item>
+                    <Form.Item {...tailLayout}>
+                        <Button type="primary" htmlType="submit">
+                            Submit
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </React.Fragment>
+        )
+    }
+
   return (
       <React.Fragment>
         <PageHeader title="Clients" subTitle="Create a new client"/>

@@ -8,6 +8,7 @@ import fr.lunatech.timekeeper.services.interfaces.ClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.NotFoundException;
@@ -15,6 +16,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.List;
+
+import javax.annotation.security.RolesAllowed;
 
 public class ClientResource implements ClientResourceApi {
 
@@ -24,11 +27,13 @@ public class ClientResource implements ClientResourceApi {
     ClientService clientService;
 
     @Override
+    @PermitAll
     public List<ClientResponse> getAllClients() {
         return clientService.listAllClients();
     }
 
     @Override
+    @RolesAllowed("user")
     public Response createClient(@Valid ClientRequest request, UriInfo uriInfo) {
         logger.debug("Create a new client with request="+request);
         final long clientId = clientService.createClient(request);
@@ -38,11 +43,13 @@ public class ClientResource implements ClientResourceApi {
     }
 
     @Override
+    @RolesAllowed("user")
     public ClientResponse getClient(Long id) {
         return clientService.findClientById(id).orElseThrow(NotFoundException::new);
     }
 
     @Override
+    @RolesAllowed("user")
     public Response updateClient(Long id, @Valid ClientRequest request) {
         clientService.updateClient(id, request).orElseThrow(NotFoundException::new);
         return Response.noContent().build();

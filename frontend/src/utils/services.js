@@ -4,7 +4,6 @@ import {useRequest} from '@umijs/hooks';
 // This must imported else the Request will not use the Bearer
 // eslint-disable-line no-unused-vars
 import request from './request';
-import {message} from 'antd';
 
 export const useTimeKeeperAPI = (urlAPI, ...rest) => {
     const [keycloak, initialized] = useKeycloak();
