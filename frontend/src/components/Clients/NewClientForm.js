@@ -41,40 +41,6 @@ const ClientForm = () => {
                     closable
                     style={{marginBottom: 10}}
                 />
-                <Form
-                    labelCol={{span: 4}}
-                    wrapperCol={{span: 14}}
-                    layout="horizontal"
-                    onFinish={timeKeeperAPIPost.run}
-                >
-                    <Form.Item
-                        label="Name"
-                        name="name"
-                        rules={[
-                            {
-                                required: true,
-                            },
-                        ]}
-                    >
-                        <Input
-                            placeholder="Client's name"
-                        />
-                    </Form.Item>
-                    <Form.Item
-                        label="Description"
-                        name="description"
-                    >
-                        <TextArea
-                            rows={4}
-                            placeholder="A short description about this client"
-                        />
-                    </Form.Item>
-                    <Form.Item {...tailLayout}>
-                        <Button type="primary" htmlType="submit">
-                            Submit
-                        </Button>
-                    </Form.Item>
-                </Form>
             </React.Fragment>
         )
     }
