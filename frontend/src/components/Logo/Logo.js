@@ -5,10 +5,12 @@ import './Logo.less';
 class Logo extends Component {
   render() {
     return (
-      <a href="home" className="sider-logo">
-        <img src={logo} alt="logo"/>
-                timekeeper
-      </a>
+      <div className="sider-logo">
+        <a href="home" className="">
+          <img src={logo} alt="logo"/>
+          <h1>timekeeper</h1>
+        </a>
+      </div>
     );
   }
 }
