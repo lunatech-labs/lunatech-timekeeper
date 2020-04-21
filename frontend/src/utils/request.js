@@ -12,7 +12,7 @@ const codeMessage = {
   500: 'Server Error',
 };
 
-const errorHandler = error => {
+function errorHandler(error) {
   const { response } = error;
 
   if (response && response.status) {
@@ -23,13 +23,10 @@ const errorHandler = error => {
       description: errorText,
     });
   }
-
   return response;
-};
-const request = extend({
-  errorHandler,
-  credentials: 'same-origin',
-});
+}
+
+const request = extend({ errorHandler });
 
 request.interceptors.request.use(async (url, options) => {
   let c_token = localStorage.getItem('x-auth-token');
