@@ -1,22 +1,27 @@
-import React from 'react';
+import React  from 'react';
 import {Layout} from 'antd';
 import './SidebarLeft.less';
 import Logo from '../Logo/Logo';
 import MenuSidebar from '../MenuSidebar/MenuSidebar';
 import BtnLogout from '../BtnLogout/BtnLogout';
+import PropTypes from 'prop-types';
 
-const { Sider: SidebarLeft } = Layout;
+const { Sider } = Layout;
 
-const Sidebar = () => {
+const SidebarLeft = ({ collapsed }) => {
   return (
-    <SidebarLeft width={200} className="site-layout-background" collapsed={false}>
+
+    <Sider width={240} className="site-layout-background" trigger={null} collapsible collapsed={collapsed}>
       <Logo />
       <MenuSidebar/>
-
       <BtnLogout/>
-
-    </SidebarLeft>
+    </Sider>
   );
 };
 
-export default Sidebar;
+SidebarLeft.propTypes = {
+  collapsed: PropTypes.bool.isRequired
+};
+
+
+export default SidebarLeft;

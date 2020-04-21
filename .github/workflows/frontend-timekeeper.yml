@@ -1,0 +1,27 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Frontend CI
+
+on:
+  push:
+    branches: [ develop ]
+    paths:
+      - 'frontend/**'
+  pull_request:
+    branches: [ develop ]
+    paths:
+      - 'frontend/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    name: Build and test
+    steps:
+      - uses: actions/checkout@v1
+      - uses: bahmutov/npm-install@HEAD
+        with:
+          working-directory: ./frontend
+          useLockFile: false
+      - run: npm t
+        working-directory: ./frontend        
