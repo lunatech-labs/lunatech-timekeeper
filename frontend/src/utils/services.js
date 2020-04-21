@@ -1,9 +1,10 @@
 import {useKeycloak} from '@react-keycloak/web';
-import {useEffect} from "react";
-import {useRequest} from "@umijs/hooks";
+import {useEffect} from 'react';
+import {useRequest} from '@umijs/hooks';
 // This must imported else the Request will not use the Bearer
 // eslint-disable-line no-unused-vars
-import request from "./request";
+import request from './request';
+import {message} from 'antd';
 
 export const useTimeKeeperAPI = (urlAPI, ...rest) => {
     const [keycloak, initialized] = useKeycloak();
@@ -22,8 +23,64 @@ export const useTimeKeeperAPI = (urlAPI, ...rest) => {
         }, [urlAPI, initialized, keycloak]
     );
 
-    const {data, error, loading} = useRequest('http://localhost:8080' + urlAPI, ...rest);
-
-    return {data, error, loading}
+    return useRequest('http://localhost:8080' + urlAPI, ...rest);
 };
 
+/**
+ * A Callback method to POST a form to the server.
+ *
+ * @param urlAPI the endpoint to call
+ * @param formData : form data
+ * @param booleanCallback : a function that accepts a boolean, to indicate if it was successful
+ */
+export const useTimeKeeperAPIPost = (urlAPI, formData, booleanCallback) => {
+    const [keycloak, initialized] = useKeycloak();
+
+    useEffect(() => {
+            if (initialized) {
+                localStorage.setItem('x-auth-token', keycloak.token);
+            }
+        }, [urlAPI, initialized, keycloak]
+    );
+
+    return useRequest((formData) => ({
+        url: 'http://localhost:8080' + urlAPI,
+        method: 'post',
+        data: formData
+    }), {
+        manual:true,
+         onSuccess: () => {
+          if(booleanCallback) {
+            booleanCallback(true);
+          }else{
+            console.log("Err: please set a callback for POST call to "+urlAPI);
+          }
+         }
+    });
+};
+
+export const useTimeKeeperAPIPut = (urlAPI, formData, booleanCallback) => {
+  const [keycloak, initialized] = useKeycloak();
+
+  useEffect(() => {
+        if (initialized) {
+          localStorage.setItem('x-auth-token', keycloak.token);
+        }
+      }, [urlAPI, initialized, keycloak]
+  );
+
+  return useRequest((formData) => ({
+    url: 'http://localhost:8080' + urlAPI,
+    method: 'put',
+    data: formData
+  }), {
+    manual:true,
+    onSuccess: () => {
+      if(booleanCallback) {
+        booleanCallback(true);
+      }else{
+        console.log("Err: please set a callback for PUT call to "+urlAPI);
+      }
+    }
+  });
+};
