@@ -6,6 +6,10 @@
 
 ![Frontend CI](https://github.com/lunatech-labs/lunatech-timekeeper/workflows/Frontend%20CI/badge.svg?branch=develop)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=lunatech-labs_lunatech-timekeeper&metric=alert_status&token=002c82801d0eb45ccc3a82067c18799929110e67)](https://sonarcloud.io/dashboard?id=lunatech-labs_lunatech-timekeeper)
+
+# Intro
+
 Why another Toggl you might ask… 
 
 That’s a good question.
@@ -121,4 +125,10 @@ Try to reuse YouTrack ID as part of branch :
 ⚠️ TK must be uppercase ! 
 
 This command configures pre-commit hook and validation.
+
+# Sonarsource
+
+Use mvn with profile "sonar"
+
+    ./mvnw -P sonar verify sonar:sonar
 
