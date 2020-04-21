@@ -22,7 +22,7 @@ const TopBar = ({ collapsed, toggle }) => {
 
 TopBar.propTypes = {
   collapsed: PropTypes.bool.isRequired,
-  toggle: PropTypes.bool.isRequired
+  toggle: PropTypes.func.isRequired
 };
 
 export default TopBar;
