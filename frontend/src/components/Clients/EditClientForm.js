@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Alert,
   Button,
@@ -8,7 +8,7 @@ import {
   Spin,
 } from 'antd';
 import {Redirect, useRouteMatch} from 'react-router-dom';
-import {useTimeKeeperAPI} from '../../utils/services';
+import {useTimeKeeperAPI, useTimeKeeperAPIPut} from '../../utils/services';
 
 const {TextArea} = Input;
 
@@ -21,7 +21,7 @@ const tailLayout = {
 
 const EditClientForm = () => {
 
-  const clientUpdated = false;
+  const [clientUpdated, setClientUpdated] = useState(false);
 
   const clientIdSlug = useRouteMatch({
     path: '/clients/:id',
@@ -30,6 +30,8 @@ const EditClientForm = () => {
   });
 
   const clientResponse = useTimeKeeperAPI('/api/clients/' + clientIdSlug.params.id);
+
+  const timeKeeperAPIPut = useTimeKeeperAPIPut('/api/clients/' + clientIdSlug.params.id, (form=>form),setClientUpdated)
 
   if (clientUpdated) {
     return (
@@ -48,6 +50,7 @@ const EditClientForm = () => {
           wrapperCol={{span: 14}}
           layout="horizontal"
           initialValues={clientResponse.data}
+          onFinish={timeKeeperAPIPut.run}
         >
           <Form.Item
             label="Name"
@@ -110,12 +113,21 @@ const EditClientForm = () => {
 
 
   if(clientResponse.error){
-
-
     return (
         <React.Fragment>
           <Alert title='Server error'
                  message='Failed to load the client'
+                 type='error'
+          />
+        </React.Fragment>
+    )
+  }
+
+  if(timeKeeperAPIPut.error){
+    return (
+        <React.Fragment>
+          <Alert title='Server error'
+                 message='Failed to save the edited client'
                  type='error'
           />
         </React.Fragment>
