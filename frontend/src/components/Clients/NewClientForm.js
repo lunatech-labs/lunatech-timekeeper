@@ -19,70 +19,70 @@ const ClientForm = () => {
   const timeKeeperAPIPost = useTimeKeeperAPIPost(   '/api/clients', (form => form), setClientCreated);
 
   if (clientCreated) {
-    message.success("Client was created");
+    message.success('Client was created');
     return (
-        <React.Fragment>
-          <Redirect to="/clients"/>
-        </React.Fragment>
+      <React.Fragment>
+        <Redirect to="/clients"/>
+      </React.Fragment>
     );
   }
 
-    if (timeKeeperAPIPost.error) {
-        const { response } = timeKeeperAPIPost.error;
-        const { status, url } = response;
-        const  errMsg  =  `Server error HTTP Code:${status}  for url: ${url}`;
-        return (
-            <React.Fragment>
-                <PageHeader title="Clients" subTitle="Create a new client"/>
-                <Alert
-                    message="Unable to save the new Client"
-                    description={errMsg}
-                    type="error"
-                    closable
-                    style={{marginBottom: 10}}
-                />
-            </React.Fragment>
-        )
-    }
-
-  return (
+  if (timeKeeperAPIPost.error) {
+    const { response } = timeKeeperAPIPost.error;
+    const { status, url } = response;
+    const  errMsg  =  `Server error HTTP Code:${status}  for url: ${url}`;
+    return (
       <React.Fragment>
         <PageHeader title="Clients" subTitle="Create a new client"/>
-        <Form
-            labelCol={{span: 4}}
-            wrapperCol={{span: 14}}
-            layout="horizontal"
-            onFinish={timeKeeperAPIPost.run}
-        >
-          <Form.Item
-              label="Name"
-              name="name"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-          >
-            <Input
-                placeholder="Client's name"
-            />
-          </Form.Item>
-          <Form.Item
-              label="Description"
-              name="description"
-          >
-            <TextArea
-                rows={4}
-                placeholder="A short description about this client"
-            />
-          </Form.Item>
-          <Form.Item {...tailLayout}>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
-        </Form>
+        <Alert
+          message="Unable to save the new Client"
+          description={errMsg}
+          type="error"
+          closable
+          style={{marginBottom: 10}}
+        />
       </React.Fragment>
+    );
+  }
+
+  return (
+    <React.Fragment>
+      <PageHeader title="Clients" subTitle="Create a new client"/>
+      <Form
+        labelCol={{span: 4}}
+        wrapperCol={{span: 14}}
+        layout="horizontal"
+        onFinish={timeKeeperAPIPost.run}
+      >
+        <Form.Item
+          label="Name"
+          name="name"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Input
+            placeholder="Client's name"
+          />
+        </Form.Item>
+        <Form.Item
+          label="Description"
+          name="description"
+        >
+          <TextArea
+            rows={4}
+            placeholder="A short description about this client"
+          />
+        </Form.Item>
+        <Form.Item {...tailLayout}>
+          <Button type="primary" htmlType="submit">
+              Submit
+          </Button>
+        </Form.Item>
+      </Form>
+    </React.Fragment>
   );
 
 };

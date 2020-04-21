@@ -31,7 +31,7 @@ const EditClientForm = () => {
 
   const clientResponse = useTimeKeeperAPI('/api/clients/' + clientIdSlug.params.id);
 
-  const timeKeeperAPIPut = useTimeKeeperAPIPut('/api/clients/' + clientIdSlug.params.id, (form=>form),setClientUpdated)
+  const timeKeeperAPIPut = useTimeKeeperAPIPut('/api/clients/' + clientIdSlug.params.id, (form=>form),setClientUpdated);
 
   if (clientUpdated) {
     return (
@@ -114,24 +114,24 @@ const EditClientForm = () => {
 
   if(clientResponse.error){
     return (
-        <React.Fragment>
-          <Alert title='Server error'
-                 message='Failed to load the client'
-                 type='error'
-          />
-        </React.Fragment>
-    )
+      <React.Fragment>
+        <Alert title='Server error'
+          message='Failed to load the client'
+          type='error'
+        />
+      </React.Fragment>
+    );
   }
 
   if(timeKeeperAPIPut.error){
     return (
-        <React.Fragment>
-          <Alert title='Server error'
-                 message='Failed to save the edited client'
-                 type='error'
-          />
-        </React.Fragment>
-    )
+      <React.Fragment>
+        <Alert title='Server error'
+          message='Failed to save the edited client'
+          type='error'
+        />
+      </React.Fragment>
+    );
   }
 
 };
