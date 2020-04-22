@@ -152,8 +152,6 @@
                                 </goals>
                                 <configuration>
                                     <enableHttpUrlHandler>true</enableHttpUrlHandler>
-                                    <reportErrorsAtRuntime>true</reportErrorsAtRuntime>
-                                    <!--                                    <additionalBuildArgs>&#45;&#45;report-unsupported-elements-at-runtime</additionalBuildArgs>-->
                                 </configuration>
                             </execution>
                         </executions>
