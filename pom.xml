@@ -88,10 +88,12 @@
             <artifactId>quarkus-smallrye-health</artifactId>
         </dependency>
         <dependency>
+            <!--https://github.com/quarkusio/quarkus/issues/6327-->
             <groupId>jakarta.security.jacc</groupId>
             <artifactId>jakarta.security.jacc-api</artifactId>
         </dependency>
         <dependency>
+            <!--https://github.com/quarkusio/quarkus/issues/6327-->
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna</artifactId>
         </dependency>
