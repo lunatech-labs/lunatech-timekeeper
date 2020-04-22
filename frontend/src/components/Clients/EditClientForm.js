@@ -1,7 +1,14 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {Button, Form, Input, message, PageHeader, Spin} from 'antd';
-import {useAxios} from '../../utils/hooks';
+import React, {useState} from 'react';
+import {
+  Alert,
+  Button,
+  Form,
+  Input,
+  PageHeader,
+  Spin,
+} from 'antd';
 import {Redirect, useRouteMatch} from 'react-router-dom';
+import {useTimeKeeperAPI, useTimeKeeperAPIPut} from '../../utils/services';
 
 const {TextArea} = Input;
 
@@ -14,73 +21,17 @@ const tailLayout = {
 
 const EditClientForm = () => {
 
-  const apiEndpoint = useAxios('http://localhost:8080');
-
   const [clientUpdated, setClientUpdated] = useState(false);
 
-  const [loadedClient, setClient] = useState(null);
-
-  const [clientId, setClientId] = useState(null);
-
-  let clientIdSlug = useRouteMatch({
+  const clientIdSlug = useRouteMatch({
     path: '/clients/:id',
     strict: true,
     sensitive: true
   });
 
-  useEffect(() => {
-    // Extract the clientId from the path - EditClientForm does not need any other param
-    let localClientId = clientIdSlug.params.id;
-    setClientId(localClientId);
-  }, [clientIdSlug]);
+  const clientResponse = useTimeKeeperAPI('/api/clients/' + clientIdSlug.params.id);
 
-  useEffect(() => {
-    if (apiEndpoint == null) {
-      // When the page starts but Axios is not ready yet, we cannot fetch data
-      // I guess there is a better pattern that we should use. Axios is async.
-      return;
-    }
-    const fetchData = async () => {
-      const result = await apiEndpoint.get('/api/clients/' + clientId);
-      setClient(result.data);
-    };
-    fetchData();
-  }, [apiEndpoint, clientId]);
-
-  const postForm = useCallback(values => {
-    apiEndpoint.put('/api/clients/' + clientId, {
-      'name': values.name,
-      'description': values.description
-    })
-      .then(res => {
-        switch (res.status) {
-        case 200:
-          setClientUpdated(true);
-          message.success('Client updated');
-          break;
-        case 204:
-          setClientUpdated(true);
-          message.success('Client updated');
-          break;
-        case 400:
-          setClientUpdated(false);
-          message.error('Invalid client, please check your form');
-          break;
-        case 401:
-          setClientUpdated(false);
-          message.error('Unauthorized : your role cannot edit this Client');
-          break;
-        case 500:
-          setClientUpdated(false);
-          message.error('Server error, something went wrong on the backend side');
-          break;
-        default:
-          console.log('Invalid HTTP Code ');
-          console.log(res.status);
-          message.error('HTTP Code not handled ');
-        }
-      });
-  }, [apiEndpoint, clientId]);
+  const timeKeeperAPIPut = useTimeKeeperAPIPut('/api/clients/' + clientIdSlug.params.id, (form=>form), setClientUpdated);
 
   if (clientUpdated) {
     return (
@@ -90,7 +41,7 @@ const EditClientForm = () => {
     );
   }
 
-  if (loadedClient) {
+  if (clientResponse.data) {
     return (
       <React.Fragment>
         <PageHeader title="Clients" subTitle="Edit a client"/>
@@ -98,8 +49,8 @@ const EditClientForm = () => {
           labelCol={{span: 4}}
           wrapperCol={{span: 14}}
           layout="horizontal"
-          onFinish={postForm}
-          initialValues={loadedClient}
+          initialValues={clientResponse.data}
+          onFinish={timeKeeperAPIPut.run}
         >
           <Form.Item
             label="Name"
@@ -133,7 +84,7 @@ const EditClientForm = () => {
     );
   }
 
-  if (loadedClient == null) {
+  if (clientResponse.loading) {
     return (
       <React.Fragment>
         <PageHeader title="Clients" subTitle="Edit a client"/>
@@ -159,6 +110,29 @@ const EditClientForm = () => {
       </React.Fragment>
     );
   }
+
+  if(clientResponse.error){
+    return (
+      <React.Fragment>
+        <Alert title='Server error'
+          message='Failed to load the client'
+          type='error'
+        />
+      </React.Fragment>
+    );
+  }
+
+  if(timeKeeperAPIPut.error){
+    return (
+      <React.Fragment>
+        <Alert title='Server error'
+          message='Failed to save the edited client'
+          type='error'
+        />
+      </React.Fragment>
+    );
+  }
+
 };
 
 export default EditClientForm;

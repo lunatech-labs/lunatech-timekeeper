@@ -43,6 +43,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public Long createMember(Long projectId, MemberRequest request) {
+        logger.debug("Create a new member for projectId="+projectId+" with memberRequest="+request);
         final var member = bind(projectId, request);
         Member.persist(member);
         return member.id;
