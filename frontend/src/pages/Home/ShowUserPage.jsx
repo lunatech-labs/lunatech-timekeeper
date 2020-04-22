@@ -1,27 +1,31 @@
-import React, {useState, useEffect} from 'react'
-import {Breadcrumb, Divider, PageHeader} from "antd";
+import React from 'react'
+import {Breadcrumb, Divider, PageHeader, Alert} from "antd";
 import ShowUser from "../../components/Users/ShowUser";
 import './index.less';
-import {useAxios} from "../../utils/hooks";
+import {useTimeKeeperAPI} from '../../utils/services';
 
 const ShowUserPage = () => {
-    const axiosInstance = useAxios('http://localhost:8080');
 
-    const [loadedUsers, setData] = useState({ users: [] });
+    // Do not rename variables below - Keep 'data', 'error' or else it will not work
+    const { data, error, loading } = useTimeKeeperAPI('/api/users/me');
 
-    useEffect( () => {
-        if(axiosInstance==null){
-            // When the page starts but Axios is not ready yet, we cannot fetch data
-            // I guess there is a better pattern that we should use
-            return;
-        }
-        const fetchData = async () => {
-            // Endpoint cote Quarkus qui prend le jeton JWT et retourne l'utilisateur authentifié
-            const result = await axiosInstance.get('/api/users/me');
-            setData(result.data);
-        };
-        fetchData();
-    }, [axiosInstance]);
+    if (error) {
+        let errorReason = "Message: " + error ;
+        return (
+            <React.Fragment>
+                <Alert title='Server error'
+                       message='Failed to load user from Quarkus backend server'
+                       type='error'
+                       description={errorReason}
+                />
+            </React.Fragment>
+        );
+    }
+    if (loading) {
+        return (
+            <div>loading...</div>
+        );
+    }
 
     return (
 
@@ -38,7 +42,8 @@ const ShowUserPage = () => {
             />
 
             <Divider/>
-            <ShowUser user={loadedUsers}/>
+
+            <ShowUser user={data}/>
 
         </React.Fragment>
     )
