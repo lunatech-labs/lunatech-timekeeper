@@ -43,7 +43,7 @@ public class ClientResource implements ClientResourceApi {
     }
 
     @Override
-    @RolesAllowed("user")
+    @PermitAll
     public ClientResponse getClient(Long id) {
         return clientService.findClientById(id).orElseThrow(NotFoundException::new);
     }

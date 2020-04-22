@@ -52,7 +52,7 @@ export const useTimeKeeperAPIPost = (urlAPI, formData, booleanCallback) => {
       if(booleanCallback) {
         booleanCallback(true);
       }else{
-        console.log('Err: please set a callback for POST call to '+urlAPI);
+        console.error('Err: please set a callback for POST call to '+urlAPI);
       }
     }
   });
@@ -78,7 +78,7 @@ export const useTimeKeeperAPIPut = (urlAPI, formData, booleanCallback) => {
       if(booleanCallback) {
         booleanCallback(true);
       }else{
-        console.log('Err: please set a callback for PUT call to '+urlAPI);
+        console.error('Err: please set a callback for PUT call to '+urlAPI);
       }
     }
   });
