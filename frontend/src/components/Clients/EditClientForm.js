@@ -31,7 +31,7 @@ const EditClientForm = () => {
 
   const clientResponse = useTimeKeeperAPI('/api/clients/' + clientIdSlug.params.id);
 
-  const timeKeeperAPIPut = useTimeKeeperAPIPut('/api/clients/' + clientIdSlug.params.id, (form=>form),setClientUpdated);
+  const timeKeeperAPIPut = useTimeKeeperAPIPut('/api/clients/' + clientIdSlug.params.id, (form=>form), setClientUpdated);
 
   if (clientUpdated) {
     return (
@@ -110,7 +110,6 @@ const EditClientForm = () => {
       </React.Fragment>
     );
   }
-
 
   if(clientResponse.error){
     return (
