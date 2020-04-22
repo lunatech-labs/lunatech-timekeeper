@@ -1,0 +1,25 @@
+# Build the Quarkus part of Timekeeper, except the frontend
+# This Github action should not trigger if I commit a file under ./frontend folder
+name: Quarkus CI on develop
+
+on:
+  push:
+    branches: [ develop ]
+    paths:
+      - '!frontend/**'    
+  pull_request:
+    branches: [ develop ]
+    paths:
+      - '!frontend/**'    
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+    - name: Build with Maven in batch mode
+      run: mvn -B compile test --file pom.xml
