@@ -12,36 +12,29 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
-@Path("/api")
+@Path("/api/projects/{projectId}/members")
 public interface MemberResourceApi {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/members")
-    List<MemberResponse> getAllMembers();
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/projects/{projectId}/members")
     List<MemberResponse> getAllMembersOfProject(@PathParam("projectId") Long projectId);
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/projects/{projectId}/members")
     Response addMemberToProject(@PathParam("projectId") Long projectId, @RequestBody MemberRequest request, @Context UriInfo uriInfo);
 
     @GET
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/projects/{projectId}/members/{id}")
     MemberResponse getMember(@PathParam("projectId") Long projectId, @PathParam("id") Long id);
 
     @PUT
+    @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/projects/{projectId}/members/{id}")
     Response updateMember(@PathParam("projectId") Long projectId, @PathParam("id") Long id, @RequestBody MemberUpdateRequest request);
 
     @DELETE
-    @Path("/projects/{projectId}/members/{id}")
+    @Path("/{id}")
     Response removeMemberToProject(@PathParam("projectId") Long projectId, @PathParam("id") Long id);
 
 }

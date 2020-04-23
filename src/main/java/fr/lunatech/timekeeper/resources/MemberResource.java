@@ -1,10 +1,10 @@
 package fr.lunatech.timekeeper.resources;
 
+import fr.lunatech.timekeeper.models.Role;
+import fr.lunatech.timekeeper.resources.openapi.MemberResourceApi;
 import fr.lunatech.timekeeper.services.dtos.MemberRequest;
 import fr.lunatech.timekeeper.services.dtos.MemberResponse;
 import fr.lunatech.timekeeper.services.dtos.MemberUpdateRequest;
-import fr.lunatech.timekeeper.models.Role;
-import fr.lunatech.timekeeper.resources.openapi.MemberResourceApi;
 import fr.lunatech.timekeeper.services.interfaces.MemberService;
 
 import javax.inject.Inject;
@@ -20,11 +20,6 @@ public class MemberResource implements MemberResourceApi {
 
     @Inject
     MemberService memberService;
-
-    @Override
-    public List<MemberResponse> getAllMembers() {
-        return memberService.listAllMembers();
-    }
 
     @Override
     public List<MemberResponse> getAllMembersOfProject(Long projectId) {

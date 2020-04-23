@@ -14,7 +14,6 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.List;
 
-@Path("/api/projects")
 public class ProjectResource implements ProjectResourceApi {
 
     @Inject
