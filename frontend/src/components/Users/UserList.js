@@ -1,7 +1,6 @@
 import React from 'react';
-import {Alert, PageHeader, Spin} from 'antd';
+import {Alert, PageHeader, Spin, Table} from 'antd';
 import {useTimeKeeperAPI} from '../../utils/services';
-import Table from "antd/es/table";
 
 const UserList = () => {
 
@@ -89,7 +88,7 @@ const UserList = () => {
   return (
 
     <React.Fragment>
-      <PageHeader title="Clients" subTitle={usersResponse.data.length}/>
+      <PageHeader title="Users" subTitle={usersResponse.data.length}/>
       <Table
         dataSource={usersResponse.data.map(user => userToUserData(user))}
         columns={columns}
