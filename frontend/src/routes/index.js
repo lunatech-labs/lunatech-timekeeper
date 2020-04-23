@@ -21,11 +21,11 @@ export const AppRouter = () => {
   return (
     <Router>
       <Switch>
-        <PrivateRoute exact path="/home" component={HomePage} />
         <Route path="/login" component={LoginPage} />
-        <PrivateRoute path="/clients/new" component={NewClientPage} />
-        <PrivateRoute path="/clients/:id" component={EditClientPage} />
-        <PrivateRoute path="/clients"     component={ClientsPage} />
+        <PrivateRoute exact path="/home"  component={HomePage} roles={["user"]} />
+        <PrivateRoute path="/clients/new" component={NewClientPage} roles={["admin"]} />
+        <PrivateRoute path="/clients/:id" component={EditClientPage} roles={["admin"]} />
+        <PrivateRoute path="/clients"     component={ClientsPage} roles={["admin"]} />
         {/* the /clients route must be after any other clients routes, else it does not work*/}
         <Redirect from="/" to="/home" />
       </Switch>
