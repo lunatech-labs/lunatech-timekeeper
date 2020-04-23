@@ -10,6 +10,7 @@ import NewClientPage from '../pages/Client/newClient.js';
 import EditClientPage from '../pages/Client/editClient.js';
 
 import { PrivateRoute } from './utils';
+import UsersPage from "../pages/User/allUsers";
 
 export const AppRouter = () => {
   const [, initialized] = useKeycloak();
@@ -23,6 +24,9 @@ export const AppRouter = () => {
       <Switch>
         <PrivateRoute exact path="/home" component={HomePage} />
         <Route path="/login" component={LoginPage} />
+        {/*Users*/}
+        <PrivateRoute path="/users" component={UsersPage} />
+        {/*Clients*/}
         <PrivateRoute path="/clients/new" component={NewClientPage} />
         <PrivateRoute path="/clients/:id" component={EditClientPage} />
         <PrivateRoute path="/clients"     component={ClientsPage} />

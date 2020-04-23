@@ -52,7 +52,9 @@ public class UserServiceImpl implements UserService {
     }
 
     private UserResponse from(User user) {
-        return new UserResponse(user.id, user.firstName, user.lastName, user.email, user.profiles, user.members.stream().map(m -> m.id).collect(Collectors.toList()));
+        final List<Long> membersId = user.members.stream().map(m -> m.id).collect(Collectors.toList());
+        final List<Long> projectsId = user.members.stream().map(member -> member.project.id).collect(Collectors.toList());
+        return new UserResponse(user.id, user.firstName, user.lastName, user.email, user.profiles, membersId, projectsId);
     }
 
     private User bind(User user, UserRequest request) {

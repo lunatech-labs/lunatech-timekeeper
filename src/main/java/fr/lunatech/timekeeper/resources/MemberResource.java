@@ -22,6 +22,11 @@ public class MemberResource implements MemberResourceApi {
     MemberService memberService;
 
     @Override
+    public List<MemberResponse> getAllMembers() {
+        return memberService.listAllMembers();
+    }
+
+    @Override
     public List<MemberResponse> getAllMembersOfProject(Long projectId) {
         return memberService.listAllMembers(projectId);
     }

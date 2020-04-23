@@ -48,7 +48,7 @@ class UserResourceTest {
 
         final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
 
-        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", profilesExpected, new ArrayList<Long>());
+        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", profilesExpected, new ArrayList<Long>(), new ArrayList<Long>());
 
         given()
                 .when()
@@ -87,7 +87,7 @@ class UserResourceTest {
         final List<Profile> profileExpected = new ArrayList<>();
         profileExpected.add(User);
 
-        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam2", "Huel2", "sam2@gmail.com", profileExpected, new ArrayList<Long>());
+        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam2", "Huel2", "sam2@gmail.com", profileExpected, new ArrayList<Long>(), new ArrayList<Long>());
 
         given()
                 .when()
@@ -126,8 +126,8 @@ class UserResourceTest {
         final List<Profile> profileExpected2 = new ArrayList<>();
         profileExpected2.add(User);
 
-        final UserResponse expectedUserResponse1 = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", profileExpected1, new ArrayList<Long>());
-        final UserResponse expectedUserResponse2 = new UserResponse(2L, "Sam2", "Huel2", "sam2@gmail.com", profileExpected2, new ArrayList<Long>());
+        final UserResponse expectedUserResponse1 = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", profileExpected1, new ArrayList<Long>(), new ArrayList<Long>());
+        final UserResponse expectedUserResponse2 = new UserResponse(2L, "Sam2", "Huel2", "sam2@gmail.com", profileExpected2, new ArrayList<Long>(), new ArrayList<Long>());
 
 
 
