@@ -32,6 +32,15 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public List<MemberResponse> listAllMembers() {
+        try (final Stream<Member> members = Member.streamAll()) {
+            return members
+                    .map(this::from)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    @Override
     public List<MemberResponse> listAllMembers(Long projectId) {
         try (final Stream<Member> members = Member.streamAll()) {
             return members.filter(member -> matchProjectId(member, projectId))
@@ -72,7 +81,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     private MemberResponse from(Member member) {
-        return new MemberResponse(member.id, member.user.id, member.role);
+        return new MemberResponse(member.id, member.user.id, member.role, member.project.id);
     }
 
     private Member bind(Long projectId, MemberRequest request) {

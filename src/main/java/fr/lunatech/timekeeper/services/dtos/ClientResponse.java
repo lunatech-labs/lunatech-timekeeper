@@ -34,7 +34,7 @@ public final class ClientResponse {
         return description;
     }
 
-    public List<Long> getProjectId() {
+    public List<Long> getProjectsId() {
         return projectsId;
     }
 }

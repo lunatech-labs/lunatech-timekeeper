@@ -45,8 +45,7 @@ class MemberResourceTest {
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
         final MemberRequest member = new MemberRequest(1L, Role.Developer);
 
-        final MemberResponse expectedMember = new MemberResponse(4L, 1L, Role.Developer);
-
+        final MemberResponse expectedMember = new MemberResponse(4L, 1L, Role.Developer, 3L);
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
@@ -101,8 +100,8 @@ class MemberResourceTest {
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
         final MemberRequest member = new MemberRequest(1L, Role.Developer);
 
-        final MemberResponse expectedMember1 = new MemberResponse(4L, 1L, Role.Developer);
-        final MemberResponse expectedMember2 = new MemberResponse(5L, 1L, Role.Developer);
+        final MemberResponse expectedMember1 = new MemberResponse(4L, 1L, Role.Developer, 3L);
+        final MemberResponse expectedMember2 = new MemberResponse(5L, 1L, Role.Developer, 3L);
 
         given()
                 .when()
@@ -157,6 +156,8 @@ class MemberResourceTest {
                 .statusCode(OK.getStatusCode())
                 .body(is(TestUtils.<MemberResponse>listOfTasJson(expectedMember1, expectedMember2)));
     }
+
+
 
     @Test
     void shouldFindAllMembersEmpty() {
@@ -232,7 +233,7 @@ class MemberResourceTest {
 
         final MemberRequest member = new MemberRequest(1L, Role.Developer);
 
-        final MemberResponse expectedMember = new MemberResponse(4L, 1L, Role.TeamLeader);
+        final MemberResponse expectedMember = new MemberResponse(4L, 1L, Role.TeamLeader, 3L);
 
         given()
                 .when()
