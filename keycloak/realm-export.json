@@ -395,6 +395,7 @@
   "groups": [],
   "defaultRoles": [
     "uma_authorization",
+    "user",
     "offline_access"
   ],
   "requiredCredentials": [
