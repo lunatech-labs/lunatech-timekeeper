@@ -22,7 +22,7 @@ export const useTimeKeeperAPI = (urlAPI, ...rest) => {
   }, [urlAPI, initialized, keycloak]
   );
 
-  return useRequest('http://localhost:8080' + urlAPI, ...rest);
+  return useRequest('http://localhost:8081' + urlAPI, ...rest);
 };
 
 /**
@@ -43,7 +43,7 @@ export const useTimeKeeperAPIPost = (urlAPI, formData, booleanCallback) => {
   );
 
   return useRequest((formData) => ({
-    url: 'http://localhost:8080' + urlAPI,
+    url: 'http://localhost:8081' + urlAPI,
     method: 'post',
     data: formData
   }), {
@@ -69,7 +69,7 @@ export const useTimeKeeperAPIPut = (urlAPI, formData, booleanCallback) => {
   );
 
   return useRequest((formData) => ({
-    url: 'http://localhost:8080' + urlAPI,
+    url: 'http://localhost:8081' + urlAPI,
     method: 'put',
     data: formData
   }), {
