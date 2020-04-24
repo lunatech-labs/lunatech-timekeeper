@@ -1,7 +1,7 @@
 FROM jboss/keycloak
 
 
-ADD ./keycloak/realm-export.json /opt/jboss/keycloak/imports/realm-export-prod.json
+ADD ./realm-export-prod.json /opt/jboss/keycloak/imports/realm-export-prod.json
 ADD themes /opt/jboss/keycloak/themes
 
 ENV KEYCLOAK_USER=admin
