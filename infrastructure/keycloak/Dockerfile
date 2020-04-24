@@ -1,7 +1,11 @@
 FROM jboss/keycloak
 
 
-ADD realm-export-prod.json /opt/jboss/keycloak/imports/realm-export-prod.json
+ARG environment=dev
+
+RUN echo ${environment}
+
+ADD realm-export-${environment}.json /opt/jboss/keycloak/imports/realm-export.json
 ADD themes /opt/jboss/keycloak/themes
 
 ENV KEYCLOAK_USER=admin
@@ -13,6 +17,4 @@ ENV JGROUPS_DISCOVERY_PROPERTIES=dns_query=some.dummy.host.local
 EXPOSE 8080
 
 
-
-
-CMD ["-b","0.0.0.0","-Dkeycloak.import=/opt/jboss/keycloak/imports/realm-export-prod.json","-Dkeycloak.profile.feature.docker=enabled"]
+CMD ["-b","0.0.0.0","-Dkeycloak.import=/opt/jboss/keycloak/imports/realm-export.json","-Dkeycloak.profile.feature.docker=enabled"]

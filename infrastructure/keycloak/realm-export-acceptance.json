@@ -1,7 +1,7 @@
 {
   "id": "quarkus",
   "realm": "Timekeeper",
-  "displayName": "Timekeeper Prod",
+  "displayName": "Timekeeper acceptance",
   "notBefore": 0,
   "revokeRefreshToken": false,
   "refreshTokenMaxReuse": 0,
