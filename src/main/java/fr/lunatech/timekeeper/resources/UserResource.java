@@ -12,15 +12,14 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
-@Path("/api/users")
 public class UserResource implements UserResourceApi {
     private static Logger logger = LoggerFactory.getLogger(UserResource.class);
 
@@ -30,9 +29,6 @@ public class UserResource implements UserResourceApi {
     @Inject
     SecurityIdentity identity;
 
-    @GET
-    @Path("/me")
-    @Produces(MediaType.APPLICATION_JSON)
     @NoCache
     public UserResponse me() {
         if (identity.getPrincipal() instanceof io.quarkus.oidc.runtime.OidcJwtCallerPrincipal) {
