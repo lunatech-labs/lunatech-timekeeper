@@ -22,10 +22,10 @@ export const AppRouter = () => {
   return (
     <Router>
       <Switch>
-        <Route path="/login"              component={LoginPage} />
+        <Route        path="/login"       component={LoginPage} />
         <PrivateRoute exact path="/home"  component={HomePage} />
         {/*Users*/}
-        <PrivateRoute path="/users"       component={UsersPage} roles={["user"]} />
+        <PrivateRoute path="/users"       component={UsersPage} roles={["admin"]} />
         {/*Clients*/}
         <PrivateRoute path="/clients/new" component={NewClientPage} roles={["admin"]} />
         <PrivateRoute path="/clients/:id" component={EditClientPage} roles={["admin"]} />
