@@ -396,6 +396,7 @@
   "defaultRoles": [
     "uma_authorization",
     "user",
+    "admin",
     "offline_access"
   ],
   "requiredCredentials": [
