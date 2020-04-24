@@ -77,7 +77,7 @@ class ClientResourceTest {
                 .get("/api/clients/1")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("{\"description\":\"NewDescription\",\"id\":1,\"name\":\"NewClient\",\"projectId\":[]}"));
+                .body(is("{\"description\":\"NewDescription\",\"id\":1,\"name\":\"NewClient\",\"projectsId\":[]}"));
     }
 
     @Test
@@ -196,6 +196,6 @@ class ClientResourceTest {
                 .get("/api/clients/1")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is("{\"description\":\"NewDescription2\",\"id\":1,\"name\":\"NewName\",\"projectId\":[]}"));
+                .body(is("{\"description\":\"NewDescription2\",\"id\":1,\"name\":\"NewName\",\"projectsId\":[]}"));
     }
 }

@@ -23,14 +23,17 @@ public final class UserResponse {
     private final List<Profile> profiles;
     @NotNull
     private final List<Long> membersId;
+    @NotNull
+    private final List<Long> projectsId;
 
-    public UserResponse(@NotNull Long id, @NotBlank String firstName, @NotBlank String lastName, @NotBlank @Email String email, @NotEmpty List<Profile> profiles, @NotNull List<Long> membersId) {
+    public UserResponse(@NotNull Long id, @NotBlank String firstName, @NotBlank String lastName, @NotBlank @Email String email, @NotEmpty List<Profile> profiles, @NotNull List<Long> membersId, @NotNull List<Long> projectsId) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.profiles = profiles;
         this.membersId = membersId;
+        this.projectsId = projectsId;
     }
 
     public Long getId() {
@@ -54,4 +57,8 @@ public final class UserResponse {
     }
 
     public List<Long> getMembersId() { return membersId; }
+
+    public List<Long> getProjectsId() {
+        return projectsId;
+    }
 }

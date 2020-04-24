@@ -24,8 +24,8 @@ public interface MemberResourceApi {
     Response addMemberToProject(@PathParam("projectId") Long projectId, @RequestBody MemberRequest request, @Context UriInfo uriInfo);
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
     MemberResponse getMember(@PathParam("projectId") Long projectId, @PathParam("id") Long id);
 
     @PUT
