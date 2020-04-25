@@ -91,7 +91,7 @@ public interface ProjectResourceApi {
     Response updateProject(@PathParam("id") Long id, @RequestBody ProjectRequest request);
 
     @POST
-    @Path("{projectId}/members")
+    @Path("{id}/members")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Add a member to a project",
             description = "Add a member to a project and determine his role.")
@@ -109,10 +109,10 @@ public interface ProjectResourceApi {
                     description = "Bad parameters (unknown project or user)"
             )
     })
-    Response addMemberToProject(@PathParam("projectId") Long projectId, @RequestBody MemberRequest request, @Context UriInfo uriInfo);
+    Response addMemberToProject(@PathParam("id") Long projectId, @RequestBody MemberRequest request, @Context UriInfo uriInfo);
 
     @PUT
-    @Path("{projectId}/members")
+    @Path("{id}/members")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Update project members",
             description = "Update the list of project members.")
@@ -127,6 +127,6 @@ public interface ProjectResourceApi {
                     description = "Bad parameters (unknown project or user)"
             )
     })
-    Response updateProjectMembers(@PathParam("projectId") Long projectId, @RequestBody MembersUpdateRequest request, @Context UriInfo uriInfo);
+    Response updateProjectMembers(@PathParam("id") Long projectId, @RequestBody MembersUpdateRequest request, @Context UriInfo uriInfo);
 
 }
