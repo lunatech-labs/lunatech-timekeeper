@@ -23,7 +23,7 @@ class MenuSidebar extends Component {
             <span>Clients</span>
           </Link>
         </Menu.Item>
-          <Menu.Item className="tk_MenuItem" key="/users">
+        <Menu.Item className="tk_MenuItem" key="/users">
           <Link to="/users">
             <UserOutlined/>
             <span>Users</span>
