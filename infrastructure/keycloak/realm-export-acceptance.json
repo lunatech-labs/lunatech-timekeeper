@@ -637,20 +637,19 @@
       "id": "550f0b5e-d1c8-4665-af0f-e4666b504578",
       "clientId": "react-timekeeper-client",
       "description": "React Client for Keycloak",
-      "rootUrl": "http://localhost:3000",
-      "adminUrl": "http://localhost:3000",
-      "baseUrl": "http://localhost:3000/",
+      "rootUrl": "https://acceptance.timekeeper.lunatech.fr/",
+      "adminUrl": "https://acceptance.timekeeper.lunatech.fr/",
+      "baseUrl": "http://acceptance.timekeeper.lunatech.fr/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "secret": "secret-ae4c5ec2",
       "redirectUris": [
-        "http://127.0.0.1:3000/*",
-        "http://localhost:3000/*"
+        "https://acceptance.timekeeper.lunatech.fr/*"
       ],
       "webOrigins": [
-        "http://localhost:3000"
+        "https://acceptance.timekeeper.lunatech.fr/"
       ],
       "notBefore": 0,
       "bearerOnly": false,
@@ -702,7 +701,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "secret-ae4c5ec2",
       "redirectUris": [],
       "webOrigins": [],
       "notBefore": 0,
@@ -800,17 +799,17 @@
     {
       "id": "0ac5df91-e044-4051-bd03-106a3a5fb9cc",
       "clientId": "timekeeper-quarkus-backend",
-      "description": "Client for Quarkus application on port 8080",
-      "rootUrl": "http://localhost:8080/",
-      "adminUrl": "http://localhost:8080/",
-      "baseUrl": "http://localhost:8080/",
+      "description": "Client for Quarkus in Acceptance",
+      "rootUrl": "https://acceptance.api.timekeeper.lunatech.fr/",
+      "adminUrl": "https://acceptance.api.timekeeper.lunatech.fr/",
+      "baseUrl": "https://acceptance.api.timekeeper.lunatech.fr/",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "secret": "ae4c5ec2-7514-43e9-b026-dafc4eb52453",
       "redirectUris": [
-        "http://localhost:8080/"
+        "https://acceptance.api.timekeeper.lunatech.fr/"
       ],
       "webOrigins": [],
       "notBefore": 0,
@@ -1441,8 +1440,8 @@
       "linkOnly": false,
       "firstBrokerLoginFlowAlias": "first broker login",
       "config": {
-        "clientSecret": "_TOW4vSvNX0dgkVaH0MXKXKi",
-        "clientId": "941763132071-skunln329de3efa6j53mpc69eon6vpni.apps.googleusercontent.com",
+        "clientSecret": "JHUK8Fk-FxMGdgHCFqCMqeY7",
+        "clientId": "941763132071-tl1n3g2jm0du6n01cthan7ki6p09m4c5.apps.googleusercontent.com",
         "defaultScope": "openid profile email",
         "useJwksUrl": "true"
       }

@@ -6,14 +6,9 @@ import { AppRouter } from './routes';
 import './App.less';
 
 const keycloak = new Keycloak({
-  // Il est possible de configurer via des variables d'environement pour la PROD
-  // realm: process.env.REACT_APP_KEYCLOAK_REALM,
-  //url: process.env.REACT_APP_KEYCLOAK_URL,
-  //clientId: process.env.REACT_APP_KEYCLOAK_CLIENT_ID,
-  realm: 'Timekeeper',
-  url: 'http://localhost:8082/auth/',
-  clientId: 'react-timekeeper-client',
-  publicClient: 'true'
+  realm: process.env.REACT_APP_KEYCLOAK_REALM,
+  url: process.env.REACT_APP_KEYCLOAK_URL,
+  clientId: process.env.REACT_APP_KEYCLOAK_CLIENT_ID
 });
 
 const keycloakProviderInitConfig = {
