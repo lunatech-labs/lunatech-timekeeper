@@ -17,6 +17,7 @@ public class IllegalEntityStateExceptionMapper implements ExceptionMapper<Illega
 
     @Override
     public Response toResponse(IllegalEntityStateException e) {
+        logger.warn("An illegal entity state is handled and transform to BAD_REQUEST (HTTP 400) Response", e);
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
 }
