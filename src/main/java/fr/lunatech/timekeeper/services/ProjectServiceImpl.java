@@ -37,7 +37,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     @Override
     public Long createProject(ProjectRequest request) {
-        logger.info("Create a new project with " + request);
+        logger.debug("Create a new project with {}", request);
         final var project = unbind(request);
         Project.persist(project);
         return project.id;
@@ -46,14 +46,14 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     @Override
     public Optional<Long> updateProject(Long id, ProjectRequest request) {
-        logger.info("Modify project for projectId=" + id + " with " + request);
+        logger.debug("Modify project for projectId={} with request={}", id, request);
         return Project.<Project>findByIdOptional(id).map(project -> unbind(project, request).id);
     }
 
     @Transactional
     @Override
     public Long addMemberToProject(Long projectId, MemberRequest request) {
-        logger.info("Create a new member for projectId=" + projectId + " with " + request);
+        logger.debug("Add a new member for projectId={} with request={}", projectId, request);
         final var project = getProject(projectId);
         return addMemberToProject(project, request);
     }
@@ -61,7 +61,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     @Override
     public List<Long> updateProjectMembers(Long projectId, MembersUpdateRequest request) {
-        logger.info("Modify members for projectId=" + projectId + " with " + request);
+        logger.debug("Modify members for projectId={} with request={}", projectId, request);
         final var project = getProject(projectId);
 
         final var membersUpdated = project.members.stream()

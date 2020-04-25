@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public Long createUser(UserRequest request) {
-        logger.info("Create a new user with " + request);
+        logger.debug("Create a new user with request={}", request);
         final var user = unbind(request);
         User.persist(user);
         return user.id;
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public Optional<Long> updateUser(Long id, UserRequest request) {
-        logger.info("Modify user for userId=" + id + " with " + request);
+        logger.debug("Modify user for userId={} with request={}", id, request);
         return User.<User>findByIdOptional(id).map(user -> unbind(user, request).id);
     }
 
