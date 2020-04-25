@@ -60,5 +60,5 @@ yarn-error.log*
 # Ignored. AntD Pro ignore those 2 files
 frontend/yarn.lock
 frontend/package-lock.json
-
+frontend/.clever.json
 # Frontend -- END
