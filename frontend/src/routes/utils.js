@@ -7,7 +7,7 @@ import {message} from 'antd';
 export function PrivateRoute({ component: Component, roles, ...rest }) {
   const [keycloak] = useKeycloak();
 
-  const roleChecked = (roles) => (roles === undefined || roles.some(role => keycloak.hasRealmRole(role)))
+  const roleChecked = (roles) => (roles === undefined || roles.some(role => keycloak.hasRealmRole(role)));
 
   if (keycloak.authenticated && roleChecked(roles)) {
     return (
@@ -17,21 +17,21 @@ export function PrivateRoute({ component: Component, roles, ...rest }) {
           <Component {...props} />
         }
       />
-    )
+    );
   }
 
   if (keycloak.authenticated) {
     message.error('Access forbidden for this page');
     return <Route
       {...rest}
-      render={(props) =>
+      render={() =>
         <Redirect
           to={{
             pathname: '/',
           }}
         />
       }
-    />
+    />;
   }
 
   return (

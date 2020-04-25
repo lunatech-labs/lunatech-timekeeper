@@ -10,7 +10,7 @@ import NewClientPage from '../pages/Client/newClient.js';
 import EditClientPage from '../pages/Client/editClient.js';
 
 import { PrivateRoute } from './utils';
-import UsersPage from "../pages/User/allUsers";
+import UsersPage from '../pages/User/allUsers';
 
 export const AppRouter = () => {
   const [, initialized] = useKeycloak();
@@ -25,11 +25,11 @@ export const AppRouter = () => {
         <Route        path="/login"       component={LoginPage} />
         <PrivateRoute exact path="/home"  component={HomePage} />
         {/*Users*/}
-        <PrivateRoute path="/users"       component={UsersPage} roles={["admin"]} />
+        <PrivateRoute path="/users"       component={UsersPage} roles={['admin']} />
         {/*Clients*/}
-        <PrivateRoute path="/clients/new" component={NewClientPage} roles={["admin"]} />
-        <PrivateRoute path="/clients/:id" component={EditClientPage} roles={["admin"]} />
-        <PrivateRoute path="/clients"     component={ClientsPage} roles={["admin"]} />
+        <PrivateRoute path="/clients/new" component={NewClientPage} roles={['admin']} />
+        <PrivateRoute path="/clients/:id" component={EditClientPage} roles={['admin']} />
+        <PrivateRoute path="/clients"     component={ClientsPage} roles={['admin']} />
         {/* the /clients route must be after any other clients routes, else it does not work*/}
         <Redirect from="/" to="/home" />
       </Switch>
