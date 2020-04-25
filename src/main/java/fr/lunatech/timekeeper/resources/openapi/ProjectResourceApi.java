@@ -94,7 +94,7 @@ public interface ProjectResourceApi {
     @Path("{projectId}/members")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Add a member to a project",
-            description = "Add a member to a project and determine the role.")
+            description = "Add a member to a project and determine his role.")
     @Tag(ref = "projects")
     @APIResponses(value = {
             @APIResponse(
