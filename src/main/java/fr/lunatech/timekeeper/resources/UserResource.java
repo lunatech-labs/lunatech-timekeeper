@@ -46,7 +46,7 @@ public class UserResource implements UserResourceApi {
                 });
             });
         } else {
-            logger.debug("Unknown identity.getPrincipal: " + identity.getPrincipal());
+            logger.warn("Unknown identity.getPrincipal: " + identity.getPrincipal());
             throw new NotAuthorizedException("invalid_token");
         }
     }

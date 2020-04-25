@@ -6,14 +6,11 @@ const UserList = () => {
 
   const usersResponse = useTimeKeeperAPI('/api/users');
   const projectsResponse = useTimeKeeperAPI('/api/projects');
-  const membersResponse = useTimeKeeperAPI('/api/members');
 
   const userToUserData = (user) => {
-    const members = membersResponse.data;
-    const projects = projectsResponse.data
-      .filter(project => user.projectsId.includes(project.id))
-      .map(project => {
-        const member = members.find(m => m.projectId === project.id && m.userId === user.id);
+    const projects = user.memberOfprojects
+      .map(member => {
+        const project = projectsResponse.data.find(project => member.projectId === project.id);
         return {
           ...project,
           role: member.role
@@ -63,7 +60,7 @@ const UserList = () => {
     }
   ];
 
-  if (usersResponse.loading || membersResponse.loading || projectsResponse.loading) {
+  if (usersResponse.loading || projectsResponse.loading) {
     return (
       <React.Fragment>
         <Spin size="large">
@@ -73,7 +70,7 @@ const UserList = () => {
 
     );
   }
-  if (usersResponse.error || membersResponse.error || projectsResponse.error) {
+  if (usersResponse.error || projectsResponse.error) {
     return (
       <React.Fragment>
         <Alert title='Server error'

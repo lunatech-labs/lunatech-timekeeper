@@ -126,6 +126,8 @@
                 <configuration>
                     <systemProperties>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                        <!-- Enable debug logging for all logging categories -->
+                        <!--<quarkus.log.level>DEBUG</quarkus.log.level>-->
                     </systemProperties>
                 </configuration>
             </plugin>

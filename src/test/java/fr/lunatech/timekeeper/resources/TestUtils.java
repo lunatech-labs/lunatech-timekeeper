@@ -22,12 +22,11 @@ public class TestUtils {
     }
 
     static <T> List<T> listOf(T... elements) {
-        return Arrays.<T>asList(elements);
-
+        return Arrays.asList(elements);
     }
 
     static <T> String listOfTasJson(T... elements) {
-        return toJson(Arrays.<T>asList(elements));
+        return toJson(Arrays.asList(elements));
 
     }
 }

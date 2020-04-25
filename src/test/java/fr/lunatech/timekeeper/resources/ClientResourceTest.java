@@ -11,10 +11,10 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 
 import static fr.lunatech.timekeeper.resources.TestUtils.toJson;
 import static io.restassured.RestAssured.given;
+import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT;
 import static javax.ws.rs.core.HttpHeaders.LOCATION;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -40,7 +40,7 @@ class ClientResourceTest {
     void shouldCreateClient() {
 
         final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
-        final ClientResponse expectedClient = new ClientResponse(1L, "NewClient", "NewDescription", new ArrayList<Long>());
+        final ClientResponse expectedClient = new ClientResponse(1L, "NewClient", "NewDescription", emptyList());
 
         given()
                 .when()
@@ -95,8 +95,8 @@ class ClientResourceTest {
 
         final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         final ClientRequest client2 = new ClientRequest("NewClient2", "NewDescription2");
-        final ClientResponse expectedClient = new ClientResponse(1L, "NewClient", "NewDescription", new ArrayList<Long>());
-        final ClientResponse expectedClient2 = new ClientResponse(2L, "NewClient2", "NewDescription2", new ArrayList<Long>());
+        final ClientResponse expectedClient = new ClientResponse(1L, "NewClient", "NewDescription", emptyList());
+        final ClientResponse expectedClient2 = new ClientResponse(2L, "NewClient2", "NewDescription2", emptyList());
 
         given()
                 .when()
@@ -122,7 +122,7 @@ class ClientResourceTest {
                 .get("/api/clients")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is(TestUtils.<ClientResponse>listOfTasJson(expectedClient, expectedClient2)));
+                .body(is(TestUtils.listOfTasJson(expectedClient, expectedClient2)));
     }
 
     @Test
@@ -142,7 +142,7 @@ class ClientResourceTest {
         final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         final ClientRequest client2 = new ClientRequest("NewClient", "NewDescription2");
 
-        final ClientResponse expectedClient2 = new ClientResponse(1L, "NewClient", "NewDescription2", new ArrayList<Long>());
+        final ClientResponse expectedClient2 = new ClientResponse(1L, "NewClient", "NewDescription2", emptyList());
 
         given()
                 .when()

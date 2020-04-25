@@ -3,6 +3,7 @@ package fr.lunatech.timekeeper.services.dtos;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Optional;
 
 public final class ProjectResponse {
 
@@ -14,18 +15,17 @@ public final class ProjectResponse {
     private final Boolean billable;
     @NotNull
     private final String description;
+    private final String clientName;
     @NotNull
-    private final Long clientId;
-    @NotNull
-    private final List<Long> membersId;
+    private final List<MemberResponse> members;
 
-    public ProjectResponse(@NotNull Long id, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull Long clientId, @NotNull List<Long> membersId) {
+    public ProjectResponse(@NotNull Long id, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull String clientName, @NotNull List<MemberResponse> members) {
         this.id = id;
         this.name = name;
         this.billable = billable;
         this.description = description;
-        this.clientId = clientId;
-        this.membersId = membersId;
+        this.clientName = clientName;
+        this.members = members;
     }
 
     public Long getId() {
@@ -44,11 +44,11 @@ public final class ProjectResponse {
         return description;
     }
 
-    public Long getClientId() {
-        return clientId;
+    public String getClientName() {
+        return clientName;
     }
 
-    public List<Long> getMembersId() {
-        return membersId;
+    public List<MemberResponse> getMembers() {
+        return members;
     }
 }

@@ -24,4 +24,12 @@ public final class ClientRequest {
     public String getDescription() {
         return description;
     }
+
+    @Override
+    public String toString() {
+        return "ClientRequest{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

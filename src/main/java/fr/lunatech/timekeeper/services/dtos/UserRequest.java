@@ -43,4 +43,14 @@ public final class UserRequest {
     public List<Profile> getProfiles() {
         return profiles;
     }
+
+    @Override
+    public String toString() {
+        return "UserRequest{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", profiles=" + profiles +
+                '}';
+    }
 }

@@ -35,7 +35,7 @@ class InfrastructureTest {
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/openapi")
+                .get("/openapi")
                 .then()
                 .statusCode(OK.getStatusCode());
     }
@@ -45,7 +45,7 @@ class InfrastructureTest {
         given()
                 .when()
                 .header(ACCEPT, TEXT_HTML)
-                .get("/api/swagger-ui/")
+                .get("/swagger-ui/")
                 .then()
                 .statusCode(OK.getStatusCode());
     }
@@ -55,7 +55,7 @@ class InfrastructureTest {
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/health")
+                .get("/health")
                 .then()
                 .statusCode(OK.getStatusCode());
     }
@@ -65,7 +65,7 @@ class InfrastructureTest {
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/health/live")
+                .get("/health/live")
                 .then()
                 .statusCode(OK.getStatusCode());
     }
@@ -75,7 +75,7 @@ class InfrastructureTest {
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/health/ready")
+                .get("/health/ready")
                 .then()
                 .statusCode(OK.getStatusCode());
     }

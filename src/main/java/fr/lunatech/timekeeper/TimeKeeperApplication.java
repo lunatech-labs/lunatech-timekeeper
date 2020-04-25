@@ -10,7 +10,8 @@ import org.eclipse.microprofile.openapi.annotations.servers.Server;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-@ApplicationPath("/")
+
+@ApplicationPath("/api")
 @OpenAPIDefinition(
         info = @Info(title = "TimeKeeper API",
                 description = "This API allows CRUD operations and interaction with TimeKeeper",
@@ -21,9 +22,6 @@ import javax.ws.rs.core.Application;
         },
         externalDocs = @ExternalDocumentation(url = "https://lunatech.atlassian.net/wiki/spaces/INTRANET/pages/1609695253/Timekeeper", description = "Lunatech doc about TimeKeeper on Confluence")
 )
-/**
- * See documentation https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations
- */
 public class TimeKeeperApplication extends Application {
 
 }
