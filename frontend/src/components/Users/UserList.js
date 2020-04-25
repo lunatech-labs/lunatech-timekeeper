@@ -14,14 +14,14 @@ const UserList = () => {
         return {
           ...project,
           role: member.role
-        }
+        };
       });
     return {
       ...user,
       key: user.id,
       name: `${user.firstName} ${user.lastName}`,
       projects: projects
-    }
+    };
   };
   const columns = [
     {
@@ -74,9 +74,9 @@ const UserList = () => {
     return (
       <React.Fragment>
         <Alert title='Server error'
-               message='Failed to load'
-               type='error'
-               description='check that the user has authorities to access these resources'
+          message='Failed to load'
+          type='error'
+          description='check that the user has authorities to access these resources'
         />
       </React.Fragment>
     );
