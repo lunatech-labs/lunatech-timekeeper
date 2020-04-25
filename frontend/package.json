@@ -39,7 +39,10 @@
     "lint-fix": "npx eslint src --fix"
   },
   "resolutions": {
-    "url-parse": "1.4.3"
+    "url-parse": "1.4.3",
+    "is-promise": "2.1.0",
+    "run-async/is-promise": "2.1.0",
+    "memoizee/is-promise": "2.1.0"
   },
   "eslintConfig": {
     "extends": "react-app"
