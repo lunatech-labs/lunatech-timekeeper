@@ -61,7 +61,8 @@ public class UserServiceImpl implements UserService {
         final User authenticatedUser = User.<User>find("email", request.getEmail())
                 .firstResultOptional()
                 .map(user -> {
-                    logger.debug("Modify user by email={} with request={}", user.email, request);
+                    logger.debug("Modify user by email={} (if a change is detected) with request={}", user.email, request);
+                    /* Panache optimizes this process, no need to check if a change is necessary */
                     return unbind(user, request);
                 })
                 .orElseGet(() -> {
