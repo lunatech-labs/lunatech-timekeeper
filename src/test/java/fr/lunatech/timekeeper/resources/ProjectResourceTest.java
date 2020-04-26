@@ -14,6 +14,8 @@ import javax.inject.Inject;
 
 import static fr.lunatech.timekeeper.models.Profile.Admin;
 import static fr.lunatech.timekeeper.models.Profile.User;
+import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
+import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
 import static fr.lunatech.timekeeper.resources.TestUtils.*;
 import static io.restassured.RestAssured.given;
 import static java.util.Collections.emptyList;
@@ -26,6 +28,7 @@ import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
+@QuarkusTestResource(KeycloakTestResource.class)
 @Tag("integration")
 class ProjectResourceTest {
 
@@ -39,13 +42,14 @@ class ProjectResourceTest {
     }
 
     @Test
-    void shouldCreateProject() {
+    void shouldCreateProjectWhenAdminProfile() {
+
+        final String adminToken = getAdminAccessToken();
+        final String token = getUserAccessToken();
 
         final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L);
-        final ProjectResponse expectedProject = new ProjectResponse(2L, "Pepito", true, "New project", "NewClient", emptyList());
-
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(client)
@@ -54,7 +58,9 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/1"));
 
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L);
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(project)
@@ -63,7 +69,9 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/2"));
 
+        final ProjectResponse expectedProject = new ProjectResponse(2L, "Pepito", true, "New project", "NewClient", emptyList());
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get("/api/projects/2")
@@ -75,10 +83,11 @@ class ProjectResourceTest {
     @Test
     void shouldCreateProjectWithUnknownClient() {
 
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 10L);
-        final ProjectResponse expectedProject = new ProjectResponse(1L, "Pepito", true, "New project", "", emptyList());
+        final String token = getUserAccessToken();
 
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 10L);
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(project)
@@ -87,7 +96,9 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/1"));
 
+        final ProjectResponse expectedProject = new ProjectResponse(1L, "Pepito", true, "New project", "", emptyList());
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get("/api/projects/1")
@@ -98,7 +109,11 @@ class ProjectResourceTest {
 
     @Test
     void shouldNotFindUnknownProject() {
+
+        final String token = getUserAccessToken();
+
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get("/api/projects/4")
@@ -108,15 +123,13 @@ class ProjectResourceTest {
 
     @Test
     void shouldFindAllProjects() {
+
+        final String adminToken = getAdminAccessToken();
+        final String token = getUserAccessToken();
+
         final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
-        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
-        final ProjectRequest project1 = new ProjectRequest("Pepito", true, "New project", 2L);
-
-        final ProjectResponse expectedProject = new ProjectResponse(3L, "Pepito", true, "New project", "NewClient", emptyList());
-        final ProjectResponse expectedProject1 = new ProjectResponse(4L, "Pepito", true, "New project", "NewClient", emptyList());
-
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(user)
@@ -125,7 +138,9 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/1"));
 
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(client)
@@ -134,7 +149,9 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/2"));
 
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(project)
@@ -143,7 +160,9 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/3"));
 
+        final ProjectRequest project1 = new ProjectRequest("Pepito", true, "New project", 2L);
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(project1)
@@ -152,7 +171,10 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/4"));
 
+        final ProjectResponse expectedProject = new ProjectResponse(3L, "Pepito", true, "New project", "NewClient", emptyList());
+        final ProjectResponse expectedProject1 = new ProjectResponse(4L, "Pepito", true, "New project", "NewClient", emptyList());
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get("/api/projects")
@@ -163,7 +185,11 @@ class ProjectResourceTest {
 
     @Test
     void shouldFindAllProjectsEmpty() {
+
+        final String token = getUserAccessToken();
+
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get("/api/projects")
@@ -175,14 +201,12 @@ class ProjectResourceTest {
     @Test
     void shouldModifyProject() {
 
+        final String adminToken = getAdminAccessToken();
+        final String token = getUserAccessToken();
+
         final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
-        final ClientRequest client1 = new ClientRequest("NewClient2", "NewDescription2");
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L);
-        final ProjectRequest project1 = new ProjectRequest("Pepito2", false, "New project2", 3L);
-
-        final ProjectResponse expectedProject = new ProjectResponse(2L, "Pepito2", false, "New project2", "NewClient2", emptyList());
-
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(client)
@@ -191,7 +215,9 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/1"));
 
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L);
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(project)
@@ -200,7 +226,9 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/2"));
 
+        final ClientRequest client1 = new ClientRequest("NewClient2", "NewDescription2");
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(client1)
@@ -209,7 +237,9 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/3"));
 
+        final ProjectRequest project1 = new ProjectRequest("Pepito2", false, "New project2", 3L);
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(project1)
@@ -217,7 +247,9 @@ class ProjectResourceTest {
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
+        final ProjectResponse expectedProject = new ProjectResponse(2L, "Pepito2", false, "New project2", "NewClient2", emptyList());
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get("/api/projects/2")
@@ -229,8 +261,12 @@ class ProjectResourceTest {
     @Test
     void shouldAddMemberToProject() {
 
+        final String adminToken = getAdminAccessToken();
+        final String token = getUserAccessToken();
+
         final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(user)
@@ -241,6 +277,7 @@ class ProjectResourceTest {
 
         final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(client)
@@ -251,6 +288,7 @@ class ProjectResourceTest {
 
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(project)
@@ -261,6 +299,7 @@ class ProjectResourceTest {
 
         final MemberRequest member = new MemberRequest(1L, Role.Developer);
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(member)
@@ -272,6 +311,7 @@ class ProjectResourceTest {
         final MemberResponse expectedMemberResponse = new MemberResponse(4L, 1L, Role.Developer, 3L);
         final ProjectResponse expectedProject = new ProjectResponse(3L, "Pepito", true, "New project", "NewClient", listOf(expectedMemberResponse));
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get("/api/projects/3")
@@ -283,8 +323,12 @@ class ProjectResourceTest {
     @Test
     void shouldNotAddMemberTwiceToProject() {
 
+        final String adminToken = getAdminAccessToken();
+        final String token = getUserAccessToken();
+
         final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(user)
@@ -295,6 +339,7 @@ class ProjectResourceTest {
 
         final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(client)
@@ -305,6 +350,7 @@ class ProjectResourceTest {
 
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(project)
@@ -315,6 +361,7 @@ class ProjectResourceTest {
 
         final MemberRequest member = new MemberRequest(1L, Role.Developer);
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(member)
@@ -325,6 +372,7 @@ class ProjectResourceTest {
 
         final MemberRequest member2 = new MemberRequest(1L, Role.TeamLeader);
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(member2)
@@ -337,8 +385,12 @@ class ProjectResourceTest {
     @Test
     void shouldNotAddMemberToProjectWithUnknownUser() {
 
+        final String adminToken = getAdminAccessToken();
+        final String token = getUserAccessToken();
+
         final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(client)
@@ -349,6 +401,7 @@ class ProjectResourceTest {
 
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L);
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(project)
@@ -358,6 +411,7 @@ class ProjectResourceTest {
                 .header(LOCATION, endsWith("/api/projects/2"));
 
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body("{\"role\":\"Developer\", \"userId\":12}")
@@ -369,8 +423,12 @@ class ProjectResourceTest {
     @Test
     void shouldModifyMembersAndGetProjectMembers() {
 
+        final String adminToken = getAdminAccessToken();
+        final String token = getUserAccessToken();
+
         final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(user1)
@@ -381,6 +439,7 @@ class ProjectResourceTest {
 
         final UserRequest user2 = createUserRequest("Jimmy", "Pastore", "jimmy@gmail.com", User);
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(user2)
@@ -391,6 +450,7 @@ class ProjectResourceTest {
 
         final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(client)
@@ -401,6 +461,7 @@ class ProjectResourceTest {
 
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 3L);
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(project)
@@ -413,6 +474,7 @@ class ProjectResourceTest {
         final MemberRequest member2 = new MemberRequest(2L, Role.Developer);
         final MembersUpdateRequest members = new MembersUpdateRequest(listOf(member1, member2));
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(members)
@@ -424,6 +486,7 @@ class ProjectResourceTest {
         final MemberResponse expectedMemberResponse2 = new MemberResponse(6L, 2L, Role.Developer, 4L);
         final ProjectResponse expectedProject = new ProjectResponse(4L, "Pepito", true, "New project", "NewClient", listOf(expectedMemberResponse1, expectedMemberResponse2));
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get("/api/projects/4")
@@ -433,6 +496,7 @@ class ProjectResourceTest {
 
         final UserRequest user2_1 = createUserRequest("Sam2", "Huel2", "sam2@gmail.com", Admin);
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(user2_1)
@@ -444,6 +508,7 @@ class ProjectResourceTest {
         final MemberRequest member2_1 = new MemberRequest(7L, Role.TeamLeader);
         final MembersUpdateRequest members2 = new MembersUpdateRequest(listOf(member2_1));
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(members2)
@@ -454,6 +519,7 @@ class ProjectResourceTest {
         final MemberResponse expectedMemberResponse2_1 = new MemberResponse(8L, 7L, Role.TeamLeader, 4L);
         final ProjectResponse expectedProject2 = new ProjectResponse(4L, "Pepito", true, "New project", "NewClient", listOf(expectedMemberResponse2_1));
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get("/api/projects/4")
