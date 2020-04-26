@@ -15,6 +15,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Collections.emptyList;
+
 @ApplicationScoped
 public class UserServiceImpl implements UserService {
 
@@ -53,24 +55,45 @@ public class UserServiceImpl implements UserService {
         return User.<User>findByIdOptional(id).map(user -> unbind(user, request).id);
     }
 
+    @Transactional
+    @Override
+    public UserResponse authenticate(UserRequest request) {
+        final User authenticatedUser = User.<User>find("email", request.getEmail())
+                .firstResultOptional()
+                .map(user -> {
+                    logger.debug("Modify user by email={} with request={}", user.email, request);
+                    return unbind(user, request);
+                })
+                .orElseGet(() -> {
+                    logger.debug("Create a new user by email={} with request={}", request.getEmail(), request);
+                    final var user = unbind(request);
+                    User.persist(user);
+                    return user;
+                });
+
+        return bind(authenticatedUser);
+    }
+
     @Override
     public Long count() {
         return User.count();
     }
 
     private UserResponse bind(User user) {
-        final List<MemberResponse> members = user.members
-                .stream()
+        final List<MemberResponse> members = (user.members == null)
+                ? emptyList()
+                : user.members.stream()
                 .map(member -> new MemberResponse(member.id, member.user.id, member.role, member.project.id))
                 .collect(Collectors.toList());
 
-        return new UserResponse(user.id, user.firstName, user.lastName, user.email, user.profiles, members);
+        return new UserResponse(user.id, user.firstName, user.lastName, user.email, user.picture, user.profiles, members);
     }
 
     private User unbind(User user, UserRequest request) {
         user.firstName = request.getFirstName();
         user.lastName = request.getLastName();
         user.email = request.getEmail();
+        user.picture = request.getPicture();
         user.profiles = request.getProfiles();
         return user;
     }
