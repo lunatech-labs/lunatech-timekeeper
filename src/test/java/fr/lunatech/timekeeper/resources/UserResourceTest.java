@@ -51,7 +51,7 @@ class UserResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/1"));
 
-        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", listOf(Admin), emptyList());
+        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", "", listOf(Admin), emptyList());
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
@@ -117,7 +117,7 @@ class UserResourceTest {
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
-        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam2", "Huel2", "sam@gmail.com", listOf(User), emptyList());
+        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam2", "Huel2", "sam@gmail.com", "", listOf(User), emptyList());
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
@@ -173,8 +173,8 @@ class UserResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/2"));
 
-        final UserResponse expectedUserResponse1 = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", listOf(Admin), emptyList());
-        final UserResponse expectedUserResponse2 = new UserResponse(2L, "Sam2", "Huel2", "sam2@gmail.com", listOf(User), emptyList());
+        final UserResponse expectedUserResponse1 = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", "", listOf(Admin), emptyList());
+        final UserResponse expectedUserResponse2 = new UserResponse(2L, "Sam2", "Huel2", "sam2@gmail.com", "", listOf(User), emptyList());
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
@@ -251,8 +251,8 @@ class UserResourceTest {
 
         final MemberResponse expectedMemberResponse1 = new MemberResponse(5L, 1L, Role.TeamLeader, 4L);
         final MemberResponse expectedMemberResponse2 = new MemberResponse(6L, 2L, Role.Developer, 4L);
-        final UserResponse expectedUserResponse1 = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", listOf(Admin), listOf(expectedMemberResponse1));
-        final UserResponse expectedUserResponse2 = new UserResponse(2L, "Jimmy", "Pastore", "jimmy@gmail.com", listOf(User), listOf(expectedMemberResponse2));
+        final UserResponse expectedUserResponse1 = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", "", listOf(Admin), listOf(expectedMemberResponse1));
+        final UserResponse expectedUserResponse2 = new UserResponse(2L, "Jimmy", "Pastore", "jimmy@gmail.com", "", listOf(User), listOf(expectedMemberResponse2));
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
