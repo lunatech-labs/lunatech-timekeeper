@@ -3,12 +3,20 @@ package fr.lunatech.timekeeper.models;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.stream;
 
 public enum Profile {
     Admin, User, Guest;
+
+
+    public static Optional<Profile> optionalValueOf(String value) {
+        return stream(Profile.values())
+                .filter(profile -> profile.name().equalsIgnoreCase(value))
+                .findFirst();
+    }
 
     @Converter
     public static class ListConverter implements AttributeConverter<List<Profile>, String> {
