@@ -41,7 +41,7 @@ class UserResourceTest {
     @Test
     void shouldCreateUser() {
 
-        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
@@ -51,7 +51,7 @@ class UserResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/1"));
 
-        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", "", listOf(Admin), emptyList());
+        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", "sam.png", listOf(Admin), emptyList());
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
@@ -64,7 +64,7 @@ class UserResourceTest {
     @Test
     void shouldNotCreateUserTwiceWithSameEmail() {
 
-        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
@@ -74,7 +74,7 @@ class UserResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/1"));
 
-        final UserRequest user2 = createUserRequest("Sam2", "Huel2", "sam@gmail.com", Admin);
+        final UserRequest user2 = createUserRequest("Sam2", "Huel2", "sam@gmail.com", "sam2.png", Admin);
 
         given()
                 .when()
@@ -98,7 +98,7 @@ class UserResourceTest {
     @Test
     void shouldModifyUser() {
 
-        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
@@ -108,7 +108,7 @@ class UserResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/1"));
 
-        final UserRequest user2 = createUserRequest("Sam2", "Huel2", "sam@gmail.com", User);
+        final UserRequest user2 = createUserRequest("Sam2", "Huel2", "sam@gmail.com", "sam2.png", User);
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
@@ -117,7 +117,7 @@ class UserResourceTest {
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
-        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam2", "Huel2", "sam@gmail.com", "", listOf(User), emptyList());
+        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam2", "Huel2", "sam@gmail.com", "sam2.png", listOf(User), emptyList());
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
@@ -130,7 +130,7 @@ class UserResourceTest {
     @Test
     void shouldNotModifyUserEmail() {
 
-        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
@@ -140,7 +140,7 @@ class UserResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/1"));
 
-        final UserRequest user2 = createUserRequest("Sam2", "Huel2", "sam2@gmail.com", User);
+        final UserRequest user2 = createUserRequest("Sam2", "Huel2", "sam2@gmail.com", "sam2.png", User);
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
@@ -153,7 +153,7 @@ class UserResourceTest {
     @Test
     void shouldFindAllUsers() {
 
-        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
@@ -163,7 +163,7 @@ class UserResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/1"));
 
-        final UserRequest user2 = createUserRequest("Sam2", "Huel2", "sam2@gmail.com", User);
+        final UserRequest user2 = createUserRequest("Sam2", "Huel2", "sam2@gmail.com", "sam2.png", User);
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
@@ -173,8 +173,8 @@ class UserResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/2"));
 
-        final UserResponse expectedUserResponse1 = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", "", listOf(Admin), emptyList());
-        final UserResponse expectedUserResponse2 = new UserResponse(2L, "Sam2", "Huel2", "sam2@gmail.com", "", listOf(User), emptyList());
+        final UserResponse expectedUserResponse1 = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", "sam.png", listOf(Admin), emptyList());
+        final UserResponse expectedUserResponse2 = new UserResponse(2L, "Sam2", "Huel2", "sam2@gmail.com", "sam2.png", listOf(User), emptyList());
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
@@ -198,7 +198,7 @@ class UserResourceTest {
     @Test
     void shouldFindUserMemberOfProject() {
 
-        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
@@ -208,7 +208,7 @@ class UserResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/1"));
 
-        final UserRequest user2 = createUserRequest("Jimmy", "Pastore", "jimmy@gmail.com", User);
+        final UserRequest user2 = createUserRequest("Jimmy", "Pastore", "jimmy@gmail.com", "jimmy.png", User);
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
@@ -251,8 +251,8 @@ class UserResourceTest {
 
         final MemberResponse expectedMemberResponse1 = new MemberResponse(5L, 1L, Role.TeamLeader, 4L);
         final MemberResponse expectedMemberResponse2 = new MemberResponse(6L, 2L, Role.Developer, 4L);
-        final UserResponse expectedUserResponse1 = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", "", listOf(Admin), listOf(expectedMemberResponse1));
-        final UserResponse expectedUserResponse2 = new UserResponse(2L, "Jimmy", "Pastore", "jimmy@gmail.com", "", listOf(User), listOf(expectedMemberResponse2));
+        final UserResponse expectedUserResponse1 = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", "sam.png", listOf(Admin), listOf(expectedMemberResponse1));
+        final UserResponse expectedUserResponse2 = new UserResponse(2L, "Jimmy", "Pastore", "jimmy@gmail.com", "jimmy.png", listOf(User), listOf(expectedMemberResponse2));
         given()
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
