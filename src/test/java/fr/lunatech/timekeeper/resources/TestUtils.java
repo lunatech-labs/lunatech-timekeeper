@@ -16,9 +16,9 @@ public class TestUtils {
         return jsonb.toJson(o);
     }
 
-    static UserRequest createUserRequest(String firstName, String lastName, String email, Profile... profiles) {
+    static UserRequest createUserRequest(String firstName, String lastName, String email, String picture, Profile... profiles) {
         final List<Profile> p = Arrays.asList(profiles);
-        return new UserRequest(firstName, lastName, email, "", p);
+        return new UserRequest(firstName, lastName, email, picture, p);
     }
 
     static <T> List<T> listOf(T... elements) {

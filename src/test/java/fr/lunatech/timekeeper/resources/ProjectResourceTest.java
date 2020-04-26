@@ -108,7 +108,7 @@ class ProjectResourceTest {
 
     @Test
     void shouldFindAllProjects() {
-        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
         final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
         final ProjectRequest project1 = new ProjectRequest("Pepito", true, "New project", 2L);
@@ -229,7 +229,7 @@ class ProjectResourceTest {
     @Test
     void shouldAddMemberToProject() {
 
-        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
@@ -283,7 +283,7 @@ class ProjectResourceTest {
     @Test
     void shouldNotAddMemberTwiceToProject() {
 
-        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
@@ -369,7 +369,7 @@ class ProjectResourceTest {
     @Test
     void shouldModifyMembersAndGetProjectMembers() {
 
-        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
@@ -379,7 +379,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/1"));
 
-        final UserRequest user2 = createUserRequest("Jimmy", "Pastore", "jimmy@gmail.com", User);
+        final UserRequest user2 = createUserRequest("Jimmy", "Pastore", "jimmy@gmail.com", "jimmy.png", User);
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
@@ -431,7 +431,7 @@ class ProjectResourceTest {
                 .statusCode(OK.getStatusCode())
                 .body(is(toJson(expectedProject)));
 
-        final UserRequest user2_1 = createUserRequest("Sam2", "Huel2", "sam2@gmail.com", Admin);
+        final UserRequest user2_1 = createUserRequest("Sam2", "Huel2", "sam2@gmail.com", "sam2.png", Admin);
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
