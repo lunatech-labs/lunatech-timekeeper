@@ -11,8 +11,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
 
 import static fr.lunatech.timekeeper.models.Profile.Admin;
 import static fr.lunatech.timekeeper.models.Profile.User;
