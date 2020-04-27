@@ -50,7 +50,7 @@ public final class ProjectResponse {
         return clientName;
     }
 
-    public Boolean getPublicAccess() {
+    public Boolean isPublicAccess() {
         return publicAccess;
     }
 
