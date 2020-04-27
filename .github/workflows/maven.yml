@@ -25,3 +25,11 @@ jobs:
         SLACK_TITLE: Test
         SLACK_CHANNEL: fr-timekeeper
         SLACK_WEBHOOK: ${{ secrets.slack }}
+    - name: Slack2
+      uses: voxmedia/github-action-slack-notify-build@v1
+      with:
+        channel: fr-timekeeper
+        status: STARTED
+        color: good
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.slack }}
