@@ -19,3 +19,9 @@ jobs:
         java-version: 11
     - name: Build with Maven in batch mode
       run: mvn -B compile test --file pom.xml
+    - name: Slack Notification
+      uses: rtCamp/action-slack-notify@v2.0.0
+      env:
+        SLACK_TITLE: Test
+        SLACK_CHANNEL: fr-timekeeper
+        SLACK_WEBHOOK: ${{ secrets.slack }}
