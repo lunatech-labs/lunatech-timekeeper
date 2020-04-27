@@ -206,6 +206,16 @@
                             </systemProperties>
                         </configuration>
                     </plugin>
+                    <plugin>
+                        <groupId>org.flywaydb</groupId>
+                        <artifactId>flyway-maven-plugin</artifactId>
+                        <version>6.4.0</version>
+                        <configuration>
+                            <url>jdbc:postgresql://"${POSTGRESQL_ADDON_HOST}":"${POSTGRESQL_ADDON_PORT}"/"${POSTGRESQL_ADDON_DB}"</url>
+                            <user>${POSTGRESQL_ADDON_USERNAME}</user>
+                            <password>${POSTGRESQL_ADDON_PASSWORD}</password>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
             <properties>
