@@ -58,7 +58,6 @@ create table public.users
             unique,
     firstname varchar(255),
     lastname varchar(255),
-	picture varchar(255),
     profiles varchar(255)
 );
 
