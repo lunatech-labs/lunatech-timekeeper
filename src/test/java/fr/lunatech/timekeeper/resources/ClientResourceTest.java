@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
+import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
+import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
 import static fr.lunatech.timekeeper.resources.TestUtils.toJson;
 import static io.restassured.RestAssured.given;
 import static java.util.Collections.emptyList;
@@ -24,6 +26,7 @@ import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
+@QuarkusTestResource(KeycloakTestResource.class)
 @Tag("integration")
 class ClientResourceTest {
 
@@ -37,12 +40,13 @@ class ClientResourceTest {
     }
 
     @Test
-    void shouldCreateClient() {
+    void shouldCreateClientWhenAdminProfile() {
+
+        final String token = getAdminAccessToken();
 
         final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
-        final ClientResponse expectedClient = new ClientResponse(1L, "NewClient", "NewDescription", emptyList());
-
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(client)
@@ -51,7 +55,9 @@ class ClientResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/1"));
 
+        final ClientResponse expectedClient = new ClientResponse(1L, "NewClient", "NewDescription", emptyList());
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get("/api/clients/1")
@@ -61,28 +67,28 @@ class ClientResourceTest {
     }
 
     @Test
-    void shouldCreateClientIgnoreUselessParams() {
+    void shouldNotCreateClientWhenUserProfile() {
+
+        final String token = getUserAccessToken();
+
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"projectsId\":[1,2,3],\"id\":9999,\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .body(client)
                 .post("/api/clients")
                 .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/clients/1"));
-
-        given()
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/clients/1")
-                .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("{\"description\":\"NewDescription\",\"id\":1,\"name\":\"NewClient\",\"projectsId\":[]}"));
+                .statusCode(FORBIDDEN.getStatusCode());
     }
 
     @Test
     void shouldNotFindUnknownClient() {
+
+        final String token = getUserAccessToken();
+
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get("/api/clients/4")
@@ -93,12 +99,12 @@ class ClientResourceTest {
     @Test
     void shouldFindAllClients() {
 
-        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
-        final ClientRequest client2 = new ClientRequest("NewClient2", "NewDescription2");
-        final ClientResponse expectedClient = new ClientResponse(1L, "NewClient", "NewDescription", emptyList());
-        final ClientResponse expectedClient2 = new ClientResponse(2L, "NewClient2", "NewDescription2", emptyList());
+        final String adminToken = getAdminAccessToken();
+        final String token = getUserAccessToken();
 
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(client)
@@ -107,7 +113,9 @@ class ClientResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/1"));
 
+        final ClientRequest client2 = new ClientRequest("NewClient2", "NewDescription2");
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(client2)
@@ -116,7 +124,10 @@ class ClientResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/2"));
 
+        final ClientResponse expectedClient = new ClientResponse(1L, "NewClient", "NewDescription", emptyList());
+        final ClientResponse expectedClient2 = new ClientResponse(2L, "NewClient2", "NewDescription2", emptyList());
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get("/api/clients")
@@ -127,7 +138,11 @@ class ClientResourceTest {
 
     @Test
     void shouldFindAllClientsEmpty() {
+
+        final String token = getUserAccessToken();
+
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get("/api/clients")
@@ -137,14 +152,13 @@ class ClientResourceTest {
     }
 
     @Test
-    void shouldModifyClient() {
+    void shouldModifyClientWhenAdminProfile() {
+
+        final String token = getAdminAccessToken();
 
         final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
-        final ClientRequest client2 = new ClientRequest("NewClient", "NewDescription2");
-
-        final ClientResponse expectedClient2 = new ClientResponse(1L, "NewClient", "NewDescription2", emptyList());
-
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(client)
@@ -153,7 +167,9 @@ class ClientResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/1"));
 
+        final ClientRequest client2 = new ClientRequest("NewClient", "NewDescription2");
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(client2)
@@ -161,41 +177,42 @@ class ClientResourceTest {
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
+        final ClientResponse expectedClient = new ClientResponse(1L, "NewClient", "NewDescription2", emptyList());
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get("/api/clients/1")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is(toJson(expectedClient2)));
+                .body(is(toJson(expectedClient)));
     }
 
     @Test
-    void shouldModifyClientIgnoreUselessParams() {
+    void shouldNotModifyClientWhenUserProfile() {
 
+        final String adminToken = getAdminAccessToken();
+        final String token = getUserAccessToken();
+
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"name\":\"NewClient\",\"description\":\"NewDescription\"}")
+                .body(client)
                 .post("/api/clients")
                 .then()
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/1"));
 
+        final ClientRequest client2 = new ClientRequest("NewClient", "NewDescription2");
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body("{\"projectsId\":[1,2,3],\"id\":9999,\"name\":\"NewName\",\"description\":\"NewDescription2\"}")
+                .body(client2)
                 .put("/api/clients/1")
                 .then()
-                .statusCode(NO_CONTENT.getStatusCode());
-
-        given()
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/clients/1")
-                .then()
-                .statusCode(OK.getStatusCode())
-                .body(is("{\"description\":\"NewDescription2\",\"id\":1,\"name\":\"NewName\",\"projectsId\":[]}"));
+                .statusCode(FORBIDDEN.getStatusCode());
     }
 }

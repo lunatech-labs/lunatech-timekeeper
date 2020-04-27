@@ -14,6 +14,8 @@ import javax.inject.Inject;
 
 import static fr.lunatech.timekeeper.models.Profile.Admin;
 import static fr.lunatech.timekeeper.models.Profile.User;
+import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
+import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
 import static fr.lunatech.timekeeper.resources.TestUtils.*;
 import static io.restassured.RestAssured.given;
 import static java.util.Collections.emptyList;
@@ -26,6 +28,7 @@ import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
+@QuarkusTestResource(KeycloakTestResource.class)
 @Tag("integration")
 class UserResourceTest {
 
@@ -39,10 +42,14 @@ class UserResourceTest {
     }
 
     @Test
-    void shouldCreateUser() {
+    void shouldCreateUserWhenAdminProfile() {
 
-        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
+        final String adminToken = getAdminAccessToken();
+        final String token = getUserAccessToken();
+
+        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(user)
@@ -51,8 +58,9 @@ class UserResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/1"));
 
-        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", "sam.png", listOf(Admin), emptyList());
+        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", listOf(Admin), emptyList());
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get("/api/users/1")
@@ -62,10 +70,13 @@ class UserResourceTest {
     }
 
     @Test
-    void shouldNotCreateUserTwiceWithSameEmail() {
+    void shouldNotCreateUserWhenEmailAlreadyExists() {
 
-        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
+        final String token = getAdminAccessToken();
+
+        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(user)
@@ -74,9 +85,9 @@ class UserResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/1"));
 
-        final UserRequest user2 = createUserRequest("Sam2", "Huel2", "sam@gmail.com", "sam2.png", Admin);
-
+        final UserRequest user2 = createUserRequest("Sam2", "Huel2", "sam@gmail.com", Admin);
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(user2)
@@ -86,8 +97,28 @@ class UserResourceTest {
     }
 
     @Test
-    void shouldNotFindUnknownUser() {
+    void shouldNotCreateUserWhenUserProfile() {
+
+        final String token = getUserAccessToken();
+
+        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
         given()
+                .auth().preemptive().oauth2(token)
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body(user)
+                .post("/api/users")
+                .then()
+                .statusCode(FORBIDDEN.getStatusCode());
+    }
+
+    @Test
+    void shouldNotFindUnknownUser() {
+
+        final String token = getUserAccessToken();
+
+        given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get("/api/users/4")
@@ -96,10 +127,13 @@ class UserResourceTest {
     }
 
     @Test
-    void shouldModifyUser() {
+    void shouldModifyUserWhenAdminProfile() {
 
-        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
+        final String token = getAdminAccessToken();
+
+        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(user1)
@@ -108,8 +142,9 @@ class UserResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/1"));
 
-        final UserRequest user2 = createUserRequest("Sam2", "Huel2", "sam@gmail.com", "sam2.png", User);
+        final UserRequest user2 = createUserRequest("Sam2", "Huel2", "sam@gmail.com", User);
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(user2)
@@ -117,8 +152,9 @@ class UserResourceTest {
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
-        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam2", "Huel2", "sam@gmail.com", "sam2.png", listOf(User), emptyList());
+        final UserResponse expectedUserResponse = new UserResponse(1L, "Sam2", "Huel2", "sam@gmail.com", listOf(User), emptyList());
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get("/api/users/1")
@@ -130,8 +166,11 @@ class UserResourceTest {
     @Test
     void shouldNotModifyUserEmail() {
 
-        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
+        final String token = getAdminAccessToken();
+
+        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(user1)
@@ -140,8 +179,9 @@ class UserResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/1"));
 
-        final UserRequest user2 = createUserRequest("Sam2", "Huel2", "sam2@gmail.com", "sam2.png", User);
+        final UserRequest user2 = createUserRequest("Sam2", "Huel2", "sam2@gmail.com", User);
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(user2)
@@ -151,10 +191,14 @@ class UserResourceTest {
     }
 
     @Test
-    void shouldFindAllUsers() {
+    void shouldNotModifyUserWhenUserProfile() {
 
-        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
+        final String adminToken = getAdminAccessToken();
+        final String token = getUserAccessToken();
+
+        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(user1)
@@ -163,8 +207,37 @@ class UserResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/1"));
 
-        final UserRequest user2 = createUserRequest("Sam2", "Huel2", "sam2@gmail.com", "sam2.png", User);
+        final UserRequest user2 = createUserRequest("Sam2", "Huel2", "sam@gmail.com", User);
         given()
+                .auth().preemptive().oauth2(token)
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body(user2)
+                .put("/api/users/1")
+                .then()
+                .statusCode(FORBIDDEN.getStatusCode());
+    }
+
+    @Test
+    void shouldFindAllUsers() {
+
+        final String adminToken = getAdminAccessToken();
+        final String token = getUserAccessToken();
+
+        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+        given()
+                .auth().preemptive().oauth2(adminToken)
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body(user1)
+                .post("/api/users")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/users/1"));
+
+        final UserRequest user2 = createUserRequest("Sam2", "Huel2", "sam2@gmail.com", User);
+        given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(user2)
@@ -173,9 +246,10 @@ class UserResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/2"));
 
-        final UserResponse expectedUserResponse1 = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", "sam.png", listOf(Admin), emptyList());
-        final UserResponse expectedUserResponse2 = new UserResponse(2L, "Sam2", "Huel2", "sam2@gmail.com", "sam2.png", listOf(User), emptyList());
+        final UserResponse expectedUserResponse1 = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", listOf(Admin), emptyList());
+        final UserResponse expectedUserResponse2 = new UserResponse(2L, "Sam2", "Huel2", "sam2@gmail.com", listOf(User), emptyList());
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get("/api/users")
@@ -186,7 +260,11 @@ class UserResourceTest {
 
     @Test
     void shouldFindAllUsersEmpty() {
+
+        final String token = getUserAccessToken();
+
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get("/api/users")
@@ -198,8 +276,12 @@ class UserResourceTest {
     @Test
     void shouldFindUserMemberOfProject() {
 
-        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
+        final String adminToken = getAdminAccessToken();
+        final String token = getUserAccessToken();
+
+        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(user1)
@@ -208,8 +290,9 @@ class UserResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/1"));
 
-        final UserRequest user2 = createUserRequest("Jimmy", "Pastore", "jimmy@gmail.com", "jimmy.png", User);
+        final UserRequest user2 = createUserRequest("Jimmy", "Pastore", "jimmy@gmail.com", User);
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(user2)
@@ -220,6 +303,7 @@ class UserResourceTest {
 
         final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(client)
@@ -230,6 +314,7 @@ class UserResourceTest {
 
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 3L);
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(project)
@@ -242,6 +327,7 @@ class UserResourceTest {
         final MemberRequest member2 = new MemberRequest(2L, Role.Developer);
         final MembersUpdateRequest members = new MembersUpdateRequest(listOf(member1, member2));
         given()
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(members)
@@ -251,9 +337,10 @@ class UserResourceTest {
 
         final MemberResponse expectedMemberResponse1 = new MemberResponse(5L, 1L, Role.TeamLeader, 4L);
         final MemberResponse expectedMemberResponse2 = new MemberResponse(6L, 2L, Role.Developer, 4L);
-        final UserResponse expectedUserResponse1 = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", "sam.png", listOf(Admin), listOf(expectedMemberResponse1));
-        final UserResponse expectedUserResponse2 = new UserResponse(2L, "Jimmy", "Pastore", "jimmy@gmail.com", "jimmy.png", listOf(User), listOf(expectedMemberResponse2));
+        final UserResponse expectedUserResponse1 = new UserResponse(1L, "Sam", "Huel", "sam@gmail.com", listOf(Admin), listOf(expectedMemberResponse1));
+        final UserResponse expectedUserResponse2 = new UserResponse(2L, "Jimmy", "Pastore", "jimmy@gmail.com", listOf(User), listOf(expectedMemberResponse2));
         given()
+                .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get("/api/users")
