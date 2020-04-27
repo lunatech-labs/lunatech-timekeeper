@@ -129,4 +129,3 @@ This command configures pre-commit hook and validation.
 Use mvn with profile "sonar"
 
     ./mvnw -P sonar verify sonar:sonar
-
