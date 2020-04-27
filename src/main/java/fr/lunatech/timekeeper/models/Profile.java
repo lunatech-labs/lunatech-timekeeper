@@ -12,7 +12,7 @@ public enum Profile {
     Admin, User, Guest;
 
 
-    public static Optional<Profile> optionalValueOf(String value) {
+    public static Optional<Profile> findProfileByName(String value) {
         return stream(Profile.values())
                 .filter(profile -> profile.name().equalsIgnoreCase(value))
                 .findFirst();
