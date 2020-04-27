@@ -22,7 +22,7 @@ jobs:
     - name: Slack Notification
       uses: rtCamp/action-slack-notify@v2.0.0
       env:
-        SLACK_TITLE: Test
+        SLACK_TITLE: Github Msg
         SLACK_CHANNEL: fr-timekeeper
         SLACK_WEBHOOK: ${{ secrets.slack }}
     - name: Slack2
@@ -32,11 +32,11 @@ jobs:
         status: STARTED
         color: good
       env:
-        SLACK_BOT_TOKEN: ${{ secrets.slack }}
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
     - name: Notify slack fail
       if: failure()
       env:
-        SLACK_BOT_TOKEN: ${{ secrets.slack }}
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       uses: voxmedia/github-action-slack-notify-build@v1
       with:
         channel: app-alerts
@@ -45,7 +45,7 @@ jobs:
     - name: Notify slack success
       if: success()
       env:
-        SLACK_BOT_TOKEN: ${{ secrets.slack }}
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       uses: voxmedia/github-action-slack-notify-build@v1
       with:
         channel: app-alerts
