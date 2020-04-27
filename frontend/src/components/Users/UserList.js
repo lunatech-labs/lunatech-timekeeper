@@ -1,5 +1,5 @@
 import React from 'react';
-import {Alert, PageHeader, Spin, Table} from 'antd';
+import {Alert, Avatar, PageHeader, Spin, Table} from 'antd';
 import {useTimeKeeperAPI} from '../../utils/services';
 
 const UserList = () => {
@@ -25,6 +25,14 @@ const UserList = () => {
   };
   const columns = [
     {
+      title: '',
+      dataIndex: 'picture',
+      key: 'picture',
+      width: 60,
+      align: 'right',
+      render: (value) => <Avatar src={value} />
+    },
+    {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
@@ -38,6 +46,7 @@ const UserList = () => {
       title: 'Profiles',
       dataIndex: 'profiles',
       key: 'profiles',
+      render: (value) => value.join(', ')
     },
     {
       title: 'Organization',
