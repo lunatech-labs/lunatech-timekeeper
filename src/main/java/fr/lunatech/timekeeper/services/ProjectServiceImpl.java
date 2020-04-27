@@ -116,8 +116,8 @@ public class ProjectServiceImpl implements ProjectService {
                 project.client != null ? project.client.name : "",
                 project.members.stream()
                         .map(member -> new MemberResponse(member.id, member.user.id, member.role, member.project.id))
-                        .collect(Collectors.toList())
-        );
+                        .collect(Collectors.toList()),
+                project.isPublic);
     }
 
     private Project unbind(Project project, ProjectRequest request) {
@@ -125,6 +125,7 @@ public class ProjectServiceImpl implements ProjectService {
         project.billable = request.isBillable();
         project.description = request.getDescription();
         project.client = request.getClientId().flatMap(this::getClient).orElse(null);
+        project.isPublic = request.getPublic();
         return project;
     }
 

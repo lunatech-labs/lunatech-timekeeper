@@ -58,7 +58,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/1"));
 
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L);
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L, false);
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -69,7 +69,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/2"));
 
-        final ProjectResponse expectedProject = new ProjectResponse(2L, "Pepito", true, "New project", "NewClient", emptyList());
+        final ProjectResponse expectedProject = new ProjectResponse(2L, "Pepito", true, "New project", "NewClient", emptyList(), false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -85,7 +85,7 @@ class ProjectResourceTest {
 
         final String token = getUserAccessToken();
 
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 10L);
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 10L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -96,7 +96,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/1"));
 
-        final ProjectResponse expectedProject = new ProjectResponse(1L, "Pepito", true, "New project", "", emptyList());
+        final ProjectResponse expectedProject = new ProjectResponse(1L, "Pepito", true, "New project", "", emptyList(), false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -149,7 +149,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/2"));
 
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -160,7 +160,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/3"));
 
-        final ProjectRequest project1 = new ProjectRequest("Pepito", true, "New project", 2L);
+        final ProjectRequest project1 = new ProjectRequest("Pepito", true, "New project", 2L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -171,8 +171,8 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/4"));
 
-        final ProjectResponse expectedProject = new ProjectResponse(3L, "Pepito", true, "New project", "NewClient", emptyList());
-        final ProjectResponse expectedProject1 = new ProjectResponse(4L, "Pepito", true, "New project", "NewClient", emptyList());
+        final ProjectResponse expectedProject = new ProjectResponse(3L, "Pepito", true, "New project", "NewClient", emptyList(), false);
+        final ProjectResponse expectedProject1 = new ProjectResponse(4L, "Pepito", true, "New project", "NewClient", emptyList(), false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -215,7 +215,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/1"));
 
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L);
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -237,7 +237,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/3"));
 
-        final ProjectRequest project1 = new ProjectRequest("Pepito2", false, "New project2", 3L);
+        final ProjectRequest project1 = new ProjectRequest("Pepito2", false, "New project2", 3L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -247,7 +247,7 @@ class ProjectResourceTest {
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
-        final ProjectResponse expectedProject = new ProjectResponse(2L, "Pepito2", false, "New project2", "NewClient2", emptyList());
+        final ProjectResponse expectedProject = new ProjectResponse(2L, "Pepito2", false, "New project2", "NewClient2", emptyList(), false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -286,7 +286,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/2"));
 
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -309,7 +309,7 @@ class ProjectResourceTest {
                 .header(LOCATION, endsWith("/api/projects/3/members/4"));
 
         final MemberResponse expectedMemberResponse = new MemberResponse(4L, 1L, Role.Developer, 3L);
-        final ProjectResponse expectedProject = new ProjectResponse(3L, "Pepito", true, "New project", "NewClient", listOf(expectedMemberResponse));
+        final ProjectResponse expectedProject = new ProjectResponse(3L, "Pepito", true, "New project", "NewClient", listOf(expectedMemberResponse), false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -348,7 +348,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/2"));
 
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L);
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -399,7 +399,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/1"));
 
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L);
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -459,7 +459,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/3"));
 
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 3L);
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 3L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -484,7 +484,7 @@ class ProjectResourceTest {
 
         final MemberResponse expectedMemberResponse1 = new MemberResponse(5L, 1L, Role.TeamLeader, 4L);
         final MemberResponse expectedMemberResponse2 = new MemberResponse(6L, 2L, Role.Developer, 4L);
-        final ProjectResponse expectedProject = new ProjectResponse(4L, "Pepito", true, "New project", "NewClient", listOf(expectedMemberResponse1, expectedMemberResponse2));
+        final ProjectResponse expectedProject = new ProjectResponse(4L, "Pepito", true, "New project", "NewClient", listOf(expectedMemberResponse1, expectedMemberResponse2), false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -517,7 +517,7 @@ class ProjectResourceTest {
                 .statusCode(NO_CONTENT.getStatusCode());
 
         final MemberResponse expectedMemberResponse2_1 = new MemberResponse(8L, 7L, Role.TeamLeader, 4L);
-        final ProjectResponse expectedProject2 = new ProjectResponse(4L, "Pepito", true, "New project", "NewClient", listOf(expectedMemberResponse2_1));
+        final ProjectResponse expectedProject2 = new ProjectResponse(4L, "Pepito", true, "New project", "NewClient", listOf(expectedMemberResponse2_1), false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()

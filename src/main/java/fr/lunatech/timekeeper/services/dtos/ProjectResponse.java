@@ -3,7 +3,6 @@ package fr.lunatech.timekeeper.services.dtos;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Optional;
 
 public final class ProjectResponse {
 
@@ -18,14 +17,17 @@ public final class ProjectResponse {
     private final String clientName;
     @NotNull
     private final List<MemberResponse> members;
+    @NotNull
+    private final Boolean isPublic;
 
-    public ProjectResponse(@NotNull Long id, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull String clientName, @NotNull List<MemberResponse> members) {
+    public ProjectResponse(@NotNull Long id, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull String clientName, @NotNull List<MemberResponse> members, Boolean isPublic) {
         this.id = id;
         this.name = name;
         this.billable = billable;
         this.description = description;
         this.clientName = clientName;
         this.members = members;
+        this.isPublic = isPublic;
     }
 
     public Long getId() {
@@ -46,6 +48,10 @@ public final class ProjectResponse {
 
     public String getClientName() {
         return clientName;
+    }
+
+    public Boolean getPublic() {
+        return isPublic;
     }
 
     public List<MemberResponse> getMembers() {
