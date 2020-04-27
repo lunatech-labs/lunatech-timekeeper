@@ -19,16 +19,27 @@ public final class UserResponse {
     @NotBlank
     @Email
     private final String email;
+    @NotNull
+    private final String picture;
     @NotEmpty
     private final List<Profile> profiles;
     @NotNull
     private final List<MemberResponse> memberOfprojects;
 
-    public UserResponse(@NotNull Long id, @NotBlank String firstName, @NotBlank String lastName, @NotBlank @Email String email, @NotEmpty List<Profile> profiles, @NotNull List<MemberResponse> memberOfprojects) {
+    public UserResponse(
+            @NotNull Long id,
+            @NotBlank String firstName,
+            @NotBlank String lastName,
+            @NotBlank @Email String email,
+            @NotNull String picture,
+            @NotEmpty List<Profile> profiles,
+            @NotNull List<MemberResponse> memberOfprojects
+    ) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.picture = picture;
         this.profiles = profiles;
         this.memberOfprojects = memberOfprojects;
     }
@@ -47,6 +58,10 @@ public final class UserResponse {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getPicture() {
+        return picture;
     }
 
     public List<Profile> getProfiles() {
