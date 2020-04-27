@@ -10,6 +10,7 @@ import org.jboss.resteasy.annotations.cache.NoCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.NotAuthorizedException;
@@ -29,7 +30,9 @@ public class UserResource implements UserResourceApi {
     @Inject
     SecurityIdentity identity;
 
+    @RolesAllowed({"user", "admin"})
     @NoCache
+    @Override
     public UserResponse me() {
         if (identity.getPrincipal() instanceof io.quarkus.oidc.runtime.OidcJwtCallerPrincipal) {
             final var jwtCallerPrincipal = (io.quarkus.oidc.runtime.OidcJwtCallerPrincipal) identity.getPrincipal();
@@ -51,11 +54,13 @@ public class UserResource implements UserResourceApi {
         }
     }
 
+    @RolesAllowed({"user", "admin"})
     @Override
     public List<UserResponse> getAllUsers() {
         return userService.findAllUsers();
     }
 
+    @RolesAllowed({"admin"})
     @Override
     public Response createUser(@Valid UserRequest request, UriInfo uriInfo) {
         final Long userId = userService.createUser(request);
@@ -63,11 +68,13 @@ public class UserResource implements UserResourceApi {
         return Response.created(uri).build();
     }
 
+    @RolesAllowed({"user", "admin"})
     @Override
     public UserResponse getUser(Long id) {
         return userService.findUserById(id).orElseThrow(NotFoundException::new);
     }
 
+    @RolesAllowed({"admin"})
     @Override
     public Response updateUser(Long id, @Valid UserRequest request) {
         userService.updateUser(id, request).orElseThrow(NotFoundException::new);
