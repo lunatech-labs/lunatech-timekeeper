@@ -31,4 +31,8 @@ public class User extends PanacheEntity {
     @OneToMany(mappedBy = "user")
     @NotNull
     public List<Member> members;
+    @ManyToOne
+    @JoinColumn(name = "oranisation_id", nullable = false)
+    @NotNull
+    public Organisation organisation;
 }
