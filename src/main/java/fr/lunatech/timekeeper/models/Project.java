@@ -25,4 +25,6 @@ public class Project extends PanacheEntity {
     @OneToMany(mappedBy = "project")
     @NotNull
     public List<Member> members;
+    @NotNull
+    public Boolean isPublic;
 }

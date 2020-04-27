@@ -312,7 +312,7 @@ class UserResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/3"));
 
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 3L);
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 3L, false);
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
