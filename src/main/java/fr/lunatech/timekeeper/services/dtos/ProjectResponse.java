@@ -18,16 +18,16 @@ public final class ProjectResponse {
     @NotNull
     private final List<MemberResponse> members;
     @NotNull
-    private final Boolean isPublic;
+    private final Boolean publicAccess;
 
-    public ProjectResponse(@NotNull Long id, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull String clientName, @NotNull List<MemberResponse> members, Boolean isPublic) {
+    public ProjectResponse(@NotNull Long id, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull String clientName, @NotNull List<MemberResponse> members, @NotNull Boolean publicAccess) {
         this.id = id;
         this.name = name;
         this.billable = billable;
         this.description = description;
         this.clientName = clientName;
         this.members = members;
-        this.isPublic = isPublic;
+        this.publicAccess = publicAccess;
     }
 
     public Long getId() {
@@ -50,8 +50,8 @@ public final class ProjectResponse {
         return clientName;
     }
 
-    public Boolean getPublic() {
-        return isPublic;
+    public Boolean getPublicAccess() {
+        return publicAccess;
     }
 
     public List<MemberResponse> getMembers() {

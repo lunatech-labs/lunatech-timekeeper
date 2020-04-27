@@ -26,5 +26,5 @@ public class Project extends PanacheEntity {
     @NotNull
     public List<Member> members;
     @NotNull
-    public Boolean isPublic;
+    public Boolean publicAccess;
 }
