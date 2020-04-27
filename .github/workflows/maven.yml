@@ -39,7 +39,7 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       uses: voxmedia/github-action-slack-notify-build@v1
       with:
-        channel: app-alerts
+        channel: fr-timekeeper
         status: FAILED
         color: danger
     - name: Notify slack success
@@ -48,6 +48,6 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       uses: voxmedia/github-action-slack-notify-build@v1
       with:
-        channel: app-alerts
+        channel: fr-timekeeper
         status: SUCCESS
         color: good        
