@@ -57,7 +57,7 @@ public class SecurityIdentityUtils {
                         .stream()
                         .map(Object::toString)
                         .map(s -> s.replaceAll("\"", ""))
-                        .map(Profile::optionalValueOf)
+                        .map(Profile::findProfileByName)
                         .filter(Optional::isPresent)
                         .map(Optional::get)
                         .collect(Collectors.toList())
