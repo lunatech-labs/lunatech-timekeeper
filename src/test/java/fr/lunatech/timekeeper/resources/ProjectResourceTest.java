@@ -127,7 +127,7 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -264,7 +264,7 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -326,7 +326,7 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -426,7 +426,7 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", Admin);
+        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -437,7 +437,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/1"));
 
-        final UserRequest user2 = createUserRequest("Jimmy", "Pastore", "jimmy@gmail.com", User);
+        final UserRequest user2 = createUserRequest("Jimmy", "Pastore", "jimmy@gmail.com", "jimmy.png", User);
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -494,7 +494,7 @@ class ProjectResourceTest {
                 .statusCode(OK.getStatusCode())
                 .body(is(toJson(expectedProject)));
 
-        final UserRequest user2_1 = createUserRequest("Sam2", "Huel2", "sam2@gmail.com", Admin);
+        final UserRequest user2_1 = createUserRequest("Sam2", "Huel2", "sam2@gmail.com", "sam2.png", Admin);
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
