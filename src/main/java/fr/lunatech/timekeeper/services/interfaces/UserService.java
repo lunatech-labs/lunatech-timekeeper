@@ -17,5 +17,7 @@ public interface UserService {
 
     Optional<Long> updateUser(Long id, UserRequest user);
 
+    UserResponse authenticate(UserRequest request);
+
     Long count();
 }

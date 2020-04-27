@@ -22,6 +22,8 @@ public class User extends PanacheEntity {
     @Email
     @NaturalId
     public String email;
+    @NotNull
+    public String picture;
     @Column
     @Convert(converter = Profile.ListConverter.class)
     @NotEmpty

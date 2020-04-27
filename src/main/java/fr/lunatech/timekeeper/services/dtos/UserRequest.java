@@ -6,6 +6,7 @@ import javax.json.bind.annotation.JsonbCreator;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public final class UserRequest {
@@ -17,14 +18,23 @@ public final class UserRequest {
     @NotBlank
     @Email
     private final String email;
+    @NotNull
+    private final String picture;
     @NotEmpty
     private final List<Profile> profiles;
 
     @JsonbCreator
-    public UserRequest(@NotBlank String firstName, @NotBlank String lastName, @NotBlank @Email String email, @NotEmpty List<Profile> profiles) {
+    public UserRequest(
+            @NotBlank String firstName,
+            @NotBlank String lastName,
+            @NotBlank @Email String email,
+            @NotNull String picture,
+            @NotEmpty List<Profile> profiles
+    ) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.picture = picture;
         this.profiles = profiles;
     }
 
@@ -40,6 +50,10 @@ public final class UserRequest {
         return email;
     }
 
+    public String getPicture() {
+        return picture;
+    }
+
     public List<Profile> getProfiles() {
         return profiles;
     }
@@ -50,6 +64,7 @@ public final class UserRequest {
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
+                ", picture='" + picture + '\'' +
                 ", profiles=" + profiles +
                 '}';
     }
