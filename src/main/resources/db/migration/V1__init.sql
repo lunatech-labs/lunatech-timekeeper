@@ -17,7 +17,7 @@ create table public.projects
     billable bool,
     description varchar(255),
     name varchar(255),
-    ispublic bool,
+    publicaccess bool,
     client_id int8
         constraint fk_projects_client_id
             references public.clients

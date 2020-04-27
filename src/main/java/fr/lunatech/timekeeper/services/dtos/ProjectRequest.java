@@ -17,15 +17,15 @@ public final class ProjectRequest {
     @Null
     private final Long clientId;
     @NotNull
-    private final Boolean isPublic;
+    private final Boolean publicAccess;
 
     @JsonbCreator
-    public ProjectRequest(@NotBlank String name, @NotNull Boolean billable, @NotNull String description, @Null Long clientId, Boolean isPublic) {
+    public ProjectRequest(@NotBlank String name, @NotNull Boolean billable, @NotNull String description, @Null Long clientId, @NotNull Boolean publicAccess) {
         this.name = name;
         this.billable = billable;
         this.description = description;
         this.clientId = clientId;
-        this.isPublic = isPublic;
+        this.publicAccess = publicAccess;
     }
 
     public String getName() {
@@ -44,8 +44,8 @@ public final class ProjectRequest {
         return Optional.of(clientId);
     }
 
-    public Boolean getPublic() {
-        return isPublic;
+    public Boolean isPublicAccess() {
+        return publicAccess;
     }
 
     @Override
@@ -55,7 +55,7 @@ public final class ProjectRequest {
                 ", billable=" + billable +
                 ", description='" + description + '\'' +
                 ", clientId=" + clientId +
-                ", isPublic=" + isPublic +
+                ", publicAccess=" + publicAccess +
                 '}';
     }
 }
