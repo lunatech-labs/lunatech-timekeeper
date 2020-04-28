@@ -1,7 +1,6 @@
 package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.resources.openapi.OrganizationResourceApi;
-import fr.lunatech.timekeeper.services.dtos.ClientResponse;
 import fr.lunatech.timekeeper.services.dtos.OrganizationRequest;
 import fr.lunatech.timekeeper.services.dtos.OrganizationResponse;
 import fr.lunatech.timekeeper.services.interfaces.OrganizationService;
@@ -9,6 +8,7 @@ import fr.lunatech.timekeeper.services.interfaces.OrganizationService;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.Valid;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
@@ -31,5 +31,11 @@ public class OrganizationResource implements OrganizationResourceApi {
         final long organizationId = organizationService.createOrganization(request);
         final URI uri = uriInfo.getAbsolutePathBuilder().path(Long.toString(organizationId)).build();
         return Response.created(uri).build();
+    }
+
+    @RolesAllowed({"user", "admin"})
+    @Override
+    public OrganizationResponse getOrganization(Long id) {
+        return organizationService.findOrganizationById(id).orElseThrow(NotFoundException::new);
     }
 }
