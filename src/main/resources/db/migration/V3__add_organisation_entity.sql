@@ -6,8 +6,8 @@ CREATE TABLE public.organizations (
 );
 
 
-insert into public.organisation (id, name, tokenname) values (1,'Lunatech NL', 'lunatech.nl');
-insert into public.organisation (id, name, tokenname) values (2,'Lunatech FR', 'lunatech.fr');
+insert into public.organizations (id, name, tokenname) values (1,'Lunatech NL', 'lunatech.nl');
+insert into public.organizations (id, name, tokenname) values (2,'Lunatech FR', 'lunatech.fr');
 
 ALTER TABLE public.users add organization_id int8 not null default 1 ;
 
@@ -17,6 +17,6 @@ ALTER TABLE public.projects add organization_id int8 not null;
 
 ALTER TABLE public.projects ADD constraint fk_projects_oranisation_id FOREIGN KEY (organization_id) REFERENCES public.organizations (id);
 
-update users set organisation_id=1 where true = starts_with(reverse(email),'ln');
+update users set organization_id=1 where true = starts_with(reverse(email),'ln');
 
-update users set organisation_id=2 where true = starts_with(reverse(email),'fr');
+update users set organization_id=2 where true = starts_with(reverse(email),'fr');
