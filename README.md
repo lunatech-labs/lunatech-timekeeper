@@ -77,11 +77,12 @@ We are using Flyway extension. Database's model will be created at the first run
 ## 2.1 - Start TimeKeeper on Debug (with IntelliJ)
 
 Go to Run/Debug Configuration and add the new configuration by using the `+` button and select `Remote`. 
-Use the default configuration (Port 5005). Then start the debug.
+Use the default configuration (Port 5005).
 
 ![DebugConfiguration](https://user-images.githubusercontent.com/45755667/80485053-078d0b00-8959-11ea-9028-e223ef7859f9.png)
 
-By running the `mvn quarkus:dev` command, you will see : `Listening for transport dt_socket at address: 5005`. You can now use the debug mode.
+By running the `mvn quarkus:dev` command, you will see : `Listening for transport dt_socket at address: 5005`. 
+Then start the debug. You can now use the debug mode.
 
 ## 2.2 - Run test
 
