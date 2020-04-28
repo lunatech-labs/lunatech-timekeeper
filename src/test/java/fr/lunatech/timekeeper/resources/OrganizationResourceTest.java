@@ -1,7 +1,5 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.services.dtos.ClientRequest;
-import fr.lunatech.timekeeper.services.dtos.ClientResponse;
 import fr.lunatech.timekeeper.services.dtos.OrganizationRequest;
 import fr.lunatech.timekeeper.services.dtos.OrganizationResponse;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -56,6 +54,16 @@ public class OrganizationResourceTest {
                 .then()
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/organizations/1"));
+
+        final OrganizationResponse expectedOrganization = new OrganizationResponse(1L, "New Organization", "New Token Name", emptyList(), emptyList());
+        given()
+                .auth().preemptive().oauth2(token)
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/organizations/1")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .body(is(toJson(expectedOrganization)));
     }
 
     @Test
@@ -126,6 +134,21 @@ public class OrganizationResourceTest {
                 .then()
                 .statusCode(OK.getStatusCode())
                 .body(is(TestUtils.listOfTasJson(expectedOrganization, expectedOrganization2)));
+    }
+
+    @Test
+    void shouldFindAllOrganizationsEmpty() {
+
+        final String token = getUserAccessToken();
+
+        given()
+                .auth().preemptive().oauth2(token)
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/organizations")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .body(is("[]"));
     }
 
 }

@@ -52,4 +52,22 @@ public interface OrganizationResourceApi {
             )
     })
     Response createOrganization(@RequestBody OrganizationRequest request, @Context UriInfo uriInfo);
+
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Retrieve an organization",
+            description = "Retrieve organization details.")
+    @Tag(ref = "organization")
+    @APIResponses(value = {
+            @APIResponse(
+                    responseCode = "200",
+                    description = "Organization retrieved"
+            ),
+            @APIResponse(
+                    responseCode = "404",
+                    description = "Organization not found"
+            )
+    })
+    OrganizationResponse getOrganization(@PathParam("id") Long id);
 }
