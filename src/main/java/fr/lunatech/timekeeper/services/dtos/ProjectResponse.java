@@ -17,14 +17,17 @@ public final class ProjectResponse {
     private final String clientName;
     @NotNull
     private final List<MemberResponse> members;
+    @NotNull
+    private final Long origanisationId;
 
-    public ProjectResponse(@NotNull Long id, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull String clientName, @NotNull List<MemberResponse> members) {
+    public ProjectResponse(@NotNull Long id, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull String clientName, @NotNull List<MemberResponse> members, @NotNull Long organisationId) {
         this.id = id;
         this.name = name;
         this.billable = billable;
         this.description = description;
         this.clientName = clientName;
         this.members = members;
+        this.origanisationId = organisationId;
     }
 
     public Long getId() {
@@ -49,5 +52,20 @@ public final class ProjectResponse {
 
     public List<MemberResponse> getMembers() {
         return members;
+    }
+
+    public Long getOriganisationId() { return origanisationId; }
+
+    @Override
+    public String toString() {
+        return "ProjectResponse{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", billable=" + billable +
+                ", description='" + description + '\'' +
+                ", clientName='" + clientName + '\'' +
+                ", members=" + members +
+                ", origanisationId=" + origanisationId +
+                '}';
     }
 }
