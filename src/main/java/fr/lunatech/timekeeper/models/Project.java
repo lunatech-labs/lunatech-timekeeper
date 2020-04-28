@@ -29,4 +29,6 @@ public class Project extends PanacheEntity {
     @JoinColumn(name = "organization_id", nullable = false)
     @NotNull
     public Organization organization ;
+    @NotNull
+    public Boolean publicAccess;
 }
