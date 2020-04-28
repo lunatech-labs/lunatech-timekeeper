@@ -1,6 +1,7 @@
 package fr.lunatech.timekeeper.resources.openapi;
 
 import fr.lunatech.timekeeper.services.dtos.OrganizationRequest;
+import fr.lunatech.timekeeper.services.dtos.OrganizationResponse;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.headers.Header;
@@ -10,9 +11,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -38,4 +37,23 @@ public interface OrganizationResourceApi {
             )
     })
     Response createOrganization(@RequestBody OrganizationRequest request, @Context UriInfo uriInfo);
+
+
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Retrieve a organization",
+            description = "Retrieve organization details.")
+    @Tag(ref = "organizations")
+    @APIResponses(value = {
+            @APIResponse(
+                    responseCode = "200",
+                    description = "Organization retrieved"
+            ),
+            @APIResponse(
+                    responseCode = "404",
+                    description = "Organization not found"
+            )
+    })
+    OrganizationResponse getOrganization(long id);
 }

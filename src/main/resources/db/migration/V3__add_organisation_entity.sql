@@ -5,6 +5,7 @@ CREATE TABLE public.organizations (
 	CONSTRAINT organizations_pkey PRIMARY KEY (id)
 );
 
+insert into public.organisation
 
 ALTER TABLE public.users add organization_id int8 not null;
 
