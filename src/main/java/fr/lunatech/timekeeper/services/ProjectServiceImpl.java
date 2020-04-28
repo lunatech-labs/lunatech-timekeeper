@@ -36,9 +36,8 @@ public class ProjectServiceImpl implements ProjectService {
     public Long createProject(ProjectRequest request) {
         logger.debug("Create a new project with {}", request);
         final var project = unbind(request);
-        Organisation orga = Organisation.<Organisation>findByIdOptional(request.getOrganisationId())
-                .orElseThrow(() -> new IllegalEntityStateException(String.format("Unknown organisation. organisation id=%s", request.getOrganisationId())));
-        project.organisation = orga;
+        project.organization = Organization.<Organization>findByIdOptional(request.getOrganizationId())
+                .orElseThrow(() -> new IllegalEntityStateException(String.format("Unknown organization. organization id=%s", request.getOrganizationId())));
         Project.persist(project);
         return project.id;
     }
@@ -116,7 +115,7 @@ public class ProjectServiceImpl implements ProjectService {
                 project.members.stream()
                         .map(member -> new MemberResponse(member.id, member.user.id, member.role, member.project.id))
                         .collect(Collectors.toList()),
-                project.organisation.id
+                project.organization.id
         );
     }
 

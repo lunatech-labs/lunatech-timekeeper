@@ -4,7 +4,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-public class OrganisationResponse {
+public class OrganizationResponse {
 
     @NotNull
     private final Long id;
@@ -17,7 +17,7 @@ public class OrganisationResponse {
     @NotNull
     private final List<Long> usersId;
 
-    public OrganisationResponse(@NotNull Long id, @NotBlank String name, @NotNull String tokenName, @NotNull List<Long> projectsId, @NotNull List<Long> usersId) {
+    public OrganizationResponse(@NotNull Long id, @NotBlank String name, @NotNull String tokenName, @NotNull List<Long> projectsId, @NotNull List<Long> usersId) {
         this.id = id;
         this.name = name;
         this.tokenName = tokenName;

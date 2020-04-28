@@ -4,7 +4,7 @@ import javax.json.bind.annotation.JsonbCreator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-public class OrganisationRequest {
+public class OrganizationRequest {
 
     @NotBlank
     private final String name;
@@ -12,7 +12,7 @@ public class OrganisationRequest {
     private final String tokenName;
 
     @JsonbCreator
-    public OrganisationRequest(@NotBlank String name, @NotNull String tokenName) {
+    public OrganizationRequest(@NotBlank String name, @NotNull String tokenName) {
         this.name = name;
         this.tokenName = tokenName;
     }
@@ -27,7 +27,7 @@ public class OrganisationRequest {
 
     @Override
     public String toString() {
-        return "OrganisationRequest{" +
+        return "OrganizationRequest{" +
                 "name='" + name + '\'' +
                 ", tokenName='" + tokenName + '\'' +
                 '}';

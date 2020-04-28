@@ -47,16 +47,16 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final OrganisationRequest organisation = new OrganisationRequest("NewClient", "organization.org");
+        final OrganizationRequest organization = new OrganizationRequest("NewClient", "organization.org");
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(organisation)
-                .post("/api/organisations")
+                .body(organization)
+                .post("/api/organizations")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organisations/1"));
+                .header(LOCATION, endsWith("/api/organizations/1"));
 
         final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         given()
@@ -96,16 +96,16 @@ class ProjectResourceTest {
 
         final String token = getUserAccessToken();
 
-        final OrganisationRequest organisation = new OrganisationRequest("NewClient", "organization.org");
+        final OrganizationRequest organization = new OrganizationRequest("NewClient", "organization.org");
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(organisation)
-                .post("/api/organisations")
+                .body(organization)
+                .post("/api/organizations")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organisations/1"));
+                .header(LOCATION, endsWith("/api/organizations/1"));
 
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 10L,1L);
         given()
@@ -149,16 +149,16 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final OrganisationRequest organisation = new OrganisationRequest("NewClient", "organization.org");
+        final OrganizationRequest organization = new OrganizationRequest("NewClient", "organization.org");
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(organisation)
-                .post("/api/organisations")
+                .body(organization)
+                .post("/api/organizations")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organisations/1"));
+                .header(LOCATION, endsWith("/api/organizations/1"));
 
         final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
         given()
@@ -248,16 +248,16 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/1"));
 
-        final OrganisationRequest organisation = new OrganisationRequest("NewClient", "organization.org");
+        final OrganizationRequest organization = new OrganizationRequest("NewClient", "organization.org");
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(organisation)
-                .post("/api/organisations")
+                .body(organization)
+                .post("/api/organizations")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organisations/2"));
+                .header(LOCATION, endsWith("/api/organizations/2"));
 
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L, 2L);
         given()
@@ -308,16 +308,16 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final OrganisationRequest organisation = new OrganisationRequest("NewClient", "organization.org");
+        final OrganizationRequest organization = new OrganizationRequest("NewClient", "organization.org");
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(organisation)
-                .post("/api/organisations")
+                .body(organization)
+                .post("/api/organizations")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organisations/1"));
+                .header(LOCATION, endsWith("/api/organizations/1"));
 
         final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
         given()
@@ -382,16 +382,16 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final OrganisationRequest organisation = new OrganisationRequest("NewClient", "organization.org");
+        final OrganizationRequest organization = new OrganizationRequest("NewClient", "organization.org");
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(organisation)
-                .post("/api/organisations")
+                .body(organization)
+                .post("/api/organizations")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organisations/1"));
+                .header(LOCATION, endsWith("/api/organizations/1"));
 
         final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
         given()
@@ -457,16 +457,16 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final OrganisationRequest organisation = new OrganisationRequest("NewClient", "organization.org");
+        final OrganizationRequest organization = new OrganizationRequest("NewClient", "organization.org");
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(organisation)
-                .post("/api/organisations")
+                .body(organization)
+                .post("/api/organizations")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organisations/1"));
+                .header(LOCATION, endsWith("/api/organizations/1"));
 
         final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         given()
@@ -508,16 +508,16 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final OrganisationRequest organisation = new OrganisationRequest("NewClient", "organization.org");
+        final OrganizationRequest organization = new OrganizationRequest("NewClient", "organization.org");
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(organisation)
-                .post("/api/organisations")
+                .body(organization)
+                .post("/api/organizations")
                 .then()
                 .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organisations/1"));
+                .header(LOCATION, endsWith("/api/organizations/1"));
 
         final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
         given()

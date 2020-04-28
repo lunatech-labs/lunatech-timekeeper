@@ -8,26 +8,31 @@ public final class ProjectResponse {
 
     @NotNull
     private final Long id;
+
     @NotBlank
     private final String name;
+
     @NotNull
     private final Boolean billable;
+
     @NotNull
     private final String description;
     private final String clientName;
+
     @NotNull
     private final List<MemberResponse> members;
-    @NotNull
-    private final Long origanisationId;
 
-    public ProjectResponse(@NotNull Long id, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull String clientName, @NotNull List<MemberResponse> members, @NotNull Long organisationId) {
+    @NotNull
+    private final Long organizationId;
+
+    public ProjectResponse(@NotNull Long id, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull String clientName, @NotNull List<MemberResponse> members, @NotNull Long organizationId) {
         this.id = id;
         this.name = name;
         this.billable = billable;
         this.description = description;
         this.clientName = clientName;
         this.members = members;
-        this.origanisationId = organisationId;
+        this.organizationId = organizationId;
     }
 
     public Long getId() {
@@ -54,7 +59,7 @@ public final class ProjectResponse {
         return members;
     }
 
-    public Long getOriganisationId() { return origanisationId; }
+    public Long getOrganizationId() { return organizationId; }
 
     @Override
     public String toString() {
@@ -65,7 +70,7 @@ public final class ProjectResponse {
                 ", description='" + description + '\'' +
                 ", clientName='" + clientName + '\'' +
                 ", members=" + members +
-                ", origanisationId=" + origanisationId +
+                ", organizationId=" + organizationId +
                 '}';
     }
 }

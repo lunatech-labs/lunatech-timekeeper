@@ -26,7 +26,7 @@ public final class UserResponse {
     @NotNull
     private final List<MemberResponse> memberOfprojects;
     @NotNull
-    private final  Long organisationId;
+    private final Long organizationId;
 
     public UserResponse(
             @NotNull Long id,
@@ -36,7 +36,7 @@ public final class UserResponse {
             @NotNull String picture,
             @NotEmpty List<Profile> profiles,
             @NotNull List<MemberResponse> memberOfprojects,
-            @NotNull Long organisationId
+            @NotNull Long organizationId
     ) {
         this.id = id;
         this.firstName = firstName;
@@ -45,7 +45,7 @@ public final class UserResponse {
         this.picture = picture;
         this.profiles = profiles;
         this.memberOfprojects = memberOfprojects;
-        this.organisationId = organisationId;
+        this.organizationId = organizationId;
     }
 
     public Long getId() {
@@ -76,7 +76,7 @@ public final class UserResponse {
         return memberOfprojects;
     }
 
-    public Long getOrganisationId() {
-        return organisationId;
+    public Long getOrganizationId() {
+        return organizationId;
     }
 }

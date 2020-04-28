@@ -20,15 +20,20 @@ public class AuthenticatedUserInfo {
     @NotEmpty
     private final List<Profile> profiles;
     @NotBlank
-    private final String Organisation;
+    private final String organization;
 
-    public AuthenticatedUserInfo(String firstName, @NotBlank String lastName, @NotBlank @Email String email, @NotNull String picture, @NotEmpty List<Profile> profiles, @NotBlank String organisation) {
+    public AuthenticatedUserInfo(String firstName,
+                                 @NotBlank String lastName,
+                                 @NotBlank @Email String email,
+                                 @NotNull String picture,
+                                 @NotEmpty List<Profile> profiles,
+                                 @NotBlank String organization) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.picture = picture;
         this.profiles = profiles;
-        Organisation = organisation;
+        this.organization = organization;
     }
 
     public String getFirstName() {
@@ -51,7 +56,7 @@ public class AuthenticatedUserInfo {
         return profiles;
     }
 
-    public String getOrganisation() {
-        return Organisation;
+    public String getOrganization() {
+        return organization;
     }
 }

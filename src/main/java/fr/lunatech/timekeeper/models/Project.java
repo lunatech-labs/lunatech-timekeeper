@@ -26,7 +26,7 @@ public class Project extends PanacheEntity {
     @NotNull
     public List<Member> members;
     @ManyToOne
-    @JoinColumn(name = "organisation_id", nullable = false)
+    @JoinColumn(name = "organization_id", nullable = false)
     @NotNull
-    public Organisation organisation ;
+    public Organization organization ;
 }

@@ -17,15 +17,15 @@ public final class ProjectRequest {
     @Null
     private final Long clientId;
     @NotNull
-    private final Long organisationId;
+    private final Long organizationId;
 
     @JsonbCreator
-    public ProjectRequest(@NotBlank String name, @NotNull Boolean billable, @NotNull String description, @Null Long clientId, @NotNull Long organisationId) {
+    public ProjectRequest(@NotBlank String name, @NotNull Boolean billable, @NotNull String description, @Null Long clientId, @NotNull Long organizationId) {
         this.name = name;
         this.billable = billable;
         this.description = description;
         this.clientId = clientId;
-        this.organisationId = organisationId;
+        this.organizationId = organizationId;
     }
 
     public String getName() {
@@ -44,8 +44,8 @@ public final class ProjectRequest {
         return Optional.of(clientId);
     }
 
-    public Long getOrganisationId() {
-        return organisationId;
+    public Long getOrganizationId() {
+        return organizationId;
     }
 
     @Override
@@ -55,6 +55,7 @@ public final class ProjectRequest {
                 ", billable=" + billable +
                 ", description='" + description + '\'' +
                 ", clientId=" + clientId +
+                ", organizationId=" + organizationId +
                 '}';
     }
 }

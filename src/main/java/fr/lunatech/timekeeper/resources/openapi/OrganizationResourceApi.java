@@ -1,6 +1,6 @@
 package fr.lunatech.timekeeper.resources.openapi;
 
-import fr.lunatech.timekeeper.services.dtos.OrganisationRequest;
+import fr.lunatech.timekeeper.services.dtos.OrganizationRequest;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.headers.Header;
@@ -20,22 +20,22 @@ import javax.ws.rs.core.UriInfo;
 
 import static javax.ws.rs.core.HttpHeaders.LOCATION;
 
-@Path("/organisations")
-public interface OrganisationResourceApi {
+@Path("/organizations")
+public interface OrganizationResourceApi {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Create a new organisation ",
-            description = "Create a organisation.")
-    @Tag(ref = "organisations")
+    @Operation(summary = "Create a new organization ",
+            description = "Create a organization.")
+    @Tag(ref = "organizations")
     @APIResponses(value = {
             @APIResponse(
                     responseCode = "201",
-                    description = "Organisation created",
+                    description = "Organization created",
                     headers = {
-                            @Header(name = LOCATION, description = "New organisation url", schema = @Schema(type = SchemaType.STRING))
+                            @Header(name = LOCATION, description = "New organization url", schema = @Schema(type = SchemaType.STRING))
                     }
             )
     })
-    Response createOrganisation(@RequestBody OrganisationRequest request, @Context UriInfo uriInfo);
+    Response createOrganization(@RequestBody OrganizationRequest request, @Context UriInfo uriInfo);
 }

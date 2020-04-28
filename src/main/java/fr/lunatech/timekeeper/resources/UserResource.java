@@ -45,7 +45,7 @@ public class UserResource implements UserResourceApi {
     public Response createUser(@Valid UserRequest request, UriInfo uriInfo) {
         AuthenticatedUserInfo authenticatedUserInformation = getUserRequest(identity);
 
-        final Long userId = userService.createUser(request, authenticatedUserInformation.getOrganisation());
+        final Long userId = userService.createUser(request, authenticatedUserInformation.getOrganization());
         final URI uri = uriInfo.getAbsolutePathBuilder().path(userId.toString()).build();
         return Response.created(uri).build();
     }
