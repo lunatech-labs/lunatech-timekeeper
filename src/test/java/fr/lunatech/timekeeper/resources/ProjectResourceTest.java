@@ -480,11 +480,9 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/2"));
 
-
-
         final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L,1L, false);
         given()
-                .auth().preemptive().oauth2(token)
+                .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(project)
