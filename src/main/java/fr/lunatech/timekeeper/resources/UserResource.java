@@ -1,6 +1,7 @@
 package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.resources.openapi.UserResourceApi;
+import fr.lunatech.timekeeper.resources.security.AuthenticatedUserInfo;
 import fr.lunatech.timekeeper.services.dtos.UserRequest;
 import fr.lunatech.timekeeper.services.dtos.UserResponse;
 import fr.lunatech.timekeeper.services.interfaces.UserService;
@@ -10,7 +11,6 @@ import org.jboss.resteasy.annotations.cache.NoCache;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -30,10 +30,8 @@ public class UserResource implements UserResourceApi {
     @RolesAllowed({"user", "admin"})
     @NoCache
     @Override
-    public UserResponse me() {
-        return getUserRequest(identity)
-                .map(userRequest -> userService.authenticate(userRequest))
-                .orElseThrow(() -> new NotAuthorizedException("invalid_token"));
+    public AuthenticatedUserInfo me() {
+        return getUserRequest(identity);
     }
 
     @RolesAllowed({"user", "admin"})
@@ -45,7 +43,9 @@ public class UserResource implements UserResourceApi {
     @RolesAllowed({"admin"})
     @Override
     public Response createUser(@Valid UserRequest request, UriInfo uriInfo) {
-        final Long userId = userService.createUser(request);
+        AuthenticatedUserInfo authenticatedUserInformation = getUserRequest(identity);
+
+        final Long userId = userService.createUser(request, authenticatedUserInformation.getOrganisation());
         final URI uri = uriInfo.getAbsolutePathBuilder().path(userId.toString()).build();
         return Response.created(uri).build();
     }

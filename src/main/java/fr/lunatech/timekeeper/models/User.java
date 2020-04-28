@@ -32,7 +32,7 @@ public class User extends PanacheEntity {
     @NotNull
     public List<Member> members;
     @ManyToOne
-    @JoinColumn(name = "oranisation_id", nullable = false)
+    @JoinColumn(name = "organisation_id", nullable = false)
     @NotNull
     public Organisation organisation;
 }

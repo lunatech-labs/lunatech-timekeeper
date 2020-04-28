@@ -1,9 +1,6 @@
 package fr.lunatech.timekeeper.services;
 
-import fr.lunatech.timekeeper.models.Client;
-import fr.lunatech.timekeeper.models.Member;
-import fr.lunatech.timekeeper.models.Project;
-import fr.lunatech.timekeeper.models.User;
+import fr.lunatech.timekeeper.models.*;
 import fr.lunatech.timekeeper.services.dtos.*;
 import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.services.interfaces.ProjectService;
@@ -39,6 +36,10 @@ public class ProjectServiceImpl implements ProjectService {
     public Long createProject(ProjectRequest request) {
         logger.debug("Create a new project with {}", request);
         final var project = unbind(request);
+
+        Organisation orga = Organisation.<Organisation>findByIdOptional(request.getOrganisationId())
+                .orElseThrow(() -> new IllegalEntityStateException(String.format("Unknown organisation. organisation id=%s", request.getOrganisationId())));
+        project.organisation = orga;
         Project.persist(project);
         return project.id;
     }

@@ -1,7 +1,6 @@
 package fr.lunatech.timekeeper.resources.security;
 
 import fr.lunatech.timekeeper.models.Profile;
-import fr.lunatech.timekeeper.services.dtos.UserRequest;
 import io.quarkus.security.identity.SecurityIdentity;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.MalformedClaimException;
@@ -9,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.json.JsonObject;
+import javax.ws.rs.NotAuthorizedException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -19,27 +19,27 @@ public class SecurityIdentityUtils {
     private static Logger logger = LoggerFactory.getLogger(SecurityIdentityUtils.class);
 
 
-    public static Optional<UserRequest> getUserRequest(SecurityIdentity securityIdentity) {
+    public static AuthenticatedUserInfo getUserRequest(SecurityIdentity securityIdentity) {
         if (securityIdentity.getPrincipal() instanceof io.quarkus.oidc.runtime.OidcJwtCallerPrincipal) {
             final var jwtCallerPrincipal = (io.quarkus.oidc.runtime.OidcJwtCallerPrincipal) securityIdentity.getPrincipal();
             final var jwtClaims = jwtCallerPrincipal.getClaims();
             final String email = jwtClaims.getClaimValueAsString("email");
             final String firstName = jwtClaims.getClaimValueAsString("given_name");
             final String lastName = jwtClaims.getClaimValueAsString("family_name");
-            //TODO use for organization ==> final String organization = jwtClaims.getClaimValueAsString("organization");
+            final String organization = jwtClaims.getClaimValueAsString("organization");
             final String picture = jwtClaims.getClaimValueAsString("picture");
 
             final List<Profile> profiles = getProfiles(securityIdentity, jwtClaims);
             if (profiles.isEmpty()) {
-                logger.warn("No profile detected: " + securityIdentity.getPrincipal());
-                return Optional.empty();
+                logger.error("No profile detected: " + securityIdentity.getPrincipal());
+                throw new  NotAuthorizedException("No profile detected: " + securityIdentity.getPrincipal());
             }
 
-            return Optional.of(new UserRequest(firstName, lastName, email, picture, profiles));
+            return new AuthenticatedUserInfo(firstName, lastName, email, picture, profiles, organization);
 
         } else {
-            logger.warn("Unknown identity.getPrincipal: " + securityIdentity.getPrincipal());
-            return Optional.empty();
+            logger.error("Unknown identity.getPrincipal: " + securityIdentity.getPrincipal());
+            throw new  NotAuthorizedException("Unknown identity.getPrincipal: " + securityIdentity.getPrincipal());
         }
     }
 

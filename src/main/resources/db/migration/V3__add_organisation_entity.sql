@@ -1,6 +1,7 @@
 CREATE TABLE public.organisations (
 	id int8 NOT NULL,
-	"name" varchar(255) NULL,
+	name varchar(255) NULL,
+	tokenname varchar(255) NULL,
 	CONSTRAINT organisations_pkey PRIMARY KEY (id)
 );
 

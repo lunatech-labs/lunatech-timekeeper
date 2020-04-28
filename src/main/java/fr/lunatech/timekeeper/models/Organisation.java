@@ -14,6 +14,8 @@ public class Organisation extends PanacheEntity {
 
     @NotBlank
     public String name;
+    @NotBlank
+    public String tokenname;
     @OneToMany(mappedBy = "organisation")
     @NotNull
     public List<User> users;
