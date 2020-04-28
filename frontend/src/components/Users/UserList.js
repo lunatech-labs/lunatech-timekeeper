@@ -10,12 +10,16 @@ const UserList = () => {
   const userToUserData = (user) => {
     const projects = user.memberOfprojects
       .map(member => {
-        const project = projectsResponse.data.find(project => member.projectId === project.id);
-        return {
-          ...project,
-          role: member.role
-        };
-      });
+        const project = projectsResponse.data
+          .filter(project => project.publicAccess === false)
+          .find(project => member.projectId === project.id);
+        return project ?
+          {
+            ...project,
+            role: member.role
+          } : undefined
+      }).filter(p => !!p);
+    console.log(projects)
     return {
       ...user,
       key: user.id,
