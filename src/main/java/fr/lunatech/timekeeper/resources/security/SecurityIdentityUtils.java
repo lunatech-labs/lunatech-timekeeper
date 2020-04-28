@@ -19,7 +19,7 @@ public class SecurityIdentityUtils {
     private static Logger logger = LoggerFactory.getLogger(SecurityIdentityUtils.class);
 
 
-    public static AuthenticatedUserInfo getUserRequest(SecurityIdentity securityIdentity) {
+    public static AuthenticatedUserInfo retrieveAuthenticatedUserInfo(SecurityIdentity securityIdentity) {
         if (securityIdentity.getPrincipal() instanceof io.quarkus.oidc.runtime.OidcJwtCallerPrincipal) {
             final var jwtCallerPrincipal = (io.quarkus.oidc.runtime.OidcJwtCallerPrincipal) securityIdentity.getPrincipal();
             final var jwtClaims = jwtCallerPrincipal.getClaims();

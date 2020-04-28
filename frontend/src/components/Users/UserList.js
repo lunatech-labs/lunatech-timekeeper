@@ -9,6 +9,7 @@ const UserList = () => {
 
   const userToUserData = (user) => {
     const projects = user.memberOfprojects
+      .sort((a, b) => b.id - a.id)
       .map(member => {
         const project = projectsResponse.data
           .filter(project => project.publicAccess === false)
@@ -17,10 +18,9 @@ const UserList = () => {
           {
             ...project,
             role: member.role
-          } : undefined
+          } : undefined;
       })
-      .filter(p => !!p)
-      .sort((a, b) => b.id - a.id);
+      .filter(p => !!p);
     return {
       ...user,
       key: user.id,
@@ -88,9 +88,9 @@ const UserList = () => {
     return (
       <React.Fragment>
         <Alert title='Server error'
-               message='Failed to load'
-               type='error'
-               description='check that the user has authorities to access these resources'
+          message='Failed to load'
+          type='error'
+          description='check that the user has authorities to access these resources'
         />
       </React.Fragment>
     );
