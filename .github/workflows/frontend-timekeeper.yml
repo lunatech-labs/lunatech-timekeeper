@@ -23,5 +23,5 @@ jobs:
         with:
           working-directory: ./frontend
           useLockFile: false
-      - run: npm t
+      - run: CI=true npm test
         working-directory: ./frontend        

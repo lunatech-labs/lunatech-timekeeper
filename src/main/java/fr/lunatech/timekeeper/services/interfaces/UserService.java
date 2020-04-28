@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-    Long createUser(UserRequest request);
+    Long createUser(UserRequest request, String organization);
 
     List<UserResponse> findAllUsers();
 
@@ -16,6 +16,8 @@ public interface UserService {
     Optional<UserResponse> findUserByEmail(String email);
 
     Optional<Long> updateUser(Long id, UserRequest user);
+
+    UserResponse authenticate(UserRequest request);
 
     Long count();
 }

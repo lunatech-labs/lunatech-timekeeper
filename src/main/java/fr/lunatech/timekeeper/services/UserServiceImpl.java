@@ -1,9 +1,11 @@
 package fr.lunatech.timekeeper.services;
 
+import fr.lunatech.timekeeper.models.Organization;
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.services.dtos.MemberResponse;
 import fr.lunatech.timekeeper.services.dtos.UserRequest;
 import fr.lunatech.timekeeper.services.dtos.UserResponse;
+import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.services.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.Collections.emptyList;
 
 @ApplicationScoped
 public class UserServiceImpl implements UserService {
@@ -39,10 +43,14 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public Long createUser(UserRequest request) {
+    public Long createUser(UserRequest request, String organization) {
         logger.debug("Create a new user with request={}", request);
         final var user = unbind(request);
+        user.organization = Organization.find("tokenName", organization)
+                .<Organization>firstResultOptional()
+                .orElseThrow(() -> new IllegalEntityStateException(String.format("Unknown organization. organization=%s", organization)));
         User.persist(user);
+
         return user.id;
     }
 
@@ -53,24 +61,47 @@ public class UserServiceImpl implements UserService {
         return User.<User>findByIdOptional(id).map(user -> unbind(user, request).id);
     }
 
+    @Transactional
+    @Override
+    public UserResponse authenticate(UserRequest request) {
+        final User authenticatedUser = User.<User>find("email", request.getEmail())
+                .firstResultOptional()
+                .map(user -> {
+                    logger.debug("Modify user by email={} (if a change is detected) with request={}", user.email, request);
+                    /* Panache optimizes this process, no need to check if a change is necessary */
+                    return unbind(user, request);
+                })
+                .orElseGet(() -> {
+                    logger.debug("Create a new user by email={} with request={}", request.getEmail(), request);
+                    final var user = unbind(request);
+                    User.persist(user);
+                    return user;
+                });
+
+        return bind(authenticatedUser);
+    }
+
     @Override
     public Long count() {
         return User.count();
     }
 
     private UserResponse bind(User user) {
-        final List<MemberResponse> members = user.members
-                .stream()
+        final List<MemberResponse> members = (user.members == null)
+                ? emptyList()
+                : user.members.stream()
                 .map(member -> new MemberResponse(member.id, member.user.id, member.role, member.project.id))
                 .collect(Collectors.toList());
 
-        return new UserResponse(user.id, user.firstName, user.lastName, user.email, user.profiles, members);
+        return new UserResponse(user.id, user.firstName, user.lastName, user.email, user.picture, user.profiles, members, user.organization.id);
     }
 
     private User unbind(User user, UserRequest request) {
+
         user.firstName = request.getFirstName();
         user.lastName = request.getLastName();
         user.email = request.getEmail();
+        user.picture = request.getPicture();
         user.profiles = request.getProfiles();
         return user;
     }
