@@ -18,8 +18,9 @@ const UserList = () => {
             ...project,
             role: member.role
           } : undefined
-      }).filter(p => !!p)
-      .sort((a, b) => b.id-a.id);
+      })
+      .filter(p => !!p)
+      .sort((a, b) => b.id - a.id);
     return {
       ...user,
       key: user.id,
@@ -34,7 +35,7 @@ const UserList = () => {
       key: 'picture',
       width: 60,
       align: 'right',
-      render: (value) => <Avatar src={value} />
+      render: (value) => <Avatar src={value}/>
     },
     {
       title: 'Name',
@@ -87,9 +88,9 @@ const UserList = () => {
     return (
       <React.Fragment>
         <Alert title='Server error'
-          message='Failed to load'
-          type='error'
-          description='check that the user has authorities to access these resources'
+               message='Failed to load'
+               type='error'
+               description='check that the user has authorities to access these resources'
         />
       </React.Fragment>
     );
