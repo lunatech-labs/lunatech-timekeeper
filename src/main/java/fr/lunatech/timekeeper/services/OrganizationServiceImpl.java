@@ -49,6 +49,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         return organization.id;
     }
 
+    @Transactional
     @Override
     public Optional<Long> updateOrganization(Long id, OrganizationRequest request) {
         logger.info("Modify organization for organizationId=" + id + " with " + request);
