@@ -39,7 +39,7 @@ public interface UserResourceApi {
                     responseCode = "403",
                     description = "Invalid JWT token")
     })
-    AuthenticatedUserInfo me();
+    UserResponse me();
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)

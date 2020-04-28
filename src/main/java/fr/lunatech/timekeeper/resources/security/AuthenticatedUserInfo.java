@@ -1,6 +1,7 @@
 package fr.lunatech.timekeeper.resources.security;
 
 import fr.lunatech.timekeeper.models.Profile;
+import fr.lunatech.timekeeper.services.dtos.UserRequest;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -58,5 +59,9 @@ public class AuthenticatedUserInfo {
 
     public String getOrganization() {
         return organization;
+    }
+
+    public UserRequest toUserRequest() {
+        return new UserRequest(firstName, lastName, email, picture, profiles);
     }
 }
