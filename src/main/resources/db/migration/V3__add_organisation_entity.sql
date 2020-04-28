@@ -5,7 +5,6 @@ CREATE TABLE public.organizations (
 	CONSTRAINT organizations_pkey PRIMARY KEY (id)
 );
 
-insert into public.organisation
 
 insert into public.organizations (id, name, tokenname) values (10,'Lunatech NL', 'lunatech.nl');
 insert into public.organizations (id, name, tokenname) values (20,'Lunatech FR', 'lunatech.fr');

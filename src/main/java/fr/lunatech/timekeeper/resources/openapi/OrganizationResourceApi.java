@@ -55,5 +55,5 @@ public interface OrganizationResourceApi {
                     description = "Organization not found"
             )
     })
-    OrganizationResponse getOrganization(long id);
+    OrganizationResponse getOrganization(@PathParam("id") Long id);
 }

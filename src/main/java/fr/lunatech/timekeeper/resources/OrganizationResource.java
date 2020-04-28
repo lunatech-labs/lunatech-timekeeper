@@ -9,10 +9,12 @@ import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+
 
 public class OrganizationResource implements OrganizationResourceApi {
 
@@ -29,7 +31,7 @@ public class OrganizationResource implements OrganizationResourceApi {
 
     @RolesAllowed({"user", "admin"})
     @Override
-    public OrganizationResponse getOrganization(@PathParam("id") long id) {
+    public OrganizationResponse getOrganization( Long id) {
         return organizationService.findOrganizationById(id).orElseThrow(NotFoundException::new);
 
     }
