@@ -18,8 +18,8 @@ const UserList = () => {
             ...project,
             role: member.role
           } : undefined
-      }).filter(p => !!p);
-    console.log(projects)
+      }).filter(p => !!p)
+      .sort((a, b) => b.id-a.id);
     return {
       ...user,
       key: user.id,
