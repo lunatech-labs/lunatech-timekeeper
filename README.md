@@ -74,7 +74,7 @@ If you want to run docker in background :
     
 We are using Flyway extension. Database's model will be created at the first run of the app.
 
-##2.1 - Start TimeKeeper on Debug (with IntelliJ)
+## 2.1 - Start TimeKeeper on Debug (with IntelliJ)
 
 Go to Run/Debug Configuration and add the new configuration by using the `+` button and select `Remote`. 
 Use the default configuration (Port 5005). Then start the debug.
@@ -83,7 +83,7 @@ Use the default configuration (Port 5005). Then start the debug.
 
 By running the `mvn quarkus:dev` command, you will see : `Listening for transport dt_socket at address: 5005`. You can now use the debug mode.
 
-##2.2 - Run test
+## 2.2 - Run test
 
     ./mvnw compile test
 
