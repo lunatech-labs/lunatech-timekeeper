@@ -27,7 +27,7 @@ All documentation are hold on Confluence pages [here](https://lunatech.atlassian
 
 # Agile Dashboard
 
-Timekeeper dashboard is [here](https://lunatechfr.myjetbrains.com/youtrack/issues/TK)
+Timekeeper dashboard is [here](https://lunatech.atlassian.net/jira/software/projects/TK/boards/8)
 
 # Technical stack 
 
@@ -74,6 +74,24 @@ If you want to run docker in background :
     
 We are using Flyway extension. Database's model will be created at the first run of the app.
 
+##2.1 - Start TimeKeeper on Debug (with IntelliJ)
+
+Go to Run/Debug Configuration and add the new configuration by using the `+` button and select `Remote`. 
+Use the default configuration (Port 5005). Then start the debug.
+
+![DebugConfiguration](https://user-images.githubusercontent.com/45755667/80485053-078d0b00-8959-11ea-9028-e223ef7859f9.png)
+
+By running the `mvn quarkus:dev` command, you will see : `Listening for transport dt_socket at address: 5005`. You can now use the debug mode.
+
+##2.2 - Run test
+
+    ./mvnw compile test
+
+⚠️ Don't run your tests directly with IntelliJ ! 
+
+There are some issues, probably with maven, IntelliJ will not compile your current code before running.
+You must use the command first, then run IntelliJ for more readability if the tests failed.
+
 ## 3 - FrontEnd   
 
 Go to the `frontend` folder
@@ -115,7 +133,7 @@ Other branches:
 - `develop` is "last-stable" version of the project
 - `feature/TK-*' are ephemeral branches for WIP and PR
 
-Try to reuse YouTrack ID as part of branch : 
+Try to reuse Jira ID as part of branch : 
 
     feature/TK-84-home-page-design
     feature/TK-42-add-list-all-companies
