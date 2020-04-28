@@ -149,7 +149,7 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final OrganizationRequest organization = new OrganizationRequest("NewClient", "organization.org", false);
+        final OrganizationRequest organization = new OrganizationRequest("NewClient", "organization.org");
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -259,7 +259,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/organizations/2"));
 
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L, 2L);
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L, 2L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
