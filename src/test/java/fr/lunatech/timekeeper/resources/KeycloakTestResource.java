@@ -41,8 +41,9 @@ public class KeycloakTestResource implements QuarkusTestResourceLifecycleManager
         RealmRepresentation realm = createRealm(KEYCLOAK_REALM);
 
         realm.getClients().add(createClient(KEYCLOAK_CLIENT));
-        realm.getUsers().add(createUser("jimmy", "user"));
-        realm.getUsers().add(createUser("sam", "user", "admin"));
+        realm.getUsers().add(createUser("jimmy", "organization.org", "user"));
+        realm.getUsers().add(createUser("sam", "organization.org", "user", "admin"));
+
 
         // Create config in keycloak
         try {
@@ -123,10 +124,27 @@ public class KeycloakTestResource implements QuarkusTestResourceLifecycleManager
         client.setSecret(KEYCLOAK_SECRET);
         client.setDirectAccessGrantsEnabled(true);
         client.setEnabled(true);
+
+        ProtocolMapperRepresentation mapper = new ProtocolMapperRepresentation();
+        mapper.setName("organization");
+        mapper.setProtocol("openid-connect");
+        mapper.setProtocolMapper("oidc-usermodel-attribute-mapper");
+        mapper.setConfig(Map.of(
+                "userinfo.token.claim", "true",
+                "user.attribute", "organization",
+                "id.token.claim", "true",
+                "access.token.claim", "true",
+                "claim.name", "organization",
+                "jsonType.label", "String"
+        ));
+        client.setProtocolMappers(List.of(mapper));
+        client.setEnabled(true);
+
+
         return client;
     }
 
-    private static UserRepresentation createUser(String username, String... realmRoles) {
+    private static UserRepresentation createUser(String username,String organization, String... realmRoles) {
         UserRepresentation user = new UserRepresentation();
 
         user.setUsername(username);
@@ -134,6 +152,9 @@ public class KeycloakTestResource implements QuarkusTestResourceLifecycleManager
         user.setCredentials(new ArrayList<>());
         user.setRealmRoles(Arrays.asList(realmRoles));
         user.setEmail(username + "@gmail.com");
+        user.singleAttribute("organization", organization)
+                .singleAttribute("picture", username + ".png");
+
 
         CredentialRepresentation credential = new CredentialRepresentation();
 

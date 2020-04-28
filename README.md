@@ -1,7 +1,5 @@
 # Timekeeper project
 
-[![Codeship Status for lunatech-labs/lunatech-timekeeper](https://app.codeship.com/projects/352930a0-589d-0138-5f43-3e74b59257eb/status?branch=develop)](https://app.codeship.com/projects/391390)
-
 ![Quarkus on develop](https://github.com/lunatech-labs/lunatech-timekeeper/workflows/Java%20CI%20with%20Maven/badge.svg?branch=develop)
 
 ![Frontend CI](https://github.com/lunatech-labs/lunatech-timekeeper/workflows/Frontend%20CI/badge.svg?branch=develop)
@@ -131,4 +129,3 @@ This command configures pre-commit hook and validation.
 Use mvn with profile "sonar"
 
     ./mvnw -P sonar verify sonar:sonar
-

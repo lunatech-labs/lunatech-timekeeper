@@ -25,6 +25,10 @@ public class Project extends PanacheEntity {
     @OneToMany(mappedBy = "project")
     @NotNull
     public List<Member> members;
+    @ManyToOne
+    @JoinColumn(name = "organization_id", nullable = false)
+    @NotNull
+    public Organization organization ;
     @NotNull
     public Boolean publicAccess;
 }
