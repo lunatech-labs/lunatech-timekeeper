@@ -1,9 +1,11 @@
 package fr.lunatech.timekeeper.services;
 
+import fr.lunatech.timekeeper.models.Organization;
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.services.dtos.MemberResponse;
 import fr.lunatech.timekeeper.services.dtos.UserRequest;
 import fr.lunatech.timekeeper.services.dtos.UserResponse;
+import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.services.interfaces.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,10 +43,14 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public Long createUser(UserRequest request) {
+    public Long createUser(UserRequest request, String organization) {
         logger.debug("Create a new user with request={}", request);
         final var user = unbind(request);
+        user.organization = Organization.find("tokenName", organization)
+                .<Organization>firstResultOptional()
+                .orElseThrow(() -> new IllegalEntityStateException(String.format("Unknown organization. organization=%s", organization)));
         User.persist(user);
+
         return user.id;
     }
 
@@ -87,10 +93,11 @@ public class UserServiceImpl implements UserService {
                 .map(member -> new MemberResponse(member.id, member.user.id, member.role, member.project.id))
                 .collect(Collectors.toList());
 
-        return new UserResponse(user.id, user.firstName, user.lastName, user.email, user.picture, user.profiles, members);
+        return new UserResponse(user.id, user.firstName, user.lastName, user.email, user.picture, user.profiles, members, user.organization.id);
     }
 
     private User unbind(User user, UserRequest request) {
+
         user.firstName = request.getFirstName();
         user.lastName = request.getLastName();
         user.email = request.getEmail();
