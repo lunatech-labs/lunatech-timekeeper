@@ -21,17 +21,20 @@ public final class ProjectResponse {
 
     @NotNull
     private final List<MemberResponse> members;
+    @NotNull
+    private final Boolean publicAccess;
 
     @NotNull
     private final Long organizationId;
 
-    public ProjectResponse(@NotNull Long id, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull String clientName, @NotNull List<MemberResponse> members, @NotNull Long organizationId) {
+    public ProjectResponse(@NotNull Long id, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull String clientName, @NotNull List<MemberResponse> members, @NotNull Long organizationId, @NotNull Boolean publicAccess) {
         this.id = id;
         this.name = name;
         this.billable = billable;
         this.description = description;
         this.clientName = clientName;
         this.members = members;
+        this.publicAccess = publicAccess;
         this.organizationId = organizationId;
     }
 
@@ -53,6 +56,10 @@ public final class ProjectResponse {
 
     public String getClientName() {
         return clientName;
+    }
+
+    public Boolean isPublicAccess() {
+        return publicAccess;
     }
 
     public List<MemberResponse> getMembers() {
