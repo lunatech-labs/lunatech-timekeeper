@@ -59,7 +59,7 @@ public interface OrganizationResourceApi {
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Retrieve an organization",
             description = "Retrieve organization details.")
-    @Tag(ref = "organization")
+    @Tag(ref = "organizations")
     @APIResponses(value = {
             @APIResponse(
                     responseCode = "200",
@@ -77,7 +77,7 @@ public interface OrganizationResourceApi {
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Update an organization",
             description = "Update organization details.")
-    @Tag(ref = "organization")
+    @Tag(ref = "organizations")
     @APIResponses(value = {
             @APIResponse(
                     responseCode = "204",
