@@ -397,7 +397,7 @@ class UserResourceTest {
 
 
 
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 4L,1L);
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 4L,1L, false);
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()

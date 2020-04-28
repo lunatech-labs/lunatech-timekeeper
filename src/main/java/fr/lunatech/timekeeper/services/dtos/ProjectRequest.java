@@ -17,14 +17,17 @@ public final class ProjectRequest {
     @Null
     private final Long clientId;
     @NotNull
+    private final Boolean publicAccess;
+    @NotNull
     private final Long organizationId;
 
     @JsonbCreator
-    public ProjectRequest(@NotBlank String name, @NotNull Boolean billable, @NotNull String description, @Null Long clientId, @NotNull Long organizationId) {
+    public ProjectRequest(@NotBlank String name, @NotNull Boolean billable, @NotNull String description, @Null Long clientId, @NotNull Long organizationId, @NotNull Boolean publicAccess) {
         this.name = name;
         this.billable = billable;
         this.description = description;
         this.clientId = clientId;
+        this.publicAccess = publicAccess;
         this.organizationId = organizationId;
     }
 
@@ -44,6 +47,10 @@ public final class ProjectRequest {
         return Optional.of(clientId);
     }
 
+    public Boolean isPublicAccess() {
+        return publicAccess;
+    }
+
     public Long getOrganizationId() {
         return organizationId;
     }
@@ -56,6 +63,7 @@ public final class ProjectRequest {
                 ", description='" + description + '\'' +
                 ", clientId=" + clientId +
                 ", organizationId=" + organizationId +
+                ", publicAccess=" + publicAccess +
                 '}';
     }
 }
