@@ -1,7 +1,6 @@
 package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.Organization;
-import fr.lunatech.timekeeper.models.Organization;
 import fr.lunatech.timekeeper.services.dtos.OrganizationRequest;
 import fr.lunatech.timekeeper.services.dtos.OrganizationResponse;
 import fr.lunatech.timekeeper.services.interfaces.OrganizationService;
@@ -48,6 +47,12 @@ public class OrganizationServiceImpl implements OrganizationService {
         organization.persist();
 
         return organization.id;
+    }
+
+    @Override
+    public Optional<Long> updateOrganization(Long id, OrganizationRequest request) {
+        logger.info("Modify organization for organizationId=" + id + " with " + request);
+        return Organization.<Organization>findByIdOptional(id).map(organization -> unbind(organization, request).id);
     }
 
     private OrganizationResponse bind(Organization organization) {

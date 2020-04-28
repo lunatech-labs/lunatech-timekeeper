@@ -1,5 +1,6 @@
 package fr.lunatech.timekeeper.resources.openapi;
 
+import fr.lunatech.timekeeper.services.dtos.ClientRequest;
 import fr.lunatech.timekeeper.services.dtos.OrganizationRequest;
 import fr.lunatech.timekeeper.services.dtos.OrganizationResponse;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -70,4 +71,23 @@ public interface OrganizationResourceApi {
             )
     })
     OrganizationResponse getOrganization(@PathParam("id") Long id);
+
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Update an organization",
+            description = "Update organization details.")
+    @Tag(ref = "organization")
+    @APIResponses(value = {
+            @APIResponse(
+                    responseCode = "204",
+                    description = "Organization updated"
+            ),
+            @APIResponse(
+                    responseCode = "404",
+                    description = "Organization not found"
+            )
+    })
+    Response updateOrganization(@PathParam("id") Long id, @RequestBody OrganizationRequest request);
+
 }

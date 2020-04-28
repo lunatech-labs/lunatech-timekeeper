@@ -38,4 +38,11 @@ public class OrganizationResource implements OrganizationResourceApi {
     public OrganizationResponse getOrganization(Long id) {
         return organizationService.findOrganizationById(id).orElseThrow(NotFoundException::new);
     }
+
+    @RolesAllowed({"admin"})
+    @Override
+    public Response updateOrganization(Long id, OrganizationRequest request) {
+        organizationService.updateOrganization(id, request).orElseThrow(NotFoundException::new);
+        return Response.noContent().build();
+    }
 }
