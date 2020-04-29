@@ -28,6 +28,7 @@ const UserList = () => {
       projects: projects
     };
   };
+  // local component created to avoid an es-lint error
   const renderAvatar = (value) => <Avatar src={value} />;
   const columns = [
     {
