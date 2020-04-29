@@ -5,6 +5,7 @@ import './MenuSidebar.less';
 import PropTypes from 'prop-types';
 
 import {UserOutlined, DesktopOutlined, PieChartOutlined} from '@ant-design/icons';
+import FolderOpenOutlined from '@ant-design/icons/lib/icons/FolderOpenOutlined';
 
 class MenuSidebar extends Component {
   render() {
@@ -27,6 +28,12 @@ class MenuSidebar extends Component {
           <Link to="/users">
             <UserOutlined/>
             <span>Users</span>
+          </Link>
+        </Menu.Item>
+        <Menu.Item className="tk_MenuItem" key="/projects">
+          <Link to="/projects">
+            <FolderOpenOutlined />
+            <span>Projects</span>
           </Link>
         </Menu.Item>
       </Menu>
