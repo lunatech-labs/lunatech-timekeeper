@@ -10,8 +10,8 @@ services:
     ports:
       - 8082:8080
     volumes:
-    - ./infrastructure/keycloak/realm-export-dev.json:/opt/jboss/keycloak/imports/realm-export.json
-    - ./infrastructure/keycloak/themes:/opt/jboss/keycloak/themes
+    - ./keycloak/realm-export-dev.json:/opt/jboss/keycloak/imports/realm-export.json
+    - ./keycloak/themes:/opt/jboss/keycloak/themes
     command:
         - "-b 0.0.0.0 -Dkeycloak.import=/opt/jboss/keycloak/imports/realm-export.json"
 
