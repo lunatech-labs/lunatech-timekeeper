@@ -9,13 +9,18 @@ const UserList = () => {
 
   const userToUserData = (user) => {
     const projects = user.memberOfprojects
+      .sort((a, b) => b.id - a.id)
       .map(member => {
-        const project = projectsResponse.data.find(project => member.projectId === project.id);
-        return {
-          ...project,
-          role: member.role
-        };
-      });
+        const project = projectsResponse.data
+          .filter(project => project.publicAccess === false)
+          .find(project => member.projectId === project.id);
+        return project ?
+          {
+            ...project,
+            role: member.role
+          } : undefined;
+      })
+      .filter(p => !!p);
     return {
       ...user,
       key: user.id,
@@ -30,7 +35,7 @@ const UserList = () => {
       key: 'picture',
       width: 60,
       align: 'right',
-      render: (value) => <Avatar src={value} />
+      render: (value) => <Avatar src={value}/>
     },
     {
       title: 'Name',
