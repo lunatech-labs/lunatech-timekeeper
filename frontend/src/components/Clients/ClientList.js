@@ -1,6 +1,6 @@
 import React from 'react';
 import {Alert, Avatar, Button, List, PageHeader, Spin} from 'antd';
-import {EditOutlined, MoreOutlined} from '@ant-design/icons';
+import {EditOutlined} from '@ant-design/icons';
 import {Link} from 'react-router-dom';
 import logo from '../../img/logo_timekeeper_homepage.png';
 import {useTimeKeeperAPI} from '../../utils/services';
@@ -54,9 +54,6 @@ const ClientList = () => {
               <Link key="editLink" to={`/clients/${item.id}`}>
                 <Button type="default"
                   icon={<EditOutlined/>}>Edit</Button>
-              </Link>,
-              <Link key="moreLink" to={`/clients/${item.id}`}>
-                <Button type="default" icon={<MoreOutlined/>}/>
               </Link>,
             ]}
           >
