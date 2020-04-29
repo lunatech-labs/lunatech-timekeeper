@@ -16,4 +16,5 @@ public interface OrganizationService {
 
     Long createOrganization(OrganizationRequest request);
 
+    Optional<Long> updateOrganization(Long id, OrganizationRequest request);
 }
