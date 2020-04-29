@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
+import static org.hibernate.internal.util.StringHelper.isNotEmpty;
 
 @ApplicationScoped
 public class UserServiceImpl implements UserService {
@@ -44,11 +45,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public Long createUser(UserRequest request, String organization) {
-        logger.debug("Create a new user with request={}", request);
-        final var user = unbind(request);
-        user.organization = Organization.find("tokenName", organization)
-                .<Organization>firstResultOptional()
-                .orElseThrow(() -> new IllegalEntityStateException(String.format("Unknown organization. organization=%s", organization)));
+        logger.debug("Create a new user with organization={}, request={}", organization, request);
+        final var user = unbind(request, organization);
         User.persist(user);
 
         return user.id;
@@ -63,17 +61,17 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserResponse authenticate(UserRequest request) {
+    public UserResponse authenticate(UserRequest request, String organization) {
         final User authenticatedUser = User.<User>find("email", request.getEmail())
                 .firstResultOptional()
                 .map(user -> {
-                    logger.debug("Modify user by email={} (if a change is detected) with request={}", user.email, request);
+                    logger.debug("Modify user by email={} (if a change is detected) with organization={}, request={}", user.email, organization, request);
                     /* Panache optimizes this process, no need to check if a change is necessary */
-                    return unbind(user, request);
+                    return unbind(user, request, organization);
                 })
                 .orElseGet(() -> {
-                    logger.debug("Create a new user by email={} with request={}", request.getEmail(), request);
-                    final var user = unbind(request);
+                    logger.debug("Create a new user by email={} with organization={}, request={}", request.getEmail(), organization, request);
+                    final var user = unbind(request, organization);
                     User.persist(user);
                     return user;
                 });
@@ -96,8 +94,8 @@ public class UserServiceImpl implements UserService {
         return new UserResponse(user.id, user.firstName, user.lastName, user.email, user.picture, user.profiles, members, user.organization.id);
     }
 
-    private User unbind(User user, UserRequest request) {
-
+    private User unbind(User user, UserRequest request, String organization) {
+        user.organization = isNotEmpty(organization) ? findOrganization(organization) : user.organization;
         user.firstName = request.getFirstName();
         user.lastName = request.getLastName();
         user.email = request.getEmail();
@@ -106,7 +104,17 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    private User unbind(UserRequest request) {
-        return unbind(new User(), request);
+    private User unbind(User user, UserRequest request) {
+        return unbind(user, request, null);
+    }
+
+    private User unbind(UserRequest request, String organization) {
+        return unbind(new User(), request, organization);
+    }
+
+    private Organization findOrganization(String organization) {
+        return Organization.find("tokenName", organization)
+                .<Organization>firstResultOptional()
+                .orElseThrow(() -> new IllegalEntityStateException(String.format("Unknown organization. organization=%s", organization)));
     }
 }

@@ -17,7 +17,7 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.List;
 
-import static fr.lunatech.timekeeper.resources.security.SecurityIdentityUtils.getUserRequest;
+import static fr.lunatech.timekeeper.resources.security.SecurityIdentityUtils.retrieveAuthenticatedUserInfo;
 
 public class UserResource implements UserResourceApi {
 
@@ -30,8 +30,12 @@ public class UserResource implements UserResourceApi {
     @RolesAllowed({"user", "admin"})
     @NoCache
     @Override
-    public AuthenticatedUserInfo me() {
-        return getUserRequest(identity);
+    public UserResponse me() {
+        final AuthenticatedUserInfo authenticatedUserInfo = retrieveAuthenticatedUserInfo(identity);
+        final UserRequest userRequest = authenticatedUserInfo.toUserRequest();
+        final String organization = authenticatedUserInfo.getOrganization();
+
+        return userService.authenticate(userRequest, organization);
     }
 
     @RolesAllowed({"user", "admin"})
@@ -43,7 +47,7 @@ public class UserResource implements UserResourceApi {
     @RolesAllowed({"admin"})
     @Override
     public Response createUser(@Valid UserRequest request, UriInfo uriInfo) {
-        AuthenticatedUserInfo authenticatedUserInformation = getUserRequest(identity);
+        final AuthenticatedUserInfo authenticatedUserInformation = retrieveAuthenticatedUserInfo(identity);
 
         final Long userId = userService.createUser(request, authenticatedUserInformation.getOrganization());
         final URI uri = uriInfo.getAbsolutePathBuilder().path(userId.toString()).build();
