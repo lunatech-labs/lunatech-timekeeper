@@ -53,7 +53,7 @@ Read [How to setup your development environment](https://lunatech.atlassian.net/
 
 ## 1 - Database
 
-The postgreSQL server runs on 5435 with Docker. Username and password for dev are defined in docker-compose.yml and application.properties.
+The postgreSQL server runs on 5435 with Docker. Username and password for dev are defined in infrastructure/docker-compose.yml and application.properties.
 
 Run docker-compose as :
 
@@ -67,6 +67,7 @@ If you want to run docker in background :
 
 - PostgreSQL dedicated to TimeKeeper app on port 5435 
 - Keycloak (+ one postgres dedicated to Keycloak) on http://localhost:8081
+- Mailhog (a mail service)
 
 ## 2 - Start TimeKeeper
 
