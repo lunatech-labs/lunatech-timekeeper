@@ -6,6 +6,7 @@ const UserList = () => {
 
   const usersResponse = useTimeKeeperAPI('/api/users');
   const projectsResponse = useTimeKeeperAPI('/api/projects');
+  const organizationResponse = useTimeKeeperAPI('/api/organizations');
 
   const userToUserData = (user) => {
     const projects = user.memberOfprojects
@@ -28,6 +29,15 @@ const UserList = () => {
       projects: projects
     };
   };
+
+  const organizationIdToOrganization = (organizationId) => {
+    if (organizationResponse.data) {
+      return organizationResponse.data.filter(
+        organization => organization.id === organizationId);
+    }
+    return [];
+  };
+
   const columns = [
     {
       title: '',
@@ -55,10 +65,9 @@ const UserList = () => {
     },
     {
       title: 'Organization',
-      key: 'profiles',
-      // TODO: Replace me when the organization is implemented
-      // dataIndex: 'organization',
-      render: () => 'REPLACE ME'
+      key: 'organization',
+      dataIndex: 'organizationId',
+      render: (value) => organizationIdToOrganization(value).map(organization => organization.name)
     },
     {
       title: 'Project',
