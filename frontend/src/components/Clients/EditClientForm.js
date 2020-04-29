@@ -7,7 +7,7 @@ import {
   PageHeader,
   Spin,
 } from 'antd';
-import {Redirect, useRouteMatch} from 'react-router-dom';
+import {Redirect, useRouteMatch, Link} from 'react-router-dom';
 import {useTimeKeeperAPI, useTimeKeeperAPIPut} from '../../utils/services';
 
 const {TextArea} = Input;
@@ -75,6 +75,11 @@ const EditClientForm = () => {
             />
           </Form.Item>
           <Form.Item {...tailLayout}>
+            <Link key="cancelLink" to={'/clients'}>
+              <Button htmlType="button">
+                Cancel
+              </Button>
+            </Link>
             <Button type="primary" htmlType="submit">
                             Submit
             </Button>

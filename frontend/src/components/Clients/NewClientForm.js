@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Button, Form,  Input, message, Alert, PageHeader} from 'antd';
-import {Redirect} from 'react-router-dom';
+import {Redirect, Link} from 'react-router-dom';
 import {useTimeKeeperAPIPost} from '../../utils/services';
 
 const {TextArea} = Input;
@@ -77,6 +77,11 @@ const ClientForm = () => {
           />
         </Form.Item>
         <Form.Item {...tailLayout}>
+          <Link key="cancelLink" to={'/clients'}>
+            <Button htmlType="button">
+                    Cancel
+            </Button>
+          </Link>
           <Button type="primary" htmlType="submit">
               Submit
           </Button>
