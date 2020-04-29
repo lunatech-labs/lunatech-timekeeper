@@ -28,6 +28,7 @@ const UserList = () => {
       projects: projects
     };
   };
+  const renderAvatar = (value) => <Avatar src={value} />;
   const columns = [
     {
       title: '',
@@ -35,7 +36,7 @@ const UserList = () => {
       key: 'picture',
       width: 60,
       align: 'right',
-      render: (value) => <Avatar src={value}/>
+      render: (value) => renderAvatar(value),
     },
     {
       title: 'Name',
