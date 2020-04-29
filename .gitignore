@@ -34,6 +34,7 @@ pom.xml.releaseBackup
 pom.xml.versionsBackup
 release.properties
 /data/
+/infrastructure/data/
 
 # Frontend -- START
 # dependencies
