@@ -55,9 +55,6 @@ const ClientList = () => {
                 <Button type="default"
                   icon={<EditOutlined/>}>Edit</Button>
               </Link>,
-              <Link key="moreLink" to={`/clients/${item.id}`}>
-                <Button type="default" icon={<MoreOutlined/>}/>
-              </Link>,
             ]}
           >
             <List.Item.Meta
