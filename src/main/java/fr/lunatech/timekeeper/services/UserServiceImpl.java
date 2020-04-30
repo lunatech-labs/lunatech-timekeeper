@@ -85,13 +85,13 @@ public class UserServiceImpl implements UserService {
     }
 
     private UserResponse bind(User user) {
-        final List<RoleInProjectResponse> roleInProject = (user.projects == null)
+        final List<RoleInProjectResponse> rolesInProjects = (user.rolesInProjects == null)
                 ? emptyList()
-                : user.projects.stream()
-                .map(project -> new RoleInProjectResponse(project.id, project.user.id, project.role, project.project.id))
+                : user.rolesInProjects.stream()
+                .map(roleInProject -> new RoleInProjectResponse(roleInProject.id, roleInProject.user.id, roleInProject.role, roleInProject.project.id))
                 .collect(Collectors.toList());
 
-        return new UserResponse(user.id, user.firstName, user.lastName, user.email, user.picture, user.profiles, roleInProject, user.organization.id);
+        return new UserResponse(user.id, user.firstName, user.lastName, user.email, user.picture, user.profiles, rolesInProjects, user.organization.id);
     }
 
     private User unbind(User user, UserRequest request, String organization) {

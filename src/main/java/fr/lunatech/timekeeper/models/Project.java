@@ -24,7 +24,7 @@ public class Project extends PanacheEntity {
     public Client client;
     @OneToMany(mappedBy = "project")
     @NotNull
-    public List<RoleInProject> roles;
+    public List<RoleInProject> members;
     @ManyToOne
     @JoinColumn(name = "organization_id", nullable = false)
     @NotNull

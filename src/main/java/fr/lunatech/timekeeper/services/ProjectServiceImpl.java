@@ -63,8 +63,8 @@ public class ProjectServiceImpl implements ProjectService {
         logger.debug("Modify rolesInProject for projectId={} with request={}", projectId, request);
         final var project = getProject(projectId);
 
-        final var roleInProjectUpdated = project.roles.stream()
-                .map(roleInProject -> updateOrDeleteRoleInProject(roleInProject, request))
+        final var roleInProjectUpdated = project.members.stream()
+                .map(member -> updateOrDeleteRoleInProject(member, request))
                 .filter(Optional::isPresent)
                 .map(Optional::get);
 
@@ -76,15 +76,15 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     private Long addRoleInProjectToProject(Project project, RoleInProjectRequest request) {
-        return project.roles
+        return project.members
                 .stream()
-                .filter(role -> role.isSameUser(request.getUserId()))
+                .filter(member -> member.isSameUser(request.getUserId()))
                 .findFirst()
-                .map(role -> role.id)
+                .map(member -> member.id)
                 .orElseGet(() -> {
-                    final var role = unbind(project, request);
-                    RoleInProject.persist(role);
-                    return role.id;
+                    final var member = unbind(project, request);
+                    RoleInProject.persist(member);
+                    return member.id;
                 });
     }
 
@@ -112,7 +112,7 @@ public class ProjectServiceImpl implements ProjectService {
                 project.billable,
                 project.description,
                 project.client != null ? project.client.name : "",
-                project.roles.stream()
+                project.members.stream()
                         .map(roleInProject -> new RoleInProjectResponse(roleInProject.id, roleInProject.user.id, roleInProject.role, roleInProject.project.id))
                         .collect(Collectors.toList()),
                 project.organization.id,
