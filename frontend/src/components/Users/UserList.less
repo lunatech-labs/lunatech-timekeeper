@@ -1,0 +1,50 @@
+@import '../../timekeeper-theme.less';
+
+.tk_TopPage {
+  div:last-child {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+#tk_Breadcrumb {
+  span {font-weight: 500;}
+  a {
+    font-weight: 400;
+    &:hover {color: @red_Tk;}
+  }
+}
+#tk_h1 {
+  font-weight: 400;
+  color: white;
+}
+#tk_Table {
+  thead {
+    tr {
+      th {
+        border-bottom: 0;
+        font-weight: 400;
+        border-top: 1px solid rgba(216, 216, 216, 0.1);
+        border-radius: 0;
+      }
+    }
+  }
+  tbody {
+    tr {
+      background: @darkGray_Tk;
+      td {
+        border-bottom: none;
+        &:first-child {
+          border-top-left-radius: 6px;
+          border-bottom-left-radius: 6px;
+        }
+        &:last-child {
+          border-top-right-radius: 6px;
+          border-bottom-right-radius: 6px;
+        }
+
+      }
+    }
+  }
+
+}
