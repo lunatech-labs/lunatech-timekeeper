@@ -1,7 +1,7 @@
 package fr.lunatech.timekeeper.resources.openapi;
 
-import fr.lunatech.timekeeper.services.dtos.MemberRequest;
-import fr.lunatech.timekeeper.services.dtos.MembersUpdateRequest;
+import fr.lunatech.timekeeper.services.dtos.RoleInProjectRequest;
+import fr.lunatech.timekeeper.services.dtos.RoleInProjectUpdateRequest;
 import fr.lunatech.timekeeper.services.dtos.ProjectRequest;
 import fr.lunatech.timekeeper.services.dtos.ProjectResponse;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -91,17 +91,17 @@ public interface ProjectResourceApi {
     Response updateProject(@PathParam("id") Long id, @RequestBody ProjectRequest request);
 
     @POST
-    @Path("{id}/members")
+    @Path("{id}/roles")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Add a member to a project",
-            description = "Add a member to a project and determine his role.")
+    @Operation(summary = "Add a roleInProject to a project",
+            description = "Add a roleInProject to a project and determine his role.")
     @Tag(ref = "projects")
     @APIResponses(value = {
             @APIResponse(
                     responseCode = "201",
-                    description = "Member created",
+                    description = "RoleInProject created",
                     headers = {
-                            @Header(name = LOCATION, description = "New member url", schema = @Schema(type = SchemaType.STRING))
+                            @Header(name = LOCATION, description = "New roleInProject url", schema = @Schema(type = SchemaType.STRING))
                     }
             ),
             @APIResponse(
@@ -109,24 +109,24 @@ public interface ProjectResourceApi {
                     description = "Bad parameters (unknown project or user)"
             )
     })
-    Response addMemberToProject(@PathParam("id") Long projectId, @RequestBody MemberRequest request, @Context UriInfo uriInfo);
+    Response addRoleInProjectToProject(@PathParam("id") Long projectId, @RequestBody RoleInProjectRequest request, @Context UriInfo uriInfo);
 
     @PUT
-    @Path("{id}/members")
+    @Path("{id}/roles")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Update project members",
-            description = "Update the list of project members.")
+    @Operation(summary = "Update rolesInProjects",
+            description = "Update the list of roleInProject.")
     @Tag(ref = "projects")
     @APIResponses(value = {
             @APIResponse(
                     responseCode = "204",
-                    description = "Members updated"
+                    description = "roleInProject updated"
             ),
             @APIResponse(
                     responseCode = "400",
                     description = "Bad parameters (unknown project or user)"
             )
     })
-    Response updateProjectMembers(@PathParam("id") Long projectId, @RequestBody MembersUpdateRequest request, @Context UriInfo uriInfo);
+    Response updateRoleInProject(@PathParam("id") Long projectId, @RequestBody RoleInProjectUpdateRequest request, @Context UriInfo uriInfo);
 
 }

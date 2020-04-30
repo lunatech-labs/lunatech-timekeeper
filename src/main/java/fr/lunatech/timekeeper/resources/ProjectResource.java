@@ -1,8 +1,8 @@
 package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.resources.openapi.ProjectResourceApi;
-import fr.lunatech.timekeeper.services.dtos.MemberRequest;
-import fr.lunatech.timekeeper.services.dtos.MembersUpdateRequest;
+import fr.lunatech.timekeeper.services.dtos.RoleInProjectRequest;
+import fr.lunatech.timekeeper.services.dtos.RoleInProjectUpdateRequest;
 import fr.lunatech.timekeeper.services.dtos.ProjectRequest;
 import fr.lunatech.timekeeper.services.dtos.ProjectResponse;
 import fr.lunatech.timekeeper.services.interfaces.ProjectService;
@@ -50,16 +50,16 @@ public class ProjectResource implements ProjectResourceApi {
 
     @RolesAllowed({"user", "admin"})
     @Override
-    public Response addMemberToProject(Long projectId, @Valid MemberRequest request, UriInfo uriInfo) {
-        final Long memberId = projectService.addMemberToProject(projectId, request);
-        final URI uri = uriInfo.getAbsolutePathBuilder().path(memberId.toString()).build();
+    public Response addRoleInProjectToProject(Long projectId, @Valid RoleInProjectRequest request, UriInfo uriInfo) {
+        final Long roleInProjectId = projectService.addRoleInProjectToProject(projectId, request);
+        final URI uri = uriInfo.getAbsolutePathBuilder().path(roleInProjectId.toString()).build();
         return Response.created(uri).build();
     }
 
     @RolesAllowed({"user", "admin"})
     @Override
-    public Response updateProjectMembers(Long projectId, @Valid MembersUpdateRequest request, UriInfo uriInfo) {
-        projectService.updateProjectMembers(projectId, request);
+    public Response updateRoleInProject(Long projectId, @Valid RoleInProjectUpdateRequest request, UriInfo uriInfo) {
+        projectService.updateRoleInProject(projectId, request);
         return Response.noContent().build();
     }
 }
