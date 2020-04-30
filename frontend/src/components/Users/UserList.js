@@ -10,16 +10,16 @@ const UserList = () => {
     const organizationResponse = useTimeKeeperAPI('/api/organizations');
 
     const userToUserData = (user) => {
-        const projects = user.memberOfprojects
+        const projects = user.rolesInProjects
             .sort((a, b) => b.id - a.id)
-            .map(member => {
+            .map(roleInProject => {
                 const project = projectsResponse.data
                     .filter(project => project.publicAccess === false)
-                    .find(project => member.projectId === project.id);
+                    .find(project => roleInProject.projectId === project.id);
                 return project ?
                     {
                         ...project,
-                        role: member.role
+                        role: roleInProject.role
                     } : undefined;
             })
             .filter(p => !!p);
@@ -81,7 +81,7 @@ const UserList = () => {
         },
         {
             title: 'Role',
-            dataIndex: 'projects',
+            dataIndex: 'rolesInProjects',
             key: 'role',
             render: (value) => value.map(v => <div key={`role-${v.name}-${v.userId}`}>{v.role}</div>)
         }
