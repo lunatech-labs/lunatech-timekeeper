@@ -20,20 +20,20 @@ public final class ProjectResponse {
     private final String clientName;
 
     @NotNull
-    private final List<MemberResponse> members;
+    private final List<RoleInProjectResponse> roles;
     @NotNull
     private final Boolean publicAccess;
 
     @NotNull
     private final Long organizationId;
 
-    public ProjectResponse(@NotNull Long id, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull String clientName, @NotNull List<MemberResponse> members, @NotNull Long organizationId, @NotNull Boolean publicAccess) {
+    public ProjectResponse(@NotNull Long id, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull String clientName, @NotNull List<RoleInProjectResponse> roles, @NotNull Long organizationId, @NotNull Boolean publicAccess) {
         this.id = id;
         this.name = name;
         this.billable = billable;
         this.description = description;
         this.clientName = clientName;
-        this.members = members;
+        this.roles = roles;
         this.publicAccess = publicAccess;
         this.organizationId = organizationId;
     }
@@ -62,8 +62,8 @@ public final class ProjectResponse {
         return publicAccess;
     }
 
-    public List<MemberResponse> getMembers() {
-        return members;
+    public List<RoleInProjectResponse> getRoles() {
+        return roles;
     }
 
     public Long getOrganizationId() { return organizationId; }
@@ -76,7 +76,7 @@ public final class ProjectResponse {
                 ", billable=" + billable +
                 ", description='" + description + '\'' +
                 ", clientName='" + clientName + '\'' +
-                ", members=" + members +
+                ", roles=" + roles +
                 ", organizationId=" + organizationId +
                 '}';
     }

@@ -51,55 +51,55 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Transactional
     @Override
-    public Long addMemberToProject(Long projectId, MemberRequest request) {
-        logger.debug("Add a new member for projectId={} with request={}", projectId, request);
+    public Long addRoleInProjectToProject(Long projectId, RoleInProjectRequest request) {
+        logger.debug("Add a new roleInProject for projectId={} with request={}", projectId, request);
         final var project = getProject(projectId);
-        return addMemberToProject(project, request);
+        return addRoleInProjectToProject(project, request);
     }
 
     @Transactional
     @Override
-    public List<Long> updateProjectMembers(Long projectId, MembersUpdateRequest request) {
-        logger.debug("Modify members for projectId={} with request={}", projectId, request);
+    public List<Long> updateRoleInProject(Long projectId, RoleInProjectUpdateRequest request) {
+        logger.debug("Modify rolesInProject for projectId={} with request={}", projectId, request);
         final var project = getProject(projectId);
 
-        final var membersUpdated = project.members.stream()
-                .map(member -> updateOrDeleteMember(member, request))
+        final var roleInProjectUpdated = project.roles.stream()
+                .map(roleInProject -> updateOrDeleteRoleInProject(roleInProject, request))
                 .filter(Optional::isPresent)
                 .map(Optional::get);
 
-        final var membersAdded = request.getMembers().stream()
-                .map(memberRequest -> addMemberToProject(project, memberRequest));
+        final var rolesInProjectsAdded = request.getRolesInProjects().stream()
+                .map(roleInProjectRequest -> addRoleInProjectToProject(project, roleInProjectRequest));
 
-        return Stream.concat(membersUpdated, membersAdded)
+        return Stream.concat(roleInProjectUpdated, rolesInProjectsAdded)
                 .collect(Collectors.toList());
     }
 
-    private Long addMemberToProject(Project project, MemberRequest request) {
-        return project.members
+    private Long addRoleInProjectToProject(Project project, RoleInProjectRequest request) {
+        return project.roles
                 .stream()
-                .filter(member -> member.isSameUser(request.getUserId()))
+                .filter(role -> role.isSameUser(request.getUserId()))
                 .findFirst()
-                .map(member -> member.id)
+                .map(role -> role.id)
                 .orElseGet(() -> {
-                    final var member = unbind(project, request);
-                    Member.persist(member);
-                    return member.id;
+                    final var role = unbind(project, request);
+                    RoleInProject.persist(role);
+                    return role.id;
                 });
     }
 
-    private Optional<Long> updateOrDeleteMember(Member member, MembersUpdateRequest request) {
-        return request.getMembers()
+    private Optional<Long> updateOrDeleteRoleInProject(RoleInProject roleInProject, RoleInProjectUpdateRequest request) {
+        return request.getRolesInProjects()
                 .stream()
-                .filter(memberRequest -> member.isSameUser(memberRequest.getUserId()))
+                .filter(roleInProjectRequest -> roleInProject.isSameUser(roleInProjectRequest.getUserId()))
                 .findFirst()
-                .map(memberRequest -> {
-                    member.role = memberRequest.getRole();
-                    return member.id;
+                .map(roleInProjectRequest -> {
+                    roleInProject.role = roleInProjectRequest.getRole();
+                    return roleInProject.id;
                 })
                 .or(() -> {
-                    if (member.isPersistent()) {
-                        member.delete();
+                    if (roleInProject.isPersistent()) {
+                        roleInProject.delete();
                     }
                     return Optional.empty();
                 });
@@ -112,8 +112,8 @@ public class ProjectServiceImpl implements ProjectService {
                 project.billable,
                 project.description,
                 project.client != null ? project.client.name : "",
-                project.members.stream()
-                        .map(member -> new MemberResponse(member.id, member.user.id, member.role, member.project.id))
+                project.roles.stream()
+                        .map(roleInProject -> new RoleInProjectResponse(roleInProject.id, roleInProject.user.id, roleInProject.role, roleInProject.project.id))
                         .collect(Collectors.toList()),
                 project.organization.id,
                 project.publicAccess
@@ -133,22 +133,22 @@ public class ProjectServiceImpl implements ProjectService {
         return unbind(new Project(), request);
     }
 
-    private Member unbind(Project project, MemberRequest request) {
-        final var member = new Member();
-        member.project = project;
-        member.user = getUser(request.getUserId());
-        member.role = request.getRole();
-        return member;
+    private RoleInProject unbind(Project project, RoleInProjectRequest request) {
+        final var roleInProject = new RoleInProject();
+        roleInProject.project = project;
+        roleInProject.user = getUser(request.getUserId());
+        roleInProject.role = request.getRole();
+        return roleInProject;
     }
 
     private Project getProject(Long projectId) {
         return Project.<Project>findByIdOptional(projectId)
-                .orElseThrow(() -> new IllegalEntityStateException(String.format("One project is required for member. projectId=%s", projectId)));
+                .orElseThrow(() -> new IllegalEntityStateException(String.format("One project is required for roleInProject. projectId=%s", projectId)));
     }
 
     private User getUser(Long userId) {
         return User.<User>findByIdOptional(userId)
-                .orElseThrow(() -> new IllegalEntityStateException(String.format("One User is required for member. userId=%s", userId)));
+                .orElseThrow(() -> new IllegalEntityStateException(String.format("One User is required for roleInProject. userId=%s", userId)));
     }
 
     private Optional<Client> getClient(Long clientId) {

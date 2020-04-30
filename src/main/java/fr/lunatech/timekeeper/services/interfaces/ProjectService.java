@@ -1,7 +1,7 @@
 package fr.lunatech.timekeeper.services.interfaces;
 
-import fr.lunatech.timekeeper.services.dtos.MemberRequest;
-import fr.lunatech.timekeeper.services.dtos.MembersUpdateRequest;
+import fr.lunatech.timekeeper.services.dtos.RoleInProjectRequest;
+import fr.lunatech.timekeeper.services.dtos.RoleInProjectUpdateRequest;
 import fr.lunatech.timekeeper.services.dtos.ProjectRequest;
 import fr.lunatech.timekeeper.services.dtos.ProjectResponse;
 
@@ -17,7 +17,7 @@ public interface ProjectService {
 
     Optional<Long> updateProject(Long id, ProjectRequest project);
 
-    Long addMemberToProject(Long projectId, MemberRequest request);
+    Long addRoleInProjectToProject(Long projectId, RoleInProjectRequest request);
 
-    List<Long> updateProjectMembers(Long projectId, MembersUpdateRequest request);
+    List<Long> updateRoleInProject(Long projectId, RoleInProjectUpdateRequest request);
 }
