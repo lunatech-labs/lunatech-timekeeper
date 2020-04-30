@@ -91,10 +91,10 @@ public interface ProjectResourceApi {
     Response updateProject(@PathParam("id") Long id, @RequestBody ProjectRequest request);
 
     @POST
-    @Path("{id}/roles")
+    @Path("{id}/members")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Add a roleInProject to a project",
-            description = "Add a roleInProject to a project and determine his role.")
+    @Operation(summary = "Add a user with a role to a project",
+            description = "Add a user to a project and determine his role.")
     @Tag(ref = "projects")
     @APIResponses(value = {
             @APIResponse(
@@ -112,7 +112,7 @@ public interface ProjectResourceApi {
     Response addRoleInProjectToProject(@PathParam("id") Long projectId, @RequestBody RoleInProjectRequest request, @Context UriInfo uriInfo);
 
     @PUT
-    @Path("{id}/roles")
+    @Path("{id}/members")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Update rolesInProjects",
             description = "Update the list of roleInProject.")
