@@ -14,10 +14,10 @@ const MainPage = ({ children, ...rest }) => {
       <SidebarLeft collapsed={collapsed} {...rest} />
       <Layout className="site-layout">
         <TopBar collapsed={collapsed} toggle={() => toggle(!collapsed)} />
-        <Content className="mainContent">
+        <Content id="tk_MainContent" className="mainContent">
           {children}
         </Content>
-        <Footer className="footerTk">Time Keeper v0.1 ©2020 Created by Lunatech</Footer>
+        <Footer className="tk_Footer">Time Keeper v0.1 ©2020 Created by Lunatech</Footer>
       </Layout>
     </Layout>
   );
