@@ -59,11 +59,11 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Transactional
     @Override
-    public List<Long> updateRoleInProject(Long projectId, RoleInProjectUpdateRequest request) {
+    public List<Long> updateRolesInProjects(Long projectId, RoleInProjectUpdateRequest request) {
         logger.debug("Modify rolesInProject for projectId={} with request={}", projectId, request);
         final var project = getProject(projectId);
 
-        final var roleInProjectUpdated = project.members.stream()
+        final var rolesInProjectsUpdated = project.members.stream()
                 .map(member -> updateOrDeleteRoleInProject(member, request))
                 .filter(Optional::isPresent)
                 .map(Optional::get);
@@ -71,7 +71,7 @@ public class ProjectServiceImpl implements ProjectService {
         final var rolesInProjectsAdded = request.getRolesInProjects().stream()
                 .map(roleInProjectRequest -> addRoleInProjectToProject(project, roleInProjectRequest));
 
-        return Stream.concat(roleInProjectUpdated, rolesInProjectsAdded)
+        return Stream.concat(rolesInProjectsUpdated, rolesInProjectsAdded)
                 .collect(Collectors.toList());
     }
 

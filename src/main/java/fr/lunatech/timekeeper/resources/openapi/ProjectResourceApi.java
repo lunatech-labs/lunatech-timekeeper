@@ -109,7 +109,7 @@ public interface ProjectResourceApi {
                     description = "Bad parameters (unknown project or user)"
             )
     })
-    Response addRoleInProjectToProject(@PathParam("id") Long projectId, @RequestBody RoleInProjectRequest request, @Context UriInfo uriInfo);
+    Response addRoleInProject(@PathParam("id") Long projectId, @RequestBody RoleInProjectRequest request, @Context UriInfo uriInfo);
 
     @PUT
     @Path("{id}/members")
@@ -127,6 +127,6 @@ public interface ProjectResourceApi {
                     description = "Bad parameters (unknown project or user)"
             )
     })
-    Response updateRoleInProject(@PathParam("id") Long projectId, @RequestBody RoleInProjectUpdateRequest request, @Context UriInfo uriInfo);
+    Response updateRolesInProjects(@PathParam("id") Long projectId, @RequestBody RoleInProjectUpdateRequest request, @Context UriInfo uriInfo);
 
 }

@@ -50,7 +50,7 @@ public class ProjectResource implements ProjectResourceApi {
 
     @RolesAllowed({"user", "admin"})
     @Override
-    public Response addRoleInProjectToProject(Long projectId, @Valid RoleInProjectRequest request, UriInfo uriInfo) {
+    public Response addRoleInProject(Long projectId, @Valid RoleInProjectRequest request, UriInfo uriInfo) {
         final Long roleInProjectId = projectService.addRoleInProjectToProject(projectId, request);
         final URI uri = uriInfo.getAbsolutePathBuilder().path(roleInProjectId.toString()).build();
         return Response.created(uri).build();
@@ -58,8 +58,8 @@ public class ProjectResource implements ProjectResourceApi {
 
     @RolesAllowed({"user", "admin"})
     @Override
-    public Response updateRoleInProject(Long projectId, @Valid RoleInProjectUpdateRequest request, UriInfo uriInfo) {
-        projectService.updateRoleInProject(projectId, request);
+    public Response updateRolesInProjects(Long projectId, @Valid RoleInProjectUpdateRequest request, UriInfo uriInfo) {
+        projectService.updateRolesInProjects(projectId, request);
         return Response.noContent().build();
     }
 }

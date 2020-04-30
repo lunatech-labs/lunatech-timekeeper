@@ -19,5 +19,5 @@ public interface ProjectService {
 
     Long addRoleInProjectToProject(Long projectId, RoleInProjectRequest request);
 
-    List<Long> updateRoleInProject(Long projectId, RoleInProjectUpdateRequest request);
+    List<Long> updateRolesInProjects(Long projectId, RoleInProjectUpdateRequest request);
 }
