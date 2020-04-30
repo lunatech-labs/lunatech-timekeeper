@@ -1,6 +1,5 @@
 package fr.lunatech.timekeeper.resources.openapi;
 
-import fr.lunatech.timekeeper.resources.security.AuthenticatedUserInfo;
 import fr.lunatech.timekeeper.services.dtos.UserRequest;
 import fr.lunatech.timekeeper.services.dtos.UserResponse;
 import org.eclipse.microprofile.openapi.annotations.Operation;
