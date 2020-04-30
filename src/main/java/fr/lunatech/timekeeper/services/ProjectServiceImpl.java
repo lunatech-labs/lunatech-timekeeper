@@ -59,7 +59,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Transactional
     @Override
-    public List<Long> updateRolesInProjects(Long projectId, RoleInProjectUpdateRequest request) {
+    public List<Long> updateRolesInProject(Long projectId, RoleInProjectUpdateRequest request) {
         logger.debug("Modify rolesInProject for projectId={} with request={}", projectId, request);
         final var project = getProject(projectId);
 

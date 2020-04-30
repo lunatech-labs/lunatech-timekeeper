@@ -127,6 +127,6 @@ public interface ProjectResourceApi {
                     description = "Bad parameters (unknown project or user)"
             )
     })
-    Response updateRolesInProjects(@PathParam("id") Long projectId, @RequestBody RoleInProjectUpdateRequest request, @Context UriInfo uriInfo);
+    Response updateRolesInProject(@PathParam("id") Long projectId, @RequestBody RoleInProjectUpdateRequest request, @Context UriInfo uriInfo);
 
 }

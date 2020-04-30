@@ -58,8 +58,8 @@ public class ProjectResource implements ProjectResourceApi {
 
     @RolesAllowed({"user", "admin"})
     @Override
-    public Response updateRolesInProjects(Long projectId, @Valid RoleInProjectUpdateRequest request, UriInfo uriInfo) {
-        projectService.updateRolesInProjects(projectId, request);
+    public Response updateRolesInProject(Long projectId, @Valid RoleInProjectUpdateRequest request, UriInfo uriInfo) {
+        projectService.updateRolesInProject(projectId, request);
         return Response.noContent().build();
     }
 }
