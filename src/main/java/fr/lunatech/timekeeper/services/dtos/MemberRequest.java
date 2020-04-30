@@ -25,4 +25,12 @@ public final class MemberRequest {
     public Role getRole() {
         return role;
     }
+
+    @Override
+    public String toString() {
+        return "MemberRequest{" +
+                "userId=" + userId +
+                ", role=" + role +
+                '}';
+    }
 }

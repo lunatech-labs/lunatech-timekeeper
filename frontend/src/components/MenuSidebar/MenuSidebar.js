@@ -4,20 +4,37 @@ import {Menu} from 'antd';
 import './MenuSidebar.less';
 import PropTypes from 'prop-types';
 
-import {DesktopOutlined, PieChartOutlined} from '@ant-design/icons';
+import {UserOutlined, DesktopOutlined, PieChartOutlined} from '@ant-design/icons';
+import FolderOpenOutlined from '@ant-design/icons/lib/icons/FolderOpenOutlined';
 
 class MenuSidebar extends Component {
   render() {
     const {location} = this.props;
     return (
-      <Menu defaultSelectedKeys={['/home']} mode="inline" selectedKeys={[location.pathname]}  theme="dark">
-        <Menu.Item key="/home">
-          <PieChartOutlined/>
-          <Link to="/home">Home</Link>
+      <Menu id="tk_Menu" defaultSelectedKeys={['/home']} mode="inline" selectedKeys={[location.pathname]} theme="dark">
+        <Menu.Item className="tk_MenuItem" key="/home">
+          <Link to="/home">
+            <PieChartOutlined/>
+            <span>Home</span>
+          </Link>
         </Menu.Item>
-        <Menu.Item key="/clients">
-          <DesktopOutlined/>
-          <Link to="/clients">Clients</Link>
+        <Menu.Item className="tk_MenuItem" key="/clients">
+          <Link to="/clients">
+            <DesktopOutlined/>
+            <span>Clients</span>
+          </Link>
+        </Menu.Item>
+        <Menu.Item className="tk_MenuItem" key="/users">
+          <Link to="/users">
+            <UserOutlined/>
+            <span>Users</span>
+          </Link>
+        </Menu.Item>
+        <Menu.Item className="tk_MenuItem" key="/projects">
+          <Link to="/projects">
+            <FolderOpenOutlined />
+            <span>Projects</span>
+          </Link>
         </Menu.Item>
       </Menu>
     );
