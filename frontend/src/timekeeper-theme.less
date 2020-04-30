@@ -1,20 +1,59 @@
-// Colors
-@White_Tk: #ffffff;
+// ------------------- COLORS -------------------
+// General variables
+@white_Tk: #ffffff;
 @lightGray_Tk: #9094A2;
 @mediumGray_Tk: #444558;
 @darkGray_Tk: #323342;
 @black_Tk: #272836;
 @red_Tk: #F3252C;
 
-// Layer background
+
+@primary-color: #e9484e; // primary color for all components
+//@link-color: #F3252C; // link color
+@success-color: #52c41a; // success state color
+@warning-color: #faad14; // warning state color
+@error-color: #f5222d; // error state color
+//@heading-color: rgba(0, 0, 0, 0.85); // heading text color
+//@text-color: rgba(0, 0, 0, 0.65); // major text color
+//@text-color-secondary: rgba(0, 0, 0, 0.45); // secondary text color
+//@disabled-color: rgba(0, 0, 0, 0.25); // disable state color
+//@border-radius-base: 4px; // major border radius
+//@border-color-base: #d9d9d9; // major border color
+//@box-shadow-base: 0 2px 8px rgba(0, 0, 0, 0.15); // major shadow for layers
+
+
+// ------------------- LAYOUT BACKGROUND -------------------
 @popover-background: @darkGray_Tk;
 @body-background: @black_Tk;
-.site-layout .site-layout-background {
-  background: @black_Tk;
-}
-
-// Layout
-// ---
 @layout-body-background: @body-background;
 @layout-header-background: @popover-background;
+
+
+// ------------------- TYPOGRAPHY -------------------
+// Title
+@heading-color: @white_Tk;
+@typography-title-font-weight: 400;
+
+// General Text
+@text-color-secondary: @lightGray_Tk;
+@text-color: @white_Tk;
+
+// ------------------- GENERAL -------------------
+@border-radius-base: 6px;
+
+
+// ------------------- BREADCRUMB -------------------
+@breadcrumb-base-color: @text-color-secondary;
+@breadcrumb-last-item-color: @text-color;
+
+
+// ------------------- TABLE -------------------
+@table-bg: @black_Tk;
+@table-header-bg: @black_Tk;
+@table-header-color: @lightGray_Tk;
+@table-row-hover-bg: @mediumGray_Tk;
+
+
+
+
 

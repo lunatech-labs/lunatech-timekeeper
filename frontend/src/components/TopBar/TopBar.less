@@ -1,10 +1,12 @@
-header {
+@import '../../timekeeper-theme.less';
+
+#tk_Header {
+  background: @black_Tk;
   border-bottom: 1px solid rgba(216, 216, 216, .1);
-}
-.trigger {
-  font-size: 18px;
-  line-height: 64px;
-  padding: 0 24px;
-  cursor: pointer;
-  transition: color 0.3s;
+  .anticon[tabindex] {
+    color: @lightGray_Tk;
+    font-size: 18px;
+    line-height: 64px;
+    padding: 0 24px;
+  }
 }
