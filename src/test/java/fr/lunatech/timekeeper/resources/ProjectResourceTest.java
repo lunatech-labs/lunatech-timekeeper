@@ -1,6 +1,5 @@
 package fr.lunatech.timekeeper.resources;
 
-
 import fr.lunatech.timekeeper.models.Role;
 import fr.lunatech.timekeeper.services.dtos.*;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -14,11 +13,10 @@ import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
 
 import static fr.lunatech.timekeeper.models.Profile.Admin;
-
 import static fr.lunatech.timekeeper.models.Profile.User;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
-import static fr.lunatech.timekeeper.resources.TestUtils.*;
+import static fr.lunatech.timekeeper.resources.utils.TestUtils.*;
 import static io.restassured.RestAssured.given;
 import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT;
@@ -216,7 +214,7 @@ class ProjectResourceTest {
                 .get("/api/projects")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is(TestUtils.listOfTasJson(expectedProject, expectedProject1)));
+                .body(is(listOfTasJson(expectedProject, expectedProject1)));
     }
 
     @Test
