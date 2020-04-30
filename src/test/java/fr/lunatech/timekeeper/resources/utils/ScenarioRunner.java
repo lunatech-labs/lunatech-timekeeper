@@ -7,6 +7,7 @@ import io.vavr.Tuple2;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 
+import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
