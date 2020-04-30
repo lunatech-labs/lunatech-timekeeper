@@ -46,6 +46,7 @@ const ClientList = () => {
     <React.Fragment>
       <PageHeader title="Clients" subTitle={clientsResponse.data.length}/>
       <List
+
         itemLayout="horizontal"
         dataSource={clientsResponse.data}
         renderItem={item => (

@@ -11,7 +11,7 @@ const { Header } = Layout;
 
 const TopBar = ({ collapsed, toggle }) => {
   return (
-    <Header className="site-layout-background" style={{ padding: 0 }}>
+    <Header id="tk_Header" className="site-layout-background" style={{ padding: 0 }}>
       {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
         className: 'trigger',
         onClick: toggle,
