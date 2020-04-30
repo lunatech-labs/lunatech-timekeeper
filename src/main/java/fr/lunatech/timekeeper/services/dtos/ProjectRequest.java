@@ -3,6 +3,8 @@ package fr.lunatech.timekeeper.services.dtos;
 import javax.json.bind.annotation.JsonbCreator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
+import java.util.Optional;
 
 public final class ProjectRequest {
 
@@ -12,15 +14,21 @@ public final class ProjectRequest {
     private final Boolean billable;
     @NotNull
     private final String description;
-    @NotNull
+    @Null
     private final Long clientId;
+    @NotNull
+    private final Boolean publicAccess;
+    @NotNull
+    private final Long organizationId;
 
     @JsonbCreator
-    public ProjectRequest(@NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull Long clientId) {
+    public ProjectRequest(@NotBlank String name, @NotNull Boolean billable, @NotNull String description, @Null Long clientId, @NotNull Long organizationId, @NotNull Boolean publicAccess) {
         this.name = name;
         this.billable = billable;
         this.description = description;
         this.clientId = clientId;
+        this.publicAccess = publicAccess;
+        this.organizationId = organizationId;
     }
 
     public String getName() {
@@ -35,7 +43,27 @@ public final class ProjectRequest {
         return description;
     }
 
-    public Long getClientId() {
-        return clientId;
+    public Optional<Long> getClientId() {
+        return Optional.of(clientId);
+    }
+
+    public Boolean isPublicAccess() {
+        return publicAccess;
+    }
+
+    public Long getOrganizationId() {
+        return organizationId;
+    }
+
+    @Override
+    public String toString() {
+        return "ProjectRequest{" +
+                "name='" + name + '\'' +
+                ", billable=" + billable +
+                ", description='" + description + '\'' +
+                ", clientId=" + clientId +
+                ", organizationId=" + organizationId +
+                ", publicAccess=" + publicAccess +
+                '}';
     }
 }

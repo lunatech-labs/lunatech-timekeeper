@@ -8,24 +8,34 @@ public final class ProjectResponse {
 
     @NotNull
     private final Long id;
+
     @NotBlank
     private final String name;
+
     @NotNull
     private final Boolean billable;
+
     @NotNull
     private final String description;
-    @NotNull
-    private final Long clientId;
-    @NotNull
-    private final List<Long> membersId;
+    private final String clientName;
 
-    public ProjectResponse(@NotNull Long id, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull Long clientId, @NotNull List<Long> membersId) {
+    @NotNull
+    private final List<MemberResponse> members;
+    @NotNull
+    private final Boolean publicAccess;
+
+    @NotNull
+    private final Long organizationId;
+
+    public ProjectResponse(@NotNull Long id, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull String clientName, @NotNull List<MemberResponse> members, @NotNull Long organizationId, @NotNull Boolean publicAccess) {
         this.id = id;
         this.name = name;
         this.billable = billable;
         this.description = description;
-        this.clientId = clientId;
-        this.membersId = membersId;
+        this.clientName = clientName;
+        this.members = members;
+        this.publicAccess = publicAccess;
+        this.organizationId = organizationId;
     }
 
     public Long getId() {
@@ -44,11 +54,30 @@ public final class ProjectResponse {
         return description;
     }
 
-    public Long getClientId() {
-        return clientId;
+    public String getClientName() {
+        return clientName;
     }
 
-    public List<Long> getMembersId() {
-        return membersId;
+    public Boolean isPublicAccess() {
+        return publicAccess;
+    }
+
+    public List<MemberResponse> getMembers() {
+        return members;
+    }
+
+    public Long getOrganizationId() { return organizationId; }
+
+    @Override
+    public String toString() {
+        return "ProjectResponse{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", billable=" + billable +
+                ", description='" + description + '\'' +
+                ", clientName='" + clientName + '\'' +
+                ", members=" + members +
+                ", organizationId=" + organizationId +
+                '}';
     }
 }

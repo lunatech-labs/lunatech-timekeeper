@@ -1,6 +1,6 @@
-create sequence hibernate_sequence;
+create sequence public.hibernate_sequence;
 
-create table clients
+create table public.clients
 (
     id int8 not null
         constraint clients_pkey
@@ -9,7 +9,7 @@ create table clients
     name varchar(255)
 );
 
-create table projects
+create table public.projects
 (
     id int8 not null
         constraint projects_pkey
@@ -17,12 +17,12 @@ create table projects
     billable bool,
     description varchar(255),
     name varchar(255),
-    client_id int8 not null
+    client_id int8
         constraint fk_projects_client_id
-            references clients
+            references public.clients
 );
 
-create table task
+create table public.task
 (
     id int8 not null
         constraint task_pkey
@@ -31,7 +31,7 @@ create table task
     name varchar(255)
 );
 
-create table entry
+create table public.entry
 (
     durationtype varchar(31) not null,
     id int8 not null
@@ -41,34 +41,39 @@ create table entry
     startdatetime timestamp(6),
     stopdatetime timestamp(6),
     project_id int8
-        constraint fk_entry_project_id
-            references projects,
+        constraint fk_entries_project_id
+            references public.projects,
     task_id int8
-        constraint fk_entry_task_id
-            references task
+        constraint fk_entries_task_id
+            references public.task
 );
 
-create TABLE public.users (
-	id int8 NOT NULL
-	    constraint users_pkey
+create table public.users
+(
+    id int8 not null
+        constraint users_pkey
             primary key,
-	email varchar(255) not null,
-	firstname varchar(255) not null,
-	lastname varchar(255) not null,
-	profiles varchar(255) NULL
+    email varchar(255)
+        constraint uk_users_email
+            unique,
+    firstname varchar(255),
+    lastname varchar(255),
+    profiles varchar(255)
 );
 
-create table public.members (
-	id int8 NOT null
-	    constraint members_pkey
-	        primary key,
-	role int4,
-	user_id int8 not null
-	    constraint fk_members_user_id
-	        references users,
-	project_id int8 not null
+create table public.members
+(
+    id int8 not null
+        constraint members_pkey
+            primary key,
+    role int4,
+    project_id int8 not null
         constraint fk_members_project_id
-            references projects
+            references public.projects,
+    user_id int8 not null
+        constraint fk_members_user_id
+            references public.users,
+    constraint uk_members_user_id_project_id
+        unique (user_id, project_id)
 );
-
 

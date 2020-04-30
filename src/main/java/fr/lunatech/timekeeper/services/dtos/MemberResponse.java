@@ -12,11 +12,14 @@ public final class MemberResponse {
     private final Long userId;
     @NotNull
     private final Role role;
+    @NotNull
+    private final Long projectId;
 
-    public MemberResponse(@NotNull Long id, @NotNull Long userId, @NotNull Role role) {
+    public MemberResponse(@NotNull Long id, @NotNull Long userId, @NotNull Role role, Long projectId) {
         this.id = id;
         this.userId = userId;
         this.role = role;
+        this.projectId = projectId;
     }
 
     public Long getId() {
@@ -29,5 +32,9 @@ public final class MemberResponse {
 
     public Role getRole() {
         return role;
+    }
+
+    public Long getProjectId() {
+        return projectId;
     }
 }

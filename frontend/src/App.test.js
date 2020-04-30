@@ -2,9 +2,9 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import App from './App';
 // eslint-disable-next-line
-test('renders learn react link', () => {
+test('renders the timekeeper home', () => {
   const { getByText } = render(<App />);
-  const linkElement = getByText(/learn react/i);
+  const linkElement = getByText(/Loading.../i);
   // eslint-disable-next-line
   expect(linkElement).toBeInTheDocument();
 });

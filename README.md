@@ -1,6 +1,12 @@
 # Timekeeper project
 
-[![Codeship Status for lunatech-labs/lunatech-timekeeper](https://app.codeship.com/projects/352930a0-589d-0138-5f43-3e74b59257eb/status?branch=develop)](https://app.codeship.com/projects/391390)
+![Quarkus on develop](https://github.com/lunatech-labs/lunatech-timekeeper/workflows/Java%20CI%20with%20Maven/badge.svg?branch=develop)
+
+![Frontend CI](https://github.com/lunatech-labs/lunatech-timekeeper/workflows/Frontend%20CI/badge.svg?branch=develop)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=lunatech-labs_lunatech-timekeeper&metric=alert_status&token=002c82801d0eb45ccc3a82067c18799929110e67)](https://sonarcloud.io/dashboard?id=lunatech-labs_lunatech-timekeeper)
+
+# Intro
 
 Why another Toggl you might ask… 
 
@@ -21,7 +27,7 @@ All documentation are hold on Confluence pages [here](https://lunatech.atlassian
 
 # Agile Dashboard
 
-Timekeeper dashboard is [here](https://lunatechfr.myjetbrains.com/youtrack/issues/TK)
+Timekeeper dashboard is [here](https://lunatech.atlassian.net/jira/software/projects/TK/boards/8)
 
 # Technical stack 
 
@@ -47,7 +53,7 @@ Read [How to setup your development environment](https://lunatech.atlassian.net/
 
 ## 1 - Database
 
-The postgreSQL server runs on 5435 with Docker. Username and password for dev are defined in docker-compose.yml and application.properties.
+The postgreSQL server runs on 5435 with Docker. Username and password for dev are defined in infrastructure/docker-compose.yml and application.properties.
 
 Run docker-compose as :
 
@@ -61,12 +67,32 @@ If you want to run docker in background :
 
 - PostgreSQL dedicated to TimeKeeper app on port 5435 
 - Keycloak (+ one postgres dedicated to Keycloak) on http://localhost:8081
+- Mailhog (a mail service)
 
 ## 2 - Start TimeKeeper
 
     mvn quarkus:dev
     
 We are using Flyway extension. Database's model will be created at the first run of the app.
+
+## 2.1 - Start TimeKeeper on Debug (with IntelliJ)
+
+Go to Run/Debug Configuration and add the new configuration by using the `+` button and select `Remote`. 
+Use the default configuration (Port 5005).
+
+![DebugConfiguration](https://user-images.githubusercontent.com/45755667/80485053-078d0b00-8959-11ea-9028-e223ef7859f9.png)
+
+By running the `mvn quarkus:dev` command, you will see : `Listening for transport dt_socket at address: 5005`. 
+Then start the debug. You can now use the debug mode.
+
+## 2.2 - Run test
+
+    ./mvnw compile test
+
+⚠️ Don't run your tests directly with IntelliJ ! 
+
+There are some issues, probably with maven, IntelliJ will not compile your current code before running.
+You must use the command first, then run IntelliJ for more readability if the tests failed.
 
 ## 3 - FrontEnd   
 
@@ -109,7 +135,7 @@ Other branches:
 - `develop` is "last-stable" version of the project
 - `feature/TK-*' are ephemeral branches for WIP and PR
 
-Try to reuse YouTrack ID as part of branch : 
+Try to reuse Jira ID as part of branch : 
 
     feature/TK-84-home-page-design
     feature/TK-42-add-list-all-companies
@@ -118,3 +144,8 @@ Try to reuse YouTrack ID as part of branch :
 
 This command configures pre-commit hook and validation.
 
+# Sonarsource
+
+Use mvn with profile "sonar"
+
+    ./mvnw -P sonar verify sonar:sonar

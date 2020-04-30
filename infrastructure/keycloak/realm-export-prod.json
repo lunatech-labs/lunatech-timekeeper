@@ -1,7 +1,7 @@
 {
   "id": "quarkus",
   "realm": "Timekeeper",
-  "displayName": "Timekeeper Dev",
+  "displayName": "Timekeeper Prod",
   "notBefore": 0,
   "revokeRefreshToken": false,
   "refreshTokenMaxReuse": 0,
@@ -1116,6 +1116,21 @@
           }
         },
         {
+          "id": "d9a4444d-66ba-48fe-ab39-5778880ec29b",
+          "name": "organization",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "userinfo.token.claim": "true",
+            "user.attribute": "organization",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "organization",
+            "jsonType.label": "String"
+          }
+        },
+        {
           "id": "18971685-6dd7-420f-9c09-879c4f2d54d8",
           "name": "updated at",
           "protocol": "openid-connect",
@@ -1445,6 +1460,28 @@
         "clientId": "941763132071-skunln329de3efa6j53mpc69eon6vpni.apps.googleusercontent.com",
         "defaultScope": "openid profile email",
         "useJwksUrl": "true"
+      }
+    }
+  ],
+  "identityProviderMappers": [
+    {
+      "id": "cd067ef8-0ce4-4fe2-bc64-d7fd20b81a7a",
+      "name": "hosted G Suite domain",
+      "identityProviderAlias": "google",
+      "identityProviderMapper": "google-user-attribute-mapper",
+      "config": {
+        "userAttribute": "organization",
+        "jsonField": "hd"
+      }
+    },
+    {
+      "id": "c508f05b-1dd0-4660-a9ea-9815caf57a62",
+      "name": "picture",
+      "identityProviderAlias": "google",
+      "identityProviderMapper": "google-user-attribute-mapper",
+      "config": {
+        "userAttribute": "picture",
+        "jsonField": "picture"
       }
     }
   ],

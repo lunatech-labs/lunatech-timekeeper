@@ -5,6 +5,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.util.List;
 
 @Entity
@@ -18,10 +19,16 @@ public class Project extends PanacheEntity {
     @NotNull
     public String description;
     @ManyToOne
-    @JoinColumn(name = "client_id", nullable = false)
-    @NotNull
+    @JoinColumn(name = "client_id")
+    @Null
     public Client client;
     @OneToMany(mappedBy = "project")
     @NotNull
     public List<Member> members;
+    @ManyToOne
+    @JoinColumn(name = "organization_id", nullable = false)
+    @NotNull
+    public Organization organization ;
+    @NotNull
+    public Boolean publicAccess;
 }
