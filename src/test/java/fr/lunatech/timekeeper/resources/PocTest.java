@@ -125,46 +125,23 @@ class PocTest {
     @Test
     void shouldFindAllProjectsV2() {
 
+        var organization = createResource(new OrganizationRequest("NewClient", "organization.org"), "/api/organizations", OrganizationResponse.class);
+
         Tuple2<ClientResponse, List<ProjectResponse>> info = distribResource(
                 ScenarioRunner.<ClientResponse, ClientRequest>createResource(new ClientRequest("NewClient", "NewDescription"), "/api/clients", ClientResponse.class),
-                (ClientResponse clinfo) -> createResource(new ProjectRequest("Pepito", true, "New project", clinfo.getId(), 1L, false), "/api/projects", ProjectResponse.class),
-                (ClientResponse clinfo) -> createResource(new ProjectRequest("Pepito", true, "New project", clinfo.getId(), 1L, false), "/api/projects", ProjectResponse.class));
+                (ClientResponse clinfo) -> createResource(new ProjectRequest("Pepito", true, "New project", clinfo.getId(), organization.getId(), false), "/api/projects", ProjectResponse.class),
+                (ClientResponse clinfo) -> createResource(new ProjectRequest("Pepito", true, "New project", clinfo.getId(), organization.getId(), false), "/api/projects", ProjectResponse.class));
 
-        given()
+        given().auth().preemptive().oauth2(getAdminAccessToken())
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get("/api/projects")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .body(is(TestUtils.<ProjectResponse>listOfTasJson(info._2.map(f -> f))));
-
     }
 
-    @Test
-    void shouldFindAllMembersV2() {
 
-        var organization = createResource(new OrganizationRequest("NewClient", "organization.org"), "/api/organizations", OrganizationResponse.class);
-
-        ProjectResponse projet = createLinkedResource1(
-                createResource(new ClientRequest("NewClient", "NewDescription"), "/api/clients", ClientResponse.class),
-                (ClientResponse cliResp) -> createResource(new ProjectRequest("Pepito", true, "New project", cliResp.getId(), organization.getId(), false), "/api/projects", ProjectResponse.class)
-        );
-
-        System.out.println("projet.getId() " + projet.getId());
-        Tuple2<UserResponse, List<MemberResponse>> resp = distribResource(
-                ScenarioRunner.<UserResponse, UserRequest>createResource(createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin), "/api/users", UserResponse.class),
-                (UserResponse userResp) -> createResource(new MemberRequest(userResp.getId(), Role.Developer), "/api/projects/" + projet.getId() + "/members", MemberResponse.class),
-                (UserResponse userResp) -> createResource(new MemberRequest(userResp.getId(), Role.Developer), "/api/projects/" + projet.getId() + "/members", MemberResponse.class)
-        );
-
-        given()
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/projects/" + projet.getId() + "/members")
-                .then()
-                .statusCode(OK.getStatusCode())
-                .body(is(TestUtils.<MemberResponse>listOfTasJson(resp._2)));
-    }
 
 
 }
