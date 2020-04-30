@@ -15,7 +15,7 @@ import javax.inject.Inject;
 
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
-import static fr.lunatech.timekeeper.resources.TestUtils.toJson;
+import static fr.lunatech.timekeeper.resources.utils.TestUtils.*;
 import static io.restassured.RestAssured.given;
 import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT;
@@ -134,7 +134,7 @@ public class OrganizationResourceTest {
                 .get("/api/organizations")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is(TestUtils.listOfTasJson(expectedOrganization, expectedOrganization2)));
+                .body(is(listOfTasJson(expectedOrganization, expectedOrganization2)));
     }
 
     @Test

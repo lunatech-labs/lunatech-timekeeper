@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
+import java.util.List;
+
 import static fr.lunatech.timekeeper.models.Profile.Admin;
 import static fr.lunatech.timekeeper.models.Profile.User;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
@@ -73,7 +75,7 @@ class UserResourceTest {
 
 
 
-        final UserResponse expectedUserResponse = new UserResponse(2L, "Sam", "Huel", "sam@gmail.com", "sam.png", listOf(Admin), emptyList(),1L);
+        final UserResponse expectedUserResponse = new UserResponse(2L, "Sam", "Huel", "sam@gmail.com", "sam.png", List.of(Admin), emptyList(),1L);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -191,7 +193,7 @@ class UserResourceTest {
 
 
 
-        final UserResponse expectedUserResponse = new UserResponse(2L, "Sam2", "Huel2", "sam@gmail.com", "sam2.png", listOf(User), emptyList(),1L);
+        final UserResponse expectedUserResponse = new UserResponse(2L, "Sam2", "Huel2", "sam@gmail.com", "sam2.png", List.of(User), emptyList(),1L);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -320,8 +322,8 @@ class UserResourceTest {
 
 
 
-        final UserResponse expectedUserResponse1 = new UserResponse(2L, "Sam", "Huel", "sam@gmail.com", "sam.png", listOf(Admin), emptyList(),1L);
-        final UserResponse expectedUserResponse2 = new UserResponse(3L, "Sam2", "Huel2", "sam2@gmail.com", "sam2.png", listOf(User), emptyList(),1L);
+        final UserResponse expectedUserResponse1 = new UserResponse(2L, "Sam", "Huel", "sam@gmail.com", "sam.png", List.of(Admin), emptyList(),1L);
+        final UserResponse expectedUserResponse2 = new UserResponse(3L, "Sam2", "Huel2", "sam2@gmail.com", "sam2.png", List.of(User), emptyList(),1L);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -412,7 +414,7 @@ class UserResourceTest {
 
         final MemberRequest member1 = new MemberRequest(2L, Role.TeamLeader);
         final MemberRequest member2 = new MemberRequest(3L, Role.Developer);
-        final MembersUpdateRequest members = new MembersUpdateRequest(listOf(member1, member2));
+        final MembersUpdateRequest members = new MembersUpdateRequest(List.of(member1, member2));
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -425,8 +427,8 @@ class UserResourceTest {
 
         final MemberResponse expectedMemberResponse1 = new MemberResponse(6L, 2L, Role.TeamLeader, 5L);
         final MemberResponse expectedMemberResponse2 = new MemberResponse(7L, 3L, Role.Developer, 5L);
-        final UserResponse expectedUserResponse1 = new UserResponse(2L, "Sam", "Huel", "sam@gmail.com", "sam.png", listOf(Admin), listOf(expectedMemberResponse1),1L);
-        final UserResponse expectedUserResponse2 = new UserResponse(3L, "Jimmy", "Pastore", "jimmy@gmail.com", "jimmy.png", listOf(User), listOf(expectedMemberResponse2),1L);
+        final UserResponse expectedUserResponse1 = new UserResponse(2L, "Sam", "Huel", "sam@gmail.com", "sam.png", List.of(Admin), List.of(expectedMemberResponse1),1L);
+        final UserResponse expectedUserResponse2 = new UserResponse(3L, "Jimmy", "Pastore", "jimmy@gmail.com", "jimmy.png", List.of(User), List.of(expectedMemberResponse2),1L);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
