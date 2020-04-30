@@ -7,8 +7,8 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Entity
-@Table(name = "members", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "project_id"})})
-public class Member extends PanacheEntity {
+@Table(name = "roleInProject", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "project_id"})})
+public class RoleInProject extends PanacheEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -21,7 +21,7 @@ public class Member extends PanacheEntity {
     @NotNull
     public Project project;
 
-    public final Boolean isMemberOf(Long projectId) {
+    public final Boolean hasRoleInProject(Long projectId) {
         return Objects.equals(project.id, projectId);
     }
 
