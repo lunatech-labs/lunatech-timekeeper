@@ -304,7 +304,7 @@ class ProjectResourceTest {
     }
 
     @Test
-    void shouldAddMemberToProject() {
+    void shouldAddRoleInProjectToProject() {
 
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
@@ -354,19 +354,19 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/4"));
 
-        final MemberRequest member = new MemberRequest(2L, Role.Developer);
+        final RoleInProjectRequest roleInProject = new RoleInProjectRequest(2L, Role.Developer);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(member)
+                .body(roleInProject)
                 .post("/api/projects/4/members")
                 .then()
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/4/members/5"));
 
-        final MemberResponse expectedMemberResponse = new MemberResponse(5L, 2L, Role.Developer, 4L);
-        final ProjectResponse expectedProject = new ProjectResponse(4L, "Pepito", true, "New project", "NewClient", listOf(expectedMemberResponse),1L,false);
+        final RoleInProjectResponse expectedRoleInProjectResponse = new RoleInProjectResponse(5L, 2L, Role.Developer, 4L);
+        final ProjectResponse expectedProject = new ProjectResponse(4L, "Pepito", true, "New project", "NewClient", listOf(expectedRoleInProjectResponse),1L,false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -378,7 +378,7 @@ class ProjectResourceTest {
     }
 
     @Test
-    void shouldNotAddMemberTwiceToProject() {
+    void shouldNotAddRoleInProjectTwiceToProject() {
 
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
@@ -429,23 +429,23 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/4"));
 
-        final MemberRequest member = new MemberRequest(2L, Role.Developer);
+        final RoleInProjectRequest roleInProject = new RoleInProjectRequest(2L, Role.Developer);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(member)
+                .body(roleInProject)
                 .post("/api/projects/4/members")
                 .then()
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/4/members/5"));
 
-        final MemberRequest member2 = new MemberRequest(2L, Role.TeamLeader);
+        final RoleInProjectRequest roleInProject2 = new RoleInProjectRequest(2L, Role.TeamLeader);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(member2)
+                .body(roleInProject2)
                 .post("/api/projects/4/members")
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -502,7 +502,7 @@ class ProjectResourceTest {
     }
 
     @Test
-    void shouldModifyMembersAndGetProjectMembers() {
+    void shouldModifyRolesInProjectsAndGetProjectRoles() {
 
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
@@ -564,21 +564,21 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/5"));
 
-        final MemberRequest member1 = new MemberRequest(2L, Role.TeamLeader);
-        final MemberRequest member2 = new MemberRequest(3L, Role.Developer);
-        final MembersUpdateRequest members = new MembersUpdateRequest(listOf(member1, member2));
+        final RoleInProjectRequest roleInProject1 = new RoleInProjectRequest(2L, Role.TeamLeader);
+        final RoleInProjectRequest roleInProject2 = new RoleInProjectRequest(3L, Role.Developer);
+        final RoleInProjectUpdateRequest rolesInProjects = new RoleInProjectUpdateRequest(listOf(roleInProject1, roleInProject2));
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(members)
+                .body(rolesInProjects)
                 .put("/api/projects/5/members")
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
-        final MemberResponse expectedMemberResponse1 = new MemberResponse(6L, 2L, Role.TeamLeader, 5L);
-        final MemberResponse expectedMemberResponse2 = new MemberResponse(7L, 3L, Role.Developer, 5L);
-        final ProjectResponse expectedProject = new ProjectResponse(5L, "Pepito", true, "New project", "NewClient", listOf(expectedMemberResponse1, expectedMemberResponse2),1L, false);
+        final RoleInProjectResponse expectedRoleInProjectResponse1 = new RoleInProjectResponse(6L, 2L, Role.TeamLeader, 5L);
+        final RoleInProjectResponse expectedRoleInProjectResponse2 = new RoleInProjectResponse(7L, 3L, Role.Developer, 5L);
+        final ProjectResponse expectedProject = new ProjectResponse(5L, "Pepito", true, "New project", "NewClient", listOf(expectedRoleInProjectResponse1, expectedRoleInProjectResponse2),1L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -599,19 +599,19 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/8"));
 
-        final MemberRequest member2_1 = new MemberRequest(8L, Role.TeamLeader);
-        final MembersUpdateRequest members2 = new MembersUpdateRequest(listOf(member2_1));
+        final RoleInProjectRequest roleInProject2_1 = new RoleInProjectRequest(8L, Role.TeamLeader);
+        final RoleInProjectUpdateRequest rolesInProjects2 = new RoleInProjectUpdateRequest(listOf(roleInProject2_1));
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(members2)
+                .body(rolesInProjects2)
                 .put("/api/projects/5/members")
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
-        final MemberResponse expectedMemberResponse2_1 = new MemberResponse(9L, 8L, Role.TeamLeader, 5L);
-        final ProjectResponse expectedProject2 = new ProjectResponse(5L, "Pepito", true, "New project", "NewClient", listOf(expectedMemberResponse2_1),1L, false);
+        final RoleInProjectResponse expectedRoleInProjectResponse2_1 = new RoleInProjectResponse(9L, 8L, Role.TeamLeader, 5L);
+        final ProjectResponse expectedProject2 = new ProjectResponse(5L, "Pepito", true, "New project", "NewClient", listOf(expectedRoleInProjectResponse2_1),1L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()

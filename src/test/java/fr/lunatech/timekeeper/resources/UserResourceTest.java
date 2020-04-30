@@ -346,7 +346,7 @@ class UserResourceTest {
     }
 
     @Test
-    void shouldFindUserMemberOfProject() {
+    void shouldFindUserRoleInProject() {
 
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
@@ -408,23 +408,23 @@ class UserResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/5"));
 
-        final MemberRequest member1 = new MemberRequest(2L, Role.TeamLeader);
-        final MemberRequest member2 = new MemberRequest(3L, Role.Developer);
-        final MembersUpdateRequest members = new MembersUpdateRequest(listOf(member1, member2));
+        final RoleInProjectRequest roleInProject1 = new RoleInProjectRequest(2L, Role.TeamLeader);
+        final RoleInProjectRequest roleInProject2 = new RoleInProjectRequest(3L, Role.Developer);
+        final RoleInProjectUpdateRequest rolesInProjects = new RoleInProjectUpdateRequest(listOf(roleInProject1, roleInProject2));
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
                 .contentType(APPLICATION_JSON)
-                .body(members)
+                .body(rolesInProjects)
                 .put("/api/projects/5/members")
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
 
-        final MemberResponse expectedMemberResponse1 = new MemberResponse(6L, 2L, Role.TeamLeader, 5L);
-        final MemberResponse expectedMemberResponse2 = new MemberResponse(7L, 3L, Role.Developer, 5L);
-        final UserResponse expectedUserResponse1 = new UserResponse(2L, "Sam", "Huel", "sam@gmail.com", "sam.png", listOf(Admin), listOf(expectedMemberResponse1),1L);
-        final UserResponse expectedUserResponse2 = new UserResponse(3L, "Jimmy", "Pastore", "jimmy@gmail.com", "jimmy.png", listOf(User), listOf(expectedMemberResponse2),1L);
+        final RoleInProjectResponse expectedRoleInProjectResponse1 = new RoleInProjectResponse(6L, 2L, Role.TeamLeader, 5L);
+        final RoleInProjectResponse expectedRoleInProjectResponse2 = new RoleInProjectResponse(7L, 3L, Role.Developer, 5L);
+        final UserResponse expectedUserResponse1 = new UserResponse(2L, "Sam", "Huel", "sam@gmail.com", "sam.png", listOf(Admin), listOf(expectedRoleInProjectResponse1),1L);
+        final UserResponse expectedUserResponse2 = new UserResponse(3L, "Jimmy", "Pastore", "jimmy@gmail.com", "jimmy.png", listOf(User), listOf(expectedRoleInProjectResponse2),1L);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
