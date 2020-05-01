@@ -18,53 +18,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 public class ScenarioRunner {
 
-    private final static String SLASH = "/";
-    private final static String LOCATION = "location";
 
-
-    public static <R, P> R createResource(P request, String uri_root, Class<R> type) {
-        return createResource(request, uri_root, Option.none(), type);
-    }
-
-    public static <R, P> R createResource(P request, String uri_root, Option<String> getUri, Class<R> type) {
-        final String adminToken = getAdminAccessToken();
-        System.out.println("URI Post " + uri_root);
-        var reqSpec = given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(request)
-                .post(uri_root);
-
-        System.out.println("Status code " + reqSpec.statusCode());
-        System.out.println("Location " + reqSpec.header(LOCATION));
-
-
-
-        final String id = Iterables.<String>getLast(Arrays.stream(reqSpec.header(LOCATION).split(SLASH)).collect(Collectors.toList()));
-
-        System.out.println(uri_root + " : " +
-                given().auth().preemptive().oauth2(adminToken).when()
-                        .header(ACCEPT, APPLICATION_JSON)
-                        .get(getUri.getOrElse(uri_root) + SLASH + id).statusCode());
-        return given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get(getUri.getOrElse(uri_root) + SLASH + id).body().as(type);
-    }
-
-    public static <P> RType createResource(P request, String uri_root) {
-        final String adminToken = getAdminAccessToken();
-        String location = given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(request)
-                .post(uri_root).header(LOCATION);
-
-        return RType.NoReturn;
-    }
 
     public static <A, B, C, D> D createLinkedResource3(A p, Function1<A, B> m, Function1<B, C> m2, Function1<C, D> m3) {
         return m3.compose(m2.compose(m)).apply(p);
