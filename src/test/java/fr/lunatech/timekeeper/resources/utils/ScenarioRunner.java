@@ -1,20 +1,9 @@
 package fr.lunatech.timekeeper.resources.utils;
 
-import com.google.common.collect.Iterables;
 import io.vavr.Function1;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import io.vavr.collection.List;
-import io.vavr.control.Option;
-
-import javax.validation.constraints.NotNull;
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
-import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
-import static io.restassured.RestAssured.given;
-import static javax.ws.rs.core.HttpHeaders.ACCEPT;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 public class ScenarioRunner {
 

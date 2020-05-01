@@ -78,7 +78,7 @@ class PocTest {
 
         final String token = getAdminAccessToken();
 
-        var clientResponse = create(new ClientRequest("NewClient", "NewDescription"));
+        var clientResponse = create(new ClientRequest("NewClient", "NewDescription"),token);
 
 
         given()
@@ -167,13 +167,14 @@ class PocTest {
 
     @Test
     void shouldFindAllProjectsV2() {
+        final String adminToken = getAdminAccessToken();
 
-        OrganizationResponse organization = ResourceFactory.create(new OrganizationRequest("NewClient", "organization.org"));
+        OrganizationResponse organization = ResourceFactory.create(new OrganizationRequest("NewClient", "organization.org"),adminToken);
 
         Tuple2<ClientResponse, List<ProjectResponse>> info = distribResource(
-                create(new ClientRequest("NewClient", "NewDescription")),
-                (ClientResponse clinfo) -> create(new ProjectRequest("Pepito", true, "New project", clinfo.getId(), organization.getId(), false)),
-                (ClientResponse clinfo) -> create(new ProjectRequest("Pepito", true, "New project", clinfo.getId(), organization.getId(), false)));
+                create(new ClientRequest("NewClient", "NewDescription"),adminToken),
+                (ClientResponse clinfo) -> create(new ProjectRequest("Pepito", true, "New project", clinfo.getId(), organization.getId(), false),adminToken),
+                (ClientResponse clinfo) -> create(new ProjectRequest("Pepito", true, "New project", clinfo.getId(), organization.getId(), false),adminToken));
 
         given().auth().preemptive().oauth2(getAdminAccessToken())
                 .when()
