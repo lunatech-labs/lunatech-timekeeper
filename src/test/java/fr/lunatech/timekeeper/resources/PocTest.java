@@ -1,7 +1,6 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.models.Role;
-import fr.lunatech.timekeeper.resources.utils.ScenarioRunner;
+import fr.lunatech.timekeeper.resources.utils.ResourceFactory;
 import fr.lunatech.timekeeper.resources.utils.TestUtils;
 import fr.lunatech.timekeeper.services.dtos.*;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -9,7 +8,6 @@ import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.vavr.Tuple2;
 import io.vavr.collection.List;
-import io.vavr.control.Option;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
@@ -17,14 +15,12 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
-import java.util.Optional;
-
 import static fr.lunatech.timekeeper.models.Profile.Admin;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
-import static fr.lunatech.timekeeper.resources.utils.ScenarioRunner.*;
-import static fr.lunatech.timekeeper.resources.utils.TestUtils.createUserRequest;
-import static fr.lunatech.timekeeper.resources.utils.TestUtils.listOfTasJson;
+import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
+import static fr.lunatech.timekeeper.resources.utils.ScenarioRunner.distribResource;
+import static fr.lunatech.timekeeper.resources.utils.TestUtils.*;
 import static io.restassured.RestAssured.given;
 import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT;
@@ -49,6 +45,53 @@ class PocTest {
         flyway.clean();
         flyway.migrate();
     }
+
+    @Test
+    void shouldCreateClientWhenAdminProfile() {
+
+        final String token = getAdminAccessToken();
+
+        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
+        given()
+                .auth().preemptive().oauth2(token)
+                .when()
+                .contentType(APPLICATION_JSON)
+                .body(client)
+                .post("/api/clients")
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .header(LOCATION, endsWith("/api/clients/1"));
+
+        final ClientResponse expectedClient = new ClientResponse(1L, "NewClient", "NewDescription", emptyList());
+        given()
+                .auth().preemptive().oauth2(token)
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/clients/1")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .body(is(toJson(expectedClient)));
+    }
+
+   @Test
+    void shouldCreateClientWhenAdminProfileV2() {
+
+        final String token = getAdminAccessToken();
+
+        var clientResponse = create(new ClientRequest("NewClient", "NewDescription"));
+
+
+        given()
+                .auth().preemptive().oauth2(token)
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get("/api/clients/"+clientResponse.getId())
+                .then()
+                .statusCode(OK.getStatusCode())
+                .body(is(toJson(clientResponse)));
+    }
+
+
 
     @Test
     void shouldFindAllProjectsV1() {
@@ -125,12 +168,12 @@ class PocTest {
     @Test
     void shouldFindAllProjectsV2() {
 
-        var organization = createResource(new OrganizationRequest("NewClient", "organization.org"), "/api/organizations", OrganizationResponse.class);
+        OrganizationResponse organization = ResourceFactory.create(new OrganizationRequest("NewClient", "organization.org"));
 
         Tuple2<ClientResponse, List<ProjectResponse>> info = distribResource(
-                ScenarioRunner.<ClientResponse, ClientRequest>createResource(new ClientRequest("NewClient", "NewDescription"), "/api/clients", ClientResponse.class),
-                (ClientResponse clinfo) -> createResource(new ProjectRequest("Pepito", true, "New project", clinfo.getId(), organization.getId(), false), "/api/projects", ProjectResponse.class),
-                (ClientResponse clinfo) -> createResource(new ProjectRequest("Pepito", true, "New project", clinfo.getId(), organization.getId(), false), "/api/projects", ProjectResponse.class));
+                create(new ClientRequest("NewClient", "NewDescription")),
+                (ClientResponse clinfo) -> create(new ProjectRequest("Pepito", true, "New project", clinfo.getId(), organization.getId(), false)),
+                (ClientResponse clinfo) -> create(new ProjectRequest("Pepito", true, "New project", clinfo.getId(), organization.getId(), false)));
 
         given().auth().preemptive().oauth2(getAdminAccessToken())
                 .when()
