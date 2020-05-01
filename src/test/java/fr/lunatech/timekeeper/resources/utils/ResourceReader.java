@@ -1,13 +1,13 @@
 package fr.lunatech.timekeeper.resources.utils;
 
-import fr.lunatech.timekeeper.services.dtos.*;
+import io.restassured.response.ValidatableResponse;
 
-import static fr.lunatech.timekeeper.resources.utils.RessourceDefinition.*;
+import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.*;
 import static java.lang.String.format;
 
 public class ResourceReader {
 
-    public static <R> R read(Long id, Class<R> responseType) {
+    public static <R> R read(Long id, Class<R> responseType, String token) {
         final String uriResource;
         if (responseType == ProjectDef.typeDef.ResponseType) {
             uriResource = "/api/projects";
@@ -21,7 +21,11 @@ public class ResourceReader {
             throw new IllegalStateException(format("ResourceType provided is unknown  %s", responseType));
         }
 
-        return AbstractResourceFactory.<R>readResource(id, uriResource, responseType);
+        return AbstractResourceFactory.<R>readResource(id, uriResource, responseType, token);
+    }
+
+    public static ValidatableResponse readValidation(String uriResource, String token) {
+        return AbstractResourceFactory.readResourceValidation(uriResource, token);
     }
 
 

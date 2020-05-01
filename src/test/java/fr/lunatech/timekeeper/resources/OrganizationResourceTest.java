@@ -1,5 +1,6 @@
 package fr.lunatech.timekeeper.resources;
 
+import fr.lunatech.timekeeper.models.Organization;
 import fr.lunatech.timekeeper.services.dtos.ClientRequest;
 import fr.lunatech.timekeeper.services.dtos.OrganizationRequest;
 import fr.lunatech.timekeeper.services.dtos.OrganizationResponse;
@@ -15,7 +16,13 @@ import javax.inject.Inject;
 
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
-import static fr.lunatech.timekeeper.resources.utils.TestUtils.*;
+import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ClientDef;
+import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.OrganizationDef;
+import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
+import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
+import static fr.lunatech.timekeeper.resources.utils.ResourceReader.readValidation;
+import static fr.lunatech.timekeeper.resources.utils.TestUtils.listOfTasJson;
+import static fr.lunatech.timekeeper.resources.utils.TestUtils.toJson;
 import static io.restassured.RestAssured.given;
 import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT;
@@ -45,26 +52,10 @@ public class OrganizationResourceTest {
 
         final String token = getAdminAccessToken();
 
-        final OrganizationRequest organization = new OrganizationRequest("New Organization", "organization.org");
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(organization)
-                .post("/api/organizations")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organizations/1"));
-
-        final OrganizationResponse expectedOrganization = new OrganizationResponse(1L, "New Organization", "organization.org", emptyList(), emptyList());
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/organizations/1")
-                .then()
+        final var organization = create(new OrganizationRequest("New Organization", "organization.org"), token);
+        readValidation(String.format("%s/%s", OrganizationDef.uri, organization.getId()), token)
                 .statusCode(OK.getStatusCode())
-                .body(is(toJson(expectedOrganization)));
+                .body(is(toJson(organization)));
     }
 
     @Test
@@ -88,12 +79,7 @@ public class OrganizationResourceTest {
 
         final String token = getUserAccessToken();
 
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/organizations/4")
-                .then()
+        readValidation(String.format("%s/%s", OrganizationDef.uri, 4), token)
                 .statusCode(NOT_FOUND.getStatusCode());
     }
 
@@ -103,38 +89,12 @@ public class OrganizationResourceTest {
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final OrganizationRequest organization = new OrganizationRequest("New Organization", "organization.org");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(organization)
-                .post("/api/organizations")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organizations/1"));
+        final var organization = create(new OrganizationRequest("New Organization", "organization.org"), adminToken);
+        final var organization2 = create(new OrganizationRequest("New Organization 2", "organization.org"), adminToken);
 
-        final OrganizationRequest organization2 = new OrganizationRequest("New Organization 2", "organization.org");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(organization2)
-                .post("/api/organizations")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organizations/2"));
-
-        final OrganizationResponse expectedOrganization = new OrganizationResponse(1L, "New Organization", "organization.org", emptyList(), emptyList());
-        final OrganizationResponse expectedOrganization2 = new OrganizationResponse(2L, "New Organization 2", "organization.org", emptyList(), emptyList());
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/organizations")
-                .then()
+        readValidation(OrganizationDef.uri, token)
                 .statusCode(OK.getStatusCode())
-                .body(is(listOfTasJson(expectedOrganization, expectedOrganization2)));
+                .body(is(listOfTasJson(organization, organization2)));
     }
 
     @Test
@@ -142,12 +102,7 @@ public class OrganizationResourceTest {
 
         final String token = getUserAccessToken();
 
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/organizations")
-                .then()
+        readValidation(OrganizationDef.uri, token)
                 .statusCode(OK.getStatusCode())
                 .body(is("[]"));
     }
@@ -157,34 +112,11 @@ public class OrganizationResourceTest {
 
         final String token = getAdminAccessToken();
 
-        final OrganizationRequest organization = new OrganizationRequest("New Organization", "organization.org");
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(organization)
-                .post("/api/organizations")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organizations/1"));
+        final var organization = create(new OrganizationRequest("New Organization", "organization.org"), token);
+        update(new OrganizationRequest("New Organization 2", "organization.org"), String.format("%s/%s", OrganizationDef.uri, organization.getId()), token);
 
-        final OrganizationRequest organization2 = new OrganizationRequest("New Organization 2", "organization.org");
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(organization2)
-                .put("/api/organizations/1")
-                .then()
-                .statusCode(NO_CONTENT.getStatusCode());
-
-        final OrganizationResponse expectedOrganization = new OrganizationResponse(1L, "New Organization 2", "organization.org", emptyList(), emptyList());
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/organizations/1")
-                .then()
+        final OrganizationResponse expectedOrganization = new OrganizationResponse(organization.getId(), "New Organization 2", "organization.org", emptyList(), emptyList());
+        readValidation(String.format("%s/%s", OrganizationDef.uri, organization.getId()), token)
                 .statusCode(OK.getStatusCode())
                 .body(is(toJson(expectedOrganization)));
     }
@@ -195,16 +127,7 @@ public class OrganizationResourceTest {
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final OrganizationRequest organization = new OrganizationRequest("New Organization", "organization.org");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(organization)
-                .post("/api/organizations")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organizations/1"));
+        final var organization = create(new OrganizationRequest("New Organization", "organization.org"), adminToken);
 
         final OrganizationRequest organization2 = new OrganizationRequest("New Organization 2", "organization.org");
         given()
@@ -212,7 +135,7 @@ public class OrganizationResourceTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(organization2)
-                .put("/api/organizations/1")
+                .put(String.format("%s/%s", OrganizationDef.uri, organization.getId()))
                 .then()
                 .statusCode(FORBIDDEN.getStatusCode());
     }
