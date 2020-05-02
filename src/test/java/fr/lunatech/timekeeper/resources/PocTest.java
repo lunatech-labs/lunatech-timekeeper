@@ -1,12 +1,14 @@
 package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.resources.utils.ResourceFactory;
+import fr.lunatech.timekeeper.resources.utils.ResourceReader;
 import fr.lunatech.timekeeper.resources.utils.TestUtils;
 import fr.lunatech.timekeeper.services.dtos.*;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.vavr.Tuple2;
+import io.vavr.Tuple3;
 import io.vavr.collection.List;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterEach;
@@ -18,6 +20,7 @@ import javax.inject.Inject;
 import static fr.lunatech.timekeeper.models.Profile.Admin;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
+import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ProjectDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ScenarioRunner.distribResource;
 import static fr.lunatech.timekeeper.resources.utils.TestUtils.*;
@@ -73,25 +76,22 @@ class PocTest {
                 .body(is(toJson(expectedClient)));
     }
 
-   @Test
+    @Test
     void shouldCreateClientWhenAdminProfileV2() {
 
         final String token = getAdminAccessToken();
 
-        var clientResponse = create(new ClientRequest("NewClient", "NewDescription"),token);
-
+        var clientResponse = create(new ClientRequest("NewClient", "NewDescription"), token);
 
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/clients/"+clientResponse.getId())
+                .get("/api/clients/" + clientResponse.getId())
                 .then()
                 .statusCode(OK.getStatusCode())
                 .body(is(toJson(clientResponse)));
     }
-
-
 
     @Test
     void shouldFindAllProjectsV1() {
@@ -169,23 +169,16 @@ class PocTest {
     void shouldFindAllProjectsV2() {
         final String adminToken = getAdminAccessToken();
 
-        OrganizationResponse organization = ResourceFactory.create(new OrganizationRequest("NewClient", "organization.org"),adminToken);
+        Tuple3<ClientResponse,OrganizationResponse, List<ProjectResponse>> info = distribResource(
+                create(new ClientRequest("NewClient", "NewDescription"), adminToken),
+                create(new OrganizationRequest("NewClient", "organization.org"), adminToken),
+                (ClientResponse clinfo,OrganizationResponse orga) -> create(new ProjectRequest("Pepito", true, "New project", clinfo.getId(), orga.getId(), false), adminToken),
+                (ClientResponse clinfo,OrganizationResponse orga) -> create(new ProjectRequest("Pepito", true, "New project", clinfo.getId(), orga.getId(), false), adminToken));
 
-        Tuple2<ClientResponse, List<ProjectResponse>> info = distribResource(
-                create(new ClientRequest("NewClient", "NewDescription"),adminToken),
-                (ClientResponse clinfo) -> create(new ProjectRequest("Pepito", true, "New project", clinfo.getId(), organization.getId(), false),adminToken),
-                (ClientResponse clinfo) -> create(new ProjectRequest("Pepito", true, "New project", clinfo.getId(), organization.getId(), false),adminToken));
-
-        given().auth().preemptive().oauth2(getAdminAccessToken())
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/projects")
-                .then()
+        ResourceReader.readValidation(ProjectDef.uri, adminToken)
                 .statusCode(OK.getStatusCode())
-                .body(is(TestUtils.<ProjectResponse>listOfTasJson(info._2.map(f -> f))));
+                .body(is(TestUtils.<ProjectResponse>listOfTasJson(info._3.map(f -> f))));
     }
-
-
 
 
 }

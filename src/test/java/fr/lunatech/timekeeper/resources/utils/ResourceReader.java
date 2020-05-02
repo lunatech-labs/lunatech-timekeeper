@@ -7,25 +7,39 @@ import static java.lang.String.format;
 
 public class ResourceReader {
 
+    /**
+     * Reads one resource from API and return the result with type defined by responseType parameter
+     * @param id - Resource id
+     * @param responseType type of instance returned by read method
+     * @param token API token
+     * @param <R> Concret type returned by read method
+     * @return Resource
+     */
     public static <R> R read(Long id, Class<R> responseType, String token) {
         final String uriResource;
         if (responseType == ProjectDef.typeDef.ResponseType) {
-            uriResource = "/api/projects";
+            uriResource = ProjectDef.uri;
         } else if (responseType == ClientDef.typeDef.ResponseType) {
-            uriResource = "/api/clients";
+            uriResource = ClientDef.uri;
         } else if (responseType == UserDef.typeDef.ResponseType) {
-            uriResource = "/api/users";
+            uriResource = UserDef.uri;
         } else if (responseType == OrganizationDef.typeDef.ResponseType) {
-            uriResource = "/api/organizations";
+            uriResource = OrganizationDef.uri;
         } else {
             throw new IllegalStateException(format("ResourceType provided is unknown  %s", responseType));
         }
 
-        return AbstractResourceFactory.<R>readResource(id, uriResource, responseType, token);
+        return InternalResourceUtils.<R>readResource(id, uriResource, responseType, token);
     }
 
+    /**
+     * Reads Resource from API and returns the corresponding validatable object to apply assertions
+     * @param uriResource
+     * @param token
+     * @return
+     */
     public static ValidatableResponse readValidation(String uriResource, String token) {
-        return AbstractResourceFactory.readResourceValidation(uriResource, token);
+        return InternalResourceUtils.readResourceValidation(uriResource, token);
     }
 
 

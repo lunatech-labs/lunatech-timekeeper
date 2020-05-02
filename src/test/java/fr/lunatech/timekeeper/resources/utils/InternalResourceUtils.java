@@ -14,11 +14,14 @@ import static javax.ws.rs.core.HttpHeaders.ACCEPT;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 
-final public class AbstractResourceFactory {
+/**
+ * InternalResourceUtils provided abstract implementations of resource interaction
+ */
+final class InternalResourceUtils {
 
     private final static String SLASH = "/";
     private final static String LOCATION = "location";
-    private static Logger logger = LoggerFactory.getLogger(AbstractResourceFactory.class);
+    private final static Logger logger = LoggerFactory.getLogger(InternalResourceUtils.class);
 
     static <R, P> R createResource(P request, String uri_root, Class<R> type, String token) {
         return createResource(request, uri_root, Option.none(), type, token);
