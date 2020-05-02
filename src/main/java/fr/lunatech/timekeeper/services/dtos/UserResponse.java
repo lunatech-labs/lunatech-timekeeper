@@ -24,7 +24,7 @@ public final class UserResponse {
     @NotEmpty
     private final List<Profile> profiles;
     @NotNull
-    private final List<MemberResponse> memberOfprojects;
+    private final List<Project> projects;
     @NotNull
     private final Long organizationId;
 
@@ -35,7 +35,7 @@ public final class UserResponse {
             @NotBlank @Email String email,
             @NotNull String picture,
             @NotEmpty List<Profile> profiles,
-            @NotNull List<MemberResponse> memberOfprojects,
+            @NotNull List<Project> projects,
             @NotNull Long organizationId
     ) {
         this.id = id;
@@ -44,7 +44,7 @@ public final class UserResponse {
         this.email = email;
         this.picture = picture;
         this.profiles = profiles;
-        this.memberOfprojects = memberOfprojects;
+        this.projects = projects;
         this.organizationId = organizationId;
     }
 
@@ -72,11 +72,56 @@ public final class UserResponse {
         return profiles;
     }
 
-    public List<MemberResponse> getMemberOfprojects() {
-        return memberOfprojects;
+    public List<Project> getProjects() {
+        return projects;
     }
 
     public Long getOrganizationId() {
         return organizationId;
+    }
+
+
+    /* 🎁 UserResponse.Project */
+    public static final class Project {
+
+        @NotNull
+        private final Long id;
+
+        @NotNull
+        private final Boolean manager;
+
+        @NotNull
+        private final String name;
+
+        @NotNull
+        private final Boolean publicAccess;
+
+        public Project(
+                @NotNull Long id,
+                @NotNull Boolean manager,
+                @NotNull String name,
+                @NotNull Boolean publicAccess
+        ) {
+            this.id = id;
+            this.manager = manager;
+            this.name = name;
+            this.publicAccess = publicAccess;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public Boolean isManager() {
+            return manager;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Boolean isPublicAccess() {
+            return publicAccess;
+        }
     }
 }

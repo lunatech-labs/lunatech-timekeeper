@@ -49,7 +49,7 @@ public class KeycloakTestResource implements QuarkusTestResourceLifecycleManager
         try {
             RestAssured
                     .given()
-                    .auth().oauth2(getKeycloakAdminAccessToken())
+                    .auth().preemptive().oauth2(getKeycloakAdminAccessToken())
                     .contentType("application/json")
                     .body(JsonSerialization.writeValueAsBytes(realm))
                     .when()

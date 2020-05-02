@@ -2,7 +2,6 @@ package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.Organization;
 import fr.lunatech.timekeeper.models.User;
-import fr.lunatech.timekeeper.services.dtos.MemberResponse;
 import fr.lunatech.timekeeper.services.dtos.UserRequest;
 import fr.lunatech.timekeeper.services.dtos.UserResponse;
 import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
@@ -85,13 +84,13 @@ public class UserServiceImpl implements UserService {
     }
 
     private UserResponse bind(User user) {
-        final List<MemberResponse> members = (user.members == null)
+        final List<UserResponse.Project> projects = (user.projects == null)
                 ? emptyList()
-                : user.members.stream()
-                .map(member -> new MemberResponse(member.id, member.user.id, member.role, member.project.id))
+                : user.projects.stream()
+                .map(projectUser -> new UserResponse.Project(projectUser.id, projectUser.manager, projectUser.project.name, projectUser.project.publicAccess))
                 .collect(Collectors.toList());
 
-        return new UserResponse(user.id, user.firstName, user.lastName, user.email, user.picture, user.profiles, members, user.organization.id);
+        return new UserResponse(user.id, user.firstName, user.lastName, user.email, user.picture, user.profiles, projects, user.organization.id);
     }
 
     private User unbind(User user, UserRequest request, String organization) {
