@@ -2,42 +2,19 @@ import React from 'react';
 import {Breadcrumb, Typography, Alert, Avatar, Spin, Table} from 'antd';
 import {useTimeKeeperAPI} from '../../utils/services';
 import './UserList.less';
+import CheckCircleFilled from '@ant-design/icons/es/icons/CheckCircleFilled';
 
 const { Title } = Typography;
 
 const UserList = () => {
   const usersResponse = useTimeKeeperAPI('/api/users');
-  const projectsResponse = useTimeKeeperAPI('/api/projects');
-  const organizationResponse = useTimeKeeperAPI('/api/organizations');
 
   const userToUserData = (user) => {
-    const projects = user.memberOfprojects
-      .sort((a, b) => b.id - a.id)
-      .map(member => {
-        const project = projectsResponse.data
-          .filter(project => project.publicAccess === false)
-          .find(project => member.projectId === project.id);
-        return project ?
-          {
-            ...project,
-            role: member.role
-          } : undefined;
-      })
-      .filter(p => !!p);
     return {
       ...user,
       key: user.id,
-      name: `${user.firstName} ${user.lastName}`,
-      projects: projects
+      name: `${user.firstName} ${user.lastName}`
     };
-  };
-
-  const organizationIdToOrganization = (organizationId) => {
-    if (organizationResponse.data) {
-      return organizationResponse.data.filter(
-        organization => organization.id === organizationId);
-    }
-    return [];
   };
 
   // local component created to avoid an es-lint error
@@ -69,26 +46,21 @@ const UserList = () => {
       render: (value) => value.join(', ')
     },
     {
-      title: 'Organization',
-      key: 'organization',
-      dataIndex: 'organizationId',
-      render: (value) => organizationIdToOrganization(value).map(organization => organization.name)
-    },
-    {
       title: 'Project',
       dataIndex: 'projects',
       key: 'project',
       render: (value) => value.map(v => <div key={`project-${v.name}-${v.userId}`}>{v.name}</div>)
     },
     {
-      title: 'Role',
+      title: 'Manager',
       dataIndex: 'projects',
-      key: 'role',
-      render: (value) => value.map(v => <div key={`role-${v.name}-${v.userId}`}>{v.role}</div>)
+      key: 'manager',
+      align: 'center',
+      render: (value) => value.map(v => <div key={`role-${v.name}-${v.userId}`}>{value ? <CheckCircleFilled style={{ fontSize: '18px'}} /> : '' }</div>)
     }
   ];
 
-  if (usersResponse.loading || projectsResponse.loading) {
+  if (usersResponse.loading) {
     return (
       <React.Fragment>
         <Spin size="large">
@@ -97,7 +69,7 @@ const UserList = () => {
       </React.Fragment>
     );
   }
-  if (usersResponse.error || projectsResponse.error) {
+  if (usersResponse.error) {
     return (
       <React.Fragment>
         <Alert title='Server error'

@@ -1,7 +1,8 @@
 package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.*;
-import fr.lunatech.timekeeper.services.dtos.*;
+import fr.lunatech.timekeeper.services.dtos.ProjectRequest;
+import fr.lunatech.timekeeper.services.dtos.ProjectResponse;
 import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.services.interfaces.ProjectService;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,38 +22,61 @@ public class ProjectServiceImpl implements ProjectService {
     private static Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
 
     @Override
-    public Optional<ProjectResponse> findProjectById(Long id) {
-        return Project.<Project>findByIdOptional(id).map(this::bind);
+    public Optional<ProjectResponse> findProjectById(Long organizationId, Long id) {
+        return Project.<Project>findByIdOptional(id)
+                //TODO .filter(checkAccess)
+                .map(ProjectResponse::bind);
     }
 
     @Override
-    public List<ProjectResponse> listAllProjects() {
+    public List<ProjectResponse> listAllProjects(Long organizationId) {
         try (final Stream<Project> projects = Project.streamAll()) {
-            return projects.map(this::bind).collect(Collectors.toList());
+            return projects
+                    //TODO .filter(checkAccess)
+                    .map(ProjectResponse::bind)
+                    .collect(Collectors.toList());
         }
     }
 
     @Transactional
     @Override
-    public Long createProject(ProjectRequest request) {
-        logger.debug("Create a new project with {}", request);
-        final var project = unbind(request);
-        project.organization = Organization.<Organization>findByIdOptional(request.getOrganizationId())
-                .orElseThrow(() -> new IllegalEntityStateException(String.format("Unknown organization. organization id=%s", request.getOrganizationId())));
+    public Long createProject(Long organizationId, ProjectRequest request) {
+        logger.debug("Create a new project with organization={}, request={}", organizationId, request);
+        final Project project = request.unbind(this::getClient, this::getUser);
+        project.organization = Organization.<Organization>findByIdOptional(organizationId)
+                .orElseThrow(() -> new IllegalEntityStateException(String.format("Unknown organization. organization id=%s", organizationId)));
         Project.persist(project);
         return project.id;
     }
 
     @Transactional
     @Override
-    public Optional<Long> updateProject(Long id, ProjectRequest request) {
+    public Optional<Long> updateProject(Long organizationId, Long id, ProjectRequest request) {
         logger.debug("Modify project for projectId={} with request={}", id, request);
-        return Project.<Project>findByIdOptional(id).map(project -> unbind(project, request).id);
+        return Project.<Project>findByIdOptional(id)
+                //TODO .filter(checkAccess)
+                .map(project -> request.unbind(project, this::getClient, this::getUser))
+                .map(project -> {
+                    project.users.forEach(projectUser -> {
+                        if (projectUserNotFoundInRequest(projectUser, request)) {
+                            projectUser.delete();
+                        }
+                    });
+                    return project.id;
+                });
     }
 
+    private boolean projectUserNotFoundInRequest(ProjectUser projectUser, ProjectRequest request) {
+        return request.getUsers()
+                .stream()
+                .noneMatch(o -> Objects.equals(projectUser.id, o.getId())) && projectUser.isPersistent();
+    }
+
+
+/*
     @Transactional
     @Override
-    public Long addMemberToProject(Long projectId, MemberRequest request) {
+    public Long addMemberToProject(Long projectId, ProjectUserRequest request) {
         logger.debug("Add a new member for projectId={} with request={}", projectId, request);
         final var project = getProject(projectId);
         return addMemberToProject(project, request);
@@ -75,7 +100,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .collect(Collectors.toList());
     }
 
-    private Long addMemberToProject(Project project, MemberRequest request) {
+    private Long addMemberToProject(Project project, ProjectUserRequest request) {
         return project.members
                 .stream()
                 .filter(member -> member.isSameUser(request.getUserId()))
@@ -83,12 +108,12 @@ public class ProjectServiceImpl implements ProjectService {
                 .map(member -> member.id)
                 .orElseGet(() -> {
                     final var member = unbind(project, request);
-                    Member.persist(member);
+                    ProjectUser.persist(member);
                     return member.id;
                 });
     }
 
-    private Optional<Long> updateOrDeleteMember(Member member, MembersUpdateRequest request) {
+    private Optional<Long> updateOrDeleteMember(ProjectUser member, MembersUpdateRequest request) {
         return request.getMembers()
                 .stream()
                 .filter(memberRequest -> member.isSameUser(memberRequest.getUserId()))
@@ -103,48 +128,52 @@ public class ProjectServiceImpl implements ProjectService {
                     }
                     return Optional.empty();
                 });
-    }
+    }*/
 
-    private ProjectResponse bind(Project project) {
-        return new ProjectResponse(
-                project.id,
-                project.name,
-                project.billable,
-                project.description,
-                project.client != null ? project.client.name : "",
-                project.members.stream()
-                        .map(member -> new MemberResponse(member.id, member.user.id, member.role, member.project.id))
-                        .collect(Collectors.toList()),
-                project.organization.id,
-                project.publicAccess
-        );
+
+
+  /*  private Project unbind(ProjectRequest request) {
+        return unbind(new Project(), request);
     }
 
     private Project unbind(Project project, ProjectRequest request) {
         project.name = request.getName();
         project.billable = request.isBillable();
         project.description = request.getDescription();
-        project.client = request.getClientId().flatMap(this::getClient).orElse(null);
+        project.client = Optional.of(0L)
+                .flatMap(this::getClient)
+                .orElse(null);
+        project.users = request.getUsers()
+                .stream()
+                .map(user -> {
+                    final var projectUser = new ProjectUser();
+                    projectUser.project = project;
+                    projectUser.user = getUser(user.getId());
+                    projectUser.manager = user.isManager();
+                    return projectUser;
+                })
+                .collect(Collectors.toList());
         project.publicAccess = request.isPublicAccess();
         return project;
-    }
+    }*/
 
-    private Project unbind(ProjectRequest request) {
-        return unbind(new Project(), request);
-    }
-
-    private Member unbind(Project project, MemberRequest request) {
-        final var member = new Member();
+/*
+    private ProjectUser unbind(Project project, ProjectUserRequest request) {
+        final var member = new ProjectUser();
         member.project = project;
         member.user = getUser(request.getUserId());
         member.role = request.getRole();
         return member;
     }
+    */
 
-    private Project getProject(Long projectId) {
-        return Project.<Project>findByIdOptional(projectId)
-                .orElseThrow(() -> new IllegalEntityStateException(String.format("One project is required for member. projectId=%s", projectId)));
-    }
+
+    //Optional<Project> retrieveProject(Long organizationId, Long projectId) {
+    //    return Project.<Project>findByIdOptional(projectId)
+    //            .filter(project -> organizationId.equals(project.organization.id));
+    //}
+    //   .orElseThrow(() -> new IllegalEntityStateException(String.format("One project is required for member. projectId=%s", projectId)));
+    // }
 
     private User getUser(Long userId) {
         return User.<User>findByIdOptional(userId)
