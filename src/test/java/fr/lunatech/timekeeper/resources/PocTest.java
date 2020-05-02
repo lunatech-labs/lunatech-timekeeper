@@ -1,13 +1,11 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.resources.utils.ResourceFactory;
 import fr.lunatech.timekeeper.resources.utils.ResourceReader;
 import fr.lunatech.timekeeper.resources.utils.TestUtils;
 import fr.lunatech.timekeeper.services.dtos.*;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
-import io.vavr.Tuple2;
 import io.vavr.Tuple3;
 import io.vavr.collection.List;
 import org.flywaydb.core.Flyway;
@@ -20,12 +18,14 @@ import javax.inject.Inject;
 import static fr.lunatech.timekeeper.models.Profile.Admin;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
+import static fr.lunatech.timekeeper.resources.utils.ResourceChaining.distribResource;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ProjectDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
-import static fr.lunatech.timekeeper.resources.utils.ScenarioRunner.distribResource;
-import static fr.lunatech.timekeeper.resources.utils.TestUtils.*;
+import static fr.lunatech.timekeeper.resources.utils.TestUtils.listOfTasJson;
+import static fr.lunatech.timekeeper.resources.utils.TestUtils.toJson;
 import static io.restassured.RestAssured.given;
 import static java.util.Collections.emptyList;
+import static java.util.List.of;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT;
 import static javax.ws.rs.core.HttpHeaders.LOCATION;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -109,7 +109,7 @@ class PocTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/organizations/1"));
 
-        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
+        final UserRequest user = new UserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", of(Admin));
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()

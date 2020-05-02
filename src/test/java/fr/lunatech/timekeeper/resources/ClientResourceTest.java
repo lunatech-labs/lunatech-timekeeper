@@ -74,7 +74,9 @@ class ClientResourceTest {
 
         final String token = getUserAccessToken();
 
-        readValidation(String.format("%s/%s", ClientDef.uri, 4), token)
+        final  Long NO_EXISTING_CLIENT_ID = 243L;
+
+        readValidation(String.format("%s/%s", ClientDef.uri, NO_EXISTING_CLIENT_ID), token)
                 .statusCode(NOT_FOUND.getStatusCode());
     }
 
