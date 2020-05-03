@@ -30,16 +30,6 @@ const ShowUserPage = () => {
     return (
 
         <React.Fragment>
-            <Breadcrumb style={{margin: '16px 0'}}>
-                <Breadcrumb.Item>Home</Breadcrumb.Item>
-                <Breadcrumb.Item>Welcome</Breadcrumb.Item>
-            </Breadcrumb>
-
-            <PageHeader
-                className="site-page-header"
-                title="Welcome to TimeKeeper"
-                subTitle="A smart time entry application by Lunatech"
-            />
 
             <Divider/>
 

@@ -1,13 +1,15 @@
 import React from 'react';
-import {Alert, Avatar, Button, Card, List, PageHeader, Spin, Collapse} from 'antd';
+import {Alert, Avatar, Button, Card, List, PageHeader, Spin, Collapse, Divider} from 'antd';
 import {Link} from 'react-router-dom';
 import logo from '../../img/logo_timekeeper_homepage.png';
+import './ClientList.less';
 import {useTimeKeeperAPI} from '../../utils/services';
 import Meta from 'antd/es/card/Meta';
 import FolderOpenOutlined from '@ant-design/icons/es/icons/FolderOpenOutlined';
 import Badge from 'antd/es/badge';
 import EditFilled from '@ant-design/icons/es/icons/EditFilled';
 import Tooltip from 'antd/es/tooltip';
+import Space from 'antd/es/space';
 
 const { Panel } = Collapse;
 
@@ -39,15 +41,18 @@ const ClientList = () => {
 
   return (
     <React.Fragment>
-      <PageHeader title="Clients" subTitle={clientsResponse.data.length}/>
+      <div>
+        <p>{clientsResponse.data.length} Clients</p>
+      </div>
       <List
+        id="tk_List"
         grid={{ gutter: 32, column: 3 }}
         dataSource={clientsResponse.data}
         renderItem={item => (
           <List.Item key={item.id}>
             <Card
               bordered={false}
-              title={<div><Avatar src={logo} shape={'square'}/> {item.name}</div>}
+              title={<Space><Avatar src={logo} shape={'square'}/> {item.name}</Space>}
               extra={[
                 <Tooltip title="Edit" key="edit">
                   <Button type="link" size="small" ghost shape="circle" icon={<EditFilled/>} href={`/clients/${item.id}`}/>
