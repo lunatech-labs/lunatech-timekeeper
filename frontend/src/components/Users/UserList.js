@@ -1,11 +1,9 @@
 import React from 'react';
-import {Breadcrumb, Typography, Alert, Avatar, Spin, Table, Divider} from 'antd';
+import {Alert, Avatar, Spin, Table} from 'antd';
 import {useTimeKeeperAPI} from '../../utils/services';
 import './UserList.less';
 import FlagFilled from '@ant-design/icons/es/icons/FlagFilled';
 import Button from 'antd/es/button';
-
-const { Title } = Typography;
 
 const UserList = () => {
   const usersResponse = useTimeKeeperAPI('/api/users');
