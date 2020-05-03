@@ -19,32 +19,61 @@
   color: white;
 }
 #tk_Table {
-  thead {
-    tr {
-      th {
-        border-bottom: 0;
-        font-weight: 400;
-        border-top: 1px solid rgba(216, 216, 216, 0.1);
-        border-radius: 0;
+  table {
+    border-spacing: 0 12px;
+    thead {
+      tr {
+        th {
+          padding-bottom: 2px;
+          border-bottom: 0;
+          font-weight: 400;
+          border-top: 1px solid rgba(216, 216, 216, 0.1);
+          border-radius: 0;
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        background: @darkGray_Tk;
+
+        td {
+          border-bottom: none;
+
+          &:first-child {
+            border-top-left-radius: 6px;
+            border-bottom-left-radius: 6px;
+          }
+
+          &:last-child {
+            border-top-right-radius: 6px;
+            border-bottom-right-radius: 6px;
+          }
+
+        }
       }
     }
   }
-  tbody {
-    tr {
-      background: @darkGray_Tk;
-      td {
-        border-bottom: none;
-        &:first-child {
-          border-top-left-radius: 6px;
-          border-bottom-left-radius: 6px;
-        }
-        &:last-child {
-          border-top-right-radius: 6px;
-          border-bottom-right-radius: 6px;
-        }
+}
 
-      }
-    }
-  }
+.ant-pagination-prev button, .ant-pagination-next button {
+  background-color: @mediumGray_Tk !important;
+  color: @lightGray_Tk !important;
+  border: none !important;
+}
 
+.ant-pagination-item {
+  background-color: transparent !important;
+  color: @lightGray_Tk !important;
+  border: none !important;
+}
+
+.ant-pagination-item:not(.ant-pagination-item-active) button {
+  background-color: transparent !important;
+  color: @lightGray_Tk !important;
+  border: none !important;
+}
+
+.ant-pagination-disabled button {
+  color: @darkGray_Tk !important;
 }
