@@ -1,7 +1,6 @@
 package fr.lunatech.timekeeper.models;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -24,4 +23,5 @@ public class Client extends PanacheEntity {
     @OneToMany(mappedBy = "client")
     @NotNull
     public List<Project> projects;
+
 }

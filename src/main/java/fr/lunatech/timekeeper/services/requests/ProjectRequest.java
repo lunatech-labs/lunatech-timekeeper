@@ -1,18 +1,21 @@
-package fr.lunatech.timekeeper.services.dtos;
+package fr.lunatech.timekeeper.services.requests;
 
+import fr.lunatech.timekeeper.models.Client;
 import fr.lunatech.timekeeper.models.Project;
 import fr.lunatech.timekeeper.models.ProjectUser;
+import fr.lunatech.timekeeper.models.User;
+import fr.lunatech.timekeeper.services.AuthenticationContext;
+import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 
 import javax.json.bind.annotation.JsonbCreator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-
-import static java.util.Optional.ofNullable;
 
 public final class ProjectRequest {
 
@@ -32,7 +35,7 @@ public final class ProjectRequest {
     private final Boolean publicAccess;
 
     @NotNull
-    private final List<User> users;
+    private final List<ProjectUserRequest> users;
 
     @JsonbCreator
     public ProjectRequest(
@@ -41,7 +44,7 @@ public final class ProjectRequest {
             @NotNull String description,
             @Null Long clientId,
             @NotNull Boolean publicAccess,
-            @NotNull List<User> users
+            @NotNull List<ProjectUserRequest> users
     ) {
         this.name = name;
         this.billable = billable;
@@ -52,29 +55,38 @@ public final class ProjectRequest {
     }
 
     public Project unbind(
-            Function<Long, Optional<fr.lunatech.timekeeper.models.Client>> retrieveClient,
-            Function<Long, fr.lunatech.timekeeper.models.User> retrieveUser
+            @NotNull Project project,
+            @NotNull BiFunction<Long, AuthenticationContext, Optional<Client>> findClient,
+            @NotNull BiFunction<Long, AuthenticationContext, Optional<User>> findUser,
+            @NotNull AuthenticationContext ctx
     ) {
-        return unbind(new Project(), retrieveClient, retrieveUser);
+        project.organization = ctx.getOrganization();
+        project.name = getName();
+        project.billable = isBillable();
+        project.description = getDescription();
+        project.client = getClientId()
+                .flatMap(clientId -> findClient.apply(clientId, ctx))
+                .orElse(null);
+        project.users = getUsers()
+                .stream()
+                .map(user -> user.unbind(project, findUser, ctx))
+                .collect(Collectors.toList());
+        project.publicAccess = isPublicAccess();
+        return project;
     }
 
     public Project unbind(
-            fr.lunatech.timekeeper.models.Project project,
-            Function<Long, Optional<fr.lunatech.timekeeper.models.Client>> retrieveClient,
-            Function<Long, fr.lunatech.timekeeper.models.User> retrieveUser
+            @NotNull BiFunction<Long, AuthenticationContext, Optional<Client>> findClient,
+            @NotNull BiFunction<Long, AuthenticationContext, Optional<User>> findUser,
+            @NotNull AuthenticationContext ctx
     ) {
-        project.name = name;
-        project.billable = billable;
-        project.description = description;
-        project.client = ofNullable(clientId)
-                .flatMap(retrieveClient)
-                .orElse(null);
-        project.users = users
+        return unbind(new Project(), findClient, findUser, ctx);
+    }
+
+    public Boolean notContains(@NotNull ProjectUser projectUser) {
+        return getUsers()
                 .stream()
-                .map(user -> user.unbind(project, retrieveUser))
-                .collect(Collectors.toList());
-        project.publicAccess = publicAccess;
-        return project;
+                .noneMatch(o -> Objects.equals(projectUser.id, o.getId())) && projectUser.isPersistent();
     }
 
     public String getName() {
@@ -89,15 +101,15 @@ public final class ProjectRequest {
         return description;
     }
 
-    public Long getClientId() {
-        return clientId;
+    public Optional<Long> getClientId() {
+        return Optional.ofNullable(clientId);
     }
 
     public Boolean isPublicAccess() {
         return publicAccess;
     }
 
-    public List<User> getUsers() {
+    public List<ProjectUserRequest> getUsers() {
         return users;
     }
 
@@ -113,8 +125,8 @@ public final class ProjectRequest {
                 '}';
     }
 
-    /* 👤 ProjectRequest.User */
-    public static final class User {
+    /* 👤 ProjectUserRequest */
+    public static final class ProjectUserRequest {
 
         @NotNull
         private final Long id;
@@ -123,7 +135,7 @@ public final class ProjectRequest {
         private final Boolean manager;
 
         @JsonbCreator
-        public User(
+        public ProjectUserRequest(
                 @NotNull Long id,
                 @NotNull Boolean manager
         ) {
@@ -132,20 +144,15 @@ public final class ProjectRequest {
         }
 
         public ProjectUser unbind(
-                fr.lunatech.timekeeper.models.Project project,
-                Function<Long, fr.lunatech.timekeeper.models.User> retrieveUser
+                @NotNull Project project,
+                @NotNull BiFunction<Long, AuthenticationContext, Optional<User>> findUser,
+                @NotNull AuthenticationContext ctx
         ) {
-            final var projectUser = ofNullable(project.users)
-                    .flatMap(projectUsers -> projectUsers
-                            .stream()
-                            .filter(pu -> pu.isSame(id, project.id))
-                            .findFirst()
-                    )
-                    .orElse(new ProjectUser());
-
+            final var projectUser = project.getUser(getId()).orElse(new ProjectUser());
             projectUser.project = project;
-            projectUser.user = retrieveUser.apply(id);
-            projectUser.manager = manager;
+            projectUser.manager = isManager();
+            projectUser.user = findUser.apply(getId(), ctx)
+                    .orElseThrow(() -> new IllegalEntityStateException(String.format("Unknown User. userId=%s", getId())));
 
             return projectUser;
         }

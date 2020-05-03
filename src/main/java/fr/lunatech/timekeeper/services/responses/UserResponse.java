@@ -1,63 +1,73 @@
-package fr.lunatech.timekeeper.services.dtos;
+package fr.lunatech.timekeeper.services.responses;
 
 import fr.lunatech.timekeeper.models.Profile;
+import fr.lunatech.timekeeper.models.ProjectUser;
+import fr.lunatech.timekeeper.models.User;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class UserResponse {
 
     @NotNull
     private final Long id;
+
     @NotBlank
-    private final String firstName;
-    @NotBlank
-    private final String lastName;
+    private final String name;
+
     @NotBlank
     @Email
     private final String email;
+
     @NotNull
     private final String picture;
+
     @NotEmpty
     private final List<Profile> profiles;
-    @NotNull
-    private final List<Project> projects;
-    @NotNull
-    private final Long organizationId;
 
-    public UserResponse(
+    @NotNull
+    private final List<ProjectUserResponse> projects;
+
+    private UserResponse(
             @NotNull Long id,
-            @NotBlank String firstName,
-            @NotBlank String lastName,
+            @NotBlank String name,
             @NotBlank @Email String email,
             @NotNull String picture,
             @NotEmpty List<Profile> profiles,
-            @NotNull List<Project> projects,
-            @NotNull Long organizationId
+            @NotNull List<ProjectUserResponse> projects
     ) {
         this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.name = name;
         this.email = email;
         this.picture = picture;
         this.profiles = profiles;
         this.projects = projects;
-        this.organizationId = organizationId;
+    }
+
+    public static UserResponse bind(@NotNull User user) {
+        return new UserResponse(
+                user.id,
+                user.getFullName(),
+                user.email,
+                user.picture,
+                user.profiles,
+                user.projects
+                        .stream()
+                        .map(ProjectUserResponse::bind)
+                        .collect(Collectors.toList())
+        );
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
+    public String getName() {
+        return name;
     }
 
     public String getEmail() {
@@ -72,17 +82,13 @@ public final class UserResponse {
         return profiles;
     }
 
-    public List<Project> getProjects() {
+    public List<ProjectUserResponse> getProjects() {
         return projects;
     }
 
-    public Long getOrganizationId() {
-        return organizationId;
-    }
 
-
-    /* 🎁 UserResponse.Project */
-    public static final class Project {
+    /* 🎁 ProjectUserResponse */
+    public static final class ProjectUserResponse {
 
         @NotNull
         private final Long id;
@@ -96,7 +102,7 @@ public final class UserResponse {
         @NotNull
         private final Boolean publicAccess;
 
-        public Project(
+        private ProjectUserResponse(
                 @NotNull Long id,
                 @NotNull Boolean manager,
                 @NotNull String name,
@@ -106,6 +112,15 @@ public final class UserResponse {
             this.manager = manager;
             this.name = name;
             this.publicAccess = publicAccess;
+        }
+
+        public static ProjectUserResponse bind(@NotNull ProjectUser projectUser) {
+            return new ProjectUserResponse(
+                    projectUser.project.id,
+                    projectUser.manager,
+                    projectUser.project.name,
+                    projectUser.project.publicAccess
+            );
         }
 
         public Long getId() {

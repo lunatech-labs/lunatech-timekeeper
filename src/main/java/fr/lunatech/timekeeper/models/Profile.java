@@ -11,8 +11,7 @@ import static java.util.Arrays.stream;
 public enum Profile {
     Admin, User, Guest;
 
-
-    public static Optional<Profile> findProfileByName(String value) {
+    public static Optional<Profile> getByName(String value) {
         return stream(Profile.values())
                 .filter(profile -> profile.name().equalsIgnoreCase(value))
                 .findFirst();
