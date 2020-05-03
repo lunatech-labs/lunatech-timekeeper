@@ -1,6 +1,5 @@
-import React from 'react';
-import {Alert, Avatar, Button, Card, Collapse, List, Spin} from 'antd';
-import {Link} from 'react-router-dom';
+import React, {useState} from 'react';
+import {Alert, AutoComplete, Avatar, Button, Card, Collapse, List, Spin} from 'antd';
 import logo from '../../img/logo_timekeeper_homepage.png';
 import './ClientList.less';
 import {useTimeKeeperAPI} from '../../utils/services';
@@ -11,12 +10,20 @@ import Tooltip from 'antd/es/tooltip';
 import Space from 'antd/es/space';
 import Tag from 'antd/es/tag';
 import UserOutlined from '@ant-design/icons/es/icons/UserOutlined';
+import Input from 'antd/es/input';
+import SearchOutlined from '@ant-design/icons/es/icons/SearchOutlined';
 
 const { Panel } = Collapse;
 
 const ClientList = () => {
 
   const clientsResponse = useTimeKeeperAPI('/api/clients');
+
+  const [value, setValue] = useState('');
+
+  const onSearch = searchText => setValue(searchText);
+
+  const clientsFiltered = () => clientsResponse.data.filter(d => d.name.toLowerCase().includes(value.toLowerCase()));
 
   if (clientsResponse.loading) {
     return (
@@ -42,13 +49,22 @@ const ClientList = () => {
 
   return (
     <React.Fragment>
-      <div>
-        <p>{clientsResponse.data.length} Clients</p>
+      <div style={{position: "relative"}}>
+        <AutoComplete
+          style={{ width: 160 }}
+          onSearch={onSearch}
+          className="tk_Search_Input"
+        >
+          <Input size="large" placeholder="Search in clients" allowClear  prefix={<SearchOutlined />} />
+        </AutoComplete>
+        <div>
+          <p>{clientsFiltered().length} Clients</p>
+        </div>
       </div>
       <List
         id="tk_List"
         grid={{ gutter: 32, column: 3 }}
-        dataSource={clientsResponse.data}
+        dataSource={clientsFiltered()}
         renderItem={item => (
           <List.Item key={item.id}>
             <Card
@@ -86,11 +102,6 @@ const ClientList = () => {
           </List.Item>
         )}
       />
-      <Link to="/clients/new">
-        <Button type="primary">Create new client</Button>
-      </Link>
-
-
     </React.Fragment>
   );
 };
