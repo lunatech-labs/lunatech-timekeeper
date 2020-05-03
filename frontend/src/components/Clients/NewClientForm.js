@@ -2,13 +2,14 @@ import React, {useState} from 'react';
 import {Alert, Button, Form, Input, message} from 'antd';
 import {Link, Redirect} from 'react-router-dom';
 import {useTimeKeeperAPIPost} from '../../utils/services';
+import Space from 'antd/es/space';
 
 const {TextArea} = Input;
 
 const tailLayout = {
   wrapperCol: {
     offset: 4,
-    span: 16,
+    span: 14,
   },
 };
 
@@ -75,14 +76,16 @@ const ClientForm = () => {
           />
         </Form.Item>
         <Form.Item {...tailLayout}>
-          <Link key="cancelLink" to={'/clients'}>
-            <Button htmlType="button">
-                    Cancel
+          <Space size="middle" style={{right: 0, position: 'absolute'}}>
+            <Link key="cancelLink" to={'/clients'}>
+              <Button htmlType="button">
+                      Cancel
+              </Button>
+            </Link>
+            <Button type="primary" htmlType="submit">
+                Submit
             </Button>
-          </Link>
-          <Button type="primary" htmlType="submit">
-              Submit
-          </Button>
+          </Space>
         </Form.Item>
       </Form>
     </React.Fragment>
