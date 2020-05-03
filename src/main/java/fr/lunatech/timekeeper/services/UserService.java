@@ -37,9 +37,12 @@ public class UserService {
     public AuthenticationContext authenticate(AuthenticationRequest request) {
         final User authenticatedUser = findByEmail(request.getEmail())
                 .map(user -> {
-                    logger.debug("Modify user for email={} (if a change is detected) with request={}", user.email, request);
-                    /* Panache optimizes this process, no need to check if a change is necessary */
-                    return request.unbind(user, organizationService::findByTokenName);
+                    if (request.isDifferent(user)) {
+                        logger.debug("Modify user for email={} with request={}", user.email, request);
+                        return request.unbind(user, organizationService::findByTokenName);
+                    } else {
+                        return user;
+                    }
                 })
                 .orElseGet(() -> {
                     logger.debug("Create a new user for email={} with request={}", request.getEmail(), request);
