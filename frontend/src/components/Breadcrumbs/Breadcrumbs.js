@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { HashRouter as Router, Route, Switch, Link, withRouter } from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 import {Breadcrumb} from 'antd';
 import PropTypes from 'prop-types';
 

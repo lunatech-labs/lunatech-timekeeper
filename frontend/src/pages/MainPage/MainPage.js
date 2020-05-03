@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Breadcrumb, Layout, Typography} from 'antd';
+import {Layout, Typography} from 'antd';
 import './MainPage.less';
 import Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs';
 import SidebarLeft from '../../components/SidebarLeft/SidebarLeft';

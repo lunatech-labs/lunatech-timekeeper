@@ -1,5 +1,5 @@
 import React from 'react';
-import {Alert, Avatar, Button, Card, List, PageHeader, Spin, Collapse, Divider} from 'antd';
+import {Alert, Avatar, Button, Card, Collapse, List, Spin} from 'antd';
 import {Link} from 'react-router-dom';
 import logo from '../../img/logo_timekeeper_homepage.png';
 import './ClientList.less';
@@ -51,6 +51,7 @@ const ClientList = () => {
         renderItem={item => (
           <List.Item key={item.id}>
             <Card
+              className={'shadow'}
               bordered={false}
               title={<Space><Avatar src={logo} shape={'square'}/> {item.name}</Space>}
               extra={[
@@ -60,7 +61,7 @@ const ClientList = () => {
               ]}
               actions={[
                 <Collapse bordered={false} expandIconPosition={'right'} key="projects">
-                  <Panel header={<div><FolderOpenOutlined /> {'List of projects'}</div>} key="1">
+                  <Panel header={<div className={'small'}><FolderOpenOutlined /> {'List of projects'}</div>} key="1">
                     <List
                       dataSource={item.projects}
                       renderItem={projectItem => (
