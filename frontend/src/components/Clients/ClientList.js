@@ -5,7 +5,7 @@ import logo from '../../img/logo_timekeeper_homepage.png';
 import './ClientList.less';
 import {useTimeKeeperAPI} from '../../utils/services';
 import Meta from 'antd/es/card/Meta';
-import FolderOpenOutlined from '@ant-design/icons/es/icons/FolderOpenOutlined';
+import FolderFilled from '@ant-design/icons/es/icons/FolderFilled';
 import Badge from 'antd/es/badge';
 import EditFilled from '@ant-design/icons/es/icons/EditFilled';
 import Tooltip from 'antd/es/tooltip';
@@ -53,7 +53,12 @@ const ClientList = () => {
             <Card
               className={'shadow'}
               bordered={false}
-              title={<Space><Avatar src={logo} shape={'square'}/> {item.name}</Space>}
+              title={
+                <Space size={'middle'}>
+                  <Avatar src={logo} shape={'square'} size="large"/>
+                  <div>{item.name}<br/><span className={'subtitle'}>{item.projects.length} projects</span></div>
+                </Space>
+              }
               extra={[
                 <Tooltip title="Edit" key="edit">
                   <Button type="link" size="small" ghost shape="circle" icon={<EditFilled/>} href={`/clients/${item.id}`}/>
@@ -61,7 +66,7 @@ const ClientList = () => {
               ]}
               actions={[
                 <Collapse bordered={false} expandIconPosition={'right'} key="projects">
-                  <Panel header={<div className={'small'}><FolderOpenOutlined /> {'List of projects'}</div>} key="1">
+                  <Panel header={<Space size="small"><FolderFilled />{'List of projects'}</Space>} key="1">
                     <List
                       dataSource={item.projects}
                       renderItem={projectItem => (
