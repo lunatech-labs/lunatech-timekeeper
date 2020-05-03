@@ -1,8 +1,7 @@
 package fr.lunatech.timekeeper.resources.openapi;
 
-import fr.lunatech.timekeeper.services.dtos.ClientRequest;
-import fr.lunatech.timekeeper.services.dtos.OrganizationRequest;
-import fr.lunatech.timekeeper.services.dtos.OrganizationResponse;
+import fr.lunatech.timekeeper.services.requests.OrganizationRequest;
+import fr.lunatech.timekeeper.services.responses.OrganizationResponse;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.headers.Header;
@@ -17,7 +16,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-
 import java.util.List;
 
 import static javax.ws.rs.core.HttpHeaders.LOCATION;

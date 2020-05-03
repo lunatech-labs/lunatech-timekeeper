@@ -1,6 +1,8 @@
-package fr.lunatech.timekeeper.services.dtos;
+package fr.lunatech.timekeeper.services.responses;
 
+import fr.lunatech.timekeeper.models.Client;
 import fr.lunatech.timekeeper.models.Project;
+import fr.lunatech.timekeeper.models.ProjectUser;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -26,21 +28,21 @@ public final class ProjectResponse {
     private final String description;
 
     @Null
-    private final Client client;
+    private final ProjectClientResponse client;
 
     @NotNull
-    private final List<User> users;
+    private final List<ProjectUserResponse> users;
 
     @NotNull
     private final Boolean publicAccess;
 
-    public ProjectResponse(
+    private ProjectResponse(
             @NotNull Long id,
             @NotBlank String name,
             @NotNull Boolean billable,
             @NotNull String description,
-            @Null Client client,
-            @NotNull List<User> users,
+            @Null ProjectClientResponse client,
+            @NotNull List<ProjectUserResponse> users,
             @NotNull Boolean publicAccess
     ) {
         this.id = id;
@@ -52,18 +54,18 @@ public final class ProjectResponse {
         this.publicAccess = publicAccess;
     }
 
-    public static ProjectResponse bind(Project project) {
+    public static ProjectResponse bind(@NotNull Project project) {
         return new ProjectResponse(
                 project.id,
                 project.name,
                 project.billable,
                 project.description,
                 ofNullable(project.client)
-                        .map(ProjectResponse.Client::bind)
+                        .map(ProjectClientResponse::bind)
                         .orElse(null),
                 project.users
                         .stream()
-                        .map(ProjectResponse.User::bind)
+                        .map(ProjectUserResponse::bind)
                         .collect(Collectors.toList()),
                 project.publicAccess
         );
@@ -85,11 +87,11 @@ public final class ProjectResponse {
         return description;
     }
 
-    public Optional<Client> getClient() {
+    public Optional<ProjectClientResponse> getClient() {
         return Optional.ofNullable(client);
     }
 
-    public List<User> getUsers() {
+    public List<ProjectUserResponse> getUsers() {
         return users;
     }
 
@@ -98,8 +100,8 @@ public final class ProjectResponse {
     }
 
 
-    /* 👤 ProjectResponse.User */
-    public static final class User {
+    /* 👤 ProjectUserResponse */
+    public static final class ProjectUserResponse {
 
         @NotNull
         private final Long id;
@@ -108,25 +110,25 @@ public final class ProjectResponse {
         private final Boolean manager;
 
         @NotNull
-        private final String fullName;
+        private final String name;
 
         @NotNull
         private final String picture;
 
-        public User(
+        private ProjectUserResponse(
                 @NotNull Long id,
                 @NotNull Boolean manager,
-                @NotNull String fullName,
+                @NotNull String name,
                 @NotNull String picture
         ) {
             this.id = id;
             this.manager = manager;
-            this.fullName = fullName;
+            this.name = name;
             this.picture = picture;
         }
 
-        public static ProjectResponse.User bind(fr.lunatech.timekeeper.models.ProjectUser projectUser) {
-            return new ProjectResponse.User(
+        public static ProjectUserResponse bind(@NotNull ProjectUser projectUser) {
+            return new ProjectUserResponse(
                     projectUser.user.id,
                     projectUser.manager,
                     projectUser.user.getFullName(),
@@ -142,8 +144,8 @@ public final class ProjectResponse {
             return manager;
         }
 
-        public String getFullName() {
-            return fullName;
+        public String getName() {
+            return name;
         }
 
         public String getPicture() {
@@ -151,8 +153,9 @@ public final class ProjectResponse {
         }
     }
 
-    /* 🌐 ProjectResponse.Client */
-    public static final class Client {
+
+    /* 🌐 ProjectClientResponse */
+    public static final class ProjectClientResponse {
 
         @NotNull
         private final Long id;
@@ -160,7 +163,7 @@ public final class ProjectResponse {
         @NotNull
         private final String name;
 
-        public Client(
+        private ProjectClientResponse(
                 @NotNull Long id,
                 @NotNull String name
         ) {
@@ -168,8 +171,8 @@ public final class ProjectResponse {
             this.name = name;
         }
 
-        public static ProjectResponse.Client bind(fr.lunatech.timekeeper.models.Client client) {
-            return new ProjectResponse.Client(
+        public static ProjectClientResponse bind(@NotNull Client client) {
+            return new ProjectClientResponse(
                     client.id,
                     client.name
             );
