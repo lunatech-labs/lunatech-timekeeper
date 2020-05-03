@@ -11,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -66,6 +67,18 @@ public final class AuthenticationRequest {
 
     public User unbind(@NotNull Function<String, Optional<Organization>> findOrganizationByTokenName) {
         return unbind(new User(), findOrganizationByTokenName);
+    }
+
+    /* Panache optimizes update process, but to avoid unnecessary and undetectable logging, use this */
+    public boolean isDifferent(@NotNull User user) {
+        return !(Objects.equals(user.firstName, getFirstName())
+                && Objects.equals(user.lastName, getLastName())
+                && Objects.equals(user.email, getEmail())
+                && Objects.equals(user.picture, getPicture())
+                && user.profiles.size() == getProfiles().size()
+                && user.profiles.containsAll(getProfiles())
+                && Objects.equals(user.organization.tokenName, getOrganizationTokenName())
+        );
     }
 
     public String getFirstName() {

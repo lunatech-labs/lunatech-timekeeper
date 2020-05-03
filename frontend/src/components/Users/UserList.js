@@ -13,8 +13,7 @@ const UserList = () => {
   const userToUserData = (user) => {
     return {
       ...user,
-      key: user.id,
-      name: `${user.firstName} ${user.lastName}`
+      key: user.id
     };
   };
 
@@ -108,7 +107,7 @@ const UserList = () => {
       </div>
       <Table id="tk_Table"
         dataSource={usersResponse.data.map(user => userToUserData(user))}
-        columns={columns} pagination={{ position:['bottomCenter'], pageSize:1, itemRender: paginationItemRender }}
+        columns={columns} pagination={{ position:['bottomCenter'], pageSize:20, hideOnSinglePage:true, itemRender: paginationItemRender }}
       />
     </div>
   );
