@@ -11,7 +11,7 @@ const { Title } = Typography;
 
 const { Content, Footer } = Layout;
 
-const MainPage = ({ title, children, ...rest }) => {
+const MainPage = ({ title, children, actions, ...rest }) => {
   const [collapsed, toggle] = useState(false);
   return (
     <Layout>
@@ -21,7 +21,8 @@ const MainPage = ({ title, children, ...rest }) => {
         <Content id="tk_MainContent" className="mainContent">
           <div className="tk_TopPage">
             <Breadcrumbs />
-            <Title>{title}</Title>
+            <div className="tk_Page_Actions">{actions}</div>
+            <Title id="title">{title}</Title>
           </div>
           <div>
             {children}
