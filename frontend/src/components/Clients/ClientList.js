@@ -15,8 +15,6 @@ const ClientList = () => {
 
   const clientsResponse = useTimeKeeperAPI('/api/clients');
 
-  const renderProjects = (projects) => projects.map(project => project.name).join(' | ');
-
   if (clientsResponse.loading) {
     return (
       <React.Fragment>
@@ -51,13 +49,13 @@ const ClientList = () => {
               bordered={false}
               title={<div><Avatar src={logo} shape={'square'}/> {item.name}</div>}
               extra={[
-                <Tooltip title="Edit">
+                <Tooltip title="Edit" key="edit">
                   <Button type="link" size="small" ghost shape="circle" icon={<EditFilled/>} href={`/clients/${item.id}`}/>
                 </Tooltip>
               ]}
               actions={[
-                <Collapse bordered={false} expandIconPosition={'right'}>
-                  <Panel header={<div><FolderOpenOutlined /> {"List of projects"}</div>} key="1">
+                <Collapse bordered={false} expandIconPosition={'right'} key="projects">
+                  <Panel header={<div><FolderOpenOutlined /> {'List of projects'}</div>} key="1">
                     <List
                       dataSource={item.projects}
                       renderItem={projectItem => (
