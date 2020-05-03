@@ -44,7 +44,6 @@ const EditClientForm = () => {
   if (clientResponse.data) {
     return (
       <React.Fragment>
-        <PageHeader title="Clients" subTitle="Edit a client"/>
         <Form
           labelCol={{span: 4}}
           wrapperCol={{span: 14}}
@@ -92,8 +91,6 @@ const EditClientForm = () => {
   if (clientResponse.loading) {
     return (
       <React.Fragment>
-        <PageHeader title="Clients" subTitle="Edit a client"/>
-
         <Spin size="large">
           <Form
             labelCol={{span: 4}}

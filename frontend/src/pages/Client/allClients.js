@@ -4,7 +4,7 @@ import MainPage from '../MainPage/MainPage';
 
 const ClientsPage = () => {
   return (
-    <MainPage title="All clients">
+    <MainPage title="List of clients">
       <ClientList/>
     </MainPage>
   );

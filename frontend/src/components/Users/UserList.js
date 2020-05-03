@@ -1,5 +1,5 @@
 import React from 'react';
-import {Breadcrumb, Typography, Alert, Avatar, Spin, Table} from 'antd';
+import {Breadcrumb, Typography, Alert, Avatar, Spin, Table, Divider} from 'antd';
 import {useTimeKeeperAPI} from '../../utils/services';
 import './UserList.less';
 import FlagFilled from '@ant-design/icons/es/icons/FlagFilled';
@@ -92,24 +92,15 @@ const UserList = () => {
   };
 
   return (
-    <div>
-      <div className="tk_TopPage">
-        <Breadcrumb id="tk_Breadcrumb">
-          <Breadcrumb.Item>
-            <a href="/">Home</a>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>Users</Breadcrumb.Item>
-        </Breadcrumb>
-        <Title>List of users</Title>
-        <div>
-          <p>{usersResponse.data.length} Users</p>
-        </div>
+    <React.Fragment>
+      <div>
+        <p>{usersResponse.data.length} Users</p>
       </div>
       <Table id="tk_Table"
         dataSource={usersResponse.data.map(user => userToUserData(user))}
         columns={columns} pagination={{ position:['bottomCenter'], pageSize:20, hideOnSinglePage:true, itemRender: paginationItemRender }}
       />
-    </div>
+    </React.Fragment>
   );
 };
 

@@ -5,7 +5,7 @@ import MainPage from '../MainPage/MainPage';
 
 const EditClientPage = () => {
   return (
-    <MainPage>
+    <MainPage title="Edit a client">
       <EditClientForm/>
     </MainPage>
   );

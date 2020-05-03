@@ -4,7 +4,7 @@ import ProjectList from '../../components/Projects/ProjectList';
 
 const ProjectsPage = () => {
   return (
-    <MainPage title={'Projects'}>
+    <MainPage title={'List of projects'}>
       <ProjectList/>
     </MainPage>
   );

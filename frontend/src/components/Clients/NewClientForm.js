@@ -33,7 +33,6 @@ const ClientForm = () => {
     const  errMsg  =  `Server error HTTP Code:${status}  for url: ${url}`;
     return (
       <React.Fragment>
-        <PageHeader title="Clients" subTitle="Create a new client"/>
         <Alert
           message="Unable to save the new Client"
           description={errMsg}
@@ -47,7 +46,6 @@ const ClientForm = () => {
 
   return (
     <React.Fragment>
-      <PageHeader title="Clients" subTitle="Create a new client"/>
       <Form
         labelCol={{span: 4}}
         wrapperCol={{span: 14}}

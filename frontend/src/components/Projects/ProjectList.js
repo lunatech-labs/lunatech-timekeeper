@@ -4,7 +4,7 @@ import {PageHeader} from 'antd';
 const ProjectList = () => {
   return(
     <React.Fragment>
-      <PageHeader title="Projects" />
+      TODO
     </React.Fragment>
   );
 };
