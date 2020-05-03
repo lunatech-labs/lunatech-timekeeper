@@ -1,24 +1,22 @@
 import React from 'react';
-import {Alert, Avatar, Button, List, PageHeader, Spin} from 'antd';
+import {Alert, Avatar, Button, Card, List, PageHeader, Spin, Collapse} from 'antd';
 import {EditOutlined} from '@ant-design/icons';
 import {Link} from 'react-router-dom';
 import logo from '../../img/logo_timekeeper_homepage.png';
 import {useTimeKeeperAPI} from '../../utils/services';
+import Meta from 'antd/es/card/Meta';
+import FolderOpenOutlined from '@ant-design/icons/es/icons/FolderOpenOutlined';
+import Badge from 'antd/es/badge';
+import UserOutlined from '@ant-design/icons/es/icons/UserOutlined';
+import Tooltip from 'antd/es/tooltip';
+
+const { Panel } = Collapse;
 
 const ClientList = () => {
 
   const clientsResponse = useTimeKeeperAPI('/api/clients');
-  const projectsResponse = useTimeKeeperAPI('/api/projects');
 
-  const projectsIdToProjects = (projectsId) => {
-    if (projectsResponse.data) {
-      return projectsResponse.data.filter(
-        project => projectsId.includes(project.id));
-    }
-    return [];
-  };
-
-  const renderProjects = (projectsId) => projectsIdToProjects(projectsId).map(project => project.name).join(' | ');
+  const renderProjects = (projects) => projects.map(project => project.name).join(' | ');
 
   if (clientsResponse.loading) {
     return (
@@ -46,26 +44,39 @@ const ClientList = () => {
     <React.Fragment>
       <PageHeader title="Clients" subTitle={clientsResponse.data.length}/>
       <List
-
-        itemLayout="horizontal"
+        grid={{ gutter: 32, column: 3 }}
         dataSource={clientsResponse.data}
         renderItem={item => (
-          <List.Item key={item.id}
-            actions={[
-              <Link key="editLink" to={`/clients/${item.id}`}>
-                <Button type="default"
-                  icon={<EditOutlined/>}>Edit</Button>
-              </Link>,
-            ]}
-          >
-            <List.Item.Meta
-              avatar={
-                <Avatar src={logo}/>
-              }
-              title={item.name}
-              description={item.description}
-            />
-            <div>{renderProjects(item.projectsId)}</div>
+          <List.Item key={item.id}>
+            <Card
+              bordered={false}
+              title={<div><Avatar src={logo} shape={'square'}/> {item.name}</div>}
+              extra={[
+                <Tooltip title="Edit">
+                  <Link key="editLink" to={`/clients/${item.id}`}>
+                    <Button size="small" ghost shape="circle" icon={<EditOutlined/>} />
+                  </Link>
+                </Tooltip>
+              ]}
+              actions={[
+                <Collapse bordered={false} expandIconPosition={'right'}>
+                  <Panel header={<div><FolderOpenOutlined /> {"List of projects"}</div>} key="1">
+                    <List
+                      dataSource={item.projects}
+                      renderItem={projectItem => (
+                        <List.Item>
+                          <p>{projectItem.name} <Badge count={projectItem.userCount} /></p>
+                        </List.Item>
+                      )}
+                    />
+                  </Panel>
+                </Collapse>
+              ]}
+            >
+              <Meta
+                description={item.description}
+              />
+            </Card>
           </List.Item>
         )}
       />
