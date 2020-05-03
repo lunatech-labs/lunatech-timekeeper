@@ -6,10 +6,11 @@ import './ClientList.less';
 import {useTimeKeeperAPI} from '../../utils/services';
 import Meta from 'antd/es/card/Meta';
 import FolderFilled from '@ant-design/icons/es/icons/FolderFilled';
-import Badge from 'antd/es/badge';
 import EditFilled from '@ant-design/icons/es/icons/EditFilled';
 import Tooltip from 'antd/es/tooltip';
 import Space from 'antd/es/space';
+import Tag from 'antd/es/tag';
+import UserOutlined from '@ant-design/icons/es/icons/UserOutlined';
 
 const { Panel } = Collapse;
 
@@ -68,11 +69,10 @@ const ClientList = () => {
                 <Collapse bordered={false} expandIconPosition={'right'} key="projects">
                   <Panel header={<Space size="small"><FolderFilled />{'List of projects'}</Space>} key="1">
                     <List
+                      className={'projectList'}
                       dataSource={item.projects}
                       renderItem={projectItem => (
-                        <List.Item>
-                          <p>{projectItem.name} <Badge count={projectItem.userCount} /></p>
-                        </List.Item>
+                        <List.Item>{projectItem.name} <Tag className="usersTag" icon={<UserOutlined />}>{projectItem.userCount}</Tag></List.Item>
                       )}
                     />
                   </Panel>
