@@ -2,7 +2,8 @@ import React from 'react';
 import {Breadcrumb, Typography, Alert, Avatar, Spin, Table} from 'antd';
 import {useTimeKeeperAPI} from '../../utils/services';
 import './UserList.less';
-import CheckCircleFilled from '@ant-design/icons/es/icons/CheckCircleFilled';
+import FlagFilled from '@ant-design/icons/es/icons/FlagFilled';
+import Button from 'antd/es/button';
 
 const { Title } = Typography;
 
@@ -56,7 +57,7 @@ const UserList = () => {
       dataIndex: 'projects',
       key: 'manager',
       align: 'center',
-      render: (value) => value.map(v => <div key={`role-${v.name}-${v.userId}`}>{value ? <CheckCircleFilled style={{ fontSize: '18px'}} /> : '' }</div>)
+      render: (value) => value.map(v => <div key={`role-${v.name}-${v.userId}`}>{value ? <FlagFilled style={{ fontSize: '18px'}} /> : '' }</div>)
     }
   ];
 
@@ -81,6 +82,16 @@ const UserList = () => {
     );
   }
 
+  let paginationItemRender = (current, type, originalElement) => {
+    if (type === 'prev') {
+      return <Button type="primary" shape="circle">&lt;</Button>;
+    } else if (type === 'next') {
+      return <Button type="primary" shape="circle">&gt;</Button>;
+    } else {
+      return <Button type="primary" shape="circle">{current}</Button>;
+    }
+  };
+
   return (
     <div>
       <div className="tk_TopPage">
@@ -93,14 +104,11 @@ const UserList = () => {
         <Title>List of users</Title>
         <div>
           <p>{usersResponse.data.length} Users</p>
-          <div>
-            <p>TO DO</p>
-          </div>
         </div>
       </div>
       <Table id="tk_Table"
         dataSource={usersResponse.data.map(user => userToUserData(user))}
-        columns={columns}
+        columns={columns} pagination={{ position:['bottomCenter'], pageSize:1, itemRender: paginationItemRender }}
       />
     </div>
   );
