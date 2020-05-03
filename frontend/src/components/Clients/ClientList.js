@@ -1,13 +1,12 @@
 import React from 'react';
 import {Alert, Avatar, Button, Card, List, PageHeader, Spin, Collapse} from 'antd';
-import {EditOutlined} from '@ant-design/icons';
 import {Link} from 'react-router-dom';
 import logo from '../../img/logo_timekeeper_homepage.png';
 import {useTimeKeeperAPI} from '../../utils/services';
 import Meta from 'antd/es/card/Meta';
 import FolderOpenOutlined from '@ant-design/icons/es/icons/FolderOpenOutlined';
 import Badge from 'antd/es/badge';
-import UserOutlined from '@ant-design/icons/es/icons/UserOutlined';
+import EditFilled from '@ant-design/icons/es/icons/EditFilled';
 import Tooltip from 'antd/es/tooltip';
 
 const { Panel } = Collapse;
@@ -53,9 +52,7 @@ const ClientList = () => {
               title={<div><Avatar src={logo} shape={'square'}/> {item.name}</div>}
               extra={[
                 <Tooltip title="Edit">
-                  <Link key="editLink" to={`/clients/${item.id}`}>
-                    <Button size="small" ghost shape="circle" icon={<EditOutlined/>} />
-                  </Link>
+                  <Button type="link" size="small" ghost shape="circle" icon={<EditFilled/>} href={`/clients/${item.id}`}/>
                 </Tooltip>
               ]}
               actions={[
