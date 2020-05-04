@@ -39,6 +39,7 @@ const EditClientForm = () => {
   if (clientResponse.data) {
     return (
       <React.Fragment>
+        <div style={{ borderTop: '1px solid rgba(216, 216, 216, 0.1)', marginTop: 48 }}>&nbsp;</div>
         <Form
           labelCol={{span: 4}}
           wrapperCol={{span: 14}}
