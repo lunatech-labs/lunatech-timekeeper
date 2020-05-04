@@ -49,7 +49,7 @@ const ClientList = () => {
 
   return (
     <React.Fragment>
-      <div style={{position: "relative"}}>
+      <div style={{position: 'relative'}}>
         <AutoComplete
           style={{ width: 160 }}
           onSearch={onSearch}

@@ -79,7 +79,7 @@ const UserList = () => {
     );
   }
 
-  let paginationItemRender = (current, type, originalElement) => {
+  let paginationItemRender = (current, type) => {
     if (type === 'prev') {
       return <Button type="primary" shape="circle">&lt;</Button>;
     } else if (type === 'next') {
