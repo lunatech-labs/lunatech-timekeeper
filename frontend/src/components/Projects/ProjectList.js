@@ -10,8 +10,8 @@ const ProjectList = () => {
     <React.Fragment>
       <div className="tk_TopPage">
         <PageHeader title="Projects"/>
-        <div id="add-button" className="addButton">
-          <Link to='/projects/new'><Button icon={<PlusOutlined/>}>Add a project</Button></Link>
+        <div id="add-button">
+          <Link key='addLink' to='/projects/new'><Button type="primary" icon={<PlusOutlined/>}>Add a project</Button></Link>
         </div>
       </div>
     </React.Fragment>
