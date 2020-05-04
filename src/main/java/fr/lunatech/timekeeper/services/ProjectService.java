@@ -39,7 +39,7 @@ public class ProjectService {
 
     @Transactional
     public Long create(ProjectRequest request, AuthenticationContext ctx) {
-        logger.debug("Create a new project with request={}, ctx={}", request, ctx);
+        logger.debug("Create a new project with {}, {}", request, ctx);
         final Project project = request.unbind(clientService::findById, userService::findById, ctx);
         Project.persist(project);
         return project.id;
@@ -47,7 +47,7 @@ public class ProjectService {
 
     @Transactional
     public Optional<Long> update(Long id, ProjectRequest request, AuthenticationContext ctx) {
-        logger.debug("Modify project for for id={} with request={}, ctx={}", id, request, ctx);
+        logger.debug("Modify project for for id={} with {}, {}", id, request, ctx);
         return findById(id, ctx)
                 .stream()
                 .map(project -> request.unbind(project, clientService::findById, userService::findById, ctx))
