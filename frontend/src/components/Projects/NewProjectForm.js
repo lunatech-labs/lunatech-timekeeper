@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Alert, Button, Form, Input, message, Radio, Select, Space, Spin} from 'antd';
-import {useTimeKeeperAPI, useTimeKeeperAPIPost} from "../../utils/services";
+import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
 import {Link, Redirect} from 'react-router-dom';
 
 
@@ -9,25 +9,34 @@ const {Option} = Select;
 
 const staticUsers = [{
   id: 1,
-  name: "Billy Bob"
+  name: 'Billy Bob'
 }, {
   id: 2,
-  name: "Harry Potter"
+  name: 'Harry Potter'
 }];
 
 const NewProjectForm = () => {
 
   const [projectCreated, setProjectCreated] = useState(false);
 
-  const [projectRequest, ] = useState({
+  const [projectRequest, setProjectRequest] = useState({
     publicAccess: true,
     billable: false,
-    selectedClientId: undefined
+    selectedClientId: undefined,
+    users: []
   });
 
   const clientsResponse = useTimeKeeperAPI('/api/clients');
 
   const timeKeeperAPIPost = useTimeKeeperAPIPost('/api/projects', (form => form), setProjectCreated);
+
+  const onChangeUsers = (value) => {
+    const userProject = {
+      id: value,
+      manage: false
+    };
+    setProjectRequest({...projectRequest, users: projectRequest.users.concat(userProject)});
+  };
 
   if (projectCreated) {
     message.success('Project was created');
@@ -93,9 +102,10 @@ const NewProjectForm = () => {
             label="Client"
             name="client"
           >
-            <Select style={{width: 200}}>
-              <Option></Option>
-              {clientsResponse.data.map(client => <Option key={`option-client-${client.id}`} value={client.id}>{client.name}</Option>)}
+            <Select style={{width: 200}} >
+              <Option key={'option-client-empty'} value={undefined}/>
+              {clientsResponse.data.map(client =>
+                <Option key={`option-client-${client.id}`} value={client.id}>{client.name}</Option>)}
             </Select>
           </Form.Item>
 
@@ -117,6 +127,24 @@ const NewProjectForm = () => {
               <Radio value={true}>Public</Radio>
               <Radio value={false}>Private</Radio>
             </Radio.Group>
+          </Form.Item>
+
+          <Form.Item
+            label="Users"
+            name="users"
+          >
+            <Select
+              showSearch
+              style={{ width: 200 }}
+              placeholder="Select a client"
+              optionFilterProp="children"
+              onChange={onChangeUsers}
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+            >
+              {staticUsers.map(user => <Option key={`option-user-${user.id}`} value={user.id}>{user.name}</Option>)}
+            </Select>
           </Form.Item>
 
           <Form.Item>
@@ -165,8 +193,8 @@ const NewProjectForm = () => {
     return (
       <React.Fragment>
         <Alert title='Server error'
-               message='Failed to load the client'
-               type='error'
+          message='Failed to load the client'
+          type='error'
         />
       </React.Fragment>
     );
