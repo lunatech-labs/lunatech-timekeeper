@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Alert, Button, Form, Input, message} from 'antd';
 import {Link, Redirect} from 'react-router-dom';
 import {useTimeKeeperAPIPost} from '../../utils/services';
-import Space from 'antd/es/space';
+import Space from 'antd/lib/space';
 
 const {TextArea} = Input;
 
