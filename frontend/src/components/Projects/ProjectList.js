@@ -4,8 +4,6 @@ import {Button, PageHeader} from 'antd';
 import {Link} from 'react-router-dom';
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined';
 import './ProjectList.less';
-
-
 const ProjectList = () => {
   return (
     <React.Fragment>
