@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {Alert, AutoComplete, Avatar, Button, Card, Collapse, List, Spin} from 'antd';
 import logo from '../../img/logo_timekeeper_homepage.png';
-import '../../App.less';
 import {useTimeKeeperAPI} from '../../utils/services';
 import FolderFilled from '@ant-design/icons/lib/icons/FolderFilled';
 import EditFilled from '@ant-design/icons/lib/icons/EditFilled';
