@@ -1,14 +1,15 @@
 import React, {useState} from 'react';
-import {Button, Form,  Input, message, Alert, PageHeader} from 'antd';
-import {Redirect, Link} from 'react-router-dom';
+import {Alert, Button, Form, Input, message} from 'antd';
+import {Link, Redirect} from 'react-router-dom';
 import {useTimeKeeperAPIPost} from '../../utils/services';
+import Space from 'antd/lib/space';
 
 const {TextArea} = Input;
 
 const tailLayout = {
   wrapperCol: {
     offset: 4,
-    span: 16,
+    span: 14,
   },
 };
 
@@ -33,7 +34,6 @@ const ClientForm = () => {
     const  errMsg  =  `Server error HTTP Code:${status}  for url: ${url}`;
     return (
       <React.Fragment>
-        <PageHeader title="Clients" subTitle="Create a new client"/>
         <Alert
           message="Unable to save the new Client"
           description={errMsg}
@@ -47,7 +47,7 @@ const ClientForm = () => {
 
   return (
     <React.Fragment>
-      <PageHeader title="Clients" subTitle="Create a new client"/>
+      <div style={{ borderTop: '1px solid rgba(216, 216, 216, 0.1)', marginTop: 48 }}>&nbsp;</div>
       <Form
         labelCol={{span: 4}}
         wrapperCol={{span: 14}}
@@ -77,14 +77,16 @@ const ClientForm = () => {
           />
         </Form.Item>
         <Form.Item {...tailLayout}>
-          <Link key="cancelLink" to={'/clients'}>
-            <Button htmlType="button">
-                    Cancel
+          <Space size="middle" style={{right: 0, position: 'absolute'}}>
+            <Link key="cancelLink" to={'/clients'}>
+              <Button htmlType="button">
+                      Cancel
+              </Button>
+            </Link>
+            <Button type="primary" htmlType="submit">
+                Submit
             </Button>
-          </Link>
-          <Button type="primary" htmlType="submit">
-              Submit
-          </Button>
+          </Space>
         </Form.Item>
       </Form>
     </React.Fragment>

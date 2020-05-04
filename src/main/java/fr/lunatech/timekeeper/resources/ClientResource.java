@@ -1,9 +1,10 @@
 package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.resources.openapi.ClientResourceApi;
-import fr.lunatech.timekeeper.services.dtos.ClientRequest;
-import fr.lunatech.timekeeper.services.dtos.ClientResponse;
-import fr.lunatech.timekeeper.services.interfaces.ClientService;
+import fr.lunatech.timekeeper.resources.providers.AuthenticationContextProvider;
+import fr.lunatech.timekeeper.services.ClientService;
+import fr.lunatech.timekeeper.services.requests.ClientRequest;
+import fr.lunatech.timekeeper.services.responses.ClientResponse;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -19,16 +20,21 @@ public class ClientResource implements ClientResourceApi {
     @Inject
     ClientService clientService;
 
+    @Inject
+    AuthenticationContextProvider authentication;
+
     @RolesAllowed({"user", "admin"})
     @Override
     public List<ClientResponse> getAllClients() {
-        return clientService.listAllClients();
+        final var ctx = authentication.context();
+        return clientService.listAllResponses(ctx);
     }
 
     @RolesAllowed({"admin"})
     @Override
     public Response createClient(@Valid ClientRequest request, UriInfo uriInfo) {
-        final long clientId = clientService.createClient(request);
+        final var ctx = authentication.context();
+        final long clientId = clientService.create(request, ctx);
         final URI uri = uriInfo.getAbsolutePathBuilder().path(Long.toString(clientId)).build();
         return Response.created(uri).build();
     }
@@ -36,13 +42,17 @@ public class ClientResource implements ClientResourceApi {
     @RolesAllowed({"user", "admin"})
     @Override
     public ClientResponse getClient(Long id) {
-        return clientService.findClientById(id).orElseThrow(NotFoundException::new);
+        final var ctx = authentication.context();
+        return clientService.findResponseById(id, ctx)
+                .orElseThrow(NotFoundException::new);
     }
 
     @RolesAllowed({"admin"})
     @Override
     public Response updateClient(Long id, @Valid ClientRequest request) {
-        clientService.updateClient(id, request).orElseThrow(NotFoundException::new);
+        final var ctx = authentication.context();
+        clientService.update(id, request, ctx)
+                .orElseThrow(NotFoundException::new);
         return Response.noContent().build();
     }
 }
