@@ -1,10 +1,19 @@
 import React from 'react';
 import {PageHeader} from 'antd';
+import Button from 'antd/es/button';
+import {Link} from 'react-router-dom';
+import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined';
+import './ProjectList.less';
 
 const ProjectList = () => {
-  return(
+  return (
     <React.Fragment>
-      <PageHeader title="Projects" />
+      <div className="tk_TopPage">
+        <PageHeader title="Projects"/>
+        <div id="add-button" className="addButton">
+          <Link to='/projects/new'><Button icon={<PlusOutlined/>}>Add a project</Button></Link>
+        </div>
+      </div>
     </React.Fragment>
   );
 };
