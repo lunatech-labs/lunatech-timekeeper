@@ -51,7 +51,7 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final OrganizationRequest organization = new OrganizationRequest("NewClient", "organization.org");
+        final OrganizationRequest organization = new OrganizationRequest("NewClient", "lunatech.fr");
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -101,7 +101,7 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final OrganizationRequest organization = new OrganizationRequest("NewClient", "organization.org");
+        final OrganizationRequest organization = new OrganizationRequest("NewClient", "lunatech.fr");
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -154,7 +154,7 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final OrganizationRequest organization = new OrganizationRequest("NewClient", "organization.org");
+        final OrganizationRequest organization = new OrganizationRequest("NewClient", "lunatech.fr");
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -253,7 +253,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/1"));
 
-        final OrganizationRequest organization = new OrganizationRequest("NewClient", "organization.org");
+        final OrganizationRequest organization = new OrganizationRequest("NewClient", "lunatech.fr");
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -313,7 +313,7 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final OrganizationRequest organization = new OrganizationRequest("NewClient", "organization.org");
+        final OrganizationRequest organization = new OrganizationRequest("NewClient", "lunatech.fr");
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -387,7 +387,7 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final OrganizationRequest organization = new OrganizationRequest("NewClient", "organization.org");
+        final OrganizationRequest organization = new OrganizationRequest("NewClient", "lunatech.fr");
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -462,7 +462,7 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final OrganizationRequest organization = new OrganizationRequest("NewClient", "organization.org");
+        final OrganizationRequest organization = new OrganizationRequest("NewClient", "lunatech.fr");
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -511,7 +511,7 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final OrganizationRequest organization = new OrganizationRequest("NewClient", "organization.org");
+        final OrganizationRequest organization = new OrganizationRequest("NewClient", "lunatech.fr");
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
