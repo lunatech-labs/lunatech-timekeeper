@@ -35,7 +35,9 @@ const MainPage = ({ title, children, actions, ...rest }) => {
 };
 
 MainPage.propTypes = {
-  children: PropTypes.object.isRequired
+  title: PropTypes.string,
+  children: PropTypes.object.isRequired,
+  actions: PropTypes.object.isRequired
 };
 
 export default MainPage;

@@ -13,8 +13,8 @@ const ClientsPage = () => {
         <Link to="/clients/new">
           <Button type="primary" style={{ width: 150 }} icon={<PlusOutlined className="tk_Icon_Mini"/>}>Add client</Button>
         </Link>
-        }
-      >
+      }
+    >
       <ClientList/>
     </MainPage>
   );

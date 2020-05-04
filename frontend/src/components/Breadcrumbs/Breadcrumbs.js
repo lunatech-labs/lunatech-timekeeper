@@ -22,7 +22,7 @@ class Breadcrumbs extends Component {
       if (breadcrumbName !== undefined) {
         return (
           <Breadcrumb.Item key={url}>
-            <Link to={url}>{breadcrumbNameMap[url] ?? 'Page'}</Link>
+            <Link to={url}>{breadcrumbNameMap[url] ? breadcrumbNameMap[url] : 'Page'}</Link>
           </Breadcrumb.Item>
         );
       } else {
@@ -35,7 +35,7 @@ class Breadcrumbs extends Component {
       </Breadcrumb.Item>,
     ].concat(extraBreadcrumbItems);
 
-    return <Breadcrumb>{breadcrumbItems}</Breadcrumb>
+    return <Breadcrumb>{breadcrumbItems}</Breadcrumb>;
   }
 }
 
