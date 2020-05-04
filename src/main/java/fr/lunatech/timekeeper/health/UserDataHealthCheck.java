@@ -1,6 +1,6 @@
 package fr.lunatech.timekeeper.health;
 
-import fr.lunatech.timekeeper.services.interfaces.UserService;
+import fr.lunatech.timekeeper.services.UserService;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.HealthCheckResponseBuilder;
@@ -22,7 +22,7 @@ public class UserDataHealthCheck implements HealthCheck {
                 .named("User datasource health check");
 
         try {
-            final Long count = userService.count();
+            final Long count = userService.countAll();
             responseBuilder.withData("count", count).up();
         } catch (IllegalStateException e) {
             responseBuilder.down();

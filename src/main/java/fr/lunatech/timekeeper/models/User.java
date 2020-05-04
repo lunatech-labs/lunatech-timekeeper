@@ -1,7 +1,6 @@
 package fr.lunatech.timekeeper.models;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -11,8 +10,13 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
 public class User extends PanacheEntity {
+
+    @ManyToOne
+    @JoinColumn(name = "organization_id", nullable = false)
+    @NotNull
+    public Organization organization;
 
     @NotBlank
     public String firstName;
@@ -22,7 +26,6 @@ public class User extends PanacheEntity {
 
     @NotBlank
     @Email
-    @NaturalId
     public String email;
 
     @NotNull
@@ -35,10 +38,9 @@ public class User extends PanacheEntity {
 
     @OneToMany(mappedBy = "user")
     @NotNull
-    public List<Member> members;
+    public List<ProjectUser> projects;
 
-    @ManyToOne
-    @JoinColumn(name = "organization_id", nullable = false)
-    @NotNull
-    public Organization organization;
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 }

@@ -4,7 +4,7 @@ import UserList from '../../components/Users/UserList';
 
 const UsersPage = () => {
   return (
-    <MainPage title={'All users'}>
+    <MainPage title={'List of users'}>
       <UserList/>
     </MainPage>
   );

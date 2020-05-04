@@ -1,11 +1,10 @@
 package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.resources.openapi.ProjectResourceApi;
-import fr.lunatech.timekeeper.services.dtos.MemberRequest;
-import fr.lunatech.timekeeper.services.dtos.MembersUpdateRequest;
-import fr.lunatech.timekeeper.services.dtos.ProjectRequest;
-import fr.lunatech.timekeeper.services.dtos.ProjectResponse;
-import fr.lunatech.timekeeper.services.interfaces.ProjectService;
+import fr.lunatech.timekeeper.resources.providers.AuthenticationContextProvider;
+import fr.lunatech.timekeeper.services.ProjectService;
+import fr.lunatech.timekeeper.services.requests.ProjectRequest;
+import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -21,16 +20,21 @@ public class ProjectResource implements ProjectResourceApi {
     @Inject
     ProjectService projectService;
 
+    @Inject
+    AuthenticationContextProvider authentication;
+
     @RolesAllowed({"user", "admin"})
     @Override
     public List<ProjectResponse> getAllProjects() {
-        return projectService.listAllProjects();
+        final var ctx = authentication.context();
+        return projectService.listAllResponses(ctx);
     }
 
     @RolesAllowed({"user", "admin"})
     @Override
     public Response createProject(@Valid ProjectRequest request, UriInfo uriInfo) {
-        final long projectId = projectService.createProject(request);
+        final var ctx = authentication.context();
+        final long projectId = projectService.create(request, ctx);
         final URI uri = uriInfo.getAbsolutePathBuilder().path(Long.toString(projectId)).build();
         return Response.created(uri).build();
     }
@@ -38,28 +42,17 @@ public class ProjectResource implements ProjectResourceApi {
     @RolesAllowed({"user", "admin"})
     @Override
     public ProjectResponse getProject(Long id) {
-        return projectService.findProjectById(id).orElseThrow(NotFoundException::new);
+        final var ctx = authentication.context();
+        return projectService.findResponseById(id, ctx)
+                .orElseThrow(NotFoundException::new);
     }
 
     @RolesAllowed({"user", "admin"})
     @Override
     public Response updateProject(Long id, @Valid ProjectRequest request) {
-        projectService.updateProject(id, request).orElseThrow(NotFoundException::new);
-        return Response.noContent().build();
-    }
-
-    @RolesAllowed({"user", "admin"})
-    @Override
-    public Response addMemberToProject(Long projectId, @Valid MemberRequest request, UriInfo uriInfo) {
-        final Long memberId = projectService.addMemberToProject(projectId, request);
-        final URI uri = uriInfo.getAbsolutePathBuilder().path(memberId.toString()).build();
-        return Response.created(uri).build();
-    }
-
-    @RolesAllowed({"user", "admin"})
-    @Override
-    public Response updateProjectMembers(Long projectId, @Valid MembersUpdateRequest request, UriInfo uriInfo) {
-        projectService.updateProjectMembers(projectId, request);
+        final var ctx = authentication.context();
+        projectService.update(id, request, ctx)
+                .orElseThrow(NotFoundException::new);
         return Response.noContent().build();
     }
 }
