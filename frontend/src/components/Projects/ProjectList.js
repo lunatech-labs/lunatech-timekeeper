@@ -1,7 +1,6 @@
 import React from 'react';
 
-import {PageHeader} from 'antd';
-import Button from 'antd/es/button';
+import {Button, PageHeader} from 'antd';
 import {Link} from 'react-router-dom';
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined';
 import './ProjectList.less';
