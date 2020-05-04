@@ -99,7 +99,7 @@ class PocTest {
             final String adminToken = getAdminAccessToken();
             final String token = getUserAccessToken();
 
-            final OrganizationRequest organization = new OrganizationRequest("NewClient", "organization.org");
+            final OrganizationRequest organization = new OrganizationRequest("NewClient", "lunatech.fr");
             given()
                     .auth().preemptive().oauth2(adminToken)
                     .when()
@@ -172,7 +172,7 @@ class PocTest {
 
         Tuple3<ClientResponse, OrganizationResponse, List<ProjectResponse>> info = distribResource(
                 create(new ClientRequest("NewClient", "NewDescription"), adminToken),
-                create(new OrganizationRequest("NewClient", "organization.org"), adminToken),
+                create(new OrganizationRequest("NewClient", "lunatech.fr"), adminToken),
                 (ClientResponse clinfo,OrganizationResponse orga) -> create(new ProjectRequest("Pepito", true, "New project", clinfo.getId(), orga.getId(), false), adminToken),
                 (ClientResponse clinfo,OrganizationResponse orga) -> create(new ProjectRequest("Pepito", true, "New project", clinfo.getId(), orga.getId(), false), adminToken));
 

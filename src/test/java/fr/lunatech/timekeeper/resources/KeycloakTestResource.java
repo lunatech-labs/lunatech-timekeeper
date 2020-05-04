@@ -41,9 +41,10 @@ public class KeycloakTestResource implements QuarkusTestResourceLifecycleManager
         RealmRepresentation realm = createRealm(KEYCLOAK_REALM);
 
         realm.getClients().add(createClient(KEYCLOAK_CLIENT));
-        realm.getUsers().add(createUser("jimmy", "Jimmy", "James",  "organization.org", "user"));
-        realm.getUsers().add(createUser("merry", "Merry", "Jones",  "organization.org", "user"));
-        realm.getUsers().add(createUser("sam", "Sam", "Uell", "organization.org", "admin"));
+        realm.getUsers().add(createUser("jimmy", "Jimmy", "James",  "lunatech.fr", "user"));
+        realm.getUsers().add(createUser("merry", "Merry", "Jones",  "lunatech.fr", "user"));
+        realm.getUsers().add(createUser("sam", "Sam", "Uell", "lunatech.fr", "admin"));
+        realm.getUsers().add(createUser("clark", "Clark", "Kent", "lunatech.fr", "super-admin"));
 
 
         // Create config in keycloak
@@ -67,8 +68,16 @@ public class KeycloakTestResource implements QuarkusTestResourceLifecycleManager
         return getAccessToken("jimmy");
     }
 
+    public static String getUser2AccessToken() {
+        return getAccessToken("merry");
+    }
+
     public static String getAdminAccessToken() {
         return getAccessToken("sam");
+    }
+
+    public static String getSuperAdminAccessToken() {
+        return getAccessToken("clark");
     }
 
     public static String getAccessToken(String userName) {
