@@ -29,7 +29,8 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
     "umi": "^3.1.1",
-    "umi-request": "^1.2.19"
+    "umi-request": "^1.2.19",
+    "moment": "2.24.0"
   },
   "scripts": {
     "start": "react-app-rewired start",
@@ -42,7 +43,8 @@
     "url-parse": "1.4.3",
     "is-promise": "2.1.0",
     "run-async/is-promise": "2.1.0",
-    "memoizee/is-promise": "2.1.0"
+    "memoizee/is-promise": "2.1.0",
+    "moment": "2.24.0"
   },
   "eslintConfig": {
     "extends": "react-app"
