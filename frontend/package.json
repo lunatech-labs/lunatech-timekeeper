@@ -29,15 +29,15 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
     "umi": "^3.1.1",
-    "umi-request": "^1.2.19"
+    "umi-request": "^1.2.19",
+    "moment": "2.24.0"
   },
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "lint": "npx eslint src",
-    "lint-fix": "npx eslint src --fix",
-    "preinstall": "npx npm-force-resolutions"
+    "lint-fix": "npx eslint src --fix"
   },
   "resolutions": {
     "url-parse": "1.4.3",
@@ -62,8 +62,7 @@
     ]
   },
   "devDependencies": {
-    "eslint": "^6.8.0",
-    "npm-force-resolutions": "0.0.3"
+    "eslint": "^6.8.0"
   },
   "engines": {
     "node": ">=10.15.3",
