@@ -3,7 +3,6 @@ import {Alert, AutoComplete, Avatar, Button, Card, Collapse, List, Spin} from 'a
 import logo from '../../img/logo_timekeeper_homepage.png';
 import './ClientList.less';
 import {useTimeKeeperAPI} from '../../utils/services';
-import Meta from 'antd/es/card/Meta';
 import FolderFilled from '@ant-design/icons/es/icons/FolderFilled';
 import EditFilled from '@ant-design/icons/es/icons/EditFilled';
 import Tooltip from 'antd/es/tooltip';
@@ -12,6 +11,7 @@ import Tag from 'antd/es/tag';
 import UserOutlined from '@ant-design/icons/es/icons/UserOutlined';
 import Input from 'antd/es/input';
 import SearchOutlined from '@ant-design/icons/es/icons/SearchOutlined';
+import Meta from 'antd/lib/card/Meta';
 
 const { Panel } = Collapse;
 
