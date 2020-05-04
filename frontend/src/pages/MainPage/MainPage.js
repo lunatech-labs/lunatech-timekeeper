@@ -1,13 +1,17 @@
 import React, {useState} from 'react';
-import { Layout } from 'antd';
+import {Layout, Typography} from 'antd';
 import './MainPage.less';
+import Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs';
 import SidebarLeft from '../../components/SidebarLeft/SidebarLeft';
 import TopBar from '../../components/TopBar/TopBar';
 import PropTypes from 'prop-types';
 
+
+const { Title } = Typography;
+
 const { Content, Footer } = Layout;
 
-const MainPage = ({ children, ...rest }) => {
+const MainPage = ({ title, children, actions, ...rest }) => {
   const [collapsed, toggle] = useState(false);
   return (
     <Layout>
@@ -15,7 +19,14 @@ const MainPage = ({ children, ...rest }) => {
       <Layout className="site-layout">
         <TopBar collapsed={collapsed} toggle={() => toggle(!collapsed)} />
         <Content id="tk_MainContent" className="mainContent">
-          {children}
+          <div className="tk_TopPage">
+            <Breadcrumbs />
+            <div className="tk_Page_Actions">{actions}</div>
+            <Title id="title">{title}</Title>
+          </div>
+          <div>
+            {children}
+          </div>
         </Content>
         <Footer className="tk_Footer">Time Keeper v0.1 ©2020 Created by Lunatech</Footer>
       </Layout>
@@ -24,7 +35,9 @@ const MainPage = ({ children, ...rest }) => {
 };
 
 MainPage.propTypes = {
-  children: PropTypes.object.isRequired
+  title: PropTypes.string,
+  children: PropTypes.object.isRequired,
+  actions: PropTypes.object.isRequired
 };
 
 export default MainPage;

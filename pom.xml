@@ -114,6 +114,12 @@
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.vavr</groupId>
+            <artifactId>vavr</artifactId>
+            <version>0.9.3</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -153,7 +159,8 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>6.4.0</version>
                 <configuration>
-                    <url>jdbc:postgresql://${POSTGRESQL_ADDON_HOST}:${POSTGRESQL_ADDON_PORT}/${POSTGRESQL_ADDON_DB}</url>
+                    <url>jdbc:postgresql://${POSTGRESQL_ADDON_HOST}:${POSTGRESQL_ADDON_PORT}/${POSTGRESQL_ADDON_DB}
+                    </url>
                     <user>${POSTGRESQL_ADDON_USER}</user>
                     <password>${POSTGRESQL_ADDON_PASSWORD}</password>
                 </configuration>

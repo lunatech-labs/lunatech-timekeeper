@@ -1,21 +1,15 @@
 import React, {useState} from 'react';
-import {
-  Alert,
-  Button,
-  Form,
-  Input,
-  PageHeader,
-  Spin,
-} from 'antd';
-import {Redirect, useRouteMatch, Link} from 'react-router-dom';
+import {Alert, Button, Form, Input, message, Spin,} from 'antd';
+import {Link, Redirect, useRouteMatch} from 'react-router-dom';
 import {useTimeKeeperAPI, useTimeKeeperAPIPut} from '../../utils/services';
+import Space from 'antd/lib/space';
 
 const {TextArea} = Input;
 
 const tailLayout = {
   wrapperCol: {
     offset: 4,
-    span: 16,
+    span: 14,
   },
 };
 
@@ -34,6 +28,7 @@ const EditClientForm = () => {
   const timeKeeperAPIPut = useTimeKeeperAPIPut('/api/clients/' + clientIdSlug.params.id, (form=>form), setClientUpdated);
 
   if (clientUpdated) {
+    message.success('Client was updated');
     return (
       <React.Fragment>
         <Redirect to="/clients"/>
@@ -44,7 +39,7 @@ const EditClientForm = () => {
   if (clientResponse.data) {
     return (
       <React.Fragment>
-        <PageHeader title="Clients" subTitle="Edit a client"/>
+        <div style={{ borderTop: '1px solid rgba(216, 216, 216, 0.1)', marginTop: 48 }}>&nbsp;</div>
         <Form
           labelCol={{span: 4}}
           wrapperCol={{span: 14}}
@@ -75,14 +70,16 @@ const EditClientForm = () => {
             />
           </Form.Item>
           <Form.Item {...tailLayout}>
-            <Link key="cancelLink" to={'/clients'}>
-              <Button htmlType="button">
-                Cancel
+            <Space size="middle" style={{right: 0, position: 'absolute'}}>
+              <Link key="cancelLink" to={'/clients'}>
+                <Button htmlType="button">
+                  Cancel
+                </Button>
+              </Link>
+              <Button type="primary" htmlType="submit">
+                Submit
               </Button>
-            </Link>
-            <Button type="primary" htmlType="submit">
-                            Submit
-            </Button>
+            </Space>
           </Form.Item>
         </Form>
       </React.Fragment>
@@ -92,8 +89,6 @@ const EditClientForm = () => {
   if (clientResponse.loading) {
     return (
       <React.Fragment>
-        <PageHeader title="Clients" subTitle="Edit a client"/>
-
         <Spin size="large">
           <Form
             labelCol={{span: 4}}

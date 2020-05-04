@@ -1,9 +1,7 @@
 package fr.lunatech.timekeeper.resources.openapi;
 
-import fr.lunatech.timekeeper.services.dtos.MemberRequest;
-import fr.lunatech.timekeeper.services.dtos.MembersUpdateRequest;
-import fr.lunatech.timekeeper.services.dtos.ProjectRequest;
-import fr.lunatech.timekeeper.services.dtos.ProjectResponse;
+import fr.lunatech.timekeeper.services.requests.ProjectRequest;
+import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.headers.Header;
@@ -28,7 +26,7 @@ public interface ProjectResourceApi {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Retrieve all projects",
-            description = "Retrieve the list of projects.")
+            description = "Retrieve a project with the details and the list of project users and their respective roles.")
     @Tag(ref = "projects")
     @APIResponses(value = {
             @APIResponse(
@@ -41,7 +39,7 @@ public interface ProjectResourceApi {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Create a new project ",
-            description = "Create a project.")
+            description = "Create a project with the details and the list of project users and their respective roles.")
     @Tag(ref = "projects")
     @APIResponses(value = {
             @APIResponse(
@@ -58,7 +56,7 @@ public interface ProjectResourceApi {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Retrieve a project",
-            description = "Retrieve project details.")
+            description = "Retrieve a project with the details and the list of project users and their respective roles.")
     @Tag(ref = "projects")
     @APIResponses(value = {
             @APIResponse(
@@ -76,7 +74,7 @@ public interface ProjectResourceApi {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Update a project",
-            description = "Update project details.")
+            description = "Update a project with the details and the list of project users and their respective roles.")
     @Tag(ref = "projects")
     @APIResponses(value = {
             @APIResponse(
@@ -89,44 +87,5 @@ public interface ProjectResourceApi {
             )
     })
     Response updateProject(@PathParam("id") Long id, @RequestBody ProjectRequest request);
-
-    @POST
-    @Path("{id}/members")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Add a member to a project",
-            description = "Add a member to a project and determine his role.")
-    @Tag(ref = "projects")
-    @APIResponses(value = {
-            @APIResponse(
-                    responseCode = "201",
-                    description = "Member created",
-                    headers = {
-                            @Header(name = LOCATION, description = "New member url", schema = @Schema(type = SchemaType.STRING))
-                    }
-            ),
-            @APIResponse(
-                    responseCode = "400",
-                    description = "Bad parameters (unknown project or user)"
-            )
-    })
-    Response addMemberToProject(@PathParam("id") Long projectId, @RequestBody MemberRequest request, @Context UriInfo uriInfo);
-
-    @PUT
-    @Path("{id}/members")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Update project members",
-            description = "Update the list of project members.")
-    @Tag(ref = "projects")
-    @APIResponses(value = {
-            @APIResponse(
-                    responseCode = "204",
-                    description = "Members updated"
-            ),
-            @APIResponse(
-                    responseCode = "400",
-                    description = "Bad parameters (unknown project or user)"
-            )
-    })
-    Response updateProjectMembers(@PathParam("id") Long projectId, @RequestBody MembersUpdateRequest request, @Context UriInfo uriInfo);
 
 }

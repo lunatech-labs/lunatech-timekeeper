@@ -1,24 +1,29 @@
-import React from 'react';
-import {Alert, Avatar, Button, List, PageHeader, Spin} from 'antd';
-import {EditOutlined} from '@ant-design/icons';
-import {Link} from 'react-router-dom';
+import React, {useState} from 'react';
+import {Alert, AutoComplete, Avatar, Button, Card, Collapse, List, Spin} from 'antd';
 import logo from '../../img/logo_timekeeper_homepage.png';
+import './ClientList.less';
 import {useTimeKeeperAPI} from '../../utils/services';
+import FolderFilled from '@ant-design/icons/lib/icons/FolderFilled';
+import EditFilled from '@ant-design/icons/lib/icons/EditFilled';
+import Tooltip from 'antd/lib/tooltip';
+import Space from 'antd/lib/space';
+import Tag from 'antd/lib/tag';
+import UserOutlined from '@ant-design/icons/lib/icons/UserOutlined';
+import Input from 'antd/lib/input';
+import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined';
+import Meta from 'antd/lib/card/Meta';
+
+const { Panel } = Collapse;
 
 const ClientList = () => {
 
   const clientsResponse = useTimeKeeperAPI('/api/clients');
-  const projectsResponse = useTimeKeeperAPI('/api/projects');
 
-  const projectsIdToProjects = (projectsId) => {
-    if (projectsResponse.data) {
-      return projectsResponse.data.filter(
-        project => projectsId.includes(project.id));
-    }
-    return [];
-  };
+  const [value, setValue] = useState('');
 
-  const renderProjects = (projectsId) => projectsIdToProjects(projectsId).map(project => project.name).join(' | ');
+  const onSearch = searchText => setValue(searchText);
+
+  const clientsFiltered = () => clientsResponse.data.filter(d => d.name.toLowerCase().includes(value.toLowerCase()));
 
   if (clientsResponse.loading) {
     return (
@@ -44,36 +49,59 @@ const ClientList = () => {
 
   return (
     <React.Fragment>
-      <PageHeader title="Clients" subTitle={clientsResponse.data.length}/>
+      <div style={{position: 'relative'}}>
+        <AutoComplete
+          style={{ width: 160 }}
+          onSearch={onSearch}
+          className="tk_Search_Input"
+        >
+          <Input size="large" placeholder="Search in clients" allowClear  prefix={<SearchOutlined />} />
+        </AutoComplete>
+        <div>
+          <p>{clientsFiltered().length} Clients</p>
+        </div>
+      </div>
       <List
-
-        itemLayout="horizontal"
-        dataSource={clientsResponse.data}
+        id="tk_List"
+        grid={{ gutter: 32, column: 3 }}
+        dataSource={clientsFiltered()}
         renderItem={item => (
-          <List.Item key={item.id}
-            actions={[
-              <Link key="editLink" to={`/clients/${item.id}`}>
-                <Button type="default"
-                  icon={<EditOutlined/>}>Edit</Button>
-              </Link>,
-            ]}
-          >
-            <List.Item.Meta
-              avatar={
-                <Avatar src={logo}/>
+          <List.Item key={item.id}>
+            <Card
+              className={'shadow'}
+              bordered={false}
+              title={
+                <Space size={'middle'}>
+                  <Avatar src={logo} shape={'square'} size="large"/>
+                  <div>{item.name}<br/><span className={'subtitle'}>{item.projects.length} projects</span></div>
+                </Space>
               }
-              title={item.name}
-              description={item.description}
-            />
-            <div>{renderProjects(item.projectsId)}</div>
+              extra={[
+                <Tooltip title="Edit" key="edit">
+                  <Button type="link" size="small" ghost shape="circle" icon={<EditFilled/>} href={`/clients/${item.id}`}/>
+                </Tooltip>
+              ]}
+              actions={[
+                <Collapse bordered={false} expandIconPosition={'right'} key="projects">
+                  <Panel header={<Space size="small"><FolderFilled />{'List of projects'}</Space>} key="1">
+                    <List
+                      className={'projectList'}
+                      dataSource={item.projects}
+                      renderItem={projectItem => (
+                        <List.Item>{projectItem.name} <Tag className="usersTag" icon={<UserOutlined />}>{projectItem.userCount}</Tag></List.Item>
+                      )}
+                    />
+                  </Panel>
+                </Collapse>
+              ]}
+            >
+              <Meta
+                description={item.description}
+              />
+            </Card>
           </List.Item>
         )}
       />
-      <Link to="/clients/new">
-        <Button type="primary">Create new client</Button>
-      </Link>
-
-
     </React.Fragment>
   );
 };

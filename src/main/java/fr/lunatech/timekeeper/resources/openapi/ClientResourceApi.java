@@ -1,7 +1,7 @@
 package fr.lunatech.timekeeper.resources.openapi;
 
-import fr.lunatech.timekeeper.services.dtos.ClientRequest;
-import fr.lunatech.timekeeper.services.dtos.ClientResponse;
+import fr.lunatech.timekeeper.services.requests.ClientRequest;
+import fr.lunatech.timekeeper.services.responses.ClientResponse;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.headers.Header;
