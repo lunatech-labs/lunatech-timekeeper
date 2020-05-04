@@ -1,0 +1,32 @@
+package fr.lunatech.timekeeper.resources.providers;
+
+import fr.lunatech.timekeeper.services.OrganizationService;
+import fr.lunatech.timekeeper.services.requests.OrganizationRequest;
+import io.quarkus.runtime.StartupEvent;
+import org.eclipse.microprofile.config.Config;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+
+@ApplicationScoped
+public class OrganizationInitializer {
+
+    @Inject
+    OrganizationService organizationService;
+
+    @Inject
+    Config config;
+
+    private final static String configPrefix = "timekeeper.organizations.";
+
+    void startup(@Observes StartupEvent event) {
+        config.getPropertyNames().forEach(propertyName -> {
+            if (propertyName.startsWith(configPrefix)) {
+                final var organizationName = config.getValue(propertyName, String.class);
+                final var organizationTokenName = propertyName.replace(configPrefix, "").replace("\"", "");
+                organizationService.createIfTokenNameNotFound(new OrganizationRequest(organizationName, organizationTokenName));
+            }
+        });
+    }
+}
