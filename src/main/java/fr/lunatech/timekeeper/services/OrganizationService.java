@@ -32,6 +32,13 @@ public class OrganizationService {
     }
 
     @Transactional
+    public Long createIfTokenNameNotFound(OrganizationRequest request) {
+        return findByTokenName(request.getTokenName())
+                .map(organization -> organization.id)
+                .orElseGet(() -> create(request, null));
+    }
+
+    @Transactional
     public Long create(OrganizationRequest request, AuthenticationContext ctx) {
         logger.info("Create a new organization with {}, {}", request, ofNullable(ctx).map(AuthenticationContext::toString).orElse("No context"));
         final Organization organization = request.unbind(ctx);
