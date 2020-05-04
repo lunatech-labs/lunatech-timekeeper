@@ -20,10 +20,10 @@ const DetailProjectPage = () => {
     return (
       <React.Fragment>
         <Alert title='Server error'
-               message='Failed to load user from Quarkus backend server'
-               type='error'
-               description={errorReason}
-        />
+                 message='Failed to load projects from Quarkus backend server'
+                 type='error'
+                 description={errorReason}
+      />
       </React.Fragment>
     );
   }

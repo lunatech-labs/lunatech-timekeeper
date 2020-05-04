@@ -34,7 +34,6 @@ const ShowProject = ({project}) => {
                     bordered
                     column={{xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1}}>
         <Descriptions.Item label="Name">{project.name}</Descriptions.Item>
-        <Descriptions.Item label="Organization">TODO</Descriptions.Item>
         <Descriptions.Item label="Description">{project.description}</Descriptions.Item>
         <Descriptions.Item label="Client">{project.client.name}</Descriptions.Item>
         <Descriptions.Item label="Billable">{project.billable ? 'Yes' : 'No'}</Descriptions.Item>
