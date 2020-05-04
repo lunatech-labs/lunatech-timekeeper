@@ -72,7 +72,6 @@ const NewProjectForm = () => {
           labelCol={{span: 4}}
           wrapperCol={{span: 14}}
           layout="horizontal"
-          onFinish={timeKeeperAPIPost.run}
           initialValues={projectRequest}
         >
           <Form.Item
