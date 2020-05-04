@@ -41,8 +41,9 @@ public class KeycloakTestResource implements QuarkusTestResourceLifecycleManager
         RealmRepresentation realm = createRealm(KEYCLOAK_REALM);
 
         realm.getClients().add(createClient(KEYCLOAK_CLIENT));
-        realm.getUsers().add(createUser("jimmy", "organization.org", "user"));
-        realm.getUsers().add(createUser("sam", "organization.org", "user", "admin"));
+        realm.getUsers().add(createUser("jimmy", "Jimmy", "James",  "organization.org", "user"));
+        realm.getUsers().add(createUser("merry", "Merry", "Jones",  "organization.org", "user"));
+        realm.getUsers().add(createUser("sam", "Sam", "Uell", "organization.org", "admin"));
 
 
         // Create config in keycloak
@@ -144,17 +145,18 @@ public class KeycloakTestResource implements QuarkusTestResourceLifecycleManager
         return client;
     }
 
-    private static UserRepresentation createUser(String username,String organization, String... realmRoles) {
+    private static UserRepresentation createUser(String username, String firstname, String lastname, String organization, String... realmRoles) {
         UserRepresentation user = new UserRepresentation();
 
         user.setUsername(username);
+        user.setFirstName(firstname);
+        user.setLastName(lastname);
         user.setEnabled(true);
         user.setCredentials(new ArrayList<>());
         user.setRealmRoles(Arrays.asList(realmRoles));
-        user.setEmail(username + "@gmail.com");
+        user.setEmail(username + "@" + organization);
         user.singleAttribute("organization", organization)
                 .singleAttribute("picture", username + ".png");
-
 
         CredentialRepresentation credential = new CredentialRepresentation();
 

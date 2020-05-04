@@ -1,6 +1,9 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.services.dtos.*;
+import fr.lunatech.timekeeper.services.requests.ClientRequest;
+import fr.lunatech.timekeeper.services.requests.OrganizationRequest;
+import fr.lunatech.timekeeper.services.requests.ProjectRequest;
+import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -10,12 +13,14 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+import java.util.List;
 
 import static fr.lunatech.timekeeper.models.Profile.Admin;
+import static fr.lunatech.timekeeper.models.Profile.User;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
-import static fr.lunatech.timekeeper.resources.TestUtils.createUserRequest;
-import static fr.lunatech.timekeeper.resources.TestUtils.toJson;
+import static fr.lunatech.timekeeper.resources.utils.TestUtils.listOfTasJson;
+import static fr.lunatech.timekeeper.resources.utils.TestUtils.toJson;
 import static io.restassured.RestAssured.given;
 import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT;
@@ -39,14 +44,14 @@ class ProjectResourceTest {
         flyway.clean();
         flyway.migrate();
     }
-
+/*
     @Test
     void shouldCreateProjectWhenAdminProfile() {
 
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final OrganizationRequest organization = new OrganizationRequest("NewOrganization", "organization.org");
+        final OrganizationRequest organization = new OrganizationRequest("NewClient", "organization.org");
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -68,7 +73,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/2"));
 
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L, false, emptyList());
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L, 1L, false);
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -79,7 +84,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/3"));
 
-        final ProjectResponse expectedProject = new ProjectResponse(3L, "Pepito", true, "New project", new ProjectResponse.Client(2L, "NewClient"), emptyList(),false);
+        final ProjectResponse expectedProject = new ProjectResponse(3L, "Pepito", true, "New project", "NewClient", emptyList(),1L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -107,7 +112,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/organizations/1"));
 
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", null, false, emptyList());
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 10L,1L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -118,7 +123,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/2"));
 
-        final ProjectResponse expectedProject = new ProjectResponse(2L, "Pepito", true, "New project", null, emptyList(), false);
+        final ProjectResponse expectedProject = new ProjectResponse(2L, "Pepito", true, "New project", "", emptyList(), 1L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -160,7 +165,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/organizations/1"));
 
-        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
+        final UserRequest user = new UserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", List.of(Admin));
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -182,7 +187,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/3"));
 
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 3L, false, emptyList());
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 3L, 1L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -193,7 +198,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/4"));
 
-        final ProjectRequest project1 = new ProjectRequest("Petit Prince", true, "New project", 3L,false, emptyList());
+        final ProjectRequest project1 = new ProjectRequest("Pepito", true, "New project", 3L,1L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -204,8 +209,8 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/5"));
 
-        final ProjectResponse expectedProject = new ProjectResponse(4L, "Pepito", true, "New project", new ProjectResponse.Client(3L, "NewClient"), emptyList(),false);
-        final ProjectResponse expectedProject1 = new ProjectResponse(5L, "Petit Prince", true, "New project", new ProjectResponse.Client(3L, "NewClient"), emptyList(),false);
+        final ProjectResponse expectedProject = new ProjectResponse(4L, "Pepito", true, "New project", "NewClient", emptyList(),1L, false);
+        final ProjectResponse expectedProject1 = new ProjectResponse(5L, "Pepito", true, "New project", "NewClient", emptyList(),1L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -213,7 +218,7 @@ class ProjectResourceTest {
                 .get("/api/projects")
                 .then()
                 .statusCode(OK.getStatusCode())
-                .body(is(TestUtils.listOfTasJson(expectedProject, expectedProject1)));
+                .body(is(listOfTasJson(expectedProject, expectedProject1)));
     }
 
     @Test
@@ -259,7 +264,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/organizations/2"));
 
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L, false, emptyList());
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L, 2L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -281,7 +286,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/clients/4"));
 
-        final ProjectRequest project1 = new ProjectRequest("Pepito2", false, "New project2", 4L, false, emptyList());
+        final ProjectRequest project1 = new ProjectRequest("Pepito2", false, "New project2", 4L, 2L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -291,7 +296,7 @@ class ProjectResourceTest {
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
 
-        final ProjectResponse expectedProject = new ProjectResponse(3L, "Pepito2", false, "New project2", new ProjectResponse.Client(4L, "NewClient2"), emptyList(),false);
+        final ProjectResponse expectedProject = new ProjectResponse(3L, "Pepito2", false, "New project2", "NewClient2", emptyList(),2L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -301,7 +306,7 @@ class ProjectResourceTest {
                 .statusCode(OK.getStatusCode())
                 .body(is(toJson(expectedProject)));
     }
-/*
+
     @Test
     void shouldAddMemberToProject() {
 
@@ -319,7 +324,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/organizations/1"));
 
-        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
+        final UserRequest user = new UserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", List.of(Admin));
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -342,7 +347,7 @@ class ProjectResourceTest {
                 .header(LOCATION, endsWith("/api/clients/3"));
 
 
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 3L,false, emptyList());
+        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 3L,1L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -353,7 +358,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/4"));
 
-        final ProjectUserRequest member = new ProjectUserRequest(2L, Role.Developer);
+        final MemberRequest member = new MemberRequest(2L, Role.Developer);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -365,7 +370,7 @@ class ProjectResourceTest {
                 .header(LOCATION, endsWith("/api/projects/4/members/5"));
 
         final MemberResponse expectedMemberResponse = new MemberResponse(5L, 2L, Role.Developer, 4L);
-        final ProjectResponse expectedProject = new ProjectResponse(4L, "Pepito", true, "New project", new ProjectResponse.Client(3L, "NewClient"), listOf(expectedMemberResponse),1L,false);
+        final ProjectResponse expectedProject = new ProjectResponse(4L, "Pepito", true, "New project", "NewClient", List.of(expectedMemberResponse),1L,false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -393,7 +398,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/organizations/1"));
 
-        final UserRequest user = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
+        final UserRequest user = new UserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", List.of(Admin));
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -428,7 +433,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/4"));
 
-        final ProjectUserRequest member = new ProjectUserRequest(2L, Role.Developer);
+        final MemberRequest member = new MemberRequest(2L, Role.Developer);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -439,7 +444,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/4/members/5"));
 
-        final ProjectUserRequest member2 = new ProjectUserRequest(2L, Role.TeamLeader);
+        final MemberRequest member2 = new MemberRequest(2L, Role.TeamLeader);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -517,7 +522,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/organizations/1"));
 
-        final UserRequest user1 = createUserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", Admin);
+        final UserRequest user1 = new UserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", List.of(Admin));
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -528,7 +533,7 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/2"));
 
-        final UserRequest user2 = createUserRequest("Jimmy", "Pastore", "jimmy@gmail.com", "jimmy.png", User);
+        final UserRequest user2 = new UserRequest("Jimmy", "Pastore", "jimmy@gmail.com", "jimmy.png", List.of(User));
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -563,9 +568,9 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/projects/5"));
 
-        final ProjectUserRequest member1 = new ProjectUserRequest(2L, Role.TeamLeader);
-        final ProjectUserRequest member2 = new ProjectUserRequest(3L, Role.Developer);
-        final MembersUpdateRequest members = new MembersUpdateRequest(listOf(member1, member2));
+        final MemberRequest member1 = new MemberRequest(2L, Role.TeamLeader);
+        final MemberRequest member2 = new MemberRequest(3L, Role.Developer);
+        final MembersUpdateRequest members = new MembersUpdateRequest(List.of(member1, member2));
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -577,7 +582,7 @@ class ProjectResourceTest {
 
         final MemberResponse expectedMemberResponse1 = new MemberResponse(6L, 2L, Role.TeamLeader, 5L);
         final MemberResponse expectedMemberResponse2 = new MemberResponse(7L, 3L, Role.Developer, 5L);
-        final ProjectResponse expectedProject = new ProjectResponse(5L, "Pepito", true, "New project", "NewClient", listOf(expectedMemberResponse1, expectedMemberResponse2),1L, false);
+        final ProjectResponse expectedProject = new ProjectResponse(5L, "Pepito", true, "New project", "NewClient", List.of(expectedMemberResponse1, expectedMemberResponse2),1L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -587,7 +592,7 @@ class ProjectResourceTest {
                 .statusCode(OK.getStatusCode())
                 .body(is(toJson(expectedProject)));
 
-        final UserRequest user2_1 = createUserRequest("Sam2", "Huel2", "sam2@gmail.com", "sam2.png", Admin);
+        final UserRequest user2_1 = new UserRequest("Sam2", "Huel2", "sam2@gmail.com", "sam2.png", List.of(Admin));
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
@@ -598,8 +603,8 @@ class ProjectResourceTest {
                 .statusCode(CREATED.getStatusCode())
                 .header(LOCATION, endsWith("/api/users/8"));
 
-        final ProjectUserRequest member2_1 = new ProjectUserRequest(8L, Role.TeamLeader);
-        final MembersUpdateRequest members2 = new MembersUpdateRequest(listOf(member2_1));
+        final MemberRequest member2_1 = new MemberRequest(8L, Role.TeamLeader);
+        final MembersUpdateRequest members2 = new MembersUpdateRequest(List.of(member2_1));
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
@@ -610,7 +615,7 @@ class ProjectResourceTest {
                 .statusCode(NO_CONTENT.getStatusCode());
 
         final MemberResponse expectedMemberResponse2_1 = new MemberResponse(9L, 8L, Role.TeamLeader, 5L);
-        final ProjectResponse expectedProject2 = new ProjectResponse(5L, "Pepito", true, "New project", "NewClient", listOf(expectedMemberResponse2_1),1L, false);
+        final ProjectResponse expectedProject2 = new ProjectResponse(5L, "Pepito", true, "New project", "NewClient", List.of(expectedMemberResponse2_1),1L, false);
         given()
                 .auth().preemptive().oauth2(token)
                 .when()
