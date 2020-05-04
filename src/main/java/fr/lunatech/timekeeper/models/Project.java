@@ -7,28 +7,47 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
 
 @Entity
-@Table(name = "projects")
+@Table(name = "projects", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "organization_id"})})
 public class Project extends PanacheEntity {
 
-    @NotBlank
-    public String name;
+    @ManyToOne
+    @JoinColumn(name = "organization_id", nullable = false)
     @NotNull
-    public Boolean billable;
-    @NotNull
-    public String description;
+    public Organization organization;
+
     @ManyToOne
     @JoinColumn(name = "client_id")
     @Null
     public Client client;
-    @OneToMany(mappedBy = "project")
+
+    @NotBlank
+    public String name;
+
     @NotNull
-    public List<Member> members;
-    @ManyToOne
-    @JoinColumn(name = "organization_id", nullable = false)
+    public Boolean billable;
+
     @NotNull
-    public Organization organization ;
+    public String description;
+
     @NotNull
     public Boolean publicAccess;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    @NotNull
+    public List<ProjectUser> users;
+
+    public Optional<ProjectUser> getUser(Long userId) {
+        return ofNullable(users)
+                .flatMap(projectUsers -> projectUsers
+                        .stream()
+                        .filter(projectUser -> Objects.equals(projectUser.user.id, userId))
+                        .findFirst()
+                );
+    }
 }

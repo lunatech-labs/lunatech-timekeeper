@@ -1,4 +1,7 @@
-package fr.lunatech.timekeeper.services.dtos;
+package fr.lunatech.timekeeper.services.requests;
+
+import fr.lunatech.timekeeper.models.Client;
+import fr.lunatech.timekeeper.services.AuthenticationContext;
 
 import javax.json.bind.annotation.JsonbCreator;
 import javax.validation.constraints.NotBlank;
@@ -8,6 +11,7 @@ public final class ClientRequest {
 
     @NotBlank
     private final String name;
+
     @NotNull
     private final String description;
 
@@ -15,6 +19,16 @@ public final class ClientRequest {
     public ClientRequest(@NotBlank String name, @NotNull String description) {
         this.name = name;
         this.description = description;
+    }
+
+    public Client unbind(@NotNull Client client, @NotNull AuthenticationContext ctx) {
+        client.name = getName();
+        client.description = getDescription();
+        return client;
+    }
+
+    public Client unbind(@NotNull AuthenticationContext ctx) {
+        return unbind(new Client(), ctx);
     }
 
     public String getName() {
