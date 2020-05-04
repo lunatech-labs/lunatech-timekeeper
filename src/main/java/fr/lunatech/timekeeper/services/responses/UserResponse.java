@@ -32,7 +32,7 @@ public final class UserResponse {
     @NotNull
     private final List<ProjectUserResponse> projects;
 
-    private UserResponse(
+    public UserResponse(
             @NotNull Long id,
             @NotBlank String name,
             @NotBlank @Email String email,

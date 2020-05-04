@@ -29,7 +29,7 @@ public class OrganizationResponse {
     @NotNull
     private final List<OrganizationUserResponse> users;
 
-    private OrganizationResponse(
+    public OrganizationResponse(
             @NotNull Long id,
             @NotBlank String name,
             @NotNull String tokenName,
@@ -156,7 +156,7 @@ public class OrganizationResponse {
         @NotEmpty
         private final List<Profile> profiles;
 
-        private OrganizationUserResponse(
+        public OrganizationUserResponse(
                 @NotNull Long id,
                 @NotBlank String name,
                 @NotBlank @Email String email,
