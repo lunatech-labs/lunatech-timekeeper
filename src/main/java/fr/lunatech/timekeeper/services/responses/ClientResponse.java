@@ -22,7 +22,7 @@ public final class ClientResponse {
     @NotNull
     private final List<ProjectClientResponse> projects;
 
-    private ClientResponse(
+    public ClientResponse(
             @NotNull Long id,
             @NotBlank String name,
             @NotNull String description,

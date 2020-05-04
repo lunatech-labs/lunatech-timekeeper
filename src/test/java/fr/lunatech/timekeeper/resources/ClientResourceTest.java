@@ -1,7 +1,9 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.services.dtos.ClientRequest;
-import fr.lunatech.timekeeper.services.dtos.ClientResponse;
+import fr.lunatech.timekeeper.resources.utils.TestUtils;
+import fr.lunatech.timekeeper.services.requests.ClientRequest;
+import fr.lunatech.timekeeper.services.requests.OrganizationRequest;
+import fr.lunatech.timekeeper.services.responses.ClientResponse;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -14,14 +16,15 @@ import javax.inject.Inject;
 
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
-import static fr.lunatech.timekeeper.resources.TestUtils.toJson;
+import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ClientDef;
+import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
+import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
+import static fr.lunatech.timekeeper.resources.utils.ResourceReader.readValidation;
+import static fr.lunatech.timekeeper.resources.utils.TestUtils.toJson;
 import static io.restassured.RestAssured.given;
 import static java.util.Collections.emptyList;
-import static javax.ws.rs.core.HttpHeaders.ACCEPT;
-import static javax.ws.rs.core.HttpHeaders.LOCATION;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.Response.Status.*;
-import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
@@ -42,42 +45,30 @@ class ClientResourceTest {
     @Test
     void shouldCreateClientWhenAdminProfile() {
 
-        final String token = getAdminAccessToken();
+        final String samToken = getAdminAccessToken();
 
-        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(client)
-                .post("/api/clients")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/clients/1"));
+        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), samToken);
+        final var client = create(new ClientRequest("NewClient", "NewDescription"), samToken);
 
-        final ClientResponse expectedClient = new ClientResponse(1L, "NewClient", "NewDescription", emptyList());
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/clients/1")
-                .then()
+        readValidation(client.getId(), ClientDef.uri, samToken)
                 .statusCode(OK.getStatusCode())
-                .body(is(toJson(expectedClient)));
+                .body(is(toJson(client)));
     }
 
     @Test
     void shouldNotCreateClientWhenUserProfile() {
 
-        final String token = getUserAccessToken();
+        final String jimmyToken = getUserAccessToken();
 
+        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), jimmyToken);
         final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
+
         given()
-                .auth().preemptive().oauth2(token)
+                .auth().preemptive().oauth2(jimmyToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(client)
-                .post("/api/clients")
+                .post(ClientDef.uri)
                 .then()
                 .statusCode(FORBIDDEN.getStatusCode());
     }
@@ -85,68 +76,38 @@ class ClientResourceTest {
     @Test
     void shouldNotFindUnknownClient() {
 
-        final String token = getUserAccessToken();
+        final String jimmyToken = getUserAccessToken();
 
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/clients/4")
-                .then()
+        final  Long NO_EXISTING_CLIENT_ID = 243L;
+
+        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), jimmyToken);
+        readValidation(NO_EXISTING_CLIENT_ID, ClientDef.uri, jimmyToken)
                 .statusCode(NOT_FOUND.getStatusCode());
     }
 
     @Test
     void shouldFindAllClients() {
 
-        final String adminToken = getAdminAccessToken();
-        final String token = getUserAccessToken();
+        final String samToken = getAdminAccessToken();
+        final String jimmyToken = getUserAccessToken();
 
-        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(client)
-                .post("/api/clients")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/clients/1"));
+        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), jimmyToken);
+        final var client1 = create(new ClientRequest("NewClient", "NewDescription"), samToken);
+        final var client2 = create(new ClientRequest("NewClient2", "NewDescription2"), samToken);
 
-        final ClientRequest client2 = new ClientRequest("NewClient2", "NewDescription2");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(client2)
-                .post("/api/clients")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/clients/2"));
-
-        final ClientResponse expectedClient = new ClientResponse(1L, "NewClient", "NewDescription", emptyList());
-        final ClientResponse expectedClient2 = new ClientResponse(2L, "NewClient2", "NewDescription2", emptyList());
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/clients")
-                .then()
+        readValidation(ClientDef.uri, jimmyToken)
                 .statusCode(OK.getStatusCode())
-                .body(is(TestUtils.listOfTasJson(expectedClient, expectedClient2)));
+                .body(is(TestUtils.listOfTasJson(client1, client2)));
     }
 
     @Test
     void shouldFindAllClientsEmpty() {
 
-        final String token = getUserAccessToken();
+        final String jimmyToken = getUserAccessToken();
 
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/clients")
-                .then()
+        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), jimmyToken);
+
+        readValidation(ClientDef.uri, jimmyToken)
                 .statusCode(OK.getStatusCode())
                 .body(is("[]"));
     }
@@ -154,36 +115,14 @@ class ClientResourceTest {
     @Test
     void shouldModifyClientWhenAdminProfile() {
 
-        final String token = getAdminAccessToken();
+        final String samToken = getAdminAccessToken();
 
-        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(client)
-                .post("/api/clients")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/clients/1"));
+        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), samToken);
+        final var client = create(new ClientRequest("NewClient", "NewDescription"), samToken);
+        update(new ClientRequest("NewClient", "NewDescription2"), String.format("%s/%s", ClientDef.uri, client.getId()), samToken);
 
-        final ClientRequest client2 = new ClientRequest("NewClient", "NewDescription2");
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(client2)
-                .put("/api/clients/1")
-                .then()
-                .statusCode(NO_CONTENT.getStatusCode());
-
-        final ClientResponse expectedClient = new ClientResponse(1L, "NewClient", "NewDescription2", emptyList());
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/clients/1")
-                .then()
+        final var expectedClient = new ClientResponse(client.getId(), "NewClient", "NewDescription2", emptyList());
+        readValidation(client.getId(), ClientDef.uri, samToken)
                 .statusCode(OK.getStatusCode())
                 .body(is(toJson(expectedClient)));
     }
@@ -191,27 +130,19 @@ class ClientResourceTest {
     @Test
     void shouldNotModifyClientWhenUserProfile() {
 
-        final String adminToken = getAdminAccessToken();
-        final String token = getUserAccessToken();
+        final String samToken = getAdminAccessToken();
+        final String jimmyToken = getUserAccessToken();
 
-        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(client)
-                .post("/api/clients")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/clients/1"));
+        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), samToken);
+        final var client = create(new ClientRequest("NewClient", "NewDescription"), samToken);
 
         final ClientRequest client2 = new ClientRequest("NewClient", "NewDescription2");
         given()
-                .auth().preemptive().oauth2(token)
+                .auth().preemptive().oauth2(jimmyToken)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(client2)
-                .put("/api/clients/1")
+                .put(String.format("%s/%s", ClientDef.uri, client.getId()))
                 .then()
                 .statusCode(FORBIDDEN.getStatusCode());
     }

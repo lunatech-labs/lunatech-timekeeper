@@ -36,7 +36,7 @@ public final class ProjectResponse {
     @NotNull
     private final Boolean publicAccess;
 
-    private ProjectResponse(
+    public ProjectResponse(
             @NotNull Long id,
             @NotBlank String name,
             @NotNull Boolean billable,
@@ -115,7 +115,7 @@ public final class ProjectResponse {
         @NotNull
         private final String picture;
 
-        private ProjectUserResponse(
+        public ProjectUserResponse(
                 @NotNull Long id,
                 @NotNull Boolean manager,
                 @NotNull String name,
@@ -163,7 +163,7 @@ public final class ProjectResponse {
         @NotNull
         private final String name;
 
-        private ProjectClientResponse(
+        public ProjectClientResponse(
                 @NotNull Long id,
                 @NotNull String name
         ) {
