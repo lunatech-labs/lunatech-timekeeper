@@ -3,7 +3,7 @@ import ClientList from '../../components/Clients/ClientList';
 import MainPage from '../MainPage/MainPage';
 import {Link} from 'react-router-dom';
 import {Button} from 'antd';
-import PlusOutlined from '@ant-design/icons/es/icons/PlusOutlined';
+import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined';
 
 const ClientsPage = () => {
   return (
