@@ -9,12 +9,19 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.stream;
 
 public enum Profile {
-    SuperAdmin, Admin, User, Guest;
+    SuperAdmin ("super_admin"),
+    Admin ("admin"),
+    User ("user"),;
+
+    String tokenValue;
+
+    Profile(String tokenValue) {
+        this.tokenValue = tokenValue;
+    }
 
     public static Optional<Profile> getByName(String value) {
-        // To manage the value super-admin without to define a String Enum
         return stream(Profile.values())
-                .filter(profile -> profile.name().equalsIgnoreCase(value.replace("-", "")))
+                .filter(profile -> value.equals(profile.tokenValue))
                 .findFirst();
     }
 
