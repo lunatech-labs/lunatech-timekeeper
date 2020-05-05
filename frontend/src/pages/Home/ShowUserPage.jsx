@@ -1,5 +1,5 @@
 import React from 'react';
-import {Alert, Divider} from 'antd';
+import {Alert} from 'antd';
 import ShowUser from '../../components/Users/ShowUser';
 import './index.less';
 import {useTimeKeeperAPI} from '../../utils/services';
@@ -30,8 +30,6 @@ const ShowUserPage = () => {
     return (
 
         <React.Fragment>
-
-            <Divider/>
 
             <ShowUser user={data}/>
 

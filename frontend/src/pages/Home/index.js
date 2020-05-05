@@ -4,7 +4,7 @@ import MainPage from '../MainPage/MainPage';
 
 const HomePage = () => {
   return (
-    <MainPage>
+    <MainPage title={'Home'}>
       <ShowUserPage/>
     </MainPage>
   );
