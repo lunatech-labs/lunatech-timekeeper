@@ -12,6 +12,7 @@ public enum Profile {
     SuperAdmin, Admin, User, Guest;
 
     public static Optional<Profile> getByName(String value) {
+        // To manage the value super-admin without to define a String Enum
         return stream(Profile.values())
                 .filter(profile -> profile.name().equalsIgnoreCase(value.replace("-", "")))
                 .findFirst();
