@@ -20,6 +20,9 @@ public class OrganizationInitializer {
 
     private final static String configPrefix = "timekeeper.organizations.";
 
+    // Example of properties read in config:
+    // timekeeper.organizations."lunatech.nl"=Lunatech NL
+    // timekeeper.organizations."lunatech.fr"=Lunatech FR
     void startup(@Observes StartupEvent event) {
         config.getPropertyNames().forEach(propertyName -> {
             if (propertyName.startsWith(configPrefix)) {
