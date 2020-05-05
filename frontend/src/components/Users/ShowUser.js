@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { Descriptions, Avatar } from 'antd';
 import PropTypes from 'prop-types';
+import './ShowUser.less';
 
 class ShowUser extends Component {
 
   render() {
     return (
-      <Descriptions title="User Info"
+      <Descriptions
+        className="tk_Card"
         bordered
         column={{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }}>
         <Descriptions.Item label="Avatar"><Avatar src={this.props.user.picture} /></Descriptions.Item>
