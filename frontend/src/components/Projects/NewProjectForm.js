@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Alert, Button, Form, Input, message, Radio, Select, Space, Spin} from 'antd';
+import {Alert, Avatar, Button, Form, Input, message, Radio, Select, Space, Spin, Table} from 'antd';
 import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
 import {Link, Redirect} from 'react-router-dom';
 
@@ -7,13 +7,30 @@ import {Link, Redirect} from 'react-router-dom';
 const {TextArea} = Input;
 const {Option} = Select;
 
-const staticUsers = [{
-  id: 1,
-  name: 'Billy Bob'
-}, {
-  id: 2,
-  name: 'Harry Potter'
-}];
+
+const columns = [
+  {
+    title: '',
+    dataIndex: 'picture',
+    key: 'picture',
+    width: 60,
+    align: 'right',
+    render: (value) => renderAvatar(value),
+  },
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    key: 'name',
+  },
+  {
+    title: 'Manager',
+    dataIndex: 'manager',
+    key: 'manager',
+    render: (value) => value ? "Manager" : "Member"
+  }
+];
+
+const renderAvatar = (value) => <Avatar src={value}/>;
 
 const NewProjectForm = () => {
 
@@ -28,17 +45,27 @@ const NewProjectForm = () => {
 
   const clientsResponse = useTimeKeeperAPI('/api/clients');
   const projectsResponse = useTimeKeeperAPI('/api/projects');
+  const usersResponse = useTimeKeeperAPI('/api/users');
 
   const timeKeeperAPIPost = useTimeKeeperAPIPost('/api/projects', (form => form), setProjectCreated);
 
   const [duplicatedNameError, setDuplicatedNameError] = useState(false);
 
-  const onChangeUsers = (value) => {
+  const formRef = React.createRef();
+
+  const addMember = (id) => {
+    const user = usersResponse.data.find(user => user.id === id);
     const userProject = {
-      id: value,
+      ...user,
       manage: false
     };
     setProjectRequest({...projectRequest, users: projectRequest.users.concat(userProject)});
+  };
+  const filterUsers = (users, usersToRemove) => {
+    const usersToRemoveIds = usersToRemove.map(user => user.id);
+    const filtered = users.filter(user => !usersToRemoveIds.includes(user.id));
+    console.log(filtered);
+    return filtered;
   };
 
   if (projectCreated) {
@@ -67,9 +94,10 @@ const NewProjectForm = () => {
     );
   }
 
-  if (clientsResponse.data && projectsResponse.data) {
+  if (clientsResponse.data && projectsResponse.data && usersResponse.data) {
     const projectsName = projectsResponse.data.map(project => project.name);
     const onChangeName = (event) => setDuplicatedNameError(projectsName.includes(event.target.value));
+    console.log(projectRequest)
     return (
       <React.Fragment>
         <div style={{borderTop: '1px solid rgba(216, 216, 216, 0.1)', marginTop: 48}}>&nbsp;</div>
@@ -79,6 +107,7 @@ const NewProjectForm = () => {
           layout="horizontal"
           initialValues={projectRequest}
           onFinish={timeKeeperAPIPost.run}
+          ref={formRef}
         >
           <Form.Item
             label="Name"
@@ -139,20 +168,31 @@ const NewProjectForm = () => {
 
           <Form.Item
             label="Users"
-            name="users"
+            name="selectedUser"
+            getValueProps={(value) => console.log(value)}
           >
             <Select
               showSearch
               style={{ width: 200 }}
               placeholder="Select a client"
               optionFilterProp="children"
-              onChange={onChangeUsers}
               filterOption={(input, option) =>
                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }
             >
-              {staticUsers.map(user => <Option key={`option-user-${user.id}`} value={user.id}>{user.name}</Option>)}
+              {filterUsers(usersResponse.data, projectRequest.users).map(user => <Option key={`option-user-${user.id}`} value={user.id}>{user.name}</Option>)}
             </Select>
+          </Form.Item>
+          <Button onClick={() => addMember(formRef.current.getFieldValue('selectedUser'))}>Add a collaborator</Button>
+
+          <Form.Item
+            label="Members"
+            name="users"
+          >
+            <Table id="tk_Table"
+                   dataSource={projectRequest.users}
+                   columns={columns}
+            />
           </Form.Item>
 
           <Form.Item>
@@ -172,7 +212,7 @@ const NewProjectForm = () => {
     );
   }
 
-  if (clientsResponse.loading || projectsResponse.loading) {
+  if (clientsResponse.loading || projectsResponse.loading || usersResponse.loading) {
     return (
       <React.Fragment>
         <Spin size="large">
@@ -197,7 +237,7 @@ const NewProjectForm = () => {
     );
   }
 
-  if(clientsResponse.error || projectsResponse.error){
+  if(clientsResponse.error || projectsResponse.error || usersResponse.error){
     return (
       <React.Fragment>
         <Alert title='Server error'
