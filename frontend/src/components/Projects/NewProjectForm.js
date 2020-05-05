@@ -111,7 +111,7 @@ const NewProjectForm = () => {
             name="clientId"
           >
             <Select style={{width: 200}} >
-              <Option key={'option-client-empty'} value={undefined}> </Option>
+              <Option key={'option-client-empty'} value={null}> </Option>
               {clientsResponse.data.map(client =>
                 <Option key={`option-client-${client.id}`} value={client.id}>{client.name}</Option>)}
             </Select>
