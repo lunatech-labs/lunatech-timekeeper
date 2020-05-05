@@ -1,11 +1,10 @@
 package fr.lunatech.timekeeper.services;
 
-import fr.lunatech.timekeeper.models.Client;
-import fr.lunatech.timekeeper.models.Organization;
-import fr.lunatech.timekeeper.models.Project;
-import fr.lunatech.timekeeper.models.User;
+import fr.lunatech.timekeeper.models.*;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Objects;
 
 public final class AuthenticationContext {
@@ -13,12 +12,20 @@ public final class AuthenticationContext {
     @NotNull
     private final Long userId;
 
+    @NotEmpty
+    private final List<Profile> profiles;
+
     @NotNull
     private final Organization organization;
 
-    AuthenticationContext(@NotNull Long userId, @NotNull Organization organization) {
+    AuthenticationContext(
+            @NotNull Long userId,
+            @NotNull Organization organization,
+            @NotEmpty List<Profile> profiles
+    ) {
         this.userId = userId;
         this.organization = organization;
+        this.profiles = profiles;
     }
 
     Boolean canAccess(@NotNull Client client) {
@@ -26,7 +33,7 @@ public final class AuthenticationContext {
     }
 
     Boolean canAccess(@NotNull Organization organization) {
-        return true; //TODO super admin or mine
+        return isSuperAdmin() || Objects.equals(getOrganization().id, organization.id);
     }
 
     Boolean canAccess(@NotNull Project project) {
@@ -38,7 +45,11 @@ public final class AuthenticationContext {
     }
 
     static AuthenticationContext bind(@NotNull User user) {
-        return new AuthenticationContext(user.id, user.organization);
+        return new AuthenticationContext(user.id, user.organization, user.profiles);
+    }
+
+    public Boolean isSuperAdmin() {
+        return profiles.contains(Profile.SuperAdmin);
     }
 
     public Long getUserId() {
