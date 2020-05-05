@@ -19,8 +19,8 @@ public interface UserResourceApi {
     @GET
     @Path("/me")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Extract current user from JWT",
-            description = "Extract the current authenticated user from the JWT token.")
+    @Operation(summary = "Retrieve the current user",
+            description = "Retrieve the current authenticated user from the JWT token.")
     @Tag(ref = "users")
     @APIResponses(value = {
             @APIResponse(
