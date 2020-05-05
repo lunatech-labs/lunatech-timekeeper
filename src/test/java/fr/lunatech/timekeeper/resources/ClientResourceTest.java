@@ -47,7 +47,6 @@ class ClientResourceTest {
 
         final String samToken = getAdminAccessToken();
 
-        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), samToken);
         final var client = create(new ClientRequest("NewClient", "NewDescription"), samToken);
 
         readValidation(client.getId(), ClientDef.uri, samToken)
@@ -60,7 +59,6 @@ class ClientResourceTest {
 
         final String jimmyToken = getUserAccessToken();
 
-        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), jimmyToken);
         final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
 
         given()
@@ -80,7 +78,6 @@ class ClientResourceTest {
 
         final  Long NO_EXISTING_CLIENT_ID = 243L;
 
-        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), jimmyToken);
         readValidation(NO_EXISTING_CLIENT_ID, ClientDef.uri, jimmyToken)
                 .statusCode(NOT_FOUND.getStatusCode());
     }
@@ -91,7 +88,6 @@ class ClientResourceTest {
         final String samToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
 
-        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), jimmyToken);
         final var client1 = create(new ClientRequest("NewClient", "NewDescription"), samToken);
         final var client2 = create(new ClientRequest("NewClient2", "NewDescription2"), samToken);
 
@@ -105,8 +101,6 @@ class ClientResourceTest {
 
         final String jimmyToken = getUserAccessToken();
 
-        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), jimmyToken);
-
         readValidation(ClientDef.uri, jimmyToken)
                 .statusCode(OK.getStatusCode())
                 .body(is("[]"));
@@ -117,7 +111,6 @@ class ClientResourceTest {
 
         final String samToken = getAdminAccessToken();
 
-        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), samToken);
         final var client = create(new ClientRequest("NewClient", "NewDescription"), samToken);
         update(new ClientRequest("NewClient", "NewDescription2"), String.format("%s/%s", ClientDef.uri, client.getId()), samToken);
 
@@ -133,7 +126,6 @@ class ClientResourceTest {
         final String samToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
 
-        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), samToken);
         final var client = create(new ClientRequest("NewClient", "NewDescription"), samToken);
 
         final ClientRequest client2 = new ClientRequest("NewClient", "NewDescription2");

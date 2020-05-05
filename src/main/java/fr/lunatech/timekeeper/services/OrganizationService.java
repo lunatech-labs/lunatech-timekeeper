@@ -16,6 +16,8 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Optional.ofNullable;
+
 @ApplicationScoped
 public class OrganizationService {
 
@@ -25,14 +27,20 @@ public class OrganizationService {
         return findById(id, ctx).map(OrganizationResponse::bind);
     }
 
-    @Transactional
     public List<OrganizationResponse> listAllResponses(AuthenticationContext ctx) {
         return streamAll(ctx, OrganizationResponse::bind, Collectors.toList());
     }
 
     @Transactional
+    public Long createIfTokenNameNotFound(OrganizationRequest request) {
+        return findByTokenName(request.getTokenName())
+                .map(organization -> organization.id)
+                .orElseGet(() -> create(request, null));
+    }
+
+    @Transactional
     public Long create(OrganizationRequest request, AuthenticationContext ctx) {
-        logger.info("Create a new organization with request={}, ctx={}", request, ctx);
+        logger.info("Create a new organization with {}, {}", request, ofNullable(ctx).map(AuthenticationContext::toString).orElse("No context"));
         final Organization organization = request.unbind(ctx);
         organization.persist();
         return organization.id;
@@ -40,7 +48,7 @@ public class OrganizationService {
 
     @Transactional
     public Optional<Long> update(Long id, OrganizationRequest request, AuthenticationContext ctx) {
-        logger.info("Modify organization for id={} with request={}, ctx={}", id, request, ctx);
+        logger.info("Modify organization for id={} with {}, {}", id, request, ctx);
         return findById(id, ctx)
                 .map(organization -> request.unbind(organization, ctx))
                 .map(organization -> organization.id);

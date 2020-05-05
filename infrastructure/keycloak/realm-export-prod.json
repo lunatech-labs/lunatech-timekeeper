@@ -80,6 +80,14 @@
         "clientRole": false,
         "containerId": "quarkus",
         "attributes": {}
+      },
+      {
+        "id": "bede1f8d-9d72-447d-a6b7-4eb4599a5ed3",
+        "name": "super_admin",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "quarkus",
+        "attributes": {}
       }
     ],
     "client": {
