@@ -3,8 +3,6 @@ package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.resources.utils.ResourceReader;
 import fr.lunatech.timekeeper.resources.utils.TestUtils;
-import fr.lunatech.timekeeper.services.requests.OrganizationRequest;
-import fr.lunatech.timekeeper.services.responses.UserResponse;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -14,24 +12,12 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-import java.util.List;
 
-import static fr.lunatech.timekeeper.models.Profile.Admin;
-import static fr.lunatech.timekeeper.models.Profile.User;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
-import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.OrganizationDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.UserDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
-import static fr.lunatech.timekeeper.resources.utils.TestUtils.toJson;
-import static io.restassured.RestAssured.given;
-import static java.util.Collections.emptyList;
-import static javax.ws.rs.core.HttpHeaders.ACCEPT;
-import static javax.ws.rs.core.HttpHeaders.LOCATION;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static javax.ws.rs.core.Response.Status.CREATED;
 import static javax.ws.rs.core.Response.Status.OK;
-import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
@@ -54,8 +40,8 @@ class UserResourceTest {
 
         final String samToken = getAdminAccessToken();
 
-        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), samToken);
         var sam = create(samToken);
+
         ResourceReader.readValidation(2L, UserDef.uri, samToken)
                 .statusCode(OK.getStatusCode())
                 .body(is(TestUtils.toJson(sam)));
@@ -67,9 +53,9 @@ class UserResourceTest {
         final String samToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
 
-        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), samToken);
         var sam = create(samToken);
         var jimmy = create(jimmyToken);
+
         ResourceReader.readValidation(UserDef.uri, jimmyToken)
                 .statusCode(OK.getStatusCode())
                 .body(is(TestUtils.listOfTasJson(sam, jimmy)));
@@ -83,7 +69,7 @@ class UserResourceTest {
         final String adminToken = getAdminAccessToken();
         final String token = getUserAccessToken();
 
-        final OrganizationRequest organization = new OrganizationRequest("NewClient", "organization.org");
+        final OrganizationRequest organization = new OrganizationRequest("NewClient", "lunatech.fr");
         given()
                 .auth().preemptive().oauth2(adminToken)
                 .when()
