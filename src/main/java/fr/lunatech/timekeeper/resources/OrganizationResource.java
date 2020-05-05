@@ -23,14 +23,14 @@ public class OrganizationResource implements OrganizationResourceApi {
     @Inject
     AuthenticationContextProvider authentication;
 
-    @RolesAllowed({"super-admin"})
+    @RolesAllowed({"super_admin"})
     @Override
     public List<OrganizationResponse> getAllOrganizations() {
         final var ctx = authentication.context();
         return organizationService.listAllResponses(ctx);
     }
 
-    @RolesAllowed({"super-admin"})
+    @RolesAllowed({"super_admin"})
     @Override
     public Response createOrganization(@Valid OrganizationRequest request, UriInfo uriInfo) {
         final var ctx = authentication.context();
@@ -39,7 +39,7 @@ public class OrganizationResource implements OrganizationResourceApi {
         return Response.created(uri).build();
     }
 
-    @RolesAllowed({"super-admin"})
+    @RolesAllowed({"super_admin"})
     @Override
     public OrganizationResponse getOrganization(Long id) {
         final var ctx = authentication.context();
@@ -47,7 +47,7 @@ public class OrganizationResource implements OrganizationResourceApi {
                 .orElseThrow(NotFoundException::new);
     }
 
-    @RolesAllowed({"super-admin"})
+    @RolesAllowed({"super_admin"})
     @Override
     public Response updateOrganization(Long id, @Valid OrganizationRequest request) {
         final var ctx = authentication.context();

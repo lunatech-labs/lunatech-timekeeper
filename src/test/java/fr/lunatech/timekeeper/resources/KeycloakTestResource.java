@@ -44,7 +44,7 @@ public class KeycloakTestResource implements QuarkusTestResourceLifecycleManager
         realm.getUsers().add(createUser("jimmy", "Jimmy", "James",  "lunatech.fr", "user"));
         realm.getUsers().add(createUser("merry", "Merry", "Jones",  "lunatech.fr", "user"));
         realm.getUsers().add(createUser("sam", "Sam", "Uell", "lunatech.fr", "admin"));
-        realm.getUsers().add(createUser("clark", "Clark", "Kent", "lunatech.fr", "super-admin"));
+        realm.getUsers().add(createUser("clark", "Clark", "Kent", "lunatech.fr", "super_admin"));
 
 
         // Create config in keycloak
