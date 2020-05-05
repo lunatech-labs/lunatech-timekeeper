@@ -27,8 +27,11 @@ const NewProjectForm = () => {
   });
 
   const clientsResponse = useTimeKeeperAPI('/api/clients');
+  const projectsResponse = useTimeKeeperAPI('/api/projects');
 
   const timeKeeperAPIPost = useTimeKeeperAPIPost('/api/projects', (form => form), setProjectCreated);
+
+  const [duplicatedNameError, setDuplicatedNameError] = useState(false);
 
   const onChangeUsers = (value) => {
     const userProject = {
@@ -64,7 +67,9 @@ const NewProjectForm = () => {
     );
   }
 
-  if (clientsResponse.data) {
+  if (clientsResponse.data && projectsResponse.data) {
+    const projectsName = projectsResponse.data.map(project => project.name);
+    const onChangeName = (event) => setDuplicatedNameError(projectsName.includes(event.target.value));
     return (
       <React.Fragment>
         <div style={{borderTop: '1px solid rgba(216, 216, 216, 0.1)', marginTop: 48}}>&nbsp;</div>
@@ -73,10 +78,13 @@ const NewProjectForm = () => {
           wrapperCol={{span: 14}}
           layout="horizontal"
           initialValues={projectRequest}
+          onFinish={timeKeeperAPIPost.run}
         >
           <Form.Item
             label="Name"
             name="name"
+            validateStatus={duplicatedNameError && 'error'}
+            help={duplicatedNameError && 'A project already use this name'}
             rules={[
               {
                 required: true,
@@ -85,6 +93,7 @@ const NewProjectForm = () => {
           >
             <Input
               placeholder="Project's name"
+              onChange={onChangeName}
             />
           </Form.Item>
           <Form.Item
@@ -99,10 +108,10 @@ const NewProjectForm = () => {
 
           <Form.Item
             label="Client"
-            name="client"
+            name="clientId"
           >
             <Select style={{width: 200}} >
-              <Option key={'option-client-empty'} value={undefined}/>
+              <Option key={'option-client-empty'} value={null}> </Option>
               {clientsResponse.data.map(client =>
                 <Option key={`option-client-${client.id}`} value={client.id}>{client.name}</Option>)}
             </Select>
@@ -163,7 +172,7 @@ const NewProjectForm = () => {
     );
   }
 
-  if (clientsResponse.loading) {
+  if (clientsResponse.loading || projectsResponse.loading) {
     return (
       <React.Fragment>
         <Spin size="large">
@@ -188,11 +197,11 @@ const NewProjectForm = () => {
     );
   }
 
-  if(clientsResponse.error){
+  if(clientsResponse.error || projectsResponse.error){
     return (
       <React.Fragment>
         <Alert title='Server error'
-          message='Failed to load the client'
+          message='Failed to load the data'
           type='error'
         />
       </React.Fragment>
