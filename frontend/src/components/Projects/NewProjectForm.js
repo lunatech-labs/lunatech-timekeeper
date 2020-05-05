@@ -83,8 +83,8 @@ const NewProjectForm = () => {
           <Form.Item
             label="Name"
             name="name"
-            validateStatus={duplicatedNameError && "error"}
-            help={duplicatedNameError && "A project already use this name"}
+            validateStatus={duplicatedNameError && 'error'}
+            help={duplicatedNameError && 'A project already use this name'}
             rules={[
               {
                 required: true,
