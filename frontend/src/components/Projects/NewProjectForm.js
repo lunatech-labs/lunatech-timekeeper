@@ -74,47 +74,47 @@ const NewProjectForm = () => {
     return (
 
       <Form
-          id="tk_Form"
-          layout="vertical"
-          initialValues={projectRequest}
-          onFinish={timeKeeperAPIPost.run}
+        id="tk_Form"
+        layout="vertical"
+        initialValues={projectRequest}
+        onFinish={timeKeeperAPIPost.run}
       >
         <div className="tk_CardLg">
           <Row gutter={16}>
             <Col className="gutter-row" span={12}>
               <p className="tk_FormTitle">Informations</p>
               <Form.Item
-                  label="Name"
-                  name="name"
-                  validateStatus={duplicatedNameError && 'error'}
-                  help={duplicatedNameError && 'A project already use this name'}
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
+                label="Name"
+                name="name"
+                validateStatus={duplicatedNameError && 'error'}
+                help={duplicatedNameError && 'A project already use this name'}
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
               >
                 <Input
-                    placeholder="Project's name"
-                    onChange={onChangeName}
+                  placeholder="Project's name"
+                  onChange={onChangeName}
                 />
               </Form.Item>
               <Form.Item
-                  label="Description"
-                  name="description"
+                label="Description"
+                name="description"
               >
-            <TextArea
-                rows={4}
-                placeholder="A short description about this project"
-            />
+                <TextArea
+                  rows={4}
+                  placeholder="A short description about this project"
+                />
               </Form.Item>
               <Form.Item
-                  label="Client"
-                  name="clientId"
+                label="Client"
+                name="clientId"
               >
                 <Select
-                    className="tk_Select"
-                    placeholder="Select a client"
+                  className="tk_Select"
+                  placeholder="Select a client"
                 >
                   <Option key={'option-client-empty'} value={null}></Option>
                   {clientsResponse.data.map(client => <Option key={`option-client-${client.id}`} value={client.id}>{client.name}</Option>)}
@@ -123,8 +123,8 @@ const NewProjectForm = () => {
               <Row gutter={16}>
                 <Col className="gutter-row" span={12}>
                   <Form.Item
-                      label="Billable"
-                      name="billable"
+                    label="Billable"
+                    name="billable"
                   >
                     <Radio.Group>
                       <Radio value={true}>Yes</Radio>
@@ -134,8 +134,8 @@ const NewProjectForm = () => {
                 </Col>
                 <Col className="gutter-row" span={12}>
                   <Form.Item
-                      label="Project type"
-                      name="publicAccess"
+                    label="Project type"
+                    name="publicAccess"
                   >
                     <Radio.Group>
                       <Radio value={true}>Public</Radio>
@@ -150,19 +150,19 @@ const NewProjectForm = () => {
               <Form.Item
                 label="Users"
                 name="users"
-            >
-              <Select
+              >
+                <Select
                   showSearch
                   placeholder="Select a user"
                   optionFilterProp="children"
                   onChange={onChangeUsers}
                   filterOption={(input, option) =>
-                      option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                   }
-              >
-                {staticUsers.map(user => <Option key={`option-user-${user.id}`} value={user.id}>{user.name}</Option>)}
-              </Select>
-            </Form.Item>
+                >
+                  {staticUsers.map(user => <Option key={`option-user-${user.id}`} value={user.id}>{user.name}</Option>)}
+                </Select>
+              </Form.Item>
             </Col>
           </Row>
         </div>
