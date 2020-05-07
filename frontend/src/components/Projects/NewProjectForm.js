@@ -1,7 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, Avatar, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin} from 'antd';
-import React, {useState} from 'react';
-import {Row, Col, Alert, Button, Form, Input, message, Radio, Select, Space, Spin} from 'antd';
+import {Alert, Avatar, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin, Row, Col} from 'antd';
 import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
 import {Link, Redirect} from 'react-router-dom';
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined';
@@ -160,79 +158,79 @@ const NewProjectForm = () => {
             </Col>
             <Col className="gutter-row" span={12}>
               <p className="tk_FormTitle">Members</p>
-            <Form.List
-              label="Users"
-              name="users"
-            >
-              {(fields, {add, remove}) => {
-                return (
-                  <Form.Item label="Users">
-                    <Form.Item>
-                      <Select
-                        showSearch
-                        style={{width: 200}}
-                        placeholder="Select a user"
-                        optionFilterProp="children"
-                        onSelect={(value) => add({id: value, manager: false})}
-                        filterOption={(input, option) =>
-                          option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                        }
-                      >
-                        {usersResponse.data.map(user =>
-                          <Option key={`option-user-${user.id}`}
-                                  disabled={isIncluded(user.id, form.getFieldValue('users'))}
-                                  value={user.id}>{user.name}</Option>)
-                        }
-                      </Select>
+              <Form.List
+                label="Users"
+                name="users"
+              >
+                {(fields, {add, remove}) => {
+                  return (
+                    <Form.Item label="Users">
+                      <Form.Item>
+                        <Select
+                          showSearch
+                          style={{width: 200}}
+                          placeholder="Select a user"
+                          optionFilterProp="children"
+                          onSelect={(value) => add({id: value, manager: false})}
+                          filterOption={(input, option) =>
+                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                          }
+                        >
+                          {usersResponse.data.map(user =>
+                            <Option key={`option-user-${user.id}`}
+                              disabled={isIncluded(user.id, form.getFieldValue('users'))}
+                              value={user.id}>{user.name}</Option>)
+                          }
+                        </Select>
+                      </Form.Item>
+                      {fields.length === 0 ? 'There is no members on the project' :
+                        fields.map((field, index) => {
+                          const id = [index, 'id'];
+                          const manager = [index, 'manager'];
+                          return (
+                            <Form.Item key={field.key} required={false}>
+                              <Space>
+                                <Form.Item
+                                  noStyle
+                                  name={id}
+                                >
+                                  <UserPicture/>
+                                </Form.Item>
+                                <Form.Item
+                                  noStyle
+                                  name={id}
+                                  rules={[{required: true}]}
+                                >
+                                  <Input type="hidden"/>
+                                </Form.Item>
+                                <Form.Item
+                                  style={{marginRight: '80px'}}
+                                  name={id}
+                                >
+                                  <UserName/>
+                                </Form.Item>
+                                <Form.Item
+                                  noStyle
+                                  name={manager}
+                                  valuePropName="checked"
+                                >
+                                  <Checkbox/>
+                                </Form.Item>
+                                <DeleteOutlined
+                                  className="dynamic-delete-button"
+                                  style={{margin: '0 8px'}}
+                                  onClick={() => {
+                                    remove(index);
+                                  }}
+                                />
+                              </Space>
+                            </Form.Item>
+                          );
+                        })}
                     </Form.Item>
-                    {fields.length === 0 ? 'There is no members on the project' :
-                      fields.map((field, index) => {
-                        const id = [index, 'id'];
-                        const manager = [index, 'manager'];
-                        return (
-                          <Form.Item key={field.key} required={false}>
-                            <Space>
-                              <Form.Item
-                                noStyle
-                                name={id}
-                              >
-                                <UserPicture/>
-                              </Form.Item>
-                              <Form.Item
-                                noStyle
-                                name={id}
-                                rules={[{required: true}]}
-                              >
-                                <Input type="hidden"/>
-                              </Form.Item>
-                              <Form.Item
-                                style={{marginRight: '80px'}}
-                                name={id}
-                              >
-                                <UserName/>
-                              </Form.Item>
-                              <Form.Item
-                                noStyle
-                                name={manager}
-                                valuePropName="checked"
-                              >
-                                <Checkbox/>
-                              </Form.Item>
-                              <DeleteOutlined
-                                className="dynamic-delete-button"
-                                style={{margin: '0 8px'}}
-                                onClick={() => {
-                                  remove(index);
-                                }}
-                              />
-                            </Space>
-                          </Form.Item>
-                        );
-                      })}
-                  </Form.Item>
-                );
-              }}
-            </Form.List>
+                  );
+                }}
+              </Form.List>
             </Col>
           </Row>
         </div>
