@@ -3,7 +3,7 @@ import {Alert, Avatar, Button, Checkbox, Form, Input, message, Radio, Select, Sp
 import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
 import {Link, Redirect} from 'react-router-dom';
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined';
-
+import PropTypes from 'prop-types';
 const {TextArea} = Input;
 const {Option} = Select;
 const NewProjectForm = () => {
@@ -65,11 +65,17 @@ const NewProjectForm = () => {
   if (clientsResponse.data && projectsResponse.data && usersResponse.data) {
     const projectsName = projectsResponse.data.map(project => project.name);
     const onChangeName = (event) => setDuplicatedNameError(projectsName.includes(event.target.value));
-    const UserName = ({value}) => {
+    const UserName = ({value = {}}) => {
       return (<span>{usersResponse.data.find(u => u.id === value).name}</span>);
+    };
+    UserName.propTypes = {
+      value: PropTypes.string
     };
     const UserPicture = ({value}) => {
       return (<Avatar src={usersResponse.data.find(u => u.id === value).picture}/>);
+    };
+    UserPicture.propTypes = {
+      value: PropTypes.string
     };
     return (
       <React.Fragment>
@@ -296,5 +302,6 @@ const NewProjectForm = () => {
   }
 
 };
+
 
 export default NewProjectForm;
