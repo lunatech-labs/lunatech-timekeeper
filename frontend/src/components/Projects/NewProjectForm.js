@@ -2,46 +2,22 @@ import React, {useEffect, useState} from 'react';
 import {Alert, Avatar, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin} from 'antd';
 import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
 import {Link, Redirect} from 'react-router-dom';
-
+import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined';
 
 const {TextArea} = Input;
 const {Option} = Select;
-
-
-const columns = [
-  {
-    title: '',
-    dataIndex: 'picture',
-    key: 'picture',
-    width: 60,
-    align: 'right',
-    render: (value) => renderAvatar(value),
-  },
-  {
-    title: '',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: '',
-    dataIndex: 'manager',
-    key: 'manager',
-    render: (value) => <div>{value ? "Manager" : "Member"}</div>
-  }
-];
-
-const renderAvatar = (value) => <Avatar src={value}/>;
-
 const NewProjectForm = () => {
 
   const [projectCreated, setProjectCreated] = useState(false);
 
-  const initialProject = {
+  const initialValues = {
+    name: '',
+    description: '',
     publicAccess: true,
     billable: false,
-    selectedClientId: undefined,
-    users: [{id: 1, name: 'test', manager: true}]
-  }
+    clientId: null,
+    users: []
+  };
 
   useEffect(() => {
     if (!projectCreated) {
@@ -59,16 +35,6 @@ const NewProjectForm = () => {
 
   const [form] = Form.useForm();
 
-  const addMember = (id) => {
-    const user = usersResponse.data.find(user => user.id === id);
-    const userProject = {
-      ...user,
-      manage: false
-    };
-    const usersForm = form.getFieldValue('users');
-    console.log(usersForm)
-    form.setFieldsValue({users: usersForm.concat(userProject)})
-  };
   const isIncluded = (id, users) => users.filter(user => user.id === id).length !== 0;
 
   if (projectCreated) {
@@ -99,6 +65,12 @@ const NewProjectForm = () => {
   if (clientsResponse.data && projectsResponse.data && usersResponse.data) {
     const projectsName = projectsResponse.data.map(project => project.name);
     const onChangeName = (event) => setDuplicatedNameError(projectsName.includes(event.target.value));
+    const UserName = ({value}) => {
+      return (<span>{usersResponse.data.find(u => u.id === value).name}</span>);
+    };
+    const UserPicture = ({value}) => {
+      return (<Avatar src={usersResponse.data.find(u => u.id === value).picture}/>);
+    };
     return (
       <React.Fragment>
         <div style={{borderTop: '1px solid rgba(216, 216, 216, 0.1)', marginTop: 48}}>&nbsp;</div>
@@ -106,7 +78,7 @@ const NewProjectForm = () => {
           labelCol={{span: 4}}
           wrapperCol={{span: 14}}
           layout="horizontal"
-          initialValues={initialProject}
+          initialValues={initialValues}
           onFinish={timeKeeperAPIPost.run}
           form={form}
         >
@@ -167,31 +139,108 @@ const NewProjectForm = () => {
             </Radio.Group>
           </Form.Item>
 
+          <Form.Item
+            label="Client"
+            name="clientId"
+          >
+            <Select style={{width: 200}}>
+              <Option key={'option-client-empty'} value={null}><i>None</i></Option>
+              {clientsResponse.data.map(client =>
+                <Option key={`option-client-${client.id}`} value={client.id}>{client.name}</Option>)}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="Billable"
+            name="billable"
+          >
+            <Radio.Group>
+              <Radio value={true}>Yes</Radio>
+              <Radio value={false}>No</Radio>
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item
+            label="Project type"
+            name="publicAccess"
+          >
+            <Radio.Group>
+              <Radio value={true}>Public</Radio>
+              <Radio value={false}>Private</Radio>
+            </Radio.Group>
+          </Form.Item>
 
-
-          <Form.List name="users">
+          <Form.List
+            label="Users"
+            name="users"
+          >
             {(fields, {add, remove}) => {
               return (
-                <div>
-                  {fields.map(field => (
-                    <div key={0}>
-                      {console.log(field)}
-                      <Form.Item name={field.id}>
-                        <Input/>
-                      </Form.Item>
-                      <Form.Item name="name">
-                        <Input/>
-                      </Form.Item>
-                      <Form.Item name="manager">
-                        <Checkbox/>
-                      </Form.Item>
-                    </div>
-                  ))}
-                </div>
-              )
+                <Form.Item label="Users">
+                  <Form.Item>
+                    <Select
+                      showSearch
+                      style={{width: 200}}
+                      placeholder="Select a user"
+                      optionFilterProp="children"
+                      onSelect={(value) => add({id: value, manager: false})}
+                      filterOption={(input, option) =>
+                        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                      }
+                    >
+                      {usersResponse.data.map(user =>
+                        <Option key={`option-user-${user.id}`}
+                          disabled={isIncluded(user.id, form.getFieldValue('users'))}
+                          value={user.id}>{user.name}</Option>)
+                      }
+                    </Select>
+                  </Form.Item>
+                  {fields.length === 0 ? 'There is no members on the project' :
+                    fields.map((field, index) => {
+                      const id = [index, 'id'];
+                      const manager = [index, 'manager'];
+                      return (
+                        <Form.Item key={field.key} required={false}>
+                          <Space>
+                            <Form.Item
+                              noStyle
+                              name={id}
+                            >
+                              <UserPicture/>
+                            </Form.Item>
+                            <Form.Item
+                              noStyle
+                              name={id}
+                              rules={[{required: true}]}
+                            >
+                              <Input type="hidden"/>
+                            </Form.Item>
+                            <Form.Item
+                              style={{marginRight: '80px'}}
+                              name={id}
+                            >
+                              <UserName/>
+                            </Form.Item>
+                            <Form.Item
+                              noStyle
+                              name={manager}
+                              valuePropName="checked"
+                            >
+                              <Checkbox/>
+                            </Form.Item>
+                            <DeleteOutlined
+                              className="dynamic-delete-button"
+                              style={{margin: '0 8px'}}
+                              onClick={() => {
+                                remove(index);
+                              }}
+                            />
+                          </Space>
+                        </Form.Item>
+                      );
+                    })}
+                </Form.Item>
+              );
             }}
           </Form.List>
-
 
           <Form.Item>
             <Space size="middle" style={{right: 0, position: 'absolute'}}>
@@ -239,8 +288,8 @@ const NewProjectForm = () => {
     return (
       <React.Fragment>
         <Alert title='Server error'
-               message='Failed to load the data'
-               type='error'
+          message='Failed to load the data'
+          type='error'
         />
       </React.Fragment>
     );
