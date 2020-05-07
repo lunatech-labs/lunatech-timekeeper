@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
-import {Alert, Button, Form, Input, message, Radio, Select, Space, Spin} from 'antd';
+import {Row, Col, Alert, Button, Form, Input, message, Radio, Select, Space, Spin} from 'antd';
 import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
 import {Link, Redirect} from 'react-router-dom';
+import './NewProjectForm.less';
 
 
 const {TextArea} = Input;
@@ -71,104 +72,114 @@ const NewProjectForm = () => {
     const projectsName = projectsResponse.data.map(project => project.name);
     const onChangeName = (event) => setDuplicatedNameError(projectsName.includes(event.target.value));
     return (
-      <React.Fragment>
-        <div style={{borderTop: '1px solid rgba(216, 216, 216, 0.1)', marginTop: 48}}>&nbsp;</div>
-        <Form
-          labelCol={{span: 4}}
-          wrapperCol={{span: 14}}
-          layout="horizontal"
-          initialValues={projectRequest}
-          onFinish={timeKeeperAPIPost.run}
-        >
-          <Form.Item
-            label="Name"
-            name="name"
-            validateStatus={duplicatedNameError && 'error'}
-            help={duplicatedNameError && 'A project already use this name'}
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Input
-              placeholder="Project's name"
-              onChange={onChangeName}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Description"
-            name="description"
-          >
-            <TextArea
-              rows={4}
-              placeholder="A short description about this project"
-            />
-          </Form.Item>
 
-          <Form.Item
-            label="Client"
-            name="clientId"
-          >
-            <Select style={{width: 200}} >
-              <Option key={'option-client-empty'} value={null}> </Option>
-              {clientsResponse.data.map(client =>
-                <Option key={`option-client-${client.id}`} value={client.id}>{client.name}</Option>)}
-            </Select>
-          </Form.Item>
+      <Form
+        id="tk_Form"
+        layout="vertical"
+        initialValues={projectRequest}
+        onFinish={timeKeeperAPIPost.run}
+      >
+        <div className="tk_CardLg">
+          <Row gutter={16}>
+            <Col className="gutter-row" span={12}>
+              <p className="tk_FormTitle">Informations</p>
+              <Form.Item
+                label="Name"
+                name="name"
+                validateStatus={duplicatedNameError && 'error'}
+                help={duplicatedNameError && 'A project already use this name'}
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Input
+                  placeholder="Project's name"
+                  onChange={onChangeName}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Description"
+                name="description"
+              >
+                <TextArea
+                  rows={4}
+                  placeholder="A short description about this project"
+                />
+              </Form.Item>
+              <Form.Item
+                label="Client"
+                name="clientId"
+              >
+                <Select
+                  className="tk_Select"
+                  placeholder="Select a client"
+                >
+                  <Option key={'option-client-empty'} value={null}></Option>
+                  {clientsResponse.data.map(client => <Option key={`option-client-${client.id}`} value={client.id}>{client.name}</Option>)}
+                </Select>
+              </Form.Item>
+              <Row gutter={16}>
+                <Col className="gutter-row" span={12}>
+                  <Form.Item
+                    label="Billable"
+                    name="billable"
+                  >
+                    <Radio.Group>
+                      <Radio value={true}>Yes</Radio>
+                      <Radio value={false}>No</Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                </Col>
+                <Col className="gutter-row" span={12}>
+                  <Form.Item
+                    label="Project type"
+                    name="publicAccess"
+                  >
+                    <Radio.Group>
+                      <Radio value={true}>Public</Radio>
+                      <Radio value={false}>Private</Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <p className="tk_FormTitle">Members</p>
+              <Form.Item
+                label="Users"
+                name="users"
+              >
+                <Select
+                  showSearch
+                  placeholder="Select a user"
+                  optionFilterProp="children"
+                  onChange={onChangeUsers}
+                  filterOption={(input, option) =>
+                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  {staticUsers.map(user => <Option key={`option-user-${user.id}`} value={user.id}>{user.name}</Option>)}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+        </div>
+        <Form.Item>
+          <Space size="middle" style={{right: 0, position: 'absolute'}}>
+            <Link key="cancelLink" to={'/projects'}>
+              <Button htmlType="button">Cancel</Button>
+            </Link>
+            <Button type="primary" htmlType="submit">Submit</Button>
+          </Space>
+        </Form.Item>
+      </Form>
 
-          <Form.Item
-            label="Billable"
-            name="billable"
-          >
-            <Radio.Group>
-              <Radio value={true}>Yes</Radio>
-              <Radio value={false}>No</Radio>
-            </Radio.Group>
-          </Form.Item>
 
-          <Form.Item
-            label="Project type"
-            name="publicAccess"
-          >
-            <Radio.Group>
-              <Radio value={true}>Public</Radio>
-              <Radio value={false}>Private</Radio>
-            </Radio.Group>
-          </Form.Item>
 
-          <Form.Item
-            label="Users"
-            name="users"
-          >
-            <Select
-              showSearch
-              style={{ width: 200 }}
-              placeholder="Select a client"
-              optionFilterProp="children"
-              onChange={onChangeUsers}
-              filterOption={(input, option) =>
-                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
-            >
-              {staticUsers.map(user => <Option key={`option-user-${user.id}`} value={user.id}>{user.name}</Option>)}
-            </Select>
-          </Form.Item>
 
-          <Form.Item>
-            <Space size="middle" style={{right: 0, position: 'absolute'}}>
-              <Link key="cancelLink" to={'/projects'}>
-                <Button htmlType="button">
-                  Cancel
-                </Button>
-              </Link>
-              <Button type="primary" htmlType="submit">
-                Submit
-              </Button>
-            </Space>
-          </Form.Item>
-        </Form>
-      </React.Fragment>
+
     );
   }
 
