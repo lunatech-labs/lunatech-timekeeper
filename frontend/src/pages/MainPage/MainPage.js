@@ -19,7 +19,7 @@ const MainPage = ({ title, children, actions, ...rest }) => {
       <Layout className="site-layout">
         <TopBar collapsed={collapsed} toggle={() => toggle(!collapsed)} />
         <Content id="tk_MainContent" className="mainContent">
-          <div className="">
+          <div className="tk_MainContent_Header">
             <Breadcrumbs />
             <div className="tk_Page_Actions">{actions}</div>
             <Title id="title">{title}</Title>

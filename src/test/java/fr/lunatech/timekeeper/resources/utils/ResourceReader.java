@@ -38,6 +38,7 @@ public class ResourceReader {
      * @param token
      * @return
      */
+    @Deprecated
     public static ValidatableResponse readValidation(Long id, String uriResource, String token) {
         return InternalResourceUtils.readResourceValidation(id, uriResource, token);
     }
@@ -48,6 +49,7 @@ public class ResourceReader {
      * @param token
      * @return
      */
+    @Deprecated
     public static ValidatableResponse readValidation(String uriResource, String token) {
         return InternalResourceUtils.readResourceValidation(uriResource, token);
     }
