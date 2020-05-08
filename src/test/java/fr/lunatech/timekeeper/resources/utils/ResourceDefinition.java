@@ -24,4 +24,9 @@ public enum ResourceDefinition {
         this.uri = uri;
         this.typeDef = typeDef;
     }
+
+    public String uriWithid(Long id) {
+        return String.format("%s/%s", this.uri, id);
+    }
+
 }

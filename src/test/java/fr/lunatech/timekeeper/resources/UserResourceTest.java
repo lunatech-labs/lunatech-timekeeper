@@ -1,6 +1,5 @@
 package fr.lunatech.timekeeper.resources;
 
-
 import fr.lunatech.timekeeper.resources.utils.ResourceReader;
 import fr.lunatech.timekeeper.resources.utils.TestUtils;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -17,6 +16,7 @@ import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAcce
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.UserDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
+import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.hamcrest.CoreMatchers.is;
 
@@ -42,9 +42,7 @@ class UserResourceTest {
 
         var sam = create(samToken);
 
-        ResourceReader.readValidation(2L, UserDef.uri, samToken)
-                .statusCode(OK.getStatusCode())
-                .body(is(TestUtils.toJson(sam)));
+        getValidation(UserDef.uriWithid(2L), samToken,OK).body(is(TestUtils.toJson(sam)));
     }
 
     @Test
@@ -56,9 +54,7 @@ class UserResourceTest {
         var sam = create(samToken);
         var jimmy = create(jimmyToken);
 
-        ResourceReader.readValidation(UserDef.uri, jimmyToken)
-                .statusCode(OK.getStatusCode())
-                .body(is(TestUtils.listOfTasJson(sam, jimmy)));
+        getValidation(UserDef.uri, jimmyToken, OK).body(is(TestUtils.listOfTasJson(sam, jimmy)));
     }
 
     //TODO
