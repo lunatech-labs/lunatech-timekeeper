@@ -29,7 +29,7 @@ public final class AuthenticationContext {
     }
 
     Boolean canAccess(@NotNull Client client) {
-        return true; //TODO organization in Client
+        return Objects.equals(getOrganization().id,  client.organization.id);
     }
 
     Boolean canAccess(@NotNull Organization organization) {
