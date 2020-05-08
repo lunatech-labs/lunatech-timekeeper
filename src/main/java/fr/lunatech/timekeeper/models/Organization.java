@@ -28,4 +28,7 @@ public class Organization extends PanacheEntity {
     @NotNull
     public List<Project> projects;
 
+    @OneToMany(mappedBy = "organization")
+    @NotNull
+    public List<Project> clients;
 }
