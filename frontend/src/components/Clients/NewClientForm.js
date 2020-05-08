@@ -13,6 +13,11 @@ const tailLayout = {
   },
 };
 
+const initialValues = {
+  name: "",
+  description: ""
+};
+
 const ClientForm = () => {
 
   const [clientCreated, setClientCreated] = useState(false);
@@ -59,6 +64,7 @@ const ClientForm = () => {
         wrapperCol={{span: 14}}
         layout="horizontal"
         onFinish={timeKeeperAPIPost.run}
+        initialValues={initialValues}
       >
         <Form.Item
           label="Name"
