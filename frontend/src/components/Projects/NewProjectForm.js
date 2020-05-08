@@ -40,6 +40,13 @@ const NewProjectForm = () => {
 
   const isIncluded = (id, users) => users.filter(user => user.id === id).length !== 0;
 
+  useEffect(() => {
+    if(!projectCreated) {
+      return;
+    }
+    message.success('Project was created');
+  }, [projectCreated]);
+
   if (projectCreated) {
     return (
       <React.Fragment>
