@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Row, Col, Alert, Button, Form, Input, message, Radio, Select, Space, Spin} from 'antd';
 import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
 import {Link, Redirect} from 'react-router-dom';
@@ -42,8 +42,14 @@ const NewProjectForm = () => {
     setProjectRequest({...projectRequest, users: projectRequest.users.concat(userProject)});
   };
 
-  if (projectCreated) {
+  useEffect(() => {
+    if(!projectCreated) {
+      return;
+    }
     message.success('Project was created');
+  }, [projectCreated]);
+
+  if (projectCreated) {
     return (
       <React.Fragment>
         <Redirect to="/projects"/>

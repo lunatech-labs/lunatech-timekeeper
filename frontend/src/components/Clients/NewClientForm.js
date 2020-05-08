@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Alert, Button, Form, Input, message} from 'antd';
 import {Link, Redirect} from 'react-router-dom';
 import {useTimeKeeperAPIPost} from '../../utils/services';
@@ -19,8 +19,14 @@ const ClientForm = () => {
 
   const timeKeeperAPIPost = useTimeKeeperAPIPost(   '/api/clients', (form => form), setClientCreated);
 
-  if (clientCreated) {
+  useEffect(() => {
+    if(!clientCreated) {
+      return;
+    }
     message.success('Client was created');
+  }, [clientCreated]);
+
+  if (clientCreated) {
     return (
       <React.Fragment>
         <Redirect to="/clients"/>
