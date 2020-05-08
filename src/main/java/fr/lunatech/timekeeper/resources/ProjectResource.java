@@ -37,6 +37,7 @@ public class ProjectResource implements ProjectResourceApi {
         final long projectId = projectService.create(request, ctx);
         final URI uri = uriInfo.getAbsolutePathBuilder().path(Long.toString(projectId)).build();
         return Response.created(uri).build();
+
     }
 
     @RolesAllowed({"user", "admin"})
@@ -44,7 +45,7 @@ public class ProjectResource implements ProjectResourceApi {
     public ProjectResponse getProject(Long id) {
         final var ctx = authentication.context();
         return projectService.findResponseById(id, ctx)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(String.format("Project not found for id=%d", id)));
     }
 
     @RolesAllowed({"user", "admin"})
@@ -52,7 +53,7 @@ public class ProjectResource implements ProjectResourceApi {
     public Response updateProject(Long id, @Valid ProjectRequest request) {
         final var ctx = authentication.context();
         projectService.update(id, request, ctx)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(String.format("Project not found for id=%d", id)));
         return Response.noContent().build();
     }
 }

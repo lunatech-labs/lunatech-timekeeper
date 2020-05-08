@@ -1,9 +1,9 @@
 package fr.lunatech.timekeeper.resources;
 
+import fr.lunatech.timekeeper.resources.utils.HttpTestRuntimeException;
+import fr.lunatech.timekeeper.resources.utils.TestUtils;
 import fr.lunatech.timekeeper.services.requests.ClientRequest;
-import fr.lunatech.timekeeper.services.requests.OrganizationRequest;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
-import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -13,22 +13,18 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-import java.util.List;
 
-import static fr.lunatech.timekeeper.models.Profile.Admin;
-import static fr.lunatech.timekeeper.models.Profile.User;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
-import static fr.lunatech.timekeeper.resources.utils.TestUtils.listOfTasJson;
+import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ProjectDef;
+import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
+import static fr.lunatech.timekeeper.resources.utils.ResourceReader.readValidation;
 import static fr.lunatech.timekeeper.resources.utils.TestUtils.toJson;
-import static io.restassured.RestAssured.given;
 import static java.util.Collections.emptyList;
-import static javax.ws.rs.core.HttpHeaders.ACCEPT;
-import static javax.ws.rs.core.HttpHeaders.LOCATION;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static javax.ws.rs.core.Response.Status.*;
-import static org.hamcrest.CoreMatchers.endsWith;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
@@ -44,585 +40,108 @@ class ProjectResourceTest {
         flyway.clean();
         flyway.migrate();
     }
-/*
+
     @Test
     void shouldCreateProjectWhenAdminProfile() {
 
         final String adminToken = getAdminAccessToken();
-        final String token = getUserAccessToken();
 
-        final OrganizationRequest organization = new OrganizationRequest("NewClient", "lunatech.fr");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(organization)
-                .post("/api/organizations")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organizations/1"));
+        final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
+        final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, emptyList()), adminToken);
 
-        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(client)
-                .post("/api/clients")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/clients/2"));
-
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L, 1L, false);
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(project)
-                .post("/api/projects")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/projects/3"));
-
-        final ProjectResponse expectedProject = new ProjectResponse(3L, "Pepito", true, "New project", "NewClient", emptyList(),1L, false);
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/projects/3")
-                .then()
+        readValidation(project.getId(), ProjectDef.uri, adminToken)
                 .statusCode(OK.getStatusCode())
-                .body(is(toJson(expectedProject)));
+                .body(is(toJson(project)));
     }
 
     @Test
-    void shouldCreateProjectWithUnknownClient() {
+    void shouldCreateProjectWhenUserProfile() {
 
         final String adminToken = getAdminAccessToken();
-        final String token = getUserAccessToken();
+        final String userAccessToken = getUserAccessToken();
+        final var client = create(new ClientRequest("NewClient 2", "Un client créé en tant qu'admin"), adminToken);
 
-        final OrganizationRequest organization = new OrganizationRequest("NewClient", "lunatech.fr");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(organization)
-                .post("/api/organizations")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organizations/1"));
+        final var project = create(new ProjectRequest("Some Project", true, "un projet peut aussi etre créé par un user", client.getId(), true, emptyList()), userAccessToken);
 
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 10L,1L, false);
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(project)
-                .post("/api/projects")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/projects/2"));
-
-        final ProjectResponse expectedProject = new ProjectResponse(2L, "Pepito", true, "New project", "", emptyList(), 1L, false);
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/projects/2")
-                .then()
+        readValidation(project.getId(), ProjectDef.uri, userAccessToken)
                 .statusCode(OK.getStatusCode())
-                .body(is(toJson(expectedProject)));
+                .body(is(toJson(project)));
     }
+
+    @Test
+    void shouldNotCreateProjectWithDuplicateName() {
+
+        final String adminToken = getAdminAccessToken();
+
+        final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
+        create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, emptyList()), adminToken);
+
+        try {
+            create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, emptyList()), adminToken);
+        }catch (HttpTestRuntimeException httpError){
+            assertEquals(409, httpError.getHttpStatus());
+            assertEquals("application/json", httpError.getMimeType());
+        }
+    }
+
 
     @Test
     void shouldNotFindUnknownProject() {
+        final String userAccessToken = getUserAccessToken();
 
-        final String token = getUserAccessToken();
-
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/projects/4")
-                .then()
+        readValidation(9999L, ProjectDef.uri, userAccessToken)
                 .statusCode(NOT_FOUND.getStatusCode());
     }
 
     @Test
-    void shouldFindAllProjects() {
-
-        final String adminToken = getAdminAccessToken();
-        final String token = getUserAccessToken();
-
-        final OrganizationRequest organization = new OrganizationRequest("NewClient", "lunatech.fr");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(organization)
-                .post("/api/organizations")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organizations/1"));
-
-        final UserRequest user = new UserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", List.of(Admin));
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(user)
-                .post("/api/users")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/users/2"));
-
-        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(client)
-                .post("/api/clients")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/clients/3"));
-
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 3L, 1L, false);
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(project)
-                .post("/api/projects")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/projects/4"));
-
-        final ProjectRequest project1 = new ProjectRequest("Pepito", true, "New project", 3L,1L, false);
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(project1)
-                .post("/api/projects")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/projects/5"));
-
-        final ProjectResponse expectedProject = new ProjectResponse(4L, "Pepito", true, "New project", "NewClient", emptyList(),1L, false);
-        final ProjectResponse expectedProject1 = new ProjectResponse(5L, "Pepito", true, "New project", "NewClient", emptyList(),1L, false);
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/projects")
-                .then()
-                .statusCode(OK.getStatusCode())
-                .body(is(listOfTasJson(expectedProject, expectedProject1)));
-    }
-
-    @Test
     void shouldFindAllProjectsEmpty() {
+        final String userToken = getUserAccessToken();
 
-        final String token = getUserAccessToken();
-
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/projects")
-                .then()
+        readValidation(ProjectDef.uri, userToken)
                 .statusCode(OK.getStatusCode())
                 .body(is("[]"));
     }
 
     @Test
-    void shouldModifyProject() {
+    void shouldFindAllPublicProjects() {
 
         final String adminToken = getAdminAccessToken();
-        final String token = getUserAccessToken();
+        final String userToken = getUserAccessToken();
 
-        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(client)
-                .post("/api/clients")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/clients/1"));
+        final var client1 = create(new ClientRequest("Client 1", "New Description 1"), adminToken);
+        final var client2 = create(new ClientRequest("Client 2", "New Description 2"), adminToken);
 
-        final OrganizationRequest organization = new OrganizationRequest("NewClient", "lunatech.fr");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(organization)
-                .post("/api/organizations")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organizations/2"));
+        final var projec10 = create(new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, emptyList()), adminToken);
+        final var projec11 = create(new ProjectRequest("Some Project 11", false, "other description", client1.getId(), true, emptyList()), adminToken);
+        final var projec20 = create(new ProjectRequest("Some Project 20", true, "some description", client2.getId(), true, emptyList()), adminToken);
 
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 1L, 2L, false);
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(project)
-                .post("/api/projects")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/projects/3"));
-
-        final ClientRequest client1 = new ClientRequest("NewClient2", "NewDescription2");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(client1)
-                .post("/api/clients")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/clients/4"));
-
-        final ProjectRequest project1 = new ProjectRequest("Pepito2", false, "New project2", 4L, 2L, false);
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(project1)
-                .put("/api/projects/3")
-                .then()
-                .statusCode(NO_CONTENT.getStatusCode());
-
-        final ProjectResponse expectedProject = new ProjectResponse(3L, "Pepito2", false, "New project2", "NewClient2", emptyList(),2L, false);
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/projects/3")
-                .then()
+        readValidation(ProjectDef.uri, userToken)
                 .statusCode(OK.getStatusCode())
-                .body(is(toJson(expectedProject)));
+                .body(is(TestUtils.listOfTasJson(projec10, projec11,projec20)));
+    }
+
+    @Test
+    void shouldModifyProject() {
+
     }
 
     @Test
     void shouldAddMemberToProject() {
 
-        final String adminToken = getAdminAccessToken();
-        final String token = getUserAccessToken();
-
-        final OrganizationRequest organization = new OrganizationRequest("NewClient", "lunatech.fr");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(organization)
-                .post("/api/organizations")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organizations/1"));
-
-        final UserRequest user = new UserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", List.of(Admin));
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(user)
-                .post("/api/users")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/users/2"));
-
-        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(client)
-                .post("/api/clients")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/clients/3"));
-
-
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 3L,1L, false);
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(project)
-                .post("/api/projects")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/projects/4"));
-
-        final MemberRequest member = new MemberRequest(2L, Role.Developer);
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(member)
-                .post("/api/projects/4/members")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/projects/4/members/5"));
-
-        final MemberResponse expectedMemberResponse = new MemberResponse(5L, 2L, Role.Developer, 4L);
-        final ProjectResponse expectedProject = new ProjectResponse(4L, "Pepito", true, "New project", "NewClient", List.of(expectedMemberResponse),1L,false);
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/projects/4")
-                .then()
-                .statusCode(OK.getStatusCode())
-                .body(is(toJson(expectedProject)));
     }
 
     @Test
     void shouldNotAddMemberTwiceToProject() {
 
-        final String adminToken = getAdminAccessToken();
-        final String token = getUserAccessToken();
-
-        final OrganizationRequest organization = new OrganizationRequest("NewClient", "lunatech.fr");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(organization)
-                .post("/api/organizations")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organizations/1"));
-
-        final UserRequest user = new UserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", List.of(Admin));
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(user)
-                .post("/api/users")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/users/2"));
-
-        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(client)
-                .post("/api/clients")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/clients/3"));
-
-
-
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 3L, 1L, false);
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(project)
-                .post("/api/projects")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/projects/4"));
-
-        final MemberRequest member = new MemberRequest(2L, Role.Developer);
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(member)
-                .post("/api/projects/4/members")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/projects/4/members/5"));
-
-        final MemberRequest member2 = new MemberRequest(2L, Role.TeamLeader);
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(member2)
-                .post("/api/projects/4/members")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/projects/4/members/5"));
     }
 
     @Test
     void shouldNotAddMemberToProjectWithUnknownUser() {
 
-        final String adminToken = getAdminAccessToken();
-        final String token = getUserAccessToken();
-
-        final OrganizationRequest organization = new OrganizationRequest("NewClient", "lunatech.fr");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(organization)
-                .post("/api/organizations")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organizations/1"));
-
-        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(client)
-                .post("/api/clients")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/clients/2"));
-
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 2L,1L, false);
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(project)
-                .post("/api/projects")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/projects/3"));
-
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body("{\"role\":\"Developer\", \"userId\":12}")
-                .post("/api/projects/2/members")
-                .then()
-                .statusCode(BAD_REQUEST.getStatusCode());
     }
 
     @Test
     void shouldModifyMembersAndGetProjectMembers() {
 
-        final String adminToken = getAdminAccessToken();
-        final String token = getUserAccessToken();
-
-        final OrganizationRequest organization = new OrganizationRequest("NewClient", "lunatech.fr");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(organization)
-                .post("/api/organizations")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organizations/1"));
-
-        final UserRequest user1 = new UserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", List.of(Admin));
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(user1)
-                .post("/api/users")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/users/2"));
-
-        final UserRequest user2 = new UserRequest("Jimmy", "Pastore", "jimmy@gmail.com", "jimmy.png", List.of(User));
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(user2)
-                .post("/api/users")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/users/3"));
-
-        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(client)
-                .post("/api/clients")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/clients/4"));
-
-
-
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 4L, 1L, false);
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(project)
-                .post("/api/projects")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/projects/5"));
-
-        final MemberRequest member1 = new MemberRequest(2L, Role.TeamLeader);
-        final MemberRequest member2 = new MemberRequest(3L, Role.Developer);
-        final MembersUpdateRequest members = new MembersUpdateRequest(List.of(member1, member2));
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(members)
-                .put("/api/projects/5/members")
-                .then()
-                .statusCode(NO_CONTENT.getStatusCode());
-
-        final MemberResponse expectedMemberResponse1 = new MemberResponse(6L, 2L, Role.TeamLeader, 5L);
-        final MemberResponse expectedMemberResponse2 = new MemberResponse(7L, 3L, Role.Developer, 5L);
-        final ProjectResponse expectedProject = new ProjectResponse(5L, "Pepito", true, "New project", "NewClient", List.of(expectedMemberResponse1, expectedMemberResponse2),1L, false);
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/projects/5")
-                .then()
-                .statusCode(OK.getStatusCode())
-                .body(is(toJson(expectedProject)));
-
-        final UserRequest user2_1 = new UserRequest("Sam2", "Huel2", "sam2@gmail.com", "sam2.png", List.of(Admin));
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(user2_1)
-                .post("/api/users")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/users/8"));
-
-        final MemberRequest member2_1 = new MemberRequest(8L, Role.TeamLeader);
-        final MembersUpdateRequest members2 = new MembersUpdateRequest(List.of(member2_1));
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(members2)
-                .put("/api/projects/5/members")
-                .then()
-                .statusCode(NO_CONTENT.getStatusCode());
-
-        final MemberResponse expectedMemberResponse2_1 = new MemberResponse(9L, 8L, Role.TeamLeader, 5L);
-        final ProjectResponse expectedProject2 = new ProjectResponse(5L, "Pepito", true, "New project", "NewClient", List.of(expectedMemberResponse2_1),1L, false);
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/projects/5")
-                .then()
-                .statusCode(OK.getStatusCode())
-                .body(is(toJson(expectedProject2)));
-    }*/
+    }
 }

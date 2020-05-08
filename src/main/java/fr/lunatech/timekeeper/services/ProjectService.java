@@ -1,6 +1,7 @@
 package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.Project;
+import fr.lunatech.timekeeper.resources.exceptions.ResourceCreationException;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
@@ -38,10 +40,14 @@ public class ProjectService {
     }
 
     @Transactional
-    public Long create(ProjectRequest request, AuthenticationContext ctx) {
+    public Long create(ProjectRequest request, AuthenticationContext ctx) throws ResourceCreationException {
         logger.debug("Create a new project with {}, {}", request, ctx);
         final Project project = request.unbind(clientService::findById, userService::findById, ctx);
-        Project.persist(project);
+        try {
+            project.persistAndFlush();
+        } catch (PersistenceException pe) {
+            throw new ResourceCreationException(String.format("Project was not created due to constraint violation"));
+        }
         return project.id;
     }
 
