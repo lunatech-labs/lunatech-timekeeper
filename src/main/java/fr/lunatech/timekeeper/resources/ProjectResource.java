@@ -37,7 +37,6 @@ public class ProjectResource implements ProjectResourceApi {
         final long projectId = projectService.create(request, ctx);
         final URI uri = uriInfo.getAbsolutePathBuilder().path(Long.toString(projectId)).build();
         return Response.created(uri).build();
-
     }
 
     @RolesAllowed({"user", "admin"})

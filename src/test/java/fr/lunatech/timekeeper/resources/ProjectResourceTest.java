@@ -1,9 +1,12 @@
 package fr.lunatech.timekeeper.resources;
 
+import fr.lunatech.timekeeper.models.ProjectUser;
 import fr.lunatech.timekeeper.resources.utils.HttpTestRuntimeException;
 import fr.lunatech.timekeeper.resources.utils.TestUtils;
 import fr.lunatech.timekeeper.services.requests.ClientRequest;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
+import fr.lunatech.timekeeper.services.responses.ClientResponse;
+import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -14,11 +17,16 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
+import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ClientDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ProjectDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
-import static fr.lunatech.timekeeper.resources.utils.ResourceReader.readValidation;
+import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
+import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
 import static fr.lunatech.timekeeper.resources.utils.TestUtils.toJson;
 import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
@@ -43,34 +51,27 @@ class ProjectResourceTest {
 
     @Test
     void shouldCreateProjectWhenAdminProfile() {
-
         final String adminToken = getAdminAccessToken();
 
         final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, emptyList()), adminToken);
 
-        readValidation(project.getId(), ProjectDef.uri, adminToken)
-                .statusCode(OK.getStatusCode())
-                .body(is(toJson(project)));
+        getValidation(ProjectDef.uriWithid(project.getId()), adminToken, OK).body(is(toJson(project)));
     }
 
     @Test
     void shouldCreateProjectWhenUserProfile() {
-
         final String adminToken = getAdminAccessToken();
         final String userAccessToken = getUserAccessToken();
         final var client = create(new ClientRequest("NewClient 2", "Un client créé en tant qu'admin"), adminToken);
 
         final var project = create(new ProjectRequest("Some Project", true, "un projet peut aussi etre créé par un user", client.getId(), true, emptyList()), userAccessToken);
 
-        readValidation(project.getId(), ProjectDef.uri, userAccessToken)
-                .statusCode(OK.getStatusCode())
-                .body(is(toJson(project)));
+        getValidation(ProjectDef.uriWithid(project.getId()), userAccessToken, OK).body(is(toJson(project)));
     }
 
     @Test
     void shouldNotCreateProjectWithDuplicateName() {
-
         final String adminToken = getAdminAccessToken();
 
         final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
@@ -87,18 +88,13 @@ class ProjectResourceTest {
     @Test
     void shouldNotFindUnknownProject() {
         final String userAccessToken = getUserAccessToken();
-
-        readValidation(9999L, ProjectDef.uri, userAccessToken)
-                .statusCode(NOT_FOUND.getStatusCode());
+        getValidation(ProjectDef.uriWithid(99999L), userAccessToken, NOT_FOUND);
     }
 
     @Test
     void shouldFindAllProjectsEmpty() {
         final String userToken = getUserAccessToken();
-
-        readValidation(ProjectDef.uri, userToken)
-                .statusCode(OK.getStatusCode())
-                .body(is("[]"));
+        getValidation(ProjectDef.uri, userToken, OK).body(is("[]"));
     }
 
     @Test
@@ -110,18 +106,33 @@ class ProjectResourceTest {
         final var client1 = create(new ClientRequest("Client 1", "New Description 1"), adminToken);
         final var client2 = create(new ClientRequest("Client 2", "New Description 2"), adminToken);
 
-        final var projec10 = create(new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, emptyList()), adminToken);
-        final var projec11 = create(new ProjectRequest("Some Project 11", false, "other description", client1.getId(), true, emptyList()), adminToken);
-        final var projec20 = create(new ProjectRequest("Some Project 20", true, "some description", client2.getId(), true, emptyList()), adminToken);
+        final var project10 = create(new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, emptyList()), adminToken);
+        final var project11 = create(new ProjectRequest("Some Project 11", false, "other description", client1.getId(), true, emptyList()), adminToken);
+        final var project20 = create(new ProjectRequest("Some Project 20", true, "some description", client2.getId(), true, emptyList()), adminToken);
 
-        readValidation(ProjectDef.uri, userToken)
-                .statusCode(OK.getStatusCode())
-                .body(is(TestUtils.listOfTasJson(projec10, projec11, projec20)));
+        getValidation(ProjectDef.uri, userToken, OK).body(is(TestUtils.listOfTasJson(project10, project11, project20)));
     }
 
     @Test
-    void shouldModifyProject() {
+    void shouldModifyProjectWithEmptyListOfUsers() {
+        // GIVEN
+        final String adminToken = getAdminAccessToken();
+        final var client1 = create(new ClientRequest("Client 1", "New Description 1"), adminToken);
+        final var project10 = create(new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, emptyList()), adminToken);
+        final var updatedProject = new ProjectRequest("Some Project 10 updated",false, "updated description", client1.getId(),false, emptyList());
+        final var expectedProject = new ProjectResponse(project10.getId()
+                , updatedProject.getName()
+                , updatedProject.isBillable()
+                , updatedProject.getDescription()
+                , new ProjectResponse.ProjectClientResponse(client1.getId(), client1.getName())
+                , emptyList()
+                , updatedProject.isPublicAccess());
 
+        // WHEN
+        update(updatedProject, ProjectDef.uriWithid(project10.getId()), adminToken);
+
+        // THEN
+        getValidation(ProjectDef.uriWithid(project10.getId()), adminToken, OK).body(is(toJson(expectedProject)));
     }
 
     @Test
