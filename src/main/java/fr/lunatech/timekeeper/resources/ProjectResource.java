@@ -8,6 +8,8 @@ import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.json.Json;
+import javax.transaction.SystemException;
 import javax.validation.Valid;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
@@ -51,8 +53,8 @@ public class ProjectResource implements ProjectResourceApi {
     @Override
     public Response updateProject(Long id, @Valid ProjectRequest request) {
         final var ctx = authentication.context();
-        projectService.update(id, request, ctx)
-                .orElseThrow(() -> new NotFoundException(String.format("Project not found for id=%d", id)));
+            projectService.update(id, request, ctx)
+                    .orElseThrow(() -> new NotFoundException(String.format("Project not found for id=%d", id)));
         return Response.noContent().build();
     }
 }

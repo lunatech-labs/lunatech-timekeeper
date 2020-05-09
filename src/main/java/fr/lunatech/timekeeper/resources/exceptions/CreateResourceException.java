@@ -4,20 +4,20 @@ package fr.lunatech.timekeeper.resources.exceptions;
  * This is a marker Exception to report that the Resource was not created.
  * Could be a duplicate or a validation reason.
  */
-public class ResourceCreationException extends RuntimeException {
-    public ResourceCreationException() {
+public class CreateResourceException extends RuntimeException {
+    public CreateResourceException() {
         super();
     }
 
-    public ResourceCreationException(String message) {
+    public CreateResourceException(String message) {
         super(message);
     }
 
-    public ResourceCreationException(String message, Throwable cause) {
+    public CreateResourceException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ResourceCreationException(Throwable cause) {
+    public CreateResourceException(Throwable cause) {
         super(cause);
     }
 }

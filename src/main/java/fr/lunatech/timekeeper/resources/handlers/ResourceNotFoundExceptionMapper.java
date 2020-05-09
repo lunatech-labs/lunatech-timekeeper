@@ -10,9 +10,9 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class NotFoundResourceExceptionMapper implements ExceptionMapper<NotFoundException> {
+public class ResourceNotFoundExceptionMapper implements ExceptionMapper<NotFoundException> {
 
-    private static Logger logger = LoggerFactory.getLogger(NotFoundResourceExceptionMapper.class);
+    private static Logger logger = LoggerFactory.getLogger(ResourceNotFoundExceptionMapper.class);
 
     @Override
     public Response toResponse(NotFoundException e) {

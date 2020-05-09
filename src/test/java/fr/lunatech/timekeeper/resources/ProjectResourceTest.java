@@ -1,11 +1,9 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.models.ProjectUser;
 import fr.lunatech.timekeeper.resources.utils.HttpTestRuntimeException;
 import fr.lunatech.timekeeper.resources.utils.TestUtils;
 import fr.lunatech.timekeeper.services.requests.ClientRequest;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
-import fr.lunatech.timekeeper.services.responses.ClientResponse;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
@@ -16,21 +14,17 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-
-import java.util.ArrayList;
 import java.util.List;
 
-import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
-import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
-import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ClientDef;
+import static fr.lunatech.timekeeper.resources.KeycloakTestResource.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ProjectDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
+import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.putValidation;
 import static fr.lunatech.timekeeper.resources.utils.TestUtils.toJson;
 import static java.util.Collections.emptyList;
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
-import static javax.ws.rs.core.Response.Status.OK;
+import static javax.ws.rs.core.Response.Status.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -118,9 +112,9 @@ class ProjectResourceTest {
         // GIVEN
         final String adminToken = getAdminAccessToken();
         final var client1 = create(new ClientRequest("Client 1", "New Description 1"), adminToken);
-        final var project10 = create(new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, emptyList()), adminToken);
-        final var updatedProject = new ProjectRequest("Some Project 10 updated",false, "updated description", client1.getId(),false, emptyList());
-        final var expectedProject = new ProjectResponse(project10.getId()
+        final var originalProject = create(new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, emptyList()), adminToken);
+        final var updatedProject = new ProjectRequest("Some Project 10 updated", false, "updated description", client1.getId(), false, emptyList());
+        final var expectedUpdatedProject = new ProjectResponse(originalProject.getId()
                 , updatedProject.getName()
                 , updatedProject.isBillable()
                 , updatedProject.getDescription()
@@ -129,29 +123,102 @@ class ProjectResourceTest {
                 , updatedProject.isPublicAccess());
 
         // WHEN
-        update(updatedProject, ProjectDef.uriWithid(project10.getId()), adminToken);
+        update(updatedProject, ProjectDef.uriWithid(originalProject.getId()), adminToken);
+
+        // THEN
+        getValidation(ProjectDef.uriWithid(originalProject.getId()), adminToken, OK).body(is(toJson(expectedUpdatedProject)));
+    }
+
+    @Test
+    void shouldAddMemberToProject() {
+        // GIVEN
+        final String adminToken = getAdminAccessToken();
+        final String samToken = getAdminAccessToken();
+        final String jimmyToken = getUserAccessToken();
+
+        final var client1 = create(new ClientRequest("Client 1", "New Description 1"), adminToken);
+        final var project10 = create(new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, emptyList()), adminToken);
+
+        var sam = create(samToken);
+        var jimmy = create(jimmyToken);
+
+        final var userRequest1 = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
+        final var userRequest2 = new ProjectRequest.ProjectUserRequest(jimmy.getId(), false);
+
+        final var newUsers = List.of(userRequest1, userRequest2);
+        final var updatedProjectWithTwoUsers = new ProjectRequest("Some Project with 2 users"
+                , false
+                , "updated description"
+                , client1.getId()
+                , false
+                , newUsers);
+
+        final var expectedProjectUsers = List.of(
+                new ProjectResponse.ProjectUserResponse(sam.getId(), true, sam.getName(), sam.getPicture())
+                , new ProjectResponse.ProjectUserResponse(jimmy.getId(), false, jimmy.getName(), jimmy.getPicture())
+        );
+        final var expectedProject = new ProjectResponse(project10.getId()
+                , updatedProjectWithTwoUsers.getName()
+                , updatedProjectWithTwoUsers.isBillable()
+                , updatedProjectWithTwoUsers.getDescription()
+                , new ProjectResponse.ProjectClientResponse(client1.getId(), client1.getName())
+                , expectedProjectUsers
+                , updatedProjectWithTwoUsers.isPublicAccess());
+
+        // WHEN
+        update(updatedProjectWithTwoUsers, ProjectDef.uriWithid(project10.getId()), adminToken);
 
         // THEN
         getValidation(ProjectDef.uriWithid(project10.getId()), adminToken, OK).body(is(toJson(expectedProject)));
     }
 
     @Test
-    void shouldAddMemberToProject() {
+    void shouldNotAcceptInvalidListOfUsers() {
+        // GIVEN
+        final String adminToken = getAdminAccessToken();
+        final String merryToken = getUser2AccessToken();
 
-    }
+        var sam = create(merryToken);
+        final var client1 = create(new ClientRequest("Client 1", "New Description 1"), adminToken);
+        final var project10 = create(new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, emptyList()), adminToken);
 
-    @Test
-    void shouldNotAddMemberTwiceToProject() {
+        final var userRequest1 = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
 
+        // If we send twice the same user twice it should trigger a SQL Duplicate key exception
+        final var newUsers = List.of(userRequest1, userRequest1);
+
+        final var updateProjectRequest = new ProjectRequest("Some Project with the same user"
+                , false
+                , "updated description"
+                , client1.getId()
+                , false
+                , newUsers);
+
+        // WHEN THEN
+        putValidation(ProjectDef.uriWithid(project10.getId()), adminToken, updateProjectRequest, BAD_REQUEST);
     }
 
     @Test
     void shouldNotAddMemberToProjectWithUnknownUser() {
+        // GIVEN
+        final String adminToken = getAdminAccessToken();
+        final var client1 = create(new ClientRequest("Client 1", "New Description 1"), adminToken);
+        final var project10 = create(new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, emptyList()), adminToken);
 
+        final var userUnknown = new ProjectRequest.ProjectUserRequest(999L, true);
+
+        // If we send twice the same user twice
+        final var newUsers = List.of(userUnknown);
+
+        final var updateProjectRequest = new ProjectRequest("Some Project with one unknown user"
+                , false
+                , "updated description"
+                , client1.getId()
+                , false
+                , newUsers);
+
+        // WHEN THEN
+        putValidation(ProjectDef.uriWithid(project10.getId()), adminToken, updateProjectRequest, BAD_REQUEST);
     }
 
-    @Test
-    void shouldModifyMembersAndGetProjectMembers() {
-
-    }
 }
