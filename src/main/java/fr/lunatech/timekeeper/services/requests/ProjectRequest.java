@@ -5,6 +5,7 @@ import fr.lunatech.timekeeper.models.Project;
 import fr.lunatech.timekeeper.models.ProjectUser;
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.services.AuthenticationContext;
+import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 
 import javax.json.bind.annotation.JsonbCreator;
 import javax.validation.constraints.NotBlank;
@@ -152,7 +153,7 @@ public final class ProjectRequest {
             projectUser.project = project;
             projectUser.manager = isManager();
             projectUser.user = findUser.apply(getId(), ctx)
-                    .orElseThrow(() -> new NotFoundException(String.format("User not found (userId=%s)", getId())));
+                    .orElseThrow(() -> new IllegalEntityStateException(String.format("Unknown User. userId=%s", getId())));
             return projectUser;
         }
 

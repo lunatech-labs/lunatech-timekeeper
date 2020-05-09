@@ -78,12 +78,11 @@ class ProjectResourceTest {
 
         try {
             create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, emptyList()), adminToken);
-        }catch (HttpTestRuntimeException httpError){
-            assertEquals(409, httpError.getHttpStatus());
+        } catch (HttpTestRuntimeException httpError) {
+            assertEquals(400, httpError.getHttpStatus());
             assertEquals("application/json", httpError.getMimeType());
         }
     }
-
 
     @Test
     void shouldNotFindUnknownProject() {
@@ -117,7 +116,7 @@ class ProjectResourceTest {
 
         readValidation(ProjectDef.uri, userToken)
                 .statusCode(OK.getStatusCode())
-                .body(is(TestUtils.listOfTasJson(projec10, projec11,projec20)));
+                .body(is(TestUtils.listOfTasJson(projec10, projec11, projec20)));
     }
 
     @Test

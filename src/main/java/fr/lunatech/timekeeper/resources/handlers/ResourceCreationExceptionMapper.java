@@ -16,7 +16,9 @@ public class ResourceCreationExceptionMapper implements ExceptionMapper<Resource
     @Override
     public Response toResponse(ResourceCreationException e) {
         logger.warn(e.getMessage());
-        return Response.status(Response.Status.CONFLICT)
+        // We could use also a CONFLICT but since we do not check the exact constraint name, we prefer to use a
+        // more generic "Bad request" http response here.
+        return Response.status(Response.Status.BAD_REQUEST)
                 .entity(Json.createObjectBuilder()
                         .add("message", "" + e.getMessage())
                         .build())

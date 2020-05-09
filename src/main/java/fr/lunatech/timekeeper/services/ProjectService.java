@@ -40,7 +40,7 @@ public class ProjectService {
     }
 
     @Transactional
-    public Long create(ProjectRequest request, AuthenticationContext ctx) throws ResourceCreationException {
+    public Long create(ProjectRequest request, AuthenticationContext ctx) {
         logger.debug("Create a new project with {}, {}", request, ctx);
         final Project project = request.unbind(clientService::findById, userService::findById, ctx);
         try {
