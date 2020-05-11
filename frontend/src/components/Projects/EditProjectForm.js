@@ -1,39 +1,38 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, Avatar, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin, Row, Col} from 'antd';
-import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
-import {Link, Redirect} from 'react-router-dom';
+import {useTimeKeeperAPI, useTimeKeeperAPIPut} from '../../utils/services';
+import {Link, Redirect, useRouteMatch} from 'react-router-dom';
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined';
 import PropTypes from 'prop-types';
-import './NewProjectForm.less';
+import './EditProjectForm.less';
 import TitleSection from '../Title/TitleSection';
 
 
 const {TextArea} = Input;
 const {Option} = Select;
-const NewProjectForm = () => {
+const EditProjectForm = () => {
 
-  const [projectCreated, setProjectCreated] = useState(false);
+  const [projectUpdated, setProjectUpdated] = useState(false);
 
-  const initialValues = {
-    name: '',
-    description: '',
-    publicAccess: true,
-    billable: false,
-    clientId: null,
-    users: []
-  };
+  const projectIdSlug = useRouteMatch({
+    path: '/projects/:id',
+    strict: true,
+    sensitive: true
+  });
+
+  const projectResponse = useTimeKeeperAPI('/api/projects/' + projectIdSlug.params.id);
 
   useEffect(() => {
-    if (!projectCreated) {
+    if (!projectUpdated) {
       return;
     }
-    message.success('Project was created');
-  }, [projectCreated]);
+    message.success('Project was updated');
+  }, [projectUpdated]);
 
   const clientsResponse = useTimeKeeperAPI('/api/clients');
   const projectsResponse = useTimeKeeperAPI('/api/projects');
   const usersResponse = useTimeKeeperAPI('/api/users');
-  const timeKeeperAPIPost = useTimeKeeperAPIPost('/api/projects', (form => form), setProjectCreated);
+  const timeKeeperAPIPut = useTimeKeeperAPIPut('/api/projects/' + projectIdSlug.params.id, (form => form), setProjectUpdated);
 
   const [duplicatedNameError, setDuplicatedNameError] = useState(false);
 
@@ -41,7 +40,7 @@ const NewProjectForm = () => {
 
   const isIncluded = (id, users) => users.filter(user => user.id === id).length !== 0;
 
-  if (projectCreated) {
+  if (projectUpdated) {
     return (
       <React.Fragment>
         <Redirect to="/projects"/>
@@ -49,8 +48,8 @@ const NewProjectForm = () => {
     );
   }
 
-  if (timeKeeperAPIPost.error) {
-    const {response} = timeKeeperAPIPost.error;
+  if (timeKeeperAPIPut.error) {
+    const {response} = timeKeeperAPIPut.error;
     const {status, url} = response;
     const errMsg = `Server error HTTP Code:${status}  for url: ${url}`;
     return (
@@ -66,7 +65,7 @@ const NewProjectForm = () => {
     );
   }
 
-  if (clientsResponse.data && projectsResponse.data && usersResponse.data) {
+  if (clientsResponse.data && projectsResponse.data && usersResponse.data && projectResponse.data) {
     const projectsName = projectsResponse.data.map(project => project.name);
     const onChangeName = (event) => setDuplicatedNameError(projectsName.includes(event.target.value));
     const UserName = ({value = {}}) => {
@@ -86,8 +85,8 @@ const NewProjectForm = () => {
       <Form
         id="tk_Form"
         layout="vertical"
-        initialValues={initialValues}
-        onFinish={timeKeeperAPIPost.run}
+        initialValues={projectResponse.data}
+        onFinish={timeKeeperAPIPut.run}
         form={form}
       >
         <div className="tk_CardLg">
@@ -252,7 +251,7 @@ const NewProjectForm = () => {
     );
   }
 
-  if (clientsResponse.loading || projectsResponse.loading || usersResponse.loading) {
+  if (clientsResponse.loading || projectsResponse.loading || usersResponse.loading || projectResponse.loading) {
     return (
       <React.Fragment>
         <Spin size="large">
@@ -277,7 +276,7 @@ const NewProjectForm = () => {
     );
   }
 
-  if (clientsResponse.error || projectsResponse.error || usersResponse.error) {
+  if (clientsResponse.error || projectsResponse.error || usersResponse.error || projectResponse.error) {
     return (
       <React.Fragment>
         <Alert title='Server error'
@@ -291,4 +290,4 @@ const NewProjectForm = () => {
 };
 
 
-export default NewProjectForm;
+export default EditProjectForm;
