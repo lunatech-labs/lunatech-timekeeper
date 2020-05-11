@@ -40,8 +40,8 @@ public class AuthenticationContextProvider {
             try {
                 return userService.authenticate(authenticationRequest);
             } catch (IllegalEntityStateException e) {
-                logger.error("Illegal state detected: " + authenticationRequest);
-                throw new ForbiddenException();
+                logger.error("Cannot get context for a user due to: [{}]", e.getMessage());
+                throw new ForbiddenException(e.getMessage(), e);
             }
 
         } else {
