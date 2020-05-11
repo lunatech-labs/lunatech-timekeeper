@@ -56,15 +56,14 @@ const ProjectList = () => {
         renderItem={item => (
           <List.Item key={item.id}>
             <Card
-              className={'shadow'}
+              id="tk_Card_Sm"
               bordered={false}
               title={
                 <Space size={'middle'}>
                   <Avatar src={logo} shape={'square'} size="large"/>
-                  <div>{item.name} {item.client ? '| ' + item.client.name : ''}
-                    <br/>
-                    {item.publicAccess ?   <UnlockOutlined/>  : <LockFilled/> }
-                    <span className={'subtitle'}>{ item.publicAccess ? ' Public' : ' Private project' }</span>
+                  <div className="tk_Card_Sm_Header">
+                    <p>{item.name}<span>{item.client ? '| ' + item.client.name : ''}</span></p>
+                    <p>{item.publicAccess ?   <UnlockOutlined/>  : <LockFilled/> }<span>{ item.publicAccess ? ' Public' : ' Private project' }</span></p>
                   </div>
                 </Space>
               }
@@ -77,7 +76,7 @@ const ProjectList = () => {
                 <Collapse bordered={false} expandIconPosition={'right'} key="projects">
                   <Panel header={<Space size="small"><UserOutlined />{item.users.length}{ item.users.length === 1 ? 'member' : 'members' }</Space>} key="members">
                     <List
-                      className={'projectList'}
+                      className={'tk_Project_MemberList'}
                       dataSource={item.users}
                       renderItem={member => (
                         <List.Item><ProjectMemberTag member={member}/></List.Item>

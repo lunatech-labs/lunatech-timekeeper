@@ -8,13 +8,16 @@ const ProjectMemberTag = ({ member }) => {
   if(member.manager) {
     return (
       <React.Fragment>
-        <Avatar src={member.picture} shape={'square'} size="large"/> {member.picture}  <Tag className="managerTag">Team leader</Tag>
+        <Avatar src={member.picture} shape={'square'} size="large"/>
+        {member.picture}
+        <Tag id="tk_Tag" className="tk_Tag_Gold">Team leader</Tag>
       </React.Fragment>
     );
   }else{
     return (
       <React.Fragment>
-        <Avatar src={member.picture} shape={'square'} size="large"/>   <Tag className="userTag">Member</Tag>
+        <Avatar src={member.picture} shape={'square'} size="large"/>
+        <Tag id="tk_Tag">Member</Tag>
       </React.Fragment>
     );
   }
