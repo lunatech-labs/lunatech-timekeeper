@@ -100,7 +100,7 @@ const NewProjectForm = () => {
         <div className="tk_CardLg">
           <Row gutter={16}>
             <Col className="gutter-row" span={12}>
-              <TitleSection title="Informations"/>
+              <TitleSection title="Information"/>
               <Form.Item
                 label="Name"
                 name="name"

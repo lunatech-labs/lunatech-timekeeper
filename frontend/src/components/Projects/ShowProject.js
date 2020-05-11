@@ -1,5 +1,5 @@
 import React from "react";
-import {Avatar, Col, Descriptions, Divider, Row, Table, Tag} from "antd";
+import {Avatar, Col, Descriptions, Divider, Row, Table, Tag, Typography} from "antd";
 import PropTypes from "prop-types";
 import {DesktopOutlined, UserOutlined} from "@ant-design/icons";
 import DollarOutlined from "@ant-design/icons/lib/icons/DollarOutlined";
@@ -7,6 +7,8 @@ import LockOutlined from "@ant-design/icons/lib/icons/LockOutlined";
 import TitleSection from "../Title/TitleSection";
 
 const renderAvatar = (value) => <Avatar src={value}/>;
+
+const {Title} = Typography;
 
 const columns = [
   {
@@ -35,8 +37,11 @@ const ShowProject = ({project}) => {
   const users = project.users.map(user => {
     return (
       <Row>
-        <Col span={10}>
-          <Avatar src={user.picture}/> {user.name}
+        <Col span={2}>
+          <Avatar src={user.picture}/>
+        </Col>
+        <Col span={14}>
+          {user.name}
         </Col>
         <Col span={6}>
           {user.manager ? <Tag color="gold">Team Leader</Tag> : <Tag color="grey">Member</Tag>}
@@ -46,18 +51,21 @@ const ShowProject = ({project}) => {
   });
 
   return (
+    <div>
+      <Title level={3}>{project.name}</Title>
     <Row gutter={16}>
       <Col className="gutter-row" span={12}>
-        <p className="tk_FormTitle">Informations</p>
+        <TitleSection title="Information"/>
+
         <Row gutter={16}>
-        <Col span={8}>
-          <div><DesktopOutlined /> Client : {project.client ? project.client.name : 'No client'}</div>
-          <div><UserOutlined /> Members : {project.users ? project.users.length : 0}</div>
-        </Col>
-        <Col span={8}>
-          <div><DollarOutlined /> Billable : {project.publicAccess ? 'Public project' : 'Private project'}</div>
-          <div><LockOutlined /> Project type : {project.publicAccess ? 'Public project' : 'Private project'}</div>
-        </Col>
+          <Col span={12}><DesktopOutlined /> Client : {project.client ? project.client.name : 'No client'}</Col>
+          <Col span={12}><DollarOutlined /> Billable : {project.billable ? 'Yes' : 'No'}</Col>
+        </Row>
+        <Row gutter={16}>
+          <Col span={12}><UserOutlined /> Members : {project.users ? project.users.length : 0}</Col>
+          <Col span={12}><LockOutlined /> Project type : {project.publicAccess ? 'Public' : 'Private'}</Col>
+        </Row>
+        <Row gutter={16}>
         <div>
           {project.description}
         </div>
@@ -68,6 +76,7 @@ const ShowProject = ({project}) => {
         {users}
       </Col>
     </Row>
+    </div>
   );
 };
 
