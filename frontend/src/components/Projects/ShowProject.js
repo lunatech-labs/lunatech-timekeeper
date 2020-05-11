@@ -37,7 +37,7 @@ const ShowProject = ({project}) => {
             <TitleSection title="Information"/>
 
             <Row gutter={16}>
-              <Col span={12}><DesktopOutlined/> Client : {project.client ? project.client.name : 'No client'}</Col>
+              <Col span={12}><DesktopOutlined/> Client : {project.client ? <Tag color="blue">{project.client.name}</Tag> : 'No client'}</Col>
               <Col span={12}><DollarOutlined/> Billable : {project.billable ? 'Yes' : 'No'}</Col>
             </Row>
             <Row gutter={16}>
