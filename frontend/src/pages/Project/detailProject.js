@@ -37,7 +37,7 @@ const DetailProjectPage = () => {
   }
 
   return (
-    <MainPage title="Project details" actions={<Link key='editLink' to={`/projects/edit/${data.id}`}><Button type="primary" icon={<EditOutlined />}>Edit project</Button></Link>}>
+    <MainPage title="Project details" actions={<Link key='editLink' to={`/projects/${data.id}/edit`}><Button type="primary" icon={<EditOutlined />}>Edit project</Button></Link>}>
       <ShowProject project={data} />
     </MainPage>
   );
