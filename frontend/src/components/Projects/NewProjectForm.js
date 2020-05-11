@@ -5,7 +5,7 @@ import {Link, Redirect} from 'react-router-dom';
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined';
 import PropTypes from 'prop-types';
 import './NewProjectForm.less';
-import TitleSection from "../Title/TitleSection";
+import TitleSection from '../Title/TitleSection';
 
 
 const {TextArea} = Input;

@@ -13,7 +13,7 @@ import { PrivateRoute } from './utils';
 import UsersPage from '../pages/User/allUsers';
 import ProjectsPage from '../pages/Project/allProjects';
 import NewProjectPage from '../pages/Project/newProject';
-import DetailProjectPage from "../pages/Project/detailProject";
+import DetailProjectPage from '../pages/Project/detailProject';
 
 export const AppRouter = () => {
   const [, initialized] = useKeycloak();

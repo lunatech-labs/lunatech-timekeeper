@@ -1,9 +1,9 @@
 import React from 'react';
-import MainPage from "../MainPage/MainPage";
-import ShowProject from "../../components/Projects/ShowProject";
-import {useRouteMatch} from "react-router";
-import {useTimeKeeperAPI} from "../../utils/services";
-import {Alert} from "antd";
+import MainPage from '../MainPage/MainPage';
+import ShowProject from '../../components/Projects/ShowProject';
+import {useRouteMatch} from 'react-router';
+import {useTimeKeeperAPI} from '../../utils/services';
+import {Alert} from 'antd';
 
 const DetailProjectPage = () => {
 
@@ -16,14 +16,14 @@ const DetailProjectPage = () => {
   const { data, error, loading } = useTimeKeeperAPI('/api/projects/'+projectIdSlug.params.id);
 
   if (error) {
-    let errorReason = "Message: " + error ;
+    let errorReason = 'Message: ' + error ;
     return (
       <React.Fragment>
         <Alert title='Server error'
-                 message='Failed to load projects from Quarkus backend server'
-                 type='error'
-                 description={errorReason}
-      />
+          message='Failed to load projects from Quarkus backend server'
+          type='error'
+          description={errorReason}
+        />
       </React.Fragment>
     );
   }
