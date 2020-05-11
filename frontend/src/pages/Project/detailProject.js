@@ -3,7 +3,10 @@ import MainPage from '../MainPage/MainPage';
 import ShowProject from '../../components/Projects/ShowProject';
 import {useRouteMatch} from 'react-router';
 import {useTimeKeeperAPI} from '../../utils/services';
-import {Alert} from 'antd';
+import {Alert, Button} from 'antd';
+import {Link} from 'react-router-dom';
+import EditOutlined from '@ant-design/icons/lib/icons/EditOutlined';
+
 
 const DetailProjectPage = () => {
 
@@ -34,7 +37,7 @@ const DetailProjectPage = () => {
   }
 
   return (
-    <MainPage title="Project details">
+    <MainPage title="Project details" actions={<Link key='editLink' to={`/projects/edit/${data.id}`}><Button type="primary" icon={<EditOutlined />}>Edit project</Button></Link>}>
       <ShowProject project={data} />
     </MainPage>
   );
