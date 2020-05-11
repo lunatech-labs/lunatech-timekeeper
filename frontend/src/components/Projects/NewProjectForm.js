@@ -5,6 +5,7 @@ import {Link, Redirect} from 'react-router-dom';
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined';
 import PropTypes from 'prop-types';
 import './NewProjectForm.less';
+import TitleSection from "../Title/TitleSection";
 
 
 const {TextArea} = Input;
@@ -99,7 +100,7 @@ const NewProjectForm = () => {
         <div className="tk_CardLg">
           <Row gutter={16}>
             <Col className="gutter-row" span={12}>
-              <p className="tk_FormTitle">Informations</p>
+              <TitleSection title="Informations"/>
               <Form.Item
                 label="Name"
                 name="name"
@@ -164,7 +165,7 @@ const NewProjectForm = () => {
               </Row>
             </Col>
             <Col className="gutter-row" span={12}>
-              <p className="tk_FormTitle">Members</p>
+              <TitleSection title="Members"/>
               <Form.List
                 label="Users"
                 name="users"

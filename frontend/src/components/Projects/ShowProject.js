@@ -1,6 +1,10 @@
 import React from "react";
-import {Avatar, Descriptions, Table} from "antd";
+import {Avatar, Col, Descriptions, Divider, Row, Table, Tag} from "antd";
 import PropTypes from "prop-types";
+import {DesktopOutlined, UserOutlined} from "@ant-design/icons";
+import DollarOutlined from "@ant-design/icons/lib/icons/DollarOutlined";
+import LockOutlined from "@ant-design/icons/lib/icons/LockOutlined";
+import TitleSection from "../Title/TitleSection";
 
 const renderAvatar = (value) => <Avatar src={value}/>;
 
@@ -28,25 +32,42 @@ const columns = [
 
 const ShowProject = ({project}) => {
 
+  const users = project.users.map(user => {
+    return (
+      <Row>
+        <Col span={10}>
+          <Avatar src={user.picture}/> {user.name}
+        </Col>
+        <Col span={6}>
+          {user.manager ? <Tag color="gold">Team Leader</Tag> : <Tag color="grey">Member</Tag>}
+        </Col>
+      </Row>
+    )
+  });
+
   return (
-    <React.Fragment>
-      <Descriptions title="Project information"
-                    bordered
-                    column={{xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1}}>
-        <Descriptions.Item label="Name">{project.name}</Descriptions.Item>
-        <Descriptions.Item label="Description">{project.description}</Descriptions.Item>
-        <Descriptions.Item label="Client">{project.client.name}</Descriptions.Item>
-        <Descriptions.Item label="Billable">{project.billable ? 'Yes' : 'No'}</Descriptions.Item>
-        <Descriptions.Item
-          label="Project type">{project.publicAccess ? 'Public project' : 'Private project'}</Descriptions.Item>
-        <Descriptions.Item label="Users in the projects">
-          <Table id="tk_Table"
-                 dataSource={project.users}
-                 columns={columns}
-          />
-        </Descriptions.Item>
-      </Descriptions>
-    </React.Fragment>
+    <Row gutter={16}>
+      <Col className="gutter-row" span={12}>
+        <p className="tk_FormTitle">Informations</p>
+        <Row gutter={16}>
+        <Col span={8}>
+          <div><DesktopOutlined /> Client : {project.client ? project.client.name : 'No client'}</div>
+          <div><UserOutlined /> Members : {project.users ? project.users.length : 0}</div>
+        </Col>
+        <Col span={8}>
+          <div><DollarOutlined /> Billable : {project.publicAccess ? 'Public project' : 'Private project'}</div>
+          <div><LockOutlined /> Project type : {project.publicAccess ? 'Public project' : 'Private project'}</div>
+        </Col>
+        <div>
+          {project.description}
+        </div>
+        </Row>
+      </Col>
+      <Col className="gutter-row" span={12}>
+        <TitleSection title="Members"/>
+        {users}
+      </Col>
+    </Row>
   );
 };
 

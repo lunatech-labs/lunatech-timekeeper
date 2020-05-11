@@ -34,7 +34,7 @@ const DetailProjectPage = () => {
   }
 
   return (
-    <MainPage title={'Project details'}>
+    <MainPage title={data.name}>
       <ShowProject project={data} />
     </MainPage>
   );
