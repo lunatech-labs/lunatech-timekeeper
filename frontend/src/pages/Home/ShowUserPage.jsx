@@ -10,13 +10,11 @@ const ShowUserPage = () => {
     const { data, error, loading } = useTimeKeeperAPI('/api/users/me');
 
     if (error) {
-        let errorReason = "Message: " + error ;
         return (
             <React.Fragment>
                 <Alert title='Server error'
                        message='Failed to load user from Quarkus backend server'
                        type='error'
-                       description={errorReason}
                 />
             </React.Fragment>
         );
@@ -28,11 +26,8 @@ const ShowUserPage = () => {
     }
 
     return (
-
         <React.Fragment>
-
             <ShowUser user={data}/>
-
         </React.Fragment>
     )
 };
