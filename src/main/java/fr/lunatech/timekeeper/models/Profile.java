@@ -9,11 +9,19 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.stream;
 
 public enum Profile {
-    Admin, User, Guest;
+    SuperAdmin ("super_admin"),
+    Admin ("admin"),
+    User ("user"),;
+
+    String tokenValue;
+
+    Profile(String tokenValue) {
+        this.tokenValue = tokenValue;
+    }
 
     public static Optional<Profile> getByName(String value) {
         return stream(Profile.values())
-                .filter(profile -> profile.name().equalsIgnoreCase(value))
+                .filter(profile -> value.equals(profile.tokenValue))
                 .findFirst();
     }
 

@@ -2,7 +2,6 @@ package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.resources.utils.TestUtils;
 import fr.lunatech.timekeeper.services.requests.ClientRequest;
-import fr.lunatech.timekeeper.services.requests.OrganizationRequest;
 import fr.lunatech.timekeeper.services.responses.ClientResponse;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
@@ -19,11 +18,9 @@ import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAcces
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ClientDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
-import static fr.lunatech.timekeeper.resources.utils.ResourceReader.readValidation;
+import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.*;
 import static fr.lunatech.timekeeper.resources.utils.TestUtils.toJson;
-import static io.restassured.RestAssured.given;
 import static java.util.Collections.emptyList;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.Response.Status.*;
 import static org.hamcrest.CoreMatchers.is;
 
@@ -47,12 +44,9 @@ class ClientResourceTest {
 
         final String samToken = getAdminAccessToken();
 
-        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), samToken);
         final var client = create(new ClientRequest("NewClient", "NewDescription"), samToken);
 
-        readValidation(client.getId(), ClientDef.uri, samToken)
-                .statusCode(OK.getStatusCode())
-                .body(is(toJson(client)));
+        getValidation(ClientDef.uriWithid(client.getId()), samToken, OK).body(is(toJson(client)));
     }
 
     @Test
@@ -60,17 +54,10 @@ class ClientResourceTest {
 
         final String jimmyToken = getUserAccessToken();
 
-        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), jimmyToken);
         final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
+        postValidation(ClientDef.uri, jimmyToken, client, FORBIDDEN);
 
-        given()
-                .auth().preemptive().oauth2(jimmyToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(client)
-                .post(ClientDef.uri)
-                .then()
-                .statusCode(FORBIDDEN.getStatusCode());
+
     }
 
     @Test
@@ -78,11 +65,10 @@ class ClientResourceTest {
 
         final String jimmyToken = getUserAccessToken();
 
-        final  Long NO_EXISTING_CLIENT_ID = 243L;
+        final Long NO_EXISTING_CLIENT_ID = 243L;
 
-        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), jimmyToken);
-        readValidation(NO_EXISTING_CLIENT_ID, ClientDef.uri, jimmyToken)
-                .statusCode(NOT_FOUND.getStatusCode());
+        getValidation(ClientDef.uriWithid(NO_EXISTING_CLIENT_ID), jimmyToken, NOT_FOUND);
+
     }
 
     @Test
@@ -91,13 +77,10 @@ class ClientResourceTest {
         final String samToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
 
-        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), jimmyToken);
         final var client1 = create(new ClientRequest("NewClient", "NewDescription"), samToken);
         final var client2 = create(new ClientRequest("NewClient2", "NewDescription2"), samToken);
 
-        readValidation(ClientDef.uri, jimmyToken)
-                .statusCode(OK.getStatusCode())
-                .body(is(TestUtils.listOfTasJson(client1, client2)));
+        getValidation(ClientDef.uri, jimmyToken, OK).body(is(TestUtils.listOfTasJson(client1, client2)));
     }
 
     @Test
@@ -105,11 +88,7 @@ class ClientResourceTest {
 
         final String jimmyToken = getUserAccessToken();
 
-        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), jimmyToken);
-
-        readValidation(ClientDef.uri, jimmyToken)
-                .statusCode(OK.getStatusCode())
-                .body(is("[]"));
+        getValidation(ClientDef.uri, jimmyToken, OK).body(is("[]"));
     }
 
     @Test
@@ -117,14 +96,12 @@ class ClientResourceTest {
 
         final String samToken = getAdminAccessToken();
 
-        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), samToken);
         final var client = create(new ClientRequest("NewClient", "NewDescription"), samToken);
-        update(new ClientRequest("NewClient", "NewDescription2"), String.format("%s/%s", ClientDef.uri, client.getId()), samToken);
+        update(new ClientRequest("NewClient", "NewDescription2"), ClientDef.uriWithid(client.getId()), samToken);
 
         final var expectedClient = new ClientResponse(client.getId(), "NewClient", "NewDescription2", emptyList());
-        readValidation(client.getId(), ClientDef.uri, samToken)
-                .statusCode(OK.getStatusCode())
-                .body(is(toJson(expectedClient)));
+
+        getValidation(ClientDef.uriWithid(client.getId()), samToken, OK).body(is(toJson(expectedClient)));
     }
 
     @Test
@@ -133,17 +110,11 @@ class ClientResourceTest {
         final String samToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
 
-        var __ = create(new OrganizationRequest("MyOrga", "organization.org"), samToken);
         final var client = create(new ClientRequest("NewClient", "NewDescription"), samToken);
 
         final ClientRequest client2 = new ClientRequest("NewClient", "NewDescription2");
-        given()
-                .auth().preemptive().oauth2(jimmyToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(client2)
-                .put(String.format("%s/%s", ClientDef.uri, client.getId()))
-                .then()
-                .statusCode(FORBIDDEN.getStatusCode());
+
+        putValidation(ClientDef.uriWithid(client.getId()), jimmyToken, client2, FORBIDDEN);
+
     }
 }

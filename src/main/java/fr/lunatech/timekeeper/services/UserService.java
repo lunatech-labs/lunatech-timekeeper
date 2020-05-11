@@ -37,15 +37,15 @@ public class UserService {
     public AuthenticationContext authenticate(AuthenticationRequest request) {
         final User authenticatedUser = findByEmail(request.getEmail())
                 .map(user -> {
-                    if (request.isDifferent(user)) {
-                        logger.debug("Modify user for email={} with request={}", user.email, request);
+                    if (request.isEquals(user)) {
+                        logger.debug("Modify user for email={} with {}", user.email, request);
                         return request.unbind(user, organizationService::findByTokenName);
                     } else {
                         return user;
                     }
                 })
                 .orElseGet(() -> {
-                    logger.debug("Create a new user for email={} with request={}", request.getEmail(), request);
+                    logger.debug("Create a new user for email={} with {}", request.getEmail(), request);
                     final User user = request.unbind(organizationService::findByTokenName);
                     User.persist(user);
                     return user;
@@ -63,7 +63,7 @@ public class UserService {
                 .filter(ctx::canAccess);
     }
 
-    Optional<User> findByEmail(String email) {
+    private Optional<User> findByEmail(String email) {
         return User.<User>find("email", email)
                 .firstResultOptional();
     }

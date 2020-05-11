@@ -17,9 +17,6 @@ import javax.ws.rs.core.Application;
                 description = "This API allows CRUD operations and interaction with TimeKeeper",
                 version = "1.0",
                 contact = @Contact(name = "TimeKeeper GitHub", url = "https://github.com/lunatech-labs/lunatech-timekeeper")),
-        servers = {
-                @Server(url = "http://localhost:8080")
-        },
         externalDocs = @ExternalDocumentation(url = "https://lunatech.atlassian.net/wiki/spaces/INTRANET/pages/1609695253/Timekeeper", description = "Lunatech doc about TimeKeeper on Confluence")
 )
 public class TimeKeeperApplication extends Application {

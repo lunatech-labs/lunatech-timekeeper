@@ -69,8 +69,8 @@ public final class AuthenticationRequest {
         return unbind(new User(), findOrganizationByTokenName);
     }
 
-    /* Panache optimizes update process, but to avoid unnecessary and undetectable logging, use this */
-    public boolean isDifferent(@NotNull User user) {
+    /* Panache optimizes update process, but to avoid unnecessary logging, use this */
+    public boolean isEquals(@NotNull User user) {
         return !(Objects.equals(user.firstName, getFirstName())
                 && Objects.equals(user.lastName, getLastName())
                 && Objects.equals(user.email, getEmail())

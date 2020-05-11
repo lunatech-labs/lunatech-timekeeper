@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Alert, Button, Form, Input, message, Spin,} from 'antd';
 import {Link, Redirect, useRouteMatch} from 'react-router-dom';
 import {useTimeKeeperAPI, useTimeKeeperAPIPut} from '../../utils/services';
@@ -27,8 +27,14 @@ const EditClientForm = () => {
 
   const timeKeeperAPIPut = useTimeKeeperAPIPut('/api/clients/' + clientIdSlug.params.id, (form=>form), setClientUpdated);
 
-  if (clientUpdated) {
+  useEffect(() => {
+    if(!clientUpdated) {
+      return;
+    }
     message.success('Client was updated');
+  }, [clientUpdated]);
+
+  if (clientUpdated) {
     return (
       <React.Fragment>
         <Redirect to="/clients"/>

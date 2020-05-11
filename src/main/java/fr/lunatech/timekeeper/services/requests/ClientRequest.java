@@ -22,6 +22,7 @@ public final class ClientRequest {
     }
 
     public Client unbind(@NotNull Client client, @NotNull AuthenticationContext ctx) {
+        client.organization = ctx.getOrganization();
         client.name = getName();
         client.description = getDescription();
         return client;
