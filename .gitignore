@@ -63,3 +63,4 @@ frontend/yarn.lock
 frontend/package-lock.json
 frontend/.clever.json
 # Frontend -- END
+/lsp
