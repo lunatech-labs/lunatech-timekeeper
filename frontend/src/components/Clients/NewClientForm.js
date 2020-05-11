@@ -14,8 +14,8 @@ const tailLayout = {
 };
 
 const initialValues = {
-  name: "",
-  description: ""
+  name: '',
+  description: ''
 };
 
 const ClientForm = () => {
