@@ -69,12 +69,15 @@ const ClientList = () => {
         renderItem={item => (
           <List.Item key={item.id}>
             <Card
-              className={'shadow'}
+              id="tk_Card_Sm"
               bordered={false}
               title={
                 <Space size={'middle'}>
                   <Avatar src={logo} shape={'square'} size="large"/>
-                  <div>{item.name}<br/><span className={'subtitle'}>{item.projects.length} projects</span></div>
+                  <div className="tk_Card_Sm_Header">
+                    <p>{item.name}</p>
+                    <p>{item.projects.length} projects</p>
+                  </div>
                 </Space>
               }
               extra={[
