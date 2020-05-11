@@ -62,9 +62,9 @@ const ProjectList = () => {
                 <Space size={'middle'}>
                   <Avatar src={logo} shape={'square'} size="large"/>
                   <div>{item.name} {item.client ? '| ' + item.client.name : ''}
-                  <br/>
-                  {item.publicAccess ?   <UnlockOutlined/>  : <LockFilled/> }
-                  <span className={'subtitle'}>{ item.publicAccess ? ' Public' : ' Private project' }</span>
+                    <br/>
+                    {item.publicAccess ?   <UnlockOutlined/>  : <LockFilled/> }
+                    <span className={'subtitle'}>{ item.publicAccess ? ' Public' : ' Private project' }</span>
                   </div>
                 </Space>
               }
