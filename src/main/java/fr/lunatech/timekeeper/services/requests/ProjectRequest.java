@@ -11,6 +11,7 @@ import javax.json.bind.annotation.JsonbCreator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -153,7 +154,6 @@ public final class ProjectRequest {
             projectUser.manager = isManager();
             projectUser.user = findUser.apply(getId(), ctx)
                     .orElseThrow(() -> new IllegalEntityStateException(String.format("Unknown User. userId=%s", getId())));
-
             return projectUser;
         }
 

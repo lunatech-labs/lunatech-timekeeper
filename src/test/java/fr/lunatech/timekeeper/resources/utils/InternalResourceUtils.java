@@ -62,7 +62,7 @@ final class InternalResourceUtils {
         logger.debug(String.format("Status code   : %s", status));
 
         if (location == null || status < 200) {
-            throw new IllegalStateException(String.format("Something went wrong during creation of resource : %s , Data : %s", request.getClass(), request.toString()));
+            throw new HttpTestRuntimeException(status, reqSpec.getBody().print() , reqSpec.getContentType());
         } else {
             final String id = Iterables.<String>getLast(Arrays.stream(reqSpec.header(LOCATION).split(SLASH)).collect(Collectors.toList()));
 

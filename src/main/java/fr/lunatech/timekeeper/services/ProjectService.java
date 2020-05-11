@@ -1,6 +1,8 @@
 package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.Project;
+import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
+import fr.lunatech.timekeeper.resources.exceptions.UpdateResourceException;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -9,7 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.transaction.Transactional;
+import javax.persistence.PersistenceException;
+import javax.transaction.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +23,9 @@ import java.util.stream.Stream;
 
 @ApplicationScoped
 public class ProjectService {
+
+    @Inject
+    UserTransaction transaction;
 
     private static Logger logger = LoggerFactory.getLogger(ProjectService.class);
 
@@ -41,22 +47,41 @@ public class ProjectService {
     public Long create(ProjectRequest request, AuthenticationContext ctx) {
         logger.debug("Create a new project with {}, {}", request, ctx);
         final Project project = request.unbind(clientService::findById, userService::findById, ctx);
-        Project.persist(project);
+        try {
+            project.persistAndFlush();
+        } catch (PersistenceException pe) {
+            throw new CreateResourceException(String.format("Project was not created due to constraint violation"));
+        }
         return project.id;
     }
 
-    @Transactional
-    public Optional<Long> update(Long id, ProjectRequest request, AuthenticationContext ctx) {
+    public Optional<Long> update(Long id, ProjectRequest request, AuthenticationContext ctx)  {
         logger.debug("Modify project for for id={} with {}, {}", id, request, ctx);
-        return findById(id, ctx)
-                .stream()
-                .map(project -> request.unbind(project, clientService::findById, userService::findById, ctx))
-                .peek(project -> project.users
-                        .stream()
-                        .filter(request::notContains)
-                        .forEach(PanacheEntityBase::delete))
-                .map(project -> project.id)
-                .findFirst();
+        try {
+            transaction.begin(); // See https://quarkus.io/guides/transaction API Approach
+            final var updatedProject = findById(id, ctx)
+                    .stream()
+                    .map(project -> request.unbind(project, clientService::findById, userService::findById, ctx))
+                    .peek(project -> project.users
+                            .stream()
+                            .filter(request::notContains)
+                            .forEach(PanacheEntityBase::delete))
+                    .map(project -> project.id)
+                    .findFirst();
+            transaction.commit();
+            return updatedProject;
+        } catch (Throwable e) {
+            // There are many various exceptions, we catch Throwable but this is arguable.
+            logger.warn("Could not update a Project due to an exception {}", e.getMessage());
+            try {
+                if (transaction.getStatus() != Status.STATUS_MARKED_ROLLBACK && transaction.getStatus() != Status.STATUS_NO_TRANSACTION) {
+                    transaction.rollback();
+                }
+            } catch (SystemException ex) {
+                logger.error("Tried to rollback in ProjectService but failed",ex);
+            }
+            throw new UpdateResourceException("Cannot update a Project, invalid projectRequest");
+        }
     }
 
     Optional<Project> findById(Long id, AuthenticationContext ctx) {
