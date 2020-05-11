@@ -15,6 +15,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.apache.commons.lang3.StringUtils;
+
 public final class AuthenticationRequest {
 
     @NotBlank
@@ -50,7 +52,7 @@ public final class AuthenticationRequest {
         this.email = email;
         this.picture = picture;
         this.profiles = profiles;
-        this.organizationTokenName = organizationTokenName;
+        this.organizationTokenName = StringUtils.trimToEmpty(organizationTokenName);
     }
 
     public User unbind(@NotNull User user, @NotNull Function<String, Optional<Organization>> findOrganization) {
@@ -60,7 +62,7 @@ public final class AuthenticationRequest {
         user.picture = getPicture();
         user.profiles = getProfiles();
         user.organization = findOrganization.apply(getOrganizationTokenName())
-                .orElseThrow(() -> new IllegalEntityStateException(String.format("Unknown organization. organizationTokenName=%s", organizationTokenName)));
+                .orElseThrow(() -> new IllegalEntityStateException(String.format("Organization [%s] was not found in the DB", organizationTokenName)));
 
         return user;
     }
@@ -102,7 +104,7 @@ public final class AuthenticationRequest {
     }
 
     public String getOrganizationTokenName() {
-        return organizationTokenName;
+        return StringUtils.trimToEmpty(organizationTokenName);
     }
 
     @Override
