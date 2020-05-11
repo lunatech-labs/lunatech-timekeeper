@@ -79,7 +79,7 @@ const ClientList = () => {
               }
               extra={[
                 <Tooltip title="Edit" key="edit">
-                  <Button type="link" size="small" ghost shape="circle" icon={<EditFilled/>} href={`/clients/${item.id}`}/>
+                  <Button type="link" size="small" ghost shape="circle" icon={<EditFilled/>} href={`/clients/${item.id}/edit`}/>
                 </Tooltip>
               ]}
               actions={[
