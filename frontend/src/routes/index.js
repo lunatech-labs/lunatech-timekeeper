@@ -32,7 +32,7 @@ export const AppRouter = () => {
         <PrivateRoute path="/projects/:id/edit" component={EditProjectsPage} roles={['admin']} />
         <PrivateRoute path="/projects"     component={ProjectsPage} />
         <PrivateRoute path="/clients/new"  component={NewClientPage} roles={['admin']} />
-        <PrivateRoute path="/clients/:id"  component={EditClientPage} roles={['admin']} />
+        <PrivateRoute path="/clients/:id/edit"  component={EditClientPage} roles={['admin']} />
         <PrivateRoute path="/clients"      component={ClientsPage} roles={['admin']} />
         {/* the /clients route must be after any other clients routes, else it does not work*/}
         <Redirect from="/" to="/home" />
