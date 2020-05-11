@@ -16,12 +16,22 @@ public class ForbiddenExceptionMapper implements ExceptionMapper<ForbiddenExcept
 
     @Override
     public Response toResponse(ForbiddenException e) {
-        logger.warn(String.format("ForbiddenException %s ", e.getMessage()));
-        return Response
-                .status(Response.Status.FORBIDDEN)
-                .entity(Json.createObjectBuilder()
-                        .add("message", e.getMessage()).build()
-                )
-                .build();
+        if (e.getMessage() == null) {
+            logger.warn("ForbiddenException but no reason was specified. You should specify why the access was forbidden.");
+            return Response
+                    .status(Response.Status.FORBIDDEN)
+                    .entity(Json.createObjectBuilder()
+                            .add("message", "Access to this resource is forbidden for your role.").build()
+                    )
+                    .build();
+        } else {
+            logger.warn(String.format("ForbiddenException %s ", e.getMessage()));
+            return Response
+                    .status(Response.Status.FORBIDDEN)
+                    .entity(Json.createObjectBuilder()
+                            .add("message", e.getMessage()).build()
+                    )
+                    .build();
+        }
     }
 }
