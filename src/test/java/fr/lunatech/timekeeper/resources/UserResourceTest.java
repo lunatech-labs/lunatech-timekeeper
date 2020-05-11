@@ -37,17 +37,13 @@ class UserResourceTest {
 
     @Test
     void shouldFindUserWhenAdminProfile() {
-
         final String samToken = getAdminAccessToken();
-
         var sam = create(samToken);
-
         getValidation(UserDef.uriWithid(2L), samToken,OK).body(is(TestUtils.toJson(sam)));
     }
 
     @Test
     void shouldFindAllUsers() {
-
         final String samToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
 
