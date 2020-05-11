@@ -3,13 +3,17 @@ import {Alert, Avatar, Button, Card, Collapse, List, Spin} from 'antd';
 import logo from '../../img/logo_timekeeper_homepage.png';
 import {useTimeKeeperAPI} from '../../utils/services';
 import EditFilled from '@ant-design/icons/lib/icons/EditFilled';
-import Tooltip from 'antd/lib/tooltip';
-import Space from 'antd/lib/space';
-import Tag from 'antd/lib/tag';
 import UserOutlined from '@ant-design/icons/lib/icons/UserOutlined';
+import LockFilled from '@ant-design/icons/lib/icons/LockFilled';
+import UnlockOutlined from '@ant-design/icons/lib/icons/UnlockOutlined';
+
+import Tooltip from 'antd/lib/tooltip';
+
+import Space from 'antd/lib/space';
 import Meta from 'antd/lib/card/Meta';
 
 import './ProjectList.less';
+import ProjectMemberTag  from './ProjectMemberTag';
 
 const { Panel } = Collapse;
 
@@ -44,7 +48,7 @@ const ProjectList = () => {
 
   return (
     <React.Fragment>
-      <p>{projects().length} Projects</p>
+      <p>{projects().length} project(s) | {Array.from(new Set(projects().filter((project) => project.client !== undefined).map((project) => project.client.id))).length} client(s)</p>
       <List
         id="tk_List"
         grid={{ gutter: 32, column: 3 }}
@@ -57,7 +61,11 @@ const ProjectList = () => {
               title={
                 <Space size={'middle'}>
                   <Avatar src={logo} shape={'square'} size="large"/>
-                  <div>{item.name}<br/><span className={'subtitle'}>subtitle</span></div>
+                  <div>{item.name} {item.client ? '| ' + item.client.name : ''}
+                  <br/>
+                  {item.publicAccess ?   <UnlockOutlined/>  : <LockFilled/> }
+                  <span className={'subtitle'}>{ item.publicAccess ? ' Public' : ' Private project' }</span>
+                  </div>
                 </Space>
               }
               extra={[
@@ -67,12 +75,12 @@ const ProjectList = () => {
               ]}
               actions={[
                 <Collapse bordered={false} expandIconPosition={'right'} key="projects">
-                  <Panel header={<Space size="small"><UserOutlined />{'Members'}</Space>} key="1">
+                  <Panel header={<Space size="small"><UserOutlined />{item.users.length}{ item.users.length === 1 ? 'member' : 'members' }</Space>} key="members">
                     <List
                       className={'projectList'}
-                      dataSource={item.projects}
-                      renderItem={projectItem => (
-                        <List.Item>{projectItem.name} <Tag className="usersTag" icon={<UserOutlined />}>todo tag</Tag></List.Item>
+                      dataSource={item.users}
+                      renderItem={member => (
+                        <List.Item><ProjectMemberTag member={member}/></List.Item>
                       )}
                     />
                   </Panel>
