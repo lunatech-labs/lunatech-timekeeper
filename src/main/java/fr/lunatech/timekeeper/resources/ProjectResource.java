@@ -8,8 +8,6 @@ import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
-import javax.json.Json;
-import javax.transaction.SystemException;
 import javax.validation.Valid;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
