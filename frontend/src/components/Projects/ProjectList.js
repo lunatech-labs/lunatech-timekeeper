@@ -14,6 +14,7 @@ import Meta from 'antd/lib/card/Meta';
 
 import './ProjectList.less';
 import ProjectMemberTag  from './ProjectMemberTag';
+import EyeFilled from "@ant-design/icons/lib/icons/EyeFilled";
 
 const { Panel } = Collapse;
 
@@ -68,6 +69,9 @@ const ProjectList = () => {
                 </Space>
               }
               extra={[
+                <Tooltip title="View" key="view">
+                  <Button type="link" size="small" ghost shape="circle" icon={<EyeFilled />} href={`/projects/${item.id}`}/>
+                </Tooltip>,
                 <Tooltip title="Edit" key="edit">
                   <Button type="link" size="small" ghost shape="circle" icon={<EditFilled/>} href={`/projects/${item.id}/edit`}/>
                 </Tooltip>
