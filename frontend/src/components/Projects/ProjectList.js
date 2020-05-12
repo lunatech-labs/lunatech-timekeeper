@@ -21,7 +21,7 @@ const ProjectList = () => {
 
   const projectsResponse = useTimeKeeperAPI('/api/projects');
 
-  const projects = () => projectsResponse.data;
+  const projects = () => projectsResponse.data.sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
 
   if (projectsResponse.loading) {
     return (
