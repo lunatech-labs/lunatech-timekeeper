@@ -7,6 +7,30 @@
   padding: 32px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
+#tk_Card_MemberList {
+  > div {
+    background: @black_Tk;
+    margin-bottom: 5px;
+    border-radius: 6px;
+    padding: 0 16px;
+    p {margin-bottom: 0;}
+    .ant-avatar {margin-right: 12px;}
+    .ant-form-item-control-input-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 50px;
+      > div {
+        display: flex;
+        align-items: center;
+        > .ant-row {
+          margin-bottom: 0;
+        }
+      }
+
+    }
+  }
+}
 #tk_Form {
   input {
     background: none;
@@ -24,4 +48,47 @@
     background: none;
     border: 1px solid rgba(145, 145, 160, 0.8);
   }
+}
+.tk_Crown_Checkbox {
+}
+.tk_LabelForm {
+  color: #9191A0;
+  font-size: 14px;
+}
+.tk_Select {
+  .ant-select-arrow {
+    color: @white_Tk;
+  }
+}
+.ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  background: none!important;
+  color: rgba(0, 0, 0, 0.25)!important;
+  font-weight: 400!important;
+}
+.tk_JcFe {
+  justify-content: flex-end;
+  width: 100%;
+}
+#tk_Btn {
+  height: 40px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  color: @white_Tk;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  span:first-child {
+    margin-right: 8px;
+  }
+  span:last-child {
+   margin-left: 0;
+  }
+}
+#tk_Btn.tk_BtnPrimary {
+  background: @red_Tk;
+}
+#tk_Btn.tk_BtnSecondary {
+  background: @mediumGray_Tk;
 }

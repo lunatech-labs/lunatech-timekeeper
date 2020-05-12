@@ -1,10 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, Avatar, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin, Row, Col} from 'antd';
-import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
 import {Link, Redirect} from 'react-router-dom';
-import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined';
-import PropTypes from 'prop-types';
+import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
+import {Alert, Avatar, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin, Row, Col, Tooltip} from 'antd';
+import {
+  DeleteFilled,
+  CloseOutlined,
+  CheckOutlined,
+} from '@ant-design/icons';
 import './NewProjectForm.less';
+import PropTypes from 'prop-types';
 import TitleSection from '../Title/TitleSection';
 
 
@@ -70,7 +74,7 @@ const NewProjectForm = () => {
     const projectsName = projectsResponse.data.map(project => project.name);
     const onChangeName = (event) => setDuplicatedNameError(projectsName.includes(event.target.value));
     const UserName = ({value = {}}) => {
-      return (<span>{usersResponse.data.find(u => u.id === value).name}</span>);
+      return (<p>{usersResponse.data.find(u => u.id === value).name}</p>);
     };
     UserName.propTypes = {
       value: PropTypes.string
@@ -95,7 +99,7 @@ const NewProjectForm = () => {
             <Col className="gutter-row" span={12}>
               <TitleSection title="Information"/>
               <Form.Item
-                label="Name"
+                label="Name :"
                 name="name"
                 validateStatus={duplicatedNameError && 'error'}
                 help={duplicatedNameError && 'A project already use this name'}
@@ -111,7 +115,7 @@ const NewProjectForm = () => {
                 />
               </Form.Item>
               <Form.Item
-                label="Description"
+                label="Description :"
                 name="description"
               >
                 <TextArea
@@ -120,10 +124,9 @@ const NewProjectForm = () => {
                 />
               </Form.Item>
               <Form.Item
-                label="Client"
+                label="Client :"
                 name="clientId"
               >
-
                 <Select
                   className="tk_Select"
                   placeholder="Select a client"
@@ -165,11 +168,11 @@ const NewProjectForm = () => {
               >
                 {(fields, {add, remove}) => {
                   return (
-                    <Form.Item label="Users">
+                    <Form.Item label="Users :">
                       <Form.Item>
                         <Select
+                          className="tk_Select"
                           showSearch
-                          style={{width: 200}}
                           placeholder="Select a user"
                           optionFilterProp="children"
                           onSelect={(value) => add({id: value, manager: false})}
@@ -184,48 +187,54 @@ const NewProjectForm = () => {
                           }
                         </Select>
                       </Form.Item>
+                      <p className="tk_LabelForm">Added members :</p>
                       {fields.length === 0 ? 'There is no members on the project' :
                         fields.map((field, index) => {
                           const id = [index, 'id'];
                           const manager = [index, 'manager'];
                           return (
-                            <Form.Item key={field.key} required={false}>
-                              <Space>
-                                <Form.Item
-                                  noStyle
-                                  name={id}
-                                >
-                                  <UserPicture/>
-                                </Form.Item>
-                                <Form.Item
-                                  noStyle
-                                  name={id}
-                                  rules={[{required: true}]}
-                                >
-                                  <Input type="hidden"/>
-                                </Form.Item>
-                                <Form.Item
-                                  style={{marginRight: '80px'}}
-                                  name={id}
-                                >
-                                  <UserName/>
-                                </Form.Item>
-                                <Form.Item
-                                  noStyle
-                                  name={manager}
-                                  valuePropName="checked"
-                                >
-                                  <Checkbox/>
-                                </Form.Item>
-                                <DeleteOutlined
-                                  className="dynamic-delete-button"
-                                  style={{margin: '0 8px'}}
-                                  onClick={() => {
-                                    remove(index);
-                                  }}
-                                />
-                              </Space>
-                            </Form.Item>
+                            <div id="tk_Card_MemberList">
+                              <Form.Item key={field.key} required={false}>
+                                <div>
+                                  <Form.Item
+                                    noStyle
+                                    name={id}
+                                  >
+                                    <UserPicture/>
+                                  </Form.Item>
+                                  <Form.Item
+                                    noStyle
+                                    name={id}
+                                    rules={[{required: true}]}
+                                  >
+                                    <Input type="hidden"/>
+                                  </Form.Item>
+                                  <Form.Item
+                                    name={id}
+                                  >
+                                    <UserName/>
+                                  </Form.Item>
+                                </div>
+                                <div>
+                                  <Form.Item
+                                    noStyle
+                                    name={manager}
+                                    valuePropName="checked"
+                                  >
+                                    <Tooltip title="Team leader">
+                                      <Checkbox className="tk_Crown_Checkbox"/>
+                                    </Tooltip>
+                                  </Form.Item>
+                                  <DeleteFilled
+                                    className="dynamic-delete-button"
+                                    style={{margin: '0 8px'}}
+                                    onClick={() => {
+                                      remove(index);
+                                    }}
+                                  />
+                                </div>
+                              </Form.Item>
+                            </div>
                           );
                         })}
                     </Form.Item>
@@ -236,19 +245,12 @@ const NewProjectForm = () => {
           </Row>
         </div>
         <Form.Item>
-          <Space size="middle" style={{right: 0, position: 'absolute'}}>
-            <Link key="cancelLink" to={'/projects'}>
-              <Button htmlType="button">Cancel</Button>
-            </Link>
-            <Button type="primary" htmlType="submit">Submit</Button>
+          <Space className="tk_JcFe" size="middle" align="center">
+            <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={'/projects'}><CloseOutlined />Cancel</Link>
+            <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit"><CheckOutlined />Submit</Button>
           </Space>
         </Form.Item>
       </Form>
-
-
-
-
-
     );
   }
 
@@ -289,6 +291,5 @@ const NewProjectForm = () => {
   }
 
 };
-
 
 export default NewProjectForm;
