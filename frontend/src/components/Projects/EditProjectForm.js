@@ -34,8 +34,6 @@ const EditProjectForm = () => {
   const usersResponse = useTimeKeeperAPI('/api/users');
   const timeKeeperAPIPut = useTimeKeeperAPIPut('/api/projects/' + projectIdSlug.params.id, (form => form), setProjectUpdated);
 
-  const [duplicatedNameError, setDuplicatedNameError] = useState(false);
-
   const [form] = Form.useForm();
 
   const isIncluded = (id, users) => users.filter(user => user.id === id).length !== 0;
@@ -70,8 +68,7 @@ const EditProjectForm = () => {
       ...projectResponse.data,
       clientId: (projectResponse.data.client && projectResponse.data.client.id) || null
     };
-    const projectsName = projectsResponse.data.map(project => project.name);
-    const onChangeName = (event) => setDuplicatedNameError(projectsName.includes(event.target.value));
+    const projectsName = projectsResponse.data.map(project => project.name.toLowerCase());
     const UserName = ({value = {}}) => {
       return (<span>{usersResponse.data.find(u => u.id === value).name}</span>);
     };
@@ -100,17 +97,23 @@ const EditProjectForm = () => {
               <Form.Item
                 label="Name"
                 name="name"
-                validateStatus={duplicatedNameError && 'error'}
-                help={duplicatedNameError && 'A project already use this name'}
+                hasFeedback
                 rules={[
                   {
                     required: true,
                   },
+                  () => ({
+                    validator(rule, value) {
+                      if (!projectsName.includes(value.toLowerCase()) || value === initialValues.name.toLowerCase()) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject('A project already use this name');
+                    },
+                  }),
                 ]}
               >
                 <Input
                   placeholder="Project's name"
-                  onChange={onChangeName}
                 />
               </Form.Item>
               <Form.Item
