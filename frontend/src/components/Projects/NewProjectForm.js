@@ -35,8 +35,6 @@ const NewProjectForm = () => {
   const usersResponse = useTimeKeeperAPI('/api/users');
   const timeKeeperAPIPost = useTimeKeeperAPIPost('/api/projects', (form => form), setProjectCreated);
 
-  const [duplicatedNameError, setDuplicatedNameError] = useState(false);
-
   const [form] = Form.useForm();
 
   const isIncluded = (id, users) => users.filter(user => user.id === id).length !== 0;
@@ -67,8 +65,7 @@ const NewProjectForm = () => {
   }
 
   if (clientsResponse.data && projectsResponse.data && usersResponse.data) {
-    const projectsName = projectsResponse.data.map(project => project.name);
-    const onChangeName = (event) => setDuplicatedNameError(projectsName.includes(event.target.value));
+    const projectsName = projectsResponse.data.map(project => project.name.toLowerCase().trim());
     const UserName = ({value = {}}) => {
       return (<span>{usersResponse.data.find(u => u.id === value).name}</span>);
     };
@@ -97,17 +94,24 @@ const NewProjectForm = () => {
               <Form.Item
                 label="Name"
                 name="name"
-                validateStatus={duplicatedNameError && 'error'}
-                help={duplicatedNameError && 'A project already use this name'}
+                hasFeedback
                 rules={[
                   {
                     required: true,
                   },
+                  () => ({
+                    validator(rule, value) {
+                      const name = value.toLowerCase().trim();
+                      if (!projectsName.includes(name)) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject('A project already use this name');
+                    },
+                  }),
                 ]}
               >
                 <Input
                   placeholder="Project's name"
-                  onChange={onChangeName}
                 />
               </Form.Item>
               <Form.Item
