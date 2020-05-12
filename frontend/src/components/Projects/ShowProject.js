@@ -11,22 +11,29 @@ const {Title} = Typography;
 
 const ShowProject = ({project}) => {
 
-  const users = project.users.map(user => {
-    return (
+  const users = () => {
+    if (!project.users || project.users.length === 0) {
+      return 'No user added yet';
+    } else {
+      const users = project.users.sort((u1, u2) => {
+        const res = u2.manager - u1.manager;
+        return res === 0 ? u1.name.localeCompare(u2.name) : res;
+      });
       //TODO : Use the custom card here
-      <Row key={`project-member-${user.id}`}>
-        <Col span={2}>
-          <Avatar src={user.picture}/>
-        </Col>
-        <Col span={14}>
-          {user.name}
-        </Col>
-        <Col span={6}>
-          {user.manager ? <Tag color="gold">Team Leader</Tag> : <Tag color="grey">Member</Tag>}
-        </Col>
-      </Row>
-    );
-  });
+      return users.map(user =>
+        <Row key={`project-member-${user.id}`}>
+          <Col span={2}>
+            <Avatar src={user.picture}/>
+          </Col>
+          <Col span={14}>
+            {user.name}
+          </Col>
+          <Col span={6}>
+            {user.manager ? <Tag color="gold">Team Leader</Tag> : <Tag color="grey">Member</Tag>}
+          </Col>
+        </Row>);
+    }
+  };
 
   return (
     <div>
@@ -37,7 +44,8 @@ const ShowProject = ({project}) => {
             <TitleSection title="Information"/>
 
             <Row gutter={16}>
-              <Col span={12}><DesktopOutlined/> Client : {project.client ? <Tag color="blue">{project.client.name}</Tag> : 'No client'}</Col>
+              <Col span={12}><DesktopOutlined/> Client : {project.client ?
+                <Tag color="blue">{project.client.name}</Tag> : 'No client'}</Col>
               <Col span={12}><DollarOutlined/> Billable : {project.billable ? 'Yes' : 'No'}</Col>
             </Row>
             <Row gutter={16}>
@@ -52,7 +60,7 @@ const ShowProject = ({project}) => {
           </Col>
           <Col className="gutter-row" span={12}>
             <TitleSection title="Members"/>
-            {users}
+            {users()}
           </Col>
         </Row>
       </CardLg>
