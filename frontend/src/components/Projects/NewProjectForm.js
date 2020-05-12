@@ -65,7 +65,7 @@ const NewProjectForm = () => {
   }
 
   if (clientsResponse.data && projectsResponse.data && usersResponse.data) {
-    const projectsName = projectsResponse.data.map(project => project.name.toLowerCase());
+    const projectsName = projectsResponse.data.map(project => project.name.toLowerCase().trim());
     const UserName = ({value = {}}) => {
       return (<span>{usersResponse.data.find(u => u.id === value).name}</span>);
     };
@@ -101,7 +101,8 @@ const NewProjectForm = () => {
                   },
                   () => ({
                     validator(rule, value) {
-                      if (!projectsName.includes(value.toLowerCase())) {
+                      const name = value.toLowerCase().trim();
+                      if (!projectsName.includes(name)) {
                         return Promise.resolve();
                       }
                       return Promise.reject('A project already use this name');
