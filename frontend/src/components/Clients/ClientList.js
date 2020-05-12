@@ -24,7 +24,11 @@ const ClientList = () => {
 
   const onSearch = searchText => setValue(searchText);
 
-  const clientsFiltered = () => clientsResponse.data.filter(d => d.name.toLowerCase().includes(value.toLowerCase()));
+  const clientsFiltered = () => clientsResponse.data.filter(d => d.name.toLowerCase().includes(value.toLowerCase())).sort((a,b)=>{
+    if(a.name.toLowerCase() < b.name.toLowerCase()){return -1;}
+    if(a.name.toLowerCase() > b.name.toLowerCase()){return 1;}
+    return 0;
+  });
 
   if (clientsResponse.loading) {
     return (
