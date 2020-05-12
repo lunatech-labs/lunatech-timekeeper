@@ -14,7 +14,7 @@ import Meta from 'antd/lib/card/Meta';
 
 import './ProjectList.less';
 import ProjectMemberTag  from './ProjectMemberTag';
-import EyeFilled from "@ant-design/icons/lib/icons/EyeFilled";
+import EyeFilled from '@ant-design/icons/lib/icons/EyeFilled';
 
 const { Panel } = Collapse;
 
