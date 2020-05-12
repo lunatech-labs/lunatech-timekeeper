@@ -66,6 +66,10 @@ const EditProjectForm = () => {
   }
 
   if (clientsResponse.data && projectsResponse.data && usersResponse.data && projectResponse.data) {
+    const initialValues = {
+      ...projectResponse.data,
+      clientId: (projectResponse.data.client && projectResponse.data.client.id) || null
+    };
     const projectsName = projectsResponse.data.map(project => project.name);
     const onChangeName = (event) => setDuplicatedNameError(projectsName.includes(event.target.value));
     const UserName = ({value = {}}) => {
@@ -85,7 +89,7 @@ const EditProjectForm = () => {
       <Form
         id="tk_Form"
         layout="vertical"
-        initialValues={projectResponse.data}
+        initialValues={initialValues}
         onFinish={timeKeeperAPIPut.run}
         form={form}
       >
