@@ -46,6 +46,8 @@ const ProjectList = () => {
     );
   }
 
+  const memberComparator = (m1, m2) => m2.manager - m1.manager;
+
   return (
     <React.Fragment>
       <p>{projects().length} project(s) | {Array.from(new Set(projects().filter((project) => project.client !== undefined).map((project) => project.client.id))).length} client(s)</p>
@@ -77,7 +79,7 @@ const ProjectList = () => {
                   <Panel header={<Space size="small"><UserOutlined />{item.users.length}{ item.users.length === 1 ? 'member' : 'members' }</Space>} key="members">
                     <List
                       className={'tk_Project_MemberList'}
-                      dataSource={item.users}
+                      dataSource={item.users.sort(((a, b) => memberComparator(a, b) ))}
                       renderItem={member => (
                         <List.Item><ProjectMemberTag member={member}/></List.Item>
                       )}
