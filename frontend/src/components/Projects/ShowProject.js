@@ -1,9 +1,23 @@
 import React from 'react';
 import {Avatar, Col, Row, Tag, Typography} from 'antd';
+import './ProjectMemberTag.less';
 import PropTypes from 'prop-types';
+
+import {
+  HomeOutlined,
+  SettingFilled,
+  SmileOutlined,
+  SyncOutlined,
+  LoadingOutlined,
+} from '@ant-design/icons';
+
 import {DesktopOutlined, UserOutlined} from '@ant-design/icons';
 import DollarOutlined from '@ant-design/icons/lib/icons/DollarOutlined';
 import LockOutlined from '@ant-design/icons/lib/icons/LockOutlined';
+
+
+
+
 import TitleSection from '../Title/TitleSection';
 import CardLg from '../Card/CardLg';
 
@@ -40,25 +54,23 @@ const ShowProject = ({project}) => {
       <CardLg>
         <Title level={2}>{project.name}</Title>
         <Row gutter={16}>
-          <Col className="gutter-row" span={12}>
+          <Col span={12}>
             <TitleSection title="Information"/>
-
             <Row gutter={16}>
-              <Col span={12}><DesktopOutlined/> Client : {project.client ?
-                <Tag color="blue">{project.client.name}</Tag> : 'No client'}</Col>
-              <Col span={12}><DollarOutlined/> Billable : {project.billable ? 'Yes' : 'No'}</Col>
+              <Col span={12}>
+                <p className="tk_ProjectAtt"><DesktopOutlined/> Client : {project.client ?<Tag color="blue">{project.client.name}</Tag> : 'No client'}</p>
+                <p><UserOutlined/> Members : {project.users ? project.users.length : 0}</p>
+              </Col>
+              <Col span={12}>
+                <p><DollarOutlined/> Billable : {project.billable ? 'Yes' : 'No'}</p>
+                <p><LockOutlined/> Project type : {project.publicAccess ? 'Public' : 'Private'}</p>
+              </Col>
             </Row>
-            <Row gutter={16}>
-              <Col span={12}><UserOutlined/> Members : {project.users ? project.users.length : 0}</Col>
-              <Col span={12}><LockOutlined/> Project type : {project.publicAccess ? 'Public' : 'Private'}</Col>
-            </Row>
-            <Row gutter={16}>
-              <div>
-                {project.description}
-              </div>
-            </Row>
+            <Col span={24}>
+              <p>{project.description}</p>
+            </Col>
           </Col>
-          <Col className="gutter-row" span={12}>
+          <Col span={12}>
             <TitleSection title="Members"/>
             {users()}
           </Col>
