@@ -193,8 +193,8 @@ const NewProjectForm = () => {
                           const id = [index, 'id'];
                           const manager = [index, 'manager'];
                           return (
-                            <div id="tk_Card_MemberList">
-                              <Form.Item key={field.key} required={false}>
+                            <div id="tk_Card_MemberList" key={field.key} required={false}>
+                              <Form.Item>
                                 <div>
                                   <Form.Item
                                     noStyle
