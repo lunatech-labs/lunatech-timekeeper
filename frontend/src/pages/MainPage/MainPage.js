@@ -16,7 +16,7 @@ const MainPage = ({ title, children, actions, ...rest }) => {
   return (
     <Layout>
       <SidebarLeft collapsed={collapsed} {...rest} />
-      <Layout className="site-layout">
+      <Layout id="tk_RightContent" className="site-layout">
         <TopBar collapsed={collapsed} toggle={() => toggle(!collapsed)} />
         <Content id="tk_MainContent" className="mainContent">
           <div className="tk_MainContent_Header">
