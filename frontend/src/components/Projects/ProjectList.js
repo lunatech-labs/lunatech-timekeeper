@@ -1,5 +1,5 @@
-import React from 'react';
-import {Alert, Avatar, Button, Card, Collapse, Divider, List, Spin} from 'antd';
+import React, {useState} from 'react';
+import {Alert, Avatar, Button, Card, Col, Collapse, Divider, Dropdown, List, Menu, Row, Spin} from 'antd';
 import logo from '../../img/logo_timekeeper_homepage.png';
 import {useTimeKeeperAPI} from '../../utils/services';
 import EditFilled from '@ant-design/icons/lib/icons/EditFilled';
@@ -16,14 +16,18 @@ import './ProjectList.less';
 import ProjectMemberTag from './ProjectMemberTag';
 import EyeFilled from '@ant-design/icons/lib/icons/EyeFilled';
 import TitleSection from "../Title/TitleSection";
+import DownOutlined from "@ant-design/icons/lib/icons/DownOutlined";
 
 const {Panel} = Collapse;
 
 const ProjectList = () => {
 
+
   const projectsResponse = useTimeKeeperAPI('/api/projects');
 
   const projects = () => projectsResponse.data.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+
+  const [groupBy, setGroupBy] = useState('All');
 
   const orderByClient = () => {
     const map = new Map();
@@ -47,6 +51,34 @@ const ProjectList = () => {
     });
     return data;
   };
+
+  const groupByMenu = (
+    <Menu onClick={({key}) => setGroupBy(key)}>
+      <Menu.Item key="All">
+        All
+      </Menu.Item>
+      <Menu.Item key="Project">
+        Project
+      </Menu.Item>
+    </Menu>
+  );
+
+  const groupByComponent = (
+    <React.Fragment>
+      <Row glutter={[16, 16]}>
+        <Col span={6}>
+          <p>Filter by :</p>
+        </Col>
+        <Col span={6}>
+          <Dropdown overlay={groupByMenu}>
+            <a className="ant-dropdown-link">
+              {groupBy} <DownOutlined />
+            </a>
+          </Dropdown>
+        </Col>
+      </Row>
+    </React.Fragment>
+  );
 
   if (projectsResponse.loading) {
     return (
@@ -128,15 +160,18 @@ const ProjectList = () => {
     <React.Fragment>
       <p>{projects().length} project(s)
         | {Array.from(new Set(projects().filter((project) => project.client !== undefined).map((project) => project.client.id))).length} client(s)</p>
+      <div>{groupByComponent}</div>
 
-      {<DataList data={projects()}/>}
+      {groupBy === 'All' ?
+        <DataList data={projects()}/>:
+        orderByClient().map(data =>
+          <div>
+            <TitleSection title={(data.client && data.client.name) || 'No client'}/>
+            <Divider/>
+            <DataList data={data.projects}/>
+          </div>)
+      }
 
-      {orderByClient().map(data =>
-        <div>
-          <TitleSection title={(data.client && data.client.name) || 'No client'}/>
-          <Divider/>
-          <DataList data={data.projects}/>
-        </div>)}
     </React.Fragment>
   );
 };
