@@ -26,15 +26,28 @@ const ProjectList = () => {
 
   const [filterText, setFilterText] = useState('All');
 
+  const [groupBy, setGroupBy] = useState('All');
+
   const projectsResponse = useTimeKeeperAPI('/api/projects');
 
   const projects = () => projectsResponse.data.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
 
-  const [groupBy, setGroupBy] = useState('All');
+  const projectsFilter = () => {
+    switch (filterText) {
+      case 'All':
+        return projects();
+      case 'Private':
+        return projects().filter(project => !project.publicAccess);
+      case 'Public':
+        return projects().filter(project => project.publicAccess);
+      default:
+        return projects();
+    }
+  };
 
-  const orderByClient = () => {
+  const groupByClient = () => {
     const map = new Map();
-    projects().forEach(project => {
+    projectsFilter().forEach(project => {
       const key = (project.client && project.client.id) || null;
       const collection = map.get(key);
       if (!collection) {
@@ -68,11 +81,11 @@ const ProjectList = () => {
 
   const groupByComponent = (
     <React.Fragment>
-      <Row glutter={[16, 16]}>
-        <Col span={6}>
-          <p>Filter by :</p>
+      <Row gutter={[16, 16]}>
+        <Col span={8}>
+          <p>Group by :</p>
         </Col>
-        <Col span={6}>
+        <Col span={8}>
           <Dropdown overlay={groupByMenu}>
             <a className="ant-dropdown-link">
               {groupBy} <DownOutlined />
@@ -83,16 +96,6 @@ const ProjectList = () => {
     </React.Fragment>
   );
 
-  const projectsFilter = () => {
-    switch (filterText) {
-    case 'All':
-      return projects();
-    case 'Private':
-      return projects().filter(project => !project.publicAccess);
-    case 'Public':
-      return projects().filter(project => project.publicAccess);
-    }
-  };
 
   const filterMenu = (
     <Menu onClick={({ key }) => setFilterText(key)}>
@@ -110,11 +113,11 @@ const ProjectList = () => {
 
   const filterComponent = (
     <React.Fragment>
-      <Row glutter={[16, 16]}>
-        <Col span={6}>
+      <Row gutter={[16, 16]}>
+        <Col span={8}>
           <p>Filter by :</p>
         </Col>
-        <Col span={6}>
+        <Col span={8}>
           <Dropdown overlay={filterMenu}>
             <a className="ant-dropdown-link">
               {filterText} <DownOutlined />
@@ -209,20 +212,20 @@ const ProjectList = () => {
   return (
     <React.Fragment>
       <Row>
-        <Col span={12}>
-          <p>{projects().length} project(s) | {Array.from(new Set(projects().filter((project) => project.client !== undefined).map((project) => project.client.id))).length} client(s)</p>
+        <Col span={16}>
+          <p>{data.length} project(s) | {Array.from(new Set(data.filter((project) => project.client !== undefined).map((project) => project.client.id))).length} client(s)</p>
         </Col>
-        <Col span={6}>
+        <Col span={4}>
           {filterComponent}
         </Col>
-        <Col span={6}>
+        <Col span={4}>
           {groupByComponent}
         </Col>
       </Row>
 
       {groupBy === 'All' ?
-        <DataList data={projects()}/>:
-        orderByClient().map(data =>
+        <DataList data={data}/>:
+        groupByClient().map(data =>
           <div key={`projects-of-clients-${(data.client && data.client.id) || 0}`}>
             <TitleSection title={(data.client && data.client.name) || 'No client'}/>
             <Divider/>
