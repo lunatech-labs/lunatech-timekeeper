@@ -6,13 +6,18 @@ import PropTypes from 'prop-types';
 
 const breadcrumbNameMap = {
   '/clients': 'Clients',
+  '/clients/new': 'New client',
+  '/clients/:id/edit': 'Edit client',
   '/users': 'Users',
-  '/projects': 'Projects'
+  '/projects': 'Projects',
+  '/projects/new': 'New project',
+  '/projects/:id': 'Project details',
+  '/projects/:id/edit': 'Edit project'
 };
 
 class Breadcrumbs extends Component {
   render() {
-    const {location} = this.props;
+    const {location, entity} = this.props;
 
     const pathSnippets = location.pathname.split('/').filter(i => i);
     const extraBreadcrumbItems = pathSnippets.map((_, index) => {
@@ -41,7 +46,8 @@ class Breadcrumbs extends Component {
 
 
 Breadcrumbs.propTypes = {
-  location: PropTypes.object.isRequired
+  location: PropTypes.object.isRequired,
+  entity: PropTypes.string
 };
 
 
