@@ -39,28 +39,18 @@ const ProjectList = () => {
   };
 
   const filterBy = ({ key }) => {
-    switch (key) {
-    case 'public':
-      setFilterText('Public');
-      break;
-    case 'private':
-      setFilterText('Private');
-      break;
-    default:
-      setFilterText('All');
-      break;
-    }
+    setFilterText(key);
   };
 
   const filterMenu = (
     <Menu onClick={filterBy}>
-      <Menu.Item key="all">
+      <Menu.Item key="All">
                 All
       </Menu.Item>
-      <Menu.Item key="private">
+      <Menu.Item key="Private">
                 Private
       </Menu.Item>
-      <Menu.Item key="public">
+      <Menu.Item key="Public">
                 Public
       </Menu.Item>
     </Menu>
