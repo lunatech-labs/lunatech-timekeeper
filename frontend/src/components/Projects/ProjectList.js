@@ -24,6 +24,8 @@ const {Panel} = Collapse;
 const ProjectList = () => {
 
 
+  const [filterText, setFilterText] = useState('All');
+
   const projectsResponse = useTimeKeeperAPI('/api/projects');
 
   const projects = () => projectsResponse.data.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
@@ -74,6 +76,48 @@ const ProjectList = () => {
           <Dropdown overlay={groupByMenu}>
             <a className="ant-dropdown-link">
               {groupBy} <DownOutlined />
+            </a>
+          </Dropdown>
+        </Col>
+      </Row>
+    </React.Fragment>
+  );
+
+  const projectsFilter = () => {
+    switch (filterText) {
+    case 'All':
+      return projects();
+    case 'Private':
+      return projects().filter(project => !project.publicAccess);
+    case 'Public':
+      return projects().filter(project => project.publicAccess);
+    }
+  };
+
+  const filterMenu = (
+    <Menu onClick={({ key }) => setFilterText(key)}>
+      <Menu.Item key="All">
+                All
+      </Menu.Item>
+      <Menu.Item key="Private">
+                Private
+      </Menu.Item>
+      <Menu.Item key="Public">
+                Public
+      </Menu.Item>
+    </Menu>
+  );
+
+  const filterComponent = (
+    <React.Fragment>
+      <Row glutter={[16, 16]}>
+        <Col span={6}>
+          <p>Filter by :</p>
+        </Col>
+        <Col span={6}>
+          <Dropdown overlay={filterMenu}>
+            <a className="ant-dropdown-link">
+              {filterText} <DownOutlined />
             </a>
           </Dropdown>
         </Col>
@@ -160,6 +204,8 @@ const ProjectList = () => {
     data: PropTypes.array
   };
 
+  const data = projectsFilter();
+
   return (
     <React.Fragment>
       <Row>
@@ -167,7 +213,7 @@ const ProjectList = () => {
           <p>{projects().length} project(s) | {Array.from(new Set(projects().filter((project) => project.client !== undefined).map((project) => project.client.id))).length} client(s)</p>
         </Col>
         <Col span={6}>
-          TODO : Replace By the filter dropdown
+          {filterComponent}
         </Col>
         <Col span={6}>
           {groupByComponent}
@@ -187,6 +233,4 @@ const ProjectList = () => {
     </React.Fragment>
   );
 };
-
-
 export default ProjectList;
