@@ -1,11 +1,12 @@
-import React from 'react';
-import {Alert, Avatar, Button, Card, Collapse, List, Spin} from 'antd';
+import React, {useState} from 'react';
+import {Alert, Avatar, Button, Card, Collapse, List, Spin, Row, Col, Dropdown, Menu} from 'antd';
 import logo from '../../img/logo_timekeeper_homepage.png';
 import {useTimeKeeperAPI} from '../../utils/services';
 import EditFilled from '@ant-design/icons/lib/icons/EditFilled';
 import UserOutlined from '@ant-design/icons/lib/icons/UserOutlined';
 import LockFilled from '@ant-design/icons/lib/icons/LockFilled';
 import UnlockOutlined from '@ant-design/icons/lib/icons/UnlockOutlined';
+import { DownOutlined } from '@ant-design/icons';
 
 import Tooltip from 'antd/lib/tooltip';
 
@@ -20,9 +21,67 @@ const { Panel } = Collapse;
 
 const ProjectList = () => {
 
+  const [filterText, setFilterText] = useState('All');
+
   const projectsResponse = useTimeKeeperAPI('/api/projects');
 
   const projects = () => projectsResponse.data.sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+
+  const projectsFilter = () => {
+    switch (filterText) {
+    case 'All':
+      return projects();
+    case 'Private':
+      return projects().filter(project => !project.publicAccess);
+    case 'Public':
+      return projects().filter(project => project.publicAccess);
+    }
+  };
+
+  const filterBy = ({ key }) => {
+    switch (key) {
+    case 'public':
+      setFilterText('Public');
+      break;
+    case 'private':
+      setFilterText('Private');
+      break;
+    default:
+      setFilterText('All');
+      break;
+    }
+  };
+
+  const filterMenu = (
+    <Menu onClick={filterBy}>
+      <Menu.Item key="all">
+                All
+      </Menu.Item>
+      <Menu.Item key="private">
+                Private
+      </Menu.Item>
+      <Menu.Item key="public">
+                Public
+      </Menu.Item>
+    </Menu>
+  );
+
+  const filterComponent = (
+    <React.Fragment>
+      <Row glutter={[16, 16]}>
+        <Col span={6}>
+          <p>Filter by :</p>
+        </Col>
+        <Col span={6}>
+          <Dropdown overlay={filterMenu}>
+            <a className="ant-dropdown-link">
+              {filterText} <DownOutlined />
+            </a>
+          </Dropdown>
+        </Col>
+      </Row>
+    </React.Fragment>
+  );
 
   if (projectsResponse.loading) {
     return (
@@ -48,13 +107,22 @@ const ProjectList = () => {
 
   const memberComparator = (m1, m2) => m2.manager - m1.manager;
 
+  const data = projectsFilter();
+
   return (
     <React.Fragment>
-      <p>{projects().length} project(s) | {Array.from(new Set(projects().filter((project) => project.client !== undefined).map((project) => project.client.id))).length} client(s)</p>
+      <Row>
+        <Col span={12}>
+          <p>{data.length} project(s) | {Array.from(new Set(data.filter((project) => project.client !== undefined).map((project) => project.client.id))).length} client(s)</p>
+        </Col>
+        <Col span={12}>
+          {filterComponent}
+        </Col>
+      </Row>
       <List
         id="tk_List"
         grid={{ gutter: 32, column: 3 }}
-        dataSource={projects()}
+        dataSource={data}
         renderItem={item => (
           <List.Item key={item.id}>
             <Card
