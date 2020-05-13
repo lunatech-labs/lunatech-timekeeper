@@ -38,12 +38,8 @@ const ProjectList = () => {
     }
   };
 
-  const filterBy = ({ key }) => {
-    setFilterText(key);
-  };
-
   const filterMenu = (
-    <Menu onClick={filterBy}>
+    <Menu onClick={({ key }) => setFilterText(key)}>
       <Menu.Item key="All">
                 All
       </Menu.Item>
