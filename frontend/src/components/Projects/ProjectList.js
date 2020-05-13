@@ -13,7 +13,7 @@ import Space from 'antd/lib/space';
 import Meta from 'antd/lib/card/Meta';
 
 import './ProjectList.less';
-import ProjectMemberTag  from './ProjectMemberTag';
+import ProjectMemberTag from './ProjectMemberTag';
 import EyeFilled from '@ant-design/icons/lib/icons/EyeFilled';
 
 const { Panel } = Collapse;
@@ -31,7 +31,6 @@ const ProjectList = () => {
           <p>Loading list of projects</p>
         </Spin>
       </React.Fragment>
-
     );
   }
 
