@@ -1,7 +1,9 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.resources.utils.ResourceReader;
 import fr.lunatech.timekeeper.resources.utils.TestUtils;
+import fr.lunatech.timekeeper.services.requests.ClientRequest;
+import fr.lunatech.timekeeper.services.requests.ProjectRequest;
+import fr.lunatech.timekeeper.services.responses.UserResponse;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -11,12 +13,16 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+import java.util.List;
 
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
+import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ProjectDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.UserDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
+import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
+import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.hamcrest.CoreMatchers.is;
 
@@ -39,7 +45,18 @@ class UserResourceTest {
     void shouldFindUserWhenAdminProfile() {
         final String samToken = getAdminAccessToken();
         var sam = create(samToken);
-        getValidation(UserDef.uriWithid(2L), samToken,OK).body(is(TestUtils.toJson(sam)));
+        getValidation(UserDef.uriWithid(sam.getId()), samToken,OK).body(is(TestUtils.toJson(sam)));
+    }
+
+    @Test
+    void shouldFindUserWhenUserProfile() {
+        final String samToken = getAdminAccessToken();
+        final String jimmyToken = getUserAccessToken();
+        var sam = create(samToken);
+        var jimmy = create(jimmyToken);
+
+        getValidation(UserDef.uriWithid(sam.getId()), jimmyToken, OK).body(is(TestUtils.toJson(sam)));
+        getValidation(UserDef.uriWithid(jimmy.getId()), jimmyToken, OK).body(is(TestUtils.toJson(jimmy)));
     }
 
     @Test
@@ -53,95 +70,131 @@ class UserResourceTest {
         getValidation(UserDef.uri, jimmyToken, OK).body(is(TestUtils.listOfTasJson(sam, jimmy)));
     }
 
-    //TODO
-    /*
     @Test
-    void shouldFindUserMemberOfProject() {
+    void shouldAddJimmyAsMemberOfAProjectAndRetriveThisProjectInUserRequest() {
 
-        final String adminToken = getAdminAccessToken();
-        final String token = getUserAccessToken();
+        final String samToken = getAdminAccessToken();
+        final String jimmyToken = getUserAccessToken();
 
-        final OrganizationRequest organization = new OrganizationRequest("NewClient", "lunatech.fr");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(organization)
-                .post("/api/organizations")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/organizations/1"));
+        // Create two Users
+        var jimmy = create(jimmyToken);
 
-        final UserRequest user1 = new UserRequest("Sam", "Huel", "sam@gmail.com", "sam.png", List.of(Admin));
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(user1)
-                .post("/api/users")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/users/2"));
+        // Create a Client
+        var client1 = create(new ClientRequest("NewClient", "NewDescription"), samToken);
 
-        final UserRequest user2 = new UserRequest("Jimmy", "Pastore", "jimmy@gmail.com", "jimmy.png", List.of(User));
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(user2)
-                .post("/api/users")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/users/3"));
+        // Create a Project
+        var project10 = create(new ProjectRequest("Some Project", true, "some description", client1.getId(), true, emptyList()), samToken);
 
-        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(client)
-                .post("/api/clients")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/clients/4"));
+        // Check that jimmy has no project yet
+        getValidation(UserDef.uriWithid(jimmy.getId()), jimmyToken, OK).body(is(TestUtils.toJson(jimmy)));
 
+        // WHEN
+        // Add Jimmy to a project as a simple member
+        final var userRequest2 = new ProjectRequest.ProjectUserRequest(jimmy.getId(), false);
+
+        final var newUsers = List.of(userRequest2);
+        final var updatedProjectWithTwoUsers = new ProjectRequest("Some Project with jimmy that is not a manager"
+                , false
+                , "updated description"
+                , client1.getId()
+                , true
+                , newUsers);
+
+        update(updatedProjectWithTwoUsers, ProjectDef.uriWithid(project10.getId()), samToken);
+
+        final List<UserResponse.ProjectUserResponse> expectedProjectUsers = List.of(
+                new UserResponse.ProjectUserResponse(project10.getId()
+                        , false
+                        , updatedProjectWithTwoUsers.getName()
+                        , updatedProjectWithTwoUsers.isPublicAccess()
+                )
+        );
+
+        UserResponse expectedResult = new UserResponse(
+                jimmy.getId(),
+                jimmy.getName(),
+                jimmy.getEmail(),
+                jimmy.getPicture(),
+                jimmy.getProfiles(),
+                expectedProjectUsers
+        );
 
 
-        final ProjectRequest project = new ProjectRequest("Pepito", true, "New project", 4L,1L, false);
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(project)
-                .post("/api/projects")
-                .then()
-                .statusCode(CREATED.getStatusCode())
-                .header(LOCATION, endsWith("/api/projects/5"));
+        // THEN
+        getValidation(UserDef.uriWithid(jimmy.getId()), jimmyToken, OK).body(is(TestUtils.toJson(expectedResult)));
+    }
 
-        final MemberRequest member1 = new MemberRequest(2L, Role.TeamLeader);
-        final MemberRequest member2 = new MemberRequest(3L, Role.Developer);
-        final MembersUpdateRequest members = new MembersUpdateRequest(List.of(member1, member2));
-        given()
-                .auth().preemptive().oauth2(adminToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(members)
-                .put("/api/projects/5/members")
-                .then()
-                .statusCode(NO_CONTENT.getStatusCode());
+    @Test
+    void shouldAddSamAsMemberOfAProjectAndRetriveThisProjectInUserRequest() {
+
+        final String samToken = getAdminAccessToken();
+        final String jimmyToken = getUserAccessToken();
+
+        // Create two Users
+        var jimmy = create(jimmyToken);
+        var teamLeadUser = create(samToken);
+
+        // Create a Client
+        var client1 = create(new ClientRequest("NewClient", "NewDescription"), samToken);
+
+        // Create a Project
+        var project10 = create(new ProjectRequest("Some Project", true, "some description", client1.getId(), true, emptyList()), samToken);
+
+        // Check that teamLeadUser has no project yet
+        getValidation(UserDef.uriWithid(teamLeadUser.getId()), jimmyToken, OK).body(is(TestUtils.toJson(teamLeadUser)));
+
+        // WHEN
+        // Add teamLeadUser to a project as a team lead member
+        final var userRequest1 = new ProjectRequest.ProjectUserRequest(teamLeadUser.getId(), true);
+        // Add jimmy as member
+        final var userRequest2 = new ProjectRequest.ProjectUserRequest(jimmy.getId(), false);
+
+        final var newUsers = List.of(userRequest1, userRequest2);
+        final var updatedProjectWithTwoUsers = new ProjectRequest("Some Project with SAM as a TeamLead and Jimmy as member"
+                , true
+                , "updated description"
+                , client1.getId()
+                , false
+                , newUsers);
+
+        update(updatedProjectWithTwoUsers, ProjectDef.uriWithid(project10.getId()), samToken);
+
+        final List<UserResponse.ProjectUserResponse> expectedProjectUsers = List.of(
+                new UserResponse.ProjectUserResponse(project10.getId()
+                        , true // <--- Sam is a manager
+                        , updatedProjectWithTwoUsers.getName()
+                        , updatedProjectWithTwoUsers.isPublicAccess()
+                )
+        );
+
+        UserResponse expectedResult = new UserResponse(
+                teamLeadUser.getId(),
+                teamLeadUser.getName(),
+                teamLeadUser.getEmail(),
+                teamLeadUser.getPicture(),
+                teamLeadUser.getProfiles(),
+                expectedProjectUsers
+        );
 
 
-        final MemberResponse expectedMemberResponse1 = new MemberResponse(6L, 2L, Role.TeamLeader, 5L);
-        final MemberResponse expectedMemberResponse2 = new MemberResponse(7L, 3L, Role.Developer, 5L);
-        final UserResponse expectedUserResponse1 = new UserResponse(2L, "Sam", "Huel", "sam@gmail.com", "sam.png", List.of(Admin), List.of(expectedMemberResponse1),1L);
-        final UserResponse expectedUserResponse2 = new UserResponse(3L, "Jimmy", "Pastore", "jimmy@gmail.com", "jimmy.png", List.of(User), List.of(expectedMemberResponse2),1L);
-        given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get("/api/users")
-                .then()
-                .statusCode(OK.getStatusCode())
-                .body(is(TestUtils.listOfTasJson(expectedUserResponse1, expectedUserResponse2)));
-    }*/
+        final List<UserResponse.ProjectUserResponse> expectedProjectUsers2 = List.of(
+                new UserResponse.ProjectUserResponse(project10.getId()
+                        , false // <---- jimmy is not a manager
+                        , updatedProjectWithTwoUsers.getName()
+                        , updatedProjectWithTwoUsers.isPublicAccess()
+                )
+        );
+        UserResponse expectedResult2 = new UserResponse(
+                jimmy.getId(),
+                jimmy.getName(),
+                jimmy.getEmail(),
+                jimmy.getPicture(),
+                jimmy.getProfiles(),
+                expectedProjectUsers2
+        );
+
+        // THEN
+        getValidation(UserDef.uriWithid(teamLeadUser.getId()), jimmyToken, OK).body(is(TestUtils.toJson(expectedResult)));
+        getValidation(UserDef.uriWithid(jimmy.getId()), jimmyToken, OK).body(is(TestUtils.toJson(expectedResult2)));
+    }
 }
