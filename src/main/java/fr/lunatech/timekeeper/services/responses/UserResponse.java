@@ -102,7 +102,7 @@ public final class UserResponse {
         @NotNull
         private final Boolean publicAccess;
 
-        private ProjectUserResponse(
+        public ProjectUserResponse(
                 @NotNull Long id,
                 @NotNull Boolean manager,
                 @NotNull String name,

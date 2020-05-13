@@ -41,23 +41,18 @@ class ClientResourceTest {
 
     @Test
     void shouldCreateClientWhenAdminProfile() {
-
         final String samToken = getAdminAccessToken();
 
         final var client = create(new ClientRequest("NewClient", "NewDescription"), samToken);
-
         getValidation(ClientDef.uriWithid(client.getId()), samToken, OK).body(is(toJson(client)));
     }
 
     @Test
     void shouldNotCreateClientWhenUserProfile() {
-
         final String jimmyToken = getUserAccessToken();
 
         final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
         postValidation(ClientDef.uri, jimmyToken, client, FORBIDDEN);
-
-
     }
 
     @Test
