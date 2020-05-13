@@ -15,8 +15,9 @@ import Meta from 'antd/lib/card/Meta';
 import './ProjectList.less';
 import ProjectMemberTag from './ProjectMemberTag';
 import EyeFilled from '@ant-design/icons/lib/icons/EyeFilled';
-import TitleSection from "../Title/TitleSection";
-import DownOutlined from "@ant-design/icons/lib/icons/DownOutlined";
+import TitleSection from '../Title/TitleSection';
+import DownOutlined from '@ant-design/icons/lib/icons/DownOutlined';
+import PropTypes from 'prop-types';
 
 const {Panel} = Collapse;
 
@@ -37,7 +38,7 @@ const ProjectList = () => {
       if (!collection) {
         map.set(key, [project]);
       } else {
-        collection.push(project)
+        collection.push(project);
       }
     });
     const data = [];
@@ -94,9 +95,9 @@ const ProjectList = () => {
     return (
       <React.Fragment>
         <Alert title='Server error'
-               message='Failed to load the list of projects'
-               type='error'
-               description='Unable to fetch the list of Projects from the server'
+          message='Failed to load the list of projects'
+          type='error'
+          description='Unable to fetch the list of Projects from the server'
         />
       </React.Fragment>
     );
@@ -129,14 +130,14 @@ const ProjectList = () => {
             </Tooltip>,
             <Tooltip title="Edit" key="edit">
               <Button type="link" size="small" ghost shape="circle" icon={<EditFilled/>}
-                      href={`/projects/${item.id}/edit`}/>
+                href={`/projects/${item.id}/edit`}/>
             </Tooltip>
           ]}
           actions={[
             <Collapse bordered={false} expandIconPosition={'right'} key="projects">
               <Panel header={<Space
                 size="small"><UserOutlined/>{item.users.length}{item.users.length === 1 ? 'member' : 'members'}</Space>}
-                     key="members">
+              key="members">
                 <List
                   className={'tk_Project_MemberList'}
                   dataSource={item.users.sort(((a, b) => memberComparator(a, b)))}
@@ -155,17 +156,28 @@ const ProjectList = () => {
       </List.Item>
     )}
   />;
+  DataList.propTypes = {
+    data: PropTypes.array
+  };
 
   return (
     <React.Fragment>
-      <p>{projects().length} project(s)
-        | {Array.from(new Set(projects().filter((project) => project.client !== undefined).map((project) => project.client.id))).length} client(s)</p>
-      <div>{groupByComponent}</div>
+      <Row>
+        <Col span={12}>
+          <p>{projects().length} project(s) | {Array.from(new Set(projects().filter((project) => project.client !== undefined).map((project) => project.client.id))).length} client(s)</p>
+        </Col>
+        <Col span={6}>
+          TODO : Replace By the filter dropdown
+        </Col>
+        <Col span={6}>
+          {groupByComponent}
+        </Col>
+      </Row>
 
       {groupBy === 'All' ?
         <DataList data={projects()}/>:
         orderByClient().map(data =>
-          <div>
+          <div key={`projects-of-clients-${(data.client && data.client.id) || 0}`}>
             <TitleSection title={(data.client && data.client.name) || 'No client'}/>
             <Divider/>
             <DataList data={data.projects}/>
