@@ -1,5 +1,5 @@
 import React from 'react';
-import {Alert, Avatar, Button, Card, Collapse, List, Spin} from 'antd';
+import {Alert, Avatar, Button, Card, Collapse, Divider, List, Spin} from 'antd';
 import logo from '../../img/logo_timekeeper_homepage.png';
 import {useTimeKeeperAPI} from '../../utils/services';
 import EditFilled from '@ant-design/icons/lib/icons/EditFilled';
@@ -15,14 +15,38 @@ import Meta from 'antd/lib/card/Meta';
 import './ProjectList.less';
 import ProjectMemberTag from './ProjectMemberTag';
 import EyeFilled from '@ant-design/icons/lib/icons/EyeFilled';
+import TitleSection from "../Title/TitleSection";
 
-const { Panel } = Collapse;
+const {Panel} = Collapse;
 
 const ProjectList = () => {
 
   const projectsResponse = useTimeKeeperAPI('/api/projects');
 
-  const projects = () => projectsResponse.data.sort((a,b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+  const projects = () => projectsResponse.data.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+
+  const orderByClient = () => {
+    const map = new Map();
+    projects().forEach(project => {
+      const key = (project.client && project.client.id) || null;
+      const collection = map.get(key);
+      if (!collection) {
+        map.set(key, [project]);
+      } else {
+        collection.push(project)
+      }
+    });
+    const data = [];
+    map.forEach(value => {
+      const client = value[0].client;
+      const newData = {
+        client: client,
+        projects: value
+      };
+      data.push(newData);
+    });
+    return data;
+  };
 
   if (projectsResponse.loading) {
     return (
@@ -38,9 +62,9 @@ const ProjectList = () => {
     return (
       <React.Fragment>
         <Alert title='Server error'
-          message='Failed to load the list of projects'
-          type='error'
-          description='Unable to fetch the list of Projects from the server'
+               message='Failed to load the list of projects'
+               type='error'
+               description='Unable to fetch the list of Projects from the server'
         />
       </React.Fragment>
     );
@@ -48,57 +72,74 @@ const ProjectList = () => {
 
   const memberComparator = (m1, m2) => m2.manager - m1.manager;
 
+  const DataList = ({data}) => <List
+    id="tk_List"
+    grid={{gutter: 32, column: 3}}
+    dataSource={data}
+    renderItem={item => (
+      <List.Item key={item.id}>
+        <Card
+          id="tk_Card_Sm"
+          bordered={false}
+          title={
+            <Space size={'middle'}>
+              <Avatar src={logo} shape={'square'} size="large"/>
+              <div className="tk_Card_Sm_Header">
+                <p>{item.name}<span>{item.client ? '| ' + item.client.name : ''}</span></p>
+                <p>{item.publicAccess ? <UnlockOutlined/> :
+                  <LockFilled/>}<span>{item.publicAccess ? ' Public' : ' Private project'}</span></p>
+              </div>
+            </Space>
+          }
+          extra={[
+            <Tooltip title="View" key="view">
+              <Button type="link" size="small" ghost shape="circle" icon={<EyeFilled/>} href={`/projects/${item.id}`}/>
+            </Tooltip>,
+            <Tooltip title="Edit" key="edit">
+              <Button type="link" size="small" ghost shape="circle" icon={<EditFilled/>}
+                      href={`/projects/${item.id}/edit`}/>
+            </Tooltip>
+          ]}
+          actions={[
+            <Collapse bordered={false} expandIconPosition={'right'} key="projects">
+              <Panel header={<Space
+                size="small"><UserOutlined/>{item.users.length}{item.users.length === 1 ? 'member' : 'members'}</Space>}
+                     key="members">
+                <List
+                  className={'tk_Project_MemberList'}
+                  dataSource={item.users.sort(((a, b) => memberComparator(a, b)))}
+                  renderItem={member => (
+                    <List.Item><ProjectMemberTag member={member}/></List.Item>
+                  )}
+                />
+              </Panel>
+            </Collapse>
+          ]}
+        >
+          <Meta
+            description={item.description}
+          />
+        </Card>
+      </List.Item>
+    )}
+  />;
+
   return (
     <React.Fragment>
-      <p>{projects().length} project(s) | {Array.from(new Set(projects().filter((project) => project.client !== undefined).map((project) => project.client.id))).length} client(s)</p>
-      <List
-        id="tk_List"
-        grid={{ gutter: 32, column: 3 }}
-        dataSource={projects()}
-        renderItem={item => (
-          <List.Item key={item.id}>
-            <Card
-              id="tk_Card_Sm"
-              bordered={false}
-              title={
-                <Space size={'middle'}>
-                  <Avatar src={logo} shape={'square'} size="large"/>
-                  <div className="tk_Card_Sm_Header">
-                    <p>{item.name}<span>{item.client ? '| ' + item.client.name : ''}</span></p>
-                    <p>{item.publicAccess ?   <UnlockOutlined/>  : <LockFilled/> }<span>{ item.publicAccess ? ' Public' : ' Private project' }</span></p>
-                  </div>
-                </Space>
-              }
-              extra={[
-                <Tooltip title="View" key="view">
-                  <Button type="link" size="small" ghost shape="circle" icon={<EyeFilled />} href={`/projects/${item.id}`}/>
-                </Tooltip>,
-                <Tooltip title="Edit" key="edit">
-                  <Button type="link" size="small" ghost shape="circle" icon={<EditFilled/>} href={`/projects/${item.id}/edit`}/>
-                </Tooltip>
-              ]}
-              actions={[
-                <Collapse bordered={false} expandIconPosition={'right'} key="projects">
-                  <Panel header={<Space size="small"><UserOutlined />{item.users.length}{ item.users.length === 1 ? 'member' : 'members' }</Space>} key="members">
-                    <List
-                      className={'tk_Project_MemberList'}
-                      dataSource={item.users.sort(((a, b) => memberComparator(a, b) ))}
-                      renderItem={member => (
-                        <List.Item><ProjectMemberTag member={member}/></List.Item>
-                      )}
-                    />
-                  </Panel>
-                </Collapse>
-              ]}
-            >
-              <Meta
-                description={item.description}
-              />
-            </Card>
-          </List.Item>
-        )}
-      />
+      <p>{projects().length} project(s)
+        | {Array.from(new Set(projects().filter((project) => project.client !== undefined).map((project) => project.client.id))).length} client(s)</p>
+
+      {<DataList data={projects()}/>}
+
+      {orderByClient().map(data =>
+        <div>
+          <TitleSection title={(data.client && data.client.name) || 'No client'}/>
+          <Divider/>
+          <DataList data={data.projects}/>
+        </div>)}
     </React.Fragment>
   );
 };
+
+
 export default ProjectList;
