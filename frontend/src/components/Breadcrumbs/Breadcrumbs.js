@@ -19,7 +19,7 @@ const breadcrumbDynamicMap = {
   '/projects/(\\d+)': (name) => `Project detail ${name}`,
 };
 
-const Breadcrumbs = ({location, entity}) => {
+const Breadcrumbs = ({location, entityName}) => {
 
   // URL without ids
   const pathSnippets = location.pathname.split('/').filter(i => i);
@@ -52,7 +52,7 @@ const Breadcrumbs = ({location, entity}) => {
       const f = breadcrumbDynamicMap[key];
       return (
         <Breadcrumb.Item key={pathname}>
-          <Link to={pathname}>{f ? f('Entity') : 'Page'}</Link>
+          <Link to={pathname}>{f ? f(entityName || '') : 'Page'}</Link>
         </Breadcrumb.Item>
       );
     } else {
@@ -74,7 +74,7 @@ const Breadcrumbs = ({location, entity}) => {
 
 Breadcrumbs.propTypes = {
   location: PropTypes.object.isRequired,
-  entity: PropTypes.string
+  entityName: PropTypes.string
 };
 
 
