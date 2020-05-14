@@ -13,8 +13,11 @@ const { Title } = Typography;
 const { Content, Footer } = Layout;
 
 const MainPage = ({ title, children, actions, ...rest }) => {
+
   const { data, error, loading } = useTimeKeeperAPI('/api/users/me');
+
   const [collapsed, toggle] = useState(false);
+
   if (error) {
     return (
       <React.Fragment>
@@ -25,11 +28,13 @@ const MainPage = ({ title, children, actions, ...rest }) => {
       </React.Fragment>
     );
   }
+
   if (loading) {
     return (
       <div>loading...</div>
     );
   }
+
   return (
     <Layout>
       <SidebarLeft collapsed={collapsed} {...rest} />
