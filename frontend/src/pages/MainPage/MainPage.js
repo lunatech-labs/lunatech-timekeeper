@@ -11,7 +11,7 @@ const { Title } = Typography;
 
 const { Content, Footer } = Layout;
 
-const MainPage = ({ title, children, actions, entity, ...rest }) => {
+const MainPage = ({ title, children, actions, entityName, ...rest }) => {
   const [collapsed, toggle] = useState(false);
   return (
     <Layout>
@@ -20,7 +20,7 @@ const MainPage = ({ title, children, actions, entity, ...rest }) => {
         <TopBar collapsed={collapsed} toggle={() => toggle(!collapsed)} />
         <Content id="tk_MainContent" className="mainContent">
           <div className="tk_MainContent_Header">
-            <Breadcrumbs entity={entity} />
+            <Breadcrumbs entityName={entityName} />
             <div className="tk_Page_Actions">{actions}</div>
             <Title id="title">{title}</Title>
           </div>
@@ -38,7 +38,7 @@ MainPage.propTypes = {
   title: PropTypes.string,
   children: PropTypes.object.isRequired,
   actions: PropTypes.object,
-  entity: PropTypes.string
+  entityName: PropTypes.string
 };
 
 export default MainPage;
