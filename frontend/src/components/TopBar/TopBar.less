@@ -3,13 +3,49 @@
 #tk_Header {
   position: fixed;
   z-index: 2;
-  width: 100%;
+  width: calc(100% - 240px);
   background: @black_Tk;
   border-bottom: 1px solid rgba(216, 216, 216, .1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 76px 0 0;
   .anticon[tabindex] {
     color: @lightGray_Tk;
     font-size: 18px;
     line-height: 64px;
     padding: 0 24px;
+  }
+}
+.tk_Header_Right {
+  display: flex;
+  align-items: center;
+}
+.tk_Header_Notif {
+  width: 64px;
+  height: 64px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  border-left: 1px solid rgba(216, 216, 216, 0.1);
+  border-right: 1px solid rgba(216, 216, 216, 0.1);
+}
+.tk_Header_Profile {
+  border-left: 1px solid rgba(216, 216, 216, 0.1);
+  border-right: 1px solid rgba(216, 216, 216, 0.1);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  height: 64px;
+  margin: 0 15px 0 -1px;
+  p {
+    margin-left: 12px;
+    margin-bottom: 0;
+    line-height: 16px;
+    span {
+      font-size: 10px;
+      color: @lightGray_Tk;
+    }
   }
 }
