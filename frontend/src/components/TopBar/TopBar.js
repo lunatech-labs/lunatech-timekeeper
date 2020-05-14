@@ -42,18 +42,20 @@ const TopBar = ({ collapsed, toggle, user }) => {
   };
 
   return (
-    <Header id="tk_Header" className="site-layout-background" style={{ padding: 0 }}>
+    <Header id="tk_Header" className="site-layout-background">
       {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
         className: 'trigger',
         onClick: toggle,
       })}
-      <div>
-        <Badge dot={alert} onClick={alertChangeState}>
-          <BellOutlined />
-        </Badge>
-        <div>
+      <div className="tk_Header_Right">
+        <div className="tk_Header_Notif">
+          <Badge dot={alert} onClick={alertChangeState}>
+            <BellOutlined />
+          </Badge>
+        </div>
+        <div className="tk_Header_Profile">
           <Avatar src={user.picture} />
-          <p>{user.name} <br/> {displayProfile(user.profiles)}</p>
+          <p>{user.name}<br/><span>{displayProfile(user.profiles)}</span></p>
         </div>
 
         <Avatar shape="square" size="large" src={displayOrgaPicture(user.email)} />
