@@ -12,11 +12,12 @@ const breadcrumbNameMap = {
 };
 
 // The dynamic breadcrumb must be used for an exact pathname only.
-// To use the regex, the ids must be matched with (\\d)
+// To use the regex, the ids must be matched with (\\d+)
 // The regex must be simple
 const breadcrumbDynamicMap = {
   '/projects/(\\d+)/edit': (name) => `Edit project ${name}`,
-  '/projects/(\\d+)': (name) => `Project detail ${name}`,
+  '/projects/(\\d+)': (name) => `Project details ${name}`,
+  '/clients/(\\d+)/edit': (name) => `Edit client ${name}`,
 };
 
 const Breadcrumbs = ({location, entityName}) => {
@@ -34,7 +35,7 @@ const Breadcrumbs = ({location, entityName}) => {
         </Breadcrumb.Item>
       );
     } else {
-        return '';
+      return '';
     }
   });
 
@@ -65,8 +66,7 @@ const Breadcrumbs = ({location, entityName}) => {
     <Breadcrumb.Item key="home">
       <Link to="/">Home</Link>
     </Breadcrumb.Item>,
-  ].concat(extraBreadcrumbItems).concat(extraBreadcrumbItemDynamic)
-  ;
+  ].concat(extraBreadcrumbItems).concat(extraBreadcrumbItemDynamic);
 
   return (<Breadcrumb>{breadcrumbItems}</Breadcrumb>);
 };
