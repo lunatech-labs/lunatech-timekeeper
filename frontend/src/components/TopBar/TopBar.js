@@ -4,7 +4,7 @@ import {
   MenuFoldOutlined,
   BellOutlined,
 } from '@ant-design/icons';
-import {Layout, Avatar, Badge, Col, Row} from 'antd';
+import {Layout, Avatar, Badge} from 'antd';
 import './TopBar.less';
 import PropTypes from 'prop-types';
 import OrgaPictureFR from '../../img/organization_icon_fr.png';
@@ -43,37 +43,22 @@ const TopBar = ({ collapsed, toggle, user }) => {
 
   return (
     <Header id="tk_Header" className="site-layout-background" style={{ padding: 0 }}>
-      <Row>
-        <Col flex={7}>
-          {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-            className: 'trigger',
-            onClick: toggle,
-          })}
-        </Col>
-        <Col flex={3}>
-          <Row gutter={[18,18]}>
-            <Col span={2}>
-              <Badge dot={alert} onClick={alertChangeState}>
-                <BellOutlined />
-              </Badge>
-            </Col>
-            <Col span={9}>
-              <Row gutter={[6,6]}>
-                <Col>
-                  <Avatar src={user.picture} />
-                </Col>
-                <Col>
-                  <div>{user.name}</div>
-                  <div>{displayProfile(user.profiles)}</div>
-                </Col>
-              </Row>
-            </Col>
-            <Col span={2}>
-              <Avatar shape="square" size="large" src={displayOrgaPicture(user.email)} />
-            </Col>
-          </Row>
-        </Col>
-      </Row>
+      {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+        className: 'trigger',
+        onClick: toggle,
+      })}
+      <div>
+        <Badge dot={alert} onClick={alertChangeState}>
+          <BellOutlined />
+        </Badge>
+        <div>
+          <Avatar src={user.picture} />
+          <p>{user.name} <br/> {displayProfile(user.profiles)}</p>
+        </div>
+
+        <Avatar shape="square" size="large" src={displayOrgaPicture(user.email)} />
+      </div>
+
     </Header>
   );
 };
