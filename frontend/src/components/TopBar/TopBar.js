@@ -7,8 +7,8 @@ import {
 import {Layout, Avatar, Badge} from 'antd';
 import './TopBar.less';
 import PropTypes from 'prop-types';
-import OrgaPictureFR from '../../img/organization_icon_fr.png';
-import OrgaPictureNL from '../../img/organization_icon_nl.png';
+import OrganizationPictureFR from '../../img/organization_icon_fr.png';
+import OrganizationPictureNL from '../../img/organization_icon_nl.png';
 
 const { Header } = Layout;
 
@@ -20,22 +20,20 @@ const TopBar = ({ collapsed, toggle, user }) => {
   };
 
   const displayProfile = (profiles) => {
-    if(profiles.length == 1){
-      return profiles;
-    } else if(profiles.includes('Admin')){
-      return profiles[profiles.indexOf('Admin')];
+    if(profiles.includes('Admin')){
+      return "Admin";
     } else {
-      return profiles[profiles.indexOf('User')];
+      return "User";
     }
   };
 
-  const displayOrgaPicture = (email) => {
-    if(email.split('@').includes('lunatech.fr')){
-      return OrgaPictureFR;
-    } else if(email.split('@').includes('lunatech.nl')) {
-      return OrgaPictureNL;
-    } else if(email.split('@').includes('lunatech.com')) {
-      return OrgaPictureNL;
+  const displayOrganizationPicture = (email) => {
+    if(email.includes('@lunatech.fr')){
+      return OrganizationPictureFR;
+    } else if(email.includes('@lunatech.nl')) {
+      return OrganizationPictureNL;
+    } else if(email.includes('@lunatech.com')) {
+      return OrganizationPictureNL;
     } else {
       return '';
     }
@@ -57,8 +55,7 @@ const TopBar = ({ collapsed, toggle, user }) => {
           <Avatar src={user.picture} />
           <p>{user.name}<br/><span>{displayProfile(user.profiles)}</span></p>
         </div>
-
-        <Avatar shape="square" size="large" src={displayOrgaPicture(user.email)} />
+        <Avatar shape="square" size="large" src={displayOrganizationPicture(user.email)} />
       </div>
 
     </Header>
