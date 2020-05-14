@@ -52,7 +52,6 @@ const UserList = () => {
       title: 'Role',
       dataIndex: 'projects',
       key: 'projects',
-      align: 'center',
       render: (value) => value.map(v => <div key={`role-${v.name}-${v.userId}`}>{v.manager ? <Tag id="tk_Tag" className="tk_Tag_Gold">Team leader</Tag> : <Tag id="tk_Tag">Member</Tag> }</div>)
     }
   ];
