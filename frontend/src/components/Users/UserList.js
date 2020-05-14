@@ -1,8 +1,7 @@
 import React from 'react';
-import {Alert, Avatar, Spin, Table} from 'antd';
+import {Alert, Avatar, Spin, Table, Tag} from 'antd';
 import {useTimeKeeperAPI} from '../../utils/services';
 import './UserList.less';
-import FlagFilled from '@ant-design/icons/lib/icons/FlagFilled';
 import Button from 'antd/lib/button';
 
 const UserList = () => {
@@ -50,11 +49,11 @@ const UserList = () => {
       render: (value) => value.map(v => <div key={`project-${v.name}-${v.userId}`}>{v.name}</div>)
     },
     {
-      title: 'Manager',
+      title: 'Role',
       dataIndex: 'projects',
-      key: 'manager',
+      key: 'projects',
       align: 'center',
-      render: (value) => value.map(v => <div key={`role-${v.name}-${v.userId}`}>{value ? <FlagFilled style={{ fontSize: '18px'}} /> : '' }</div>)
+      render: (value) => value.map(v => <div key={`role-${v.name}-${v.userId}`}>{v.manager ? <Tag id="tk_Tag" className="tk_Tag_Gold">Team leader</Tag> : <Tag id="tk_Tag">Member</Tag> }</div>)
     }
   ];
 
