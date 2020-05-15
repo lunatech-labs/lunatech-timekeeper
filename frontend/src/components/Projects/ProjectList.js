@@ -172,7 +172,7 @@ const ProjectList = () => {
           ]}
           actions={[
             <Collapse bordered={false} expandIconPosition={'right'} key="projects">
-              <Panel header={<Space size="small"><UserOutlined/>{item.users.length}{item.users.length === 1 ? 'member' : 'members'}</Space>} key="members">
+              <Panel header={<Space size="small"><UserOutlined/>{item.users.length}{item.users.length <= 1 ? 'member' : 'members'}</Space>} key="members">
                 <List
                   className={'tk_Project_MemberList'}
                   dataSource={item.users.sort(((a, b) => memberComparator(a, b)))}
