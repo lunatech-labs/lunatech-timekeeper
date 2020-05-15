@@ -11,6 +11,7 @@ import {
 import TitleSection from '../Title/TitleSection';
 import CardLg from '../Card/CardLg';
 import CardMember from '../Card/CardMember';
+import TagMember from '../Tag/TagMember';
 
 const {Title} = Typography;
 
@@ -24,14 +25,13 @@ const ShowProject = ({project}) => {
         const res = u2.manager - u1.manager;
         return res === 0 ? u1.name.localeCompare(u2.name) : res;
       });
-      //TODO : Use the custom card here
       return users.map(user =>
         <CardMember key={`project-member-${user.id}`}>
           <div>
             <Avatar src={user.picture}/>
             <p>{user.name}</p>
           </div>
-          {user.manager ? <Tag id="tk_Tag" className="tk_Tag_Gold">Team leader</Tag> : <Tag id="tk_Tag">Member</Tag>}
+          <TagMember isManager={user.manager} />
         </CardMember>
       );
     }

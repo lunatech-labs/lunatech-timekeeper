@@ -1,8 +1,9 @@
 import React from 'react';
-import {Alert, Avatar, Spin, Table, Tag} from 'antd';
+import {Alert, Avatar, Spin, Table} from 'antd';
 import {useTimeKeeperAPI} from '../../utils/services';
 import './UserList.less';
 import Button from 'antd/lib/button';
+import TagMember from '../Tag/TagMember';
 
 const UserList = () => {
   const usersResponse = useTimeKeeperAPI('/api/users');
@@ -52,7 +53,7 @@ const UserList = () => {
       title: 'Role',
       dataIndex: 'projects',
       key: 'projects',
-      render: (value) => value.map(v => <div key={`role-${v.name}-${v.userId}`}>{v.manager ? <Tag id="tk_Tag" className="tk_Tag_Gold">Team leader</Tag> : <Tag id="tk_Tag">Member</Tag> }</div>)
+      render: (value) => value.map(v => <div key={`role-${v.name}-${v.userId}`}>{<TagMember isManager={v.manager} />}</div>)
     }
   ];
 
