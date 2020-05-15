@@ -42,9 +42,11 @@ const MainPage = ({ title, children, actions, entityName, ...rest }) => {
         <TopBar collapsed={collapsed} toggle={() => toggle(!collapsed)} user={data} />
         <Content id="tk_MainContent" className="mainContent">
           <div className="tk_MainContent_Header">
-            <Breadcrumbs entityName={entityName} />
-            <div className="tk_Page_Actions">{actions}</div>
-            <Title id="title">{title}</Title>
+            <div className="tk_MainContent_HeaderLeft">
+              <Breadcrumbs entityName={entityName} />
+              <Title id="title">{title}</Title>
+            </div>
+            <div>{actions}</div>
           </div>
           <div>
             {children}
