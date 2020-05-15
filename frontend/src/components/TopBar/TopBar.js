@@ -21,9 +21,9 @@ const TopBar = ({ collapsed, toggle, user }) => {
 
   const displayProfile = (profiles) => {
     if(profiles.includes('Admin')){
-      return "Admin";
+      return 'Admin';
     } else {
-      return "User";
+      return 'User';
     }
   };
 
