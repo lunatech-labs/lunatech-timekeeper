@@ -1,0 +1,25 @@
+@import '../../timekeeper-theme.less';
+
+#tk_Btn {
+  height: 40px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  color: @white_Tk;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  span:first-child {
+    margin-right: 8px;
+  }
+  span:last-child {
+    margin-left: 0;
+  }
+}
+#tk_Btn.tk_BtnPrimary {
+  background: @red_Tk;
+}
+#tk_Btn.tk_BtnSecondary {
+  background: @mediumGray_Tk;
+}

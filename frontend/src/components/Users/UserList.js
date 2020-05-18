@@ -90,9 +90,12 @@ const UserList = () => {
 
   return (
     <React.Fragment>
-      <div>
+      <div className="tk_SubHeader">
         <p>{usersResponse.data.length} Users</p>
+        <div className="tk_SubHeader_RightPart">
+        </div>
       </div>
+
       <Table id="tk_Table"
         dataSource={usersResponse.data.map(user => userToUserData(user))}
         columns={columns} pagination={{ position:['bottomCenter'], pageSize:20, hideOnSinglePage:true, itemRender: paginationItemRender }}
