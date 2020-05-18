@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 import javax.inject.Inject;
 
@@ -20,7 +21,7 @@ import static javax.ws.rs.core.Response.Status.OK;
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
 @QuarkusTestResource(KeycloakTestResource.class)
-@Tag("integration")
+@DisabledIfEnvironmentVariable(named = "ENV", matches = "fast-test-only")
 class InfrastructureTest {
 
     @Inject
