@@ -14,7 +14,7 @@ public class TimeSheetResponse {
 
     public ProjectResponse project;
 
-    public UserResponse owner;
+    public Long ownerId;
 
     private String timeUnit;
 
@@ -38,7 +38,7 @@ public class TimeSheetResponse {
     public TimeSheetResponse(Long id, ProjectResponse project, UserResponse owner, String timeUnit, Boolean defaultIsBillable, LocalDate expirationDate, Integer maxDuration, String durationUnit, List<TimeEntryResponse> entries, Boolean active) {
         this.id = id;
         this.project = project;
-        this.owner = owner;
+        this.ownerId = owner.getId();
         this.timeUnit = timeUnit;
         this.defaultIsBillable = defaultIsBillable;
         this.expirationDate = expirationDate;
