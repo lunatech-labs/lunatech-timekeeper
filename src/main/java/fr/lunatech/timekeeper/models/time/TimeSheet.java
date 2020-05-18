@@ -44,13 +44,8 @@ public class TimeSheet extends PanacheEntityBase {
     @Null
     public String durationUnit; // DAYS
 
-    // TODO ???  "P2D5H"  Duration.parse(...) =>
-    // public Duration duration;
     // -------------------------------
     @OneToMany(cascade = CascadeType.ALL)
     public List<TimeEntry> entries;
-
-    // Flag to indicate if we want to fetch this TS or not
-    public Boolean active;
 
 }

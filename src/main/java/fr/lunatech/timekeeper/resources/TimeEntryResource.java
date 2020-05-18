@@ -42,7 +42,6 @@ public class TimeEntryResource implements TimeEntryResourceApi {
         return Response.created(uri).build();
     }
 
-
     @RolesAllowed({"user"})
     @Override
     public Response createTimeEntryPerHalfDay(@Valid TimeEntryPerHalfDayRequest request, UriInfo uriInfo) {

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * An Event is something that "block" a cell in your TimeSheet, so that one cannot enters TimeEntry for this
  * slot.
  * Kind of Event :
- * - public holiday
+ * - vacations
  * - company event like HackBreakfast
  */
 @Entity
