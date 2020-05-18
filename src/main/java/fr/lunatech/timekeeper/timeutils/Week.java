@@ -9,7 +9,6 @@ import java.util.List;
  * Purpose of this entity is to store time entries and special events like public holidays, for a User.
  */
 public class Week {
-
     public LocalDate firstDayOfWeek;
 
     public User owner;

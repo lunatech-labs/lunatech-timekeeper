@@ -28,14 +28,15 @@ public class TimeSheetResponse {
 
     public List<TimeEntryResponse> entries;
 
-    public Boolean active;
-
-    public Boolean isValid(){
-        // TODO
-        return true;
+    // This functional helper should indicate if a TimeSheet is over budget in term of time or days
+    // TODO it requires unit test and more work
+    public Boolean isOverTimeOrBudget() {
+        var isOverTime = LocalDate.now().isAfter(expirationDate);
+        var isOverBudget = entries.size() > maxDuration;
+        return isOverBudget || isOverTime;
     }
 
-    public TimeSheetResponse(Long id, ProjectResponse project, UserResponse owner, String timeUnit, Boolean defaultIsBillable, LocalDate expirationDate, Integer maxDuration, String durationUnit, List<TimeEntryResponse> entries, Boolean active) {
+    public TimeSheetResponse(Long id, ProjectResponse project, UserResponse owner, String timeUnit, Boolean defaultIsBillable, LocalDate expirationDate, Integer maxDuration, String durationUnit, List<TimeEntryResponse> entries) {
         this.id = id;
         this.project = project;
         this.ownerId = owner.getId();
@@ -45,7 +46,6 @@ public class TimeSheetResponse {
         this.maxDuration = maxDuration;
         this.durationUnit = durationUnit;
         this.entries = entries;
-        this.active = active;
     }
 
     public static TimeSheetResponse bind(@NotNull TimeSheet sheet) {
@@ -57,10 +57,9 @@ public class TimeSheetResponse {
                 sheet.defaultIsBillable,
                 sheet.expirationDate,
                 sheet.maxDuration,
-                sheet.durationUnit     ,
+                sheet.durationUnit,
                 sheet.entries.stream().map(TimeSheetResponse.TimeEntryResponse::bind)
-                        .collect(Collectors.toList()),
-                sheet.active
+                        .collect(Collectors.toList())
         );
     }
 
