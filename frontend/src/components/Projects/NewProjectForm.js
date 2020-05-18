@@ -83,7 +83,6 @@ const NewProjectForm = () => {
       value: PropTypes.string
     };
     return (
-
       <Form
         id="tk_Form"
         layout="vertical"
@@ -240,7 +239,8 @@ const NewProjectForm = () => {
                               </Form.Item>
                             </div>
                           );
-                        })}
+                        })
+                      }
                     </Form.Item>
                   );
                 }}

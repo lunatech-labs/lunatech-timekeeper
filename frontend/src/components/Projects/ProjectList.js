@@ -81,21 +81,14 @@ const ProjectList = () => {
 
   const groupByComponent = (
     <React.Fragment>
-      <Row gutter={[16, 16]}>
-        <Col span={8}>
-          <p>Group by :</p>
-        </Col>
-        <Col span={8}>
-          <Dropdown overlay={groupByMenu}>
-            <a className="ant-dropdown-link">
-              {groupBy} <DownOutlined />
-            </a>
-          </Dropdown>
-        </Col>
-      </Row>
+      <p>Group by :</p>
+      <Dropdown overlay={groupByMenu}>
+        <a className="ant-dropdown-link">
+          {groupBy} <DownOutlined />
+        </a>
+      </Dropdown>
     </React.Fragment>
   );
-
 
   const filterMenu = (
     <Menu onClick={({ key }) => setFilterText(key)}>
@@ -113,18 +106,12 @@ const ProjectList = () => {
 
   const filterComponent = (
     <React.Fragment>
-      <Row gutter={[16, 16]}>
-        <Col span={8}>
-          <p>Filter by :</p>
-        </Col>
-        <Col span={8}>
-          <Dropdown overlay={filterMenu}>
-            <a className="ant-dropdown-link">
-              {filterText} <DownOutlined />
-            </a>
-          </Dropdown>
-        </Col>
-      </Row>
+      <p>Filter by :</p>
+      <Dropdown overlay={filterMenu}>
+        <a className="ant-dropdown-link">
+          {filterText} <DownOutlined />
+        </a>
+      </Dropdown>
     </React.Fragment>
   );
 
@@ -165,7 +152,10 @@ const ProjectList = () => {
             <Space size={'middle'}>
               <Avatar src={logo} shape={'square'} size="large"/>
               <div className="tk_Card_Sm_Header">
-                <p>{item.name}<span>{item.client ? '| ' + item.client.name : ''}</span></p>
+                <div>
+                <p>{item.name}</p>
+                <p>{item.client ? item.client.name : ''}</p>
+                </div>
                 <p>{item.publicAccess ? <UnlockOutlined/> :
                   <LockFilled/>}<span>{item.publicAccess ? ' Public' : ' Private project'}</span></p>
               </div>
@@ -182,9 +172,7 @@ const ProjectList = () => {
           ]}
           actions={[
             <Collapse bordered={false} expandIconPosition={'right'} key="projects">
-              <Panel header={<Space
-                size="small"><UserOutlined/>{item.users.length}{item.users.length === 1 ? 'member' : 'members'}</Space>}
-              key="members">
+              <Panel header={<Space size="small"><UserOutlined/>{item.users.length}{item.users.length <= 1 ? 'member' : 'members'}</Space>} key="members">
                 <List
                   className={'tk_Project_MemberList'}
                   dataSource={item.users.sort(((a, b) => memberComparator(a, b)))}
@@ -211,17 +199,13 @@ const ProjectList = () => {
 
   return (
     <React.Fragment>
-      <Row>
-        <Col span={16}>
-          <p>{data.length} project(s) | {Array.from(new Set(data.filter((project) => project.client !== undefined).map((project) => project.client.id))).length} client(s)</p>
-        </Col>
-        <Col span={4}>
-          {filterComponent}
-        </Col>
-        <Col span={4}>
-          {groupByComponent}
-        </Col>
-      </Row>
+      <div className="tk_SubHeader">
+        <p>{data.length} project(s) | {Array.from(new Set(data.filter((project) => project.client !== undefined).map((project) => project.client.id))).length} client(s)</p>
+        <div className="tk_SubHeader_RightPart">
+          <div className="tk_SubHeader_Filters">{filterComponent}</div>
+          <div className="tk_SubHeader_Filters">{groupByComponent}</div>
+        </div>
+      </div>
 
       {groupBy === 'All' ?
         <DataList data={data}/>:
@@ -230,9 +214,9 @@ const ProjectList = () => {
             <TitleSection title={(data.client && data.client.name) || 'No client'}/>
             <Divider/>
             <DataList data={data.projects}/>
-          </div>)
+          </div>
+        )
       }
-
     </React.Fragment>
   );
 };
