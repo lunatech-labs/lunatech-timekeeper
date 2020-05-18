@@ -2,6 +2,7 @@ package fr.lunatech.timekeeper.resources;
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import io.restassured.RestAssured;
+import org.apache.commons.lang3.StringUtils;
 import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.*;
 import org.keycloak.util.JsonSerialization;
@@ -35,14 +36,22 @@ public class KeycloakTestResource implements QuarkusTestResourceLifecycleManager
 
     @Override
     public Map<String, String> start() {
+        if (StringUtils.trimToEmpty(System.getenv("ENV")).equalsIgnoreCase("fast-test-only")) {
+            System.out.println("[INFO] \uD83D\uDD25 Fast test env variable is set, do not start Keycloak docker.");
+            return Collections.emptyMap();
+        }
         // Start keycloak docker image
+        // We cannot use SLF4J here. This is why you see System.out.println.
+        long start = System.currentTimeMillis();
+        System.out.println("[INFO] \uD83D\uDE9AStarting Keycloack as a Docker container for tests...");
         KEYCLOAK.start();
+        System.out.println(String.format("[INFO] ⭐ Keycloak started in %d ms", System.currentTimeMillis() - start));
 
         RealmRepresentation realm = createRealm(KEYCLOAK_REALM);
 
         realm.getClients().add(createClient(KEYCLOAK_CLIENT));
-        realm.getUsers().add(createUser("jimmy", "Jimmy", "James",  "lunatech.fr", "user"));
-        realm.getUsers().add(createUser("merry", "Merry", "Jones",  "lunatech.fr", "user"));
+        realm.getUsers().add(createUser("jimmy", "Jimmy", "James", "lunatech.fr", "user"));
+        realm.getUsers().add(createUser("merry", "Merry", "Jones", "lunatech.fr", "user"));
         realm.getUsers().add(createUser("sam", "Sam", "Uell", "lunatech.fr", "admin"));
         realm.getUsers().add(createUser("clark", "Clark", "Kent", "lunatech.fr", "super_admin"));
 
