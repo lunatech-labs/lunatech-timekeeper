@@ -10,6 +10,7 @@ import javax.json.bind.annotation.JsonbCreator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -25,18 +26,17 @@ public final class TimeEntryPerHalfDayRequest implements TimeEntryRequest{
     private final Long timeSheetId;
 
     @NotNull
-    private final String date;
+    private final LocalDate date;
 
     @NotNull
     private final Boolean isMorning;
-
 
     @JsonbCreator
     public TimeEntryPerHalfDayRequest(
             @NotBlank String comment,
             @NotNull Boolean billable,
             @NotNull Long timeSheetId,
-            @NotNull String date,
+            @NotNull LocalDate date,
             @NotNull Boolean isMorning
     ) {
         this.comment = comment;
@@ -53,8 +53,13 @@ public final class TimeEntryPerHalfDayRequest implements TimeEntryRequest{
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.billable = getBillable();
         timeEntry.comment = getComment();
-        timeEntry.startDateTime = TimeExtractor.extractStartTime(this.date, this.isMorning);
-        timeEntry.endDateTime = TimeExtractor.extractEndTime(this.date, this.isMorning);
+        if(isMorning){
+            timeEntry.startDateTime =  this.date.atStartOfDay().plusHours(8);
+            timeEntry.endDateTime = this.date.atStartOfDay().plusHours(12);
+        }else{
+            timeEntry.startDateTime = this.date.atStartOfDay().plusHours(13);
+            timeEntry.endDateTime = this.date.atStartOfDay().plusHours(17);
+        }
         timeEntry.timeSheet = findTimeSheet.apply(getTimeSheetId()).orElseThrow(() -> new IllegalEntityStateException("TimeSheet not found for id " + getTimeSheetId()));
         return timeEntry;
     }
@@ -71,7 +76,7 @@ public final class TimeEntryPerHalfDayRequest implements TimeEntryRequest{
         return timeSheetId;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 

@@ -10,6 +10,8 @@ import javax.json.bind.annotation.JsonbCreator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -25,15 +27,14 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
     private final Long timeSheetId;
 
     @NotNull
-    private final String date;
-
+    private final LocalDate date;
 
     @JsonbCreator
     public TimeEntryPerDayRequest(
             @NotBlank String comment,
             @NotNull Boolean billable,
             @NotNull Long timeSheetId,
-            @NotNull String date
+            @NotNull LocalDate date
     ) {
         this.comment = comment;
         this.billable = billable;
@@ -48,8 +49,8 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.billable = getBillable();
         timeEntry.comment = getComment();
-        timeEntry.startDateTime = TimeExtractor.extractStartTimeForDay(this.date);
-        timeEntry.endDateTime = TimeExtractor.extractEndTimeForDay(this.date);
+        timeEntry.startDateTime = this.date.atStartOfDay();
+        timeEntry.endDateTime = null ;
         timeEntry.timeSheet = findTimeSheet.apply(getTimeSheetId()).orElseThrow(() -> new IllegalEntityStateException("TimeSheet not found for id " + getTimeSheetId()));
         return timeEntry;
     }
@@ -66,7 +67,7 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
         return timeSheetId;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 

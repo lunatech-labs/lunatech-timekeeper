@@ -10,6 +10,8 @@ import javax.json.bind.annotation.JsonbCreator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -25,19 +27,18 @@ public final class TimeEntryPerHourRequest implements TimeEntryRequest{
     private final Long timeSheetId;
 
     @NotNull
-    private final String startDateTime;
+    private final LocalDateTime startDateTime;
 
     @NotNull
-    private final String endDateTime;
-
+    private final LocalDateTime endDateTime;
 
     @JsonbCreator
     public TimeEntryPerHourRequest(
             @NotBlank String comment,
             @NotNull Boolean billable,
             @NotNull Long timeSheetId,
-            @NotNull String startDateTime,
-            @NotNull String endDateTime
+            @NotNull LocalDateTime startDateTime,
+            @NotNull LocalDateTime endDateTime
     ) {
         this.comment = comment;
         this.billable = billable;
@@ -53,8 +54,11 @@ public final class TimeEntryPerHourRequest implements TimeEntryRequest{
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.billable = getBillable();
         timeEntry.comment = getComment();
-        timeEntry.startDateTime = TimeExtractor.extractStartTime(this.startDateTime);
-        timeEntry.endDateTime = TimeExtractor.extractEndTime(this.endDateTime);
+        timeEntry.startDateTime = this.startDateTime;
+        timeEntry.endDateTime = this.endDateTime;
+        if(startDateTime.isAfter(endDateTime)){
+            throw new IllegalEntityStateException("Start dateTime cannot be after endDateTime, invalid entry");
+        }
         timeEntry.timeSheet = findTimeSheet.apply(getTimeSheetId()).orElseThrow(() -> new IllegalEntityStateException("TimeSheet not found for id " + getTimeSheetId()));
         return timeEntry;
     }
@@ -71,11 +75,11 @@ public final class TimeEntryPerHourRequest implements TimeEntryRequest{
         return timeSheetId;
     }
 
-    public String getStartDateTime() {
+    public LocalDateTime getStartDateTime() {
         return startDateTime;
     }
 
-    public String getEndDateTime() {
+    public LocalDateTime getEndDateTime() {
         return endDateTime;
     }
 
