@@ -3,16 +3,9 @@ import {Alert, Button, Form, Input, message, Spin,} from 'antd';
 import {Link, Redirect, useRouteMatch} from 'react-router-dom';
 import {useTimeKeeperAPI, useTimeKeeperAPIPut} from '../../utils/services';
 import Space from 'antd/lib/space';
-import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
+import {CheckOutlined, CloseOutlined} from '@ant-design/icons';
 
 const {TextArea} = Input;
-
-const tailLayout = {
-  wrapperCol: {
-    offset: 4,
-    span: 14,
-  },
-};
 
 const EditClientForm = () => {
 
