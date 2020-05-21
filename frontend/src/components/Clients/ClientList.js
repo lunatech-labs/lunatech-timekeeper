@@ -12,8 +12,6 @@ import UserOutlined from '@ant-design/icons/lib/icons/UserOutlined';
 import Input from 'antd/lib/input';
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined';
 import Meta from 'antd/lib/card/Meta';
-import ProjectMemberTag from "../Projects/ProjectMemberTag";
-
 
 const { Panel } = Collapse;
 

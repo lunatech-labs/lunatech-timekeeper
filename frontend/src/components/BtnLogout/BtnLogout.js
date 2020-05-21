@@ -2,7 +2,7 @@ import React  from 'react';
 import { Button } from 'antd';
 import './BtnGeneral.less';
 import {useKeycloak} from '@react-keycloak/web';
-import {LogoutOutlined} from "@ant-design/icons";
+import {LogoutOutlined} from '@ant-design/icons';
 
 const BtnLogout = ( ) => {
   const { keycloak } = useKeycloak();
