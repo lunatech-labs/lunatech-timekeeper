@@ -1,0 +1,13 @@
+# https://github.com/actions/labeler/blob/master/README.md
+  backend:
+    - src/main/*
+
+  tests:
+    - src/main/test/*
+
+  frontend:
+    - frontend/*
+
+  devops:
+    - infrastructure/*
+
