@@ -2,9 +2,7 @@ import React from 'react';
 import ClientList from '../../components/Clients/ClientList';
 import MainPage from '../MainPage/MainPage';
 import {Link} from 'react-router-dom';
-import {Button, Space} from 'antd';
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined';
-import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
 
 const ClientsPage = () => {
   return (

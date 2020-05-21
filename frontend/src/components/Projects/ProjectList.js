@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Alert, Avatar, Button, Card, Col, Collapse, Divider, Dropdown, List, Menu, Row, Spin} from 'antd';
+import {Alert, Avatar, Button, Card, Collapse, Divider, Dropdown, List, Menu, Spin} from 'antd';
 import logo from '../../img/logo_timekeeper_homepage.png';
 import {useTimeKeeperAPI} from '../../utils/services';
 import EditFilled from '@ant-design/icons/lib/icons/EditFilled';
@@ -153,8 +153,8 @@ const ProjectList = () => {
               <Avatar src={logo} shape={'square'} size="large"/>
               <div className="tk_Card_Sm_Header">
                 <div>
-                <p>{item.name}</p>
-                <p>{item.client ? item.client.name : ''}</p>
+                  <p>{item.name}</p>
+                  <p>{item.client ? item.client.name : ''}</p>
                 </div>
                 <p>{item.publicAccess ? <UnlockOutlined/> :
                   <LockFilled/>}<span>{item.publicAccess ? ' Public' : ' Private project'}</span></p>

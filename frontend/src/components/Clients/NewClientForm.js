@@ -3,16 +3,9 @@ import {Alert, Button, Form, Input, message} from 'antd';
 import {Link, Redirect} from 'react-router-dom';
 import {useTimeKeeperAPIPost} from '../../utils/services';
 import Space from 'antd/lib/space';
-import {CheckOutlined, CloseOutlined} from "@ant-design/icons";
+import {CheckOutlined, CloseOutlined} from '@ant-design/icons';
 
 const {TextArea} = Input;
-
-const tailLayout = {
-  wrapperCol: {
-    offset: 4,
-    span: 14,
-  },
-};
 
 const initialValues = {
   name: '',
