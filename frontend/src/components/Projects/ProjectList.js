@@ -66,12 +66,12 @@ const ProjectList = () => {
       data.push(newData);
     });
     return data.sort((a, b) => {
-      if(!a.client) {
+      if (!a.client) {
         return -1;
       } else if (!b.client) {
         return 1;
       }
-      return a.client.name.localeCompare(b.client.name)
+      return a.client.name.localeCompare(b.client.name);
     });
   };
 
@@ -91,22 +91,22 @@ const ProjectList = () => {
       <p>Group by :</p>
       <Dropdown overlay={groupByMenu}>
         <a className="ant-dropdown-link">
-          {groupBy} <DownOutlined />
+          {groupBy} <DownOutlined/>
         </a>
       </Dropdown>
     </React.Fragment>
   );
 
   const filterMenu = (
-    <Menu onClick={({ key }) => setFilterText(key)}>
+    <Menu onClick={({key}) => setFilterText(key)}>
       <Menu.Item key="All">
-                All
+        All
       </Menu.Item>
       <Menu.Item key="Private">
-                Private
+        Private
       </Menu.Item>
       <Menu.Item key="Public">
-                Public
+        Public
       </Menu.Item>
     </Menu>
   );
@@ -116,7 +116,7 @@ const ProjectList = () => {
       <p>Filter by :</p>
       <Dropdown overlay={filterMenu}>
         <a className="ant-dropdown-link">
-          {filterText} <DownOutlined />
+          {filterText} <DownOutlined/>
         </a>
       </Dropdown>
     </React.Fragment>
@@ -179,7 +179,9 @@ const ProjectList = () => {
           ]}
           actions={[
             <Collapse bordered={false} expandIconPosition={'right'} key="projects">
-              <Panel header={<Space size="small"><UserOutlined/>{item.users.length}{item.users.length <= 1 ? 'member' : 'members'}</Space>} key="members">
+              <Panel header={<Space
+                size="small"><UserOutlined/>{item.users.length}{item.users.length <= 1 ? 'member' : 'members'}</Space>}
+              key="members">
                 <List
                   className={'tk_Project_MemberList'}
                   dataSource={item.users.sort(((a, b) => memberComparator(a, b)))}
@@ -207,7 +209,8 @@ const ProjectList = () => {
   return (
     <React.Fragment>
       <div className="tk_SubHeader">
-        <p>{data.length} project(s) | {Array.from(new Set(data.filter((project) => project.client !== undefined).map((project) => project.client.id))).length} client(s)</p>
+        <p>{data.length} project(s)
+          | {Array.from(new Set(data.filter((project) => project.client !== undefined).map((project) => project.client.id))).length} client(s)</p>
         <div className="tk_SubHeader_RightPart">
           <div className="tk_SubHeader_Filters">{filterComponent}</div>
           <div className="tk_SubHeader_Filters">{groupByComponent}</div>
@@ -215,7 +218,7 @@ const ProjectList = () => {
       </div>
 
       {groupBy === 'All' ?
-        <DataList data={data}/>:
+        <DataList data={data}/> :
         groupByClient().map(data =>
           <div key={`projects-of-clients-${(data.client && data.client.id) || 0}`}>
             <TitleSection title={(data.client && data.client.name) || 'No client'}/>
