@@ -5,9 +5,9 @@ import * as serviceWorker from './serviceWorker';
 import HttpsRedirect from 'react-https-redirect';
 
 const app = (
-    <HttpsRedirect>
-        <App/>
-    </HttpsRedirect>
+  <HttpsRedirect>
+    <App/>
+  </HttpsRedirect>
 );
 ReactDOM.render(app, document.getElementById('root'));
 
