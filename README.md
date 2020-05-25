@@ -149,3 +149,15 @@ This command configures pre-commit hook and validation.
 Use mvn with profile "sonar"
 
     ./mvnw -P sonar verify sonar:sonar
+    
+# Fast tests : how to execute only H2 Test
+
+The integration suite is a bit slow with Docker + Keycloak. When you want to execute simple tests, please set ENV=fast-test-only
+
+    export ENV=fast-test-only
+    ./mvnw test
+    
+You can annotate a test with @DisabledIfEnvironmentVariable if your test is slow
+
+    @DisabledIfEnvironmentVariable(named = "ENV", matches = "fast-test-only")        
+
