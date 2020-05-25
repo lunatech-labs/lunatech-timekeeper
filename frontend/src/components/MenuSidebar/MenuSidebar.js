@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 import {UserOutlined, DesktopOutlined, PieChartOutlined} from '@ant-design/icons';
 import FolderOpenOutlined from '@ant-design/icons/lib/icons/FolderOpenOutlined';
-import ClockCircleOutlined from "@ant-design/icons/lib/icons/ClockCircleOutlined";
+import ClockCircleOutlined from '@ant-design/icons/lib/icons/ClockCircleOutlined';
 
 class MenuSidebar extends Component {
   render() {

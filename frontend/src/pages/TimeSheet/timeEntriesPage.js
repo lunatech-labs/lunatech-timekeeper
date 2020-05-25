@@ -1,5 +1,5 @@
 import React from 'react';
-import MainPage from "../MainPage/MainPage";
+import MainPage from '../MainPage/MainPage';
 
 const TimeEntriesPage = () => {
   return (
