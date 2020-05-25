@@ -38,7 +38,7 @@ public interface ProjectResourceApi {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Create a new project ",
+    @Operation(summary = "Create a new project",
             description = "Create a project with the details and the list of project users and their respective roles.")
     @Tag(ref = "projects")
     @APIResponses(value = {
