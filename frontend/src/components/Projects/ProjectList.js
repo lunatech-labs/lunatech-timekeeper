@@ -65,7 +65,14 @@ const ProjectList = () => {
       };
       data.push(newData);
     });
-    return data;
+    return data.sort((a, b) => {
+      if(!a.client) {
+        return -1;
+      } else if (!b.client) {
+        return 1;
+      }
+      return a.client.name.localeCompare(b.client.name)
+    });
   };
 
   const groupByMenu = (
@@ -73,8 +80,8 @@ const ProjectList = () => {
       <Menu.Item key="All">
         All
       </Menu.Item>
-      <Menu.Item key="Project">
-        Project
+      <Menu.Item key="Client">
+        Client
       </Menu.Item>
     </Menu>
   );
@@ -154,7 +161,7 @@ const ProjectList = () => {
               <div className="tk_Card_Sm_Header">
                 <div>
                   <p>{item.name}</p>
-                  <p>{item.client ? item.client.name : ''}</p>
+                  <p>{item.client ? item.client.name : 'No client'}</p>
                 </div>
                 <p>{item.publicAccess ? <UnlockOutlined/> :
                   <LockFilled/>}<span>{item.publicAccess ? ' Public' : ' Private project'}</span></p>
