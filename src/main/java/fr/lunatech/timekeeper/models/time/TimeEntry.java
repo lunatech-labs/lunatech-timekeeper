@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "time_entry")
+@Table(name = "timeentry")
 public class TimeEntry extends PanacheEntityBase {
 
     @Id
