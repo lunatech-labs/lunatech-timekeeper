@@ -4,7 +4,9 @@ import fr.lunatech.timekeeper.models.Project;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.resources.exceptions.UpdateResourceException;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
+import fr.lunatech.timekeeper.services.requests.TimeSheetRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
+import fr.lunatech.timekeeper.timeutils.TimeUnit;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +39,9 @@ public class ProjectService {
     @Inject
     UserService userService;
 
+    @Inject
+    TimeSheetService timeSheetService;
+
     public Optional<ProjectResponse> findResponseById(Long id, AuthenticationContext ctx) {
         return findById(id, ctx).map(ProjectResponse::bind);
     }
@@ -54,6 +59,9 @@ public class ProjectService {
         } catch (PersistenceException pe) {
             throw new CreateResourceException(String.format("Project was not created due to constraint violation"));
         }
+        System.out.println(request);
+        Stream<TimeSheetRequest> timeSheetRequests = project.users.stream().map(user -> new TimeSheetRequest(project.id, user.user.id, TimeUnit.HOURLY, project.billable, null, null, TimeUnit.HOURLY.toString()));
+        timeSheetRequests.forEach(timeSheetRequest -> timeSheetService.createTimeSheet(timeSheetRequest, ctx));
         return project.id;
     }
 
