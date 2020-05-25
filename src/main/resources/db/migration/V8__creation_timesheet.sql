@@ -34,15 +34,15 @@ create table public.timeentry
             references public.timesheets
 );
 
-create table public.timesheets_timeentries
+create table public.timesheets_timeentry
 (
     timesheet_id int8 not null
-        constraint fk_timesheets_timeentries_timesheet
+        constraint fk_timesheets_timeentry_timesheet
             references public.timesheets,
     entries_id   int8 not null
-        constraint uk_timesheets_timeentries_entries
+        constraint uk_timesheets_timeentry_entries
             unique
-        constraint fk_timesheets_timeentries_entries
+        constraint fk_timesheets_timeentry_entries
             references public.timeentry
 );
 
