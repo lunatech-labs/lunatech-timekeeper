@@ -7,6 +7,7 @@
   "repository": "https://github.com/lunatech-labs/lunatech-timekeeper",
   "main": "index.js",
   "dependencies": {
+    "react-https-redirect": "^1.1.0",
     "@ant-design/icons": "latest",
     "@react-keycloak/web": "^2.0.0",
     "@testing-library/jest-dom": "^5.1.1",
