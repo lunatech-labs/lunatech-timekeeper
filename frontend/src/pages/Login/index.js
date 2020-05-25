@@ -5,7 +5,6 @@ import {Button, Layout, Row, Col, Typography} from 'antd';
 
 import Logo from '../../img/logo.png';
 import LoginBackground from '../../img/login_Background.png';
-import HttpsRedirect from 'react-https-redirect';
 
 import './Login.less';
 
@@ -22,7 +21,6 @@ const LoginPage = withRouter(
     }, [keycloak]);
 
     return (
-      <HttpsRedirect>
         <Layout>
           <Content>
             <Row>
@@ -46,7 +44,6 @@ const LoginPage = withRouter(
             </Row>
           </Content>
         </Layout>
-      </HttpsRedirect>
     );
   })
 );
