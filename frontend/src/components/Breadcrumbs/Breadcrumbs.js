@@ -17,7 +17,7 @@ const breadcrumbNameMap = {
 // The regex must be simple
 const breadcrumbDynamicMap = {
   '/projects/(\\d+)/edit': (name) => `Edit project ${name}`,
-  '/projects/(\\d+)': (name) => name || "Project details",
+  '/projects/(\\d+)': (name) => name || 'Project details',
   '/clients/(\\d+)/edit': (name) => `Edit client ${name}`,
 };
 

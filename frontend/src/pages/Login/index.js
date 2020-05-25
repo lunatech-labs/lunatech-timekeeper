@@ -21,29 +21,29 @@ const LoginPage = withRouter(
     }, [keycloak]);
 
     return (
-        <Layout>
-          <Content>
-            <Row>
-              <Col className="login_LeftPart" span={9}>
-                <div className="logo_Tk">
-                  <img src={Logo} alt=""/>
-                </div>
-                <div className="title_Tk">
-                  <Title>Simple time tracking. Powerful reporting.</Title>
-                  <Paragraph>Turn your team on to productivity.</Paragraph>
-                </div>
+      <Layout>
+        <Content>
+          <Row>
+            <Col className="login_LeftPart" span={9}>
+              <div className="logo_Tk">
+                <img src={Logo} alt=""/>
+              </div>
+              <div className="title_Tk">
+                <Title>Simple time tracking. Powerful reporting.</Title>
+                <Paragraph>Turn your team on to productivity.</Paragraph>
+              </div>
 
-                <Button type="primary" onClick={login} danger>
+              <Button type="primary" onClick={login} danger>
                                     Login
-                </Button>
+              </Button>
 
-              </Col>
-              <Col className="login_RightPart" span={15}>
-                <img src={LoginBackground} alt=""/>
-              </Col>
-            </Row>
-          </Content>
-        </Layout>
+            </Col>
+            <Col className="login_RightPart" span={15}>
+              <img src={LoginBackground} alt=""/>
+            </Col>
+          </Row>
+        </Content>
+      </Layout>
     );
   })
 );
