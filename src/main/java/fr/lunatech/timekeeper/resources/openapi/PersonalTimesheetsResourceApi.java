@@ -1,5 +1,6 @@
 package fr.lunatech.timekeeper.resources.openapi;
 
+import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import fr.lunatech.timekeeper.services.responses.WeekResponse;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -14,6 +15,26 @@ import java.util.List;
 
 @Path("/my")
 public interface PersonalTimesheetsResourceApi {
+
+    @GET
+    @Path("/timeSheets")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Retrieve timeSheets",
+            description = "Retrieve timeSheets, with details about TimeSheets")
+    @Tag(ref = "personalTimeEntry")
+    @APIResponses(value = {
+            @APIResponse(
+                    responseCode = "200",
+                    description = "TimeSheet successfully retrieved"
+            ),
+            @APIResponse(
+                    responseCode = "404",
+                    description = "No timeSheet for this user"),
+            @APIResponse(
+                    responseCode = "403",
+                    description = "Invalid JWT token")
+    })
+    List<TimeSheetResponse> getAllTimeSheet();
 
     @GET
     @Path("/currentWeek")
