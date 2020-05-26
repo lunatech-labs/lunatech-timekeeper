@@ -47,6 +47,7 @@ public class TimeSheetService {
         try {
             timeSheet.persistAndFlush();
         } catch (PersistenceException pe) {
+            pe.printStackTrace();
             throw new CreateResourceException(String.format("Timesheet was not created due to constraint violation"));
         }
         return timeSheet.id;
