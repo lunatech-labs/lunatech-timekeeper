@@ -45,10 +45,6 @@ public final class AuthenticationContext {
         return Objects.equals(getOrganization().id, user.organization.id);
     }
 
-    Boolean canAccess(@NotNull TimeSheet timesheet) {
-        return Objects.equals(userId, timesheet.owner.id);
-    }
-
     static AuthenticationContext bind(@NotNull User user) {
         return new AuthenticationContext(user.id, user.organization, user.profiles);
     }
