@@ -45,7 +45,7 @@ public class TimeSheet extends PanacheEntityBase {
     public String durationUnit; // DAYS
 
     // -------------------------------
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "timeSheet")
     public List<TimeEntry> entries;
 
 }

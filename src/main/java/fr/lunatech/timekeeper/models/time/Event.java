@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
  * - company event like HackBreakfast
  */
 @Entity
-@Table(name = "time_entry")
+@Table(name = "events")
 public class Event extends PanacheEntityBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
