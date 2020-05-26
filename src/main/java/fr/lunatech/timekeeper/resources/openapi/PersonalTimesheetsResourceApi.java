@@ -18,7 +18,7 @@ public interface PersonalTimesheetsResourceApi {
     @GET
     @Path("/currentWeek")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Retrieve the current Week",
+    @Operation(summary = "Retrieve the current Week for you",
             description = "Retrieve the current week, with details about TimeSheets and Events")
     @Tag(ref = "personalTimeEntry")
     @APIResponses(value = {
@@ -38,7 +38,7 @@ public interface PersonalTimesheetsResourceApi {
     @GET
     @Path("/currentMonth")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Retrieve the current Mont",
+    @Operation(summary = "Retrieve the current Month for you",
             description = "Retrieve the current mont, with details about TimeSheets and Events")
     @Tag(ref = "personalTimeEntry")
     @APIResponses(value = {

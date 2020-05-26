@@ -29,7 +29,7 @@ public class PersonalTimesheetsResource implements PersonalTimesheetsResourceApi
     @Override
     public WeekResponse getCurrentWeek() {
         final var ctx = authentication.context();
-        return weekService.getCurrentWeek(ctx.getUserId())
+        return weekService.getCurrentWeek(ctx)
                 .orElseThrow(NotFoundException::new);
     }
 

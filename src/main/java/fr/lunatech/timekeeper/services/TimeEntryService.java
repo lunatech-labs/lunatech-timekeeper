@@ -1,6 +1,7 @@
 package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.time.TimeEntry;
+import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.services.requests.TimeEntryRequest;
 import org.slf4j.Logger;
@@ -16,16 +17,12 @@ import javax.validation.constraints.NotNull;
 public class TimeEntryService {
     private static Logger logger = LoggerFactory.getLogger(TimeEntryService.class);
 
-    @Inject
-    UserService userService;
-
-    @Inject
-    TimeSheetService timeSheetService;
 
     @Transactional
     public Long createTimeEntry(Long timeSheetId, TimeEntryRequest request, AuthenticationContext ctx, Enum TimeUnit) {
         logger.debug("Create a new TimeEntry with {}, {}", request, ctx);
-        final TimeEntry timeEntry = request.unbind( timeSheetId, timeSheetService::findById, ctx);
+        // TODO check that the user can create the timeEntry for this timesheet
+        final TimeEntry timeEntry = request.unbind( timeSheetId, TimeSheet::findByIdOptional, ctx);
         try {
             timeEntry.persistAndFlush();
         } catch (PersistenceException pe) {
