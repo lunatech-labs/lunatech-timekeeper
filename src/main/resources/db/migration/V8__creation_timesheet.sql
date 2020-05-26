@@ -1,7 +1,7 @@
-create table events
+create table user_events
 (
     id int8 not null
-        constraint events_pkey
+        constraint user_events_pkey
             primary key,
     description varchar(255),
     enddatetime timestamp(6),
@@ -35,9 +35,6 @@ create table timeentries
     comment varchar(255),
     enddatetime timestamp(6),
     startdatetime timestamp(6),
-    user_id int8 not null
-        constraint fk_timeentries_users
-            references users,
     timesheet_id int8 not null
         constraint fk_timeentries_timesheets
             references timesheets

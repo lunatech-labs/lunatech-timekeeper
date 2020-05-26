@@ -52,16 +52,18 @@ public class ProjectService {
 
     @Transactional
     public Long create(ProjectRequest request, AuthenticationContext ctx) {
-        logger.debug("Create a new project with {}, {}", request, ctx);
+        logger.info("Create a new project with {}, {}", request, ctx);
         final Project project = request.unbind(clientService::findById, userService::findById, ctx);
         try {
             project.persistAndFlush();
         } catch (PersistenceException pe) {
-            pe.printStackTrace();
             throw new CreateResourceException(String.format("Project was not created due to constraint violation"));
         }
         Stream<TimeSheetRequest> timeSheetRequests = project.users.stream().map(user -> new TimeSheetRequest(project.id, user.user.id, TimeUnit.HOURLY, project.billable, null, null, TimeUnit.HOURLY));
-        timeSheetRequests.forEach(timeSheetRequest -> timeSheetService.createTimeSheet(timeSheetRequest, ctx));
+        timeSheetRequests.forEach(timeSheetRequest -> {
+            var createdId = timeSheetService.createTimeSheet(timeSheetRequest, ctx);
+            System.out.println(" ⭐ yolo "+createdId);
+        });
         return project.id;
     }
 

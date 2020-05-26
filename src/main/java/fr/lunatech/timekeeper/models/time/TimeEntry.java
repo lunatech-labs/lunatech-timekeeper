@@ -1,6 +1,7 @@
 package fr.lunatech.timekeeper.models.time;
 
 import fr.lunatech.timekeeper.models.User;
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
@@ -9,11 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "timeentries")
-public class TimeEntry extends PanacheEntityBase {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+public class TimeEntry extends PanacheEntity {
 
     public Boolean billable;
 
@@ -23,11 +20,6 @@ public class TimeEntry extends PanacheEntityBase {
     @ManyToOne
     @JoinColumn(name = "timeSheet_id", nullable = false)
     public TimeSheet timeSheet;
-
-    // ??? pas forcément nécessaire
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    public User owner;
 
     @NotNull
     public LocalDateTime startDateTime;

@@ -40,12 +40,11 @@ public class TimeSheetService {
 
     @Transactional
     Long createTimeSheet(TimeSheetRequest request, AuthenticationContext ctx) {
-        logger.debug("Create a new timesheet with {}, {}", request, ctx);
+        logger.info("Create a new timesheet with {}, {}", request, ctx);
         final TimeSheet timeSheet = request.unbind(projectService::findById, userService::findById, ctx);
         try {
             timeSheet.persistAndFlush();
         } catch (PersistenceException pe) {
-            pe.printStackTrace();
             throw new CreateResourceException(String.format("Timesheet was not created due to constraint violation"));
         }
         return timeSheet.id;

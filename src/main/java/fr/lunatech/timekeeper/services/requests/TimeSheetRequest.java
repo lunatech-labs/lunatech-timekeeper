@@ -91,4 +91,17 @@ public class TimeSheetRequest {
     public TimeUnit getDurationUnit() {
         return durationUnit;
     }
+
+    @Override
+    public String toString() {
+        return "TimeSheetRequest{" +
+                "projectId=" + projectId +
+                ", ownerId=" + ownerId +
+                ", timeUnit=" + timeUnit +
+                ", defaultIsBillable=" + defaultIsBillable +
+                ", expirationDate=" + expirationDate +
+                ", maxDuration=" + maxDuration +
+                ", durationUnit=" + durationUnit +
+                '}';
+    }
 }

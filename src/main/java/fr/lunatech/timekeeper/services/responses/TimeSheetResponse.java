@@ -16,8 +16,6 @@ public class TimeSheetResponse {
 
     public Long ownerId;
 
-    private String timeUnit;
-
     public Boolean defaultIsBillable;
 
     public LocalDate expirationDate;
@@ -28,11 +26,10 @@ public class TimeSheetResponse {
 
     public List<TimeEntryResponse> entries;
 
-    public TimeSheetResponse(Long id, ProjectResponse project, UserResponse owner, String timeUnit, Boolean defaultIsBillable, LocalDate expirationDate, Integer maxDuration, String durationUnit, List<TimeEntryResponse> entries) {
+    public TimeSheetResponse(Long id, ProjectResponse project, UserResponse owner, Boolean defaultIsBillable, LocalDate expirationDate, Integer maxDuration, String durationUnit, List<TimeEntryResponse> entries) {
         this.id = id;
         this.project = project;
         this.ownerId = owner.getId();
-        this.timeUnit = timeUnit;
         this.defaultIsBillable = defaultIsBillable;
         this.expirationDate = expirationDate;
         this.maxDuration = maxDuration;
@@ -45,7 +42,6 @@ public class TimeSheetResponse {
                 sheet.id,
                 ProjectResponse.bind(sheet.project),
                 UserResponse.bind(sheet.owner),
-                sheet.timeUnit.name(),
                 sheet.defaultIsBillable,
                 sheet.expirationDate,
                 sheet.maxDuration,
