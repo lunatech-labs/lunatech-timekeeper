@@ -40,7 +40,7 @@ public class OrganizationService {
 
     @Transactional
     public Long create(OrganizationRequest request, AuthenticationContext ctx) {
-        logger.info("Create a new organization with {}, {}", request, ofNullable(ctx).map(AuthenticationContext::toString).orElse("No context"));
+        logger.debug("Create a new organization with {}, {}", request, ofNullable(ctx).map(AuthenticationContext::toString).orElse("No context"));
         final Organization organization = request.unbind(ctx);
         organization.persist();
         return organization.id;
@@ -48,7 +48,7 @@ public class OrganizationService {
 
     @Transactional
     public Optional<Long> update(Long id, OrganizationRequest request, AuthenticationContext ctx) {
-        logger.info("Modify organization for id={} with {}, {}", id, request, ctx);
+        logger.debug("Modify organization for id={} with {}, {}", id, request, ctx);
         return findById(id, ctx)
                 .map(organization -> request.unbind(organization, ctx))
                 .map(organization -> organization.id);

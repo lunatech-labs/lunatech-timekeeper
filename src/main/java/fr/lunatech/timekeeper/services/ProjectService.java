@@ -26,11 +26,10 @@ import java.util.stream.Stream;
 
 @ApplicationScoped
 public class ProjectService {
+    private static Logger logger = LoggerFactory.getLogger(ProjectService.class);
 
     @Inject
     UserTransaction transaction;
-
-    private static Logger logger = LoggerFactory.getLogger(ProjectService.class);
 
     @Inject
     ClientService clientService;
