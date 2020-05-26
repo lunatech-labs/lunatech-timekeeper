@@ -1,6 +1,6 @@
 package fr.lunatech.timekeeper.models.time;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -16,12 +16,8 @@ import java.time.LocalDateTime;
  * - company event like HackBreakfast
  */
 @Entity
-@Table(name = "time_entry")
-public class UserEvent extends PanacheEntityBase {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
-
+@Table(name = "user_events")
+public class UserEvent extends PanacheEntity {
     @NotNull
     public String description;
 

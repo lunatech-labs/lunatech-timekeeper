@@ -29,6 +29,7 @@ import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.putValidation;
+import static fr.lunatech.timekeeper.resources.utils.TestUtils.*;
 import static fr.lunatech.timekeeper.resources.utils.TestUtils.toJson;
 import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.Response.Status.*;
@@ -112,7 +113,7 @@ class ProjectResourceTest {
         final var project11 = create(new ProjectRequest("Some Project 11", false, "other description", client1.getId(), true, emptyList()), adminToken);
         final var project20 = create(new ProjectRequest("Some Project 20", true, "some description", client2.getId(), true, emptyList()), adminToken);
 
-        getValidation(ProjectDef.uri, userToken, OK).body(is(TestUtils.listOfTasJson(project10, project11, project20)));
+        getValidation(ProjectDef.uri, userToken, OK).body(is(listOfTasJson(project10, project11, project20)));
     }
 
     @Test
@@ -231,7 +232,6 @@ class ProjectResourceTest {
 
     @Test
     void shouldCreateTimeSheetForProjectMembers() {
-        RestAssured.defaultParser = Parser.JSON;
         // GIVEN
         final String adminToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
@@ -248,11 +248,29 @@ class ProjectResourceTest {
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
 
         // THEN`
-        final var expectedTimeSheetSam = new TimeSheetResponse(4L, project, sam, TimeUnit.HOURLY.toString(), true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(5L, project, jimmy, TimeUnit.HOURLY.toString(), true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetSam = new TimeSheetResponse(8L, project, sam, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, project, jimmy, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
-        getValidation(TimeSheetDef.uri, adminToken, OK);/*.body(CoreMatchers.hasItems(toJson(expectedTimeSheetSam), toJson(expectedTimeSheetJimmy)));*/
+
+        getValidation(TimeSheetDef.uri, adminToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetSam))));
+        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetJimmy))));
 
     }
 
+    @Test
+    void shouldNotCreateTimeSheetForNonProjectMembers() {
+        // GIVEN
+        final String adminToken = getAdminAccessToken();
+        final String jimmyToken = getUserAccessToken();
+
+        final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
+
+        List<ProjectRequest.ProjectUserRequest> newUsers = Collections.emptyList();
+
+        final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
+
+        // THEN
+        getValidation(TimeSheetDef.uri, adminToken, OK).body(is("[]"));
+        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is("[]"));
+    }
 }
