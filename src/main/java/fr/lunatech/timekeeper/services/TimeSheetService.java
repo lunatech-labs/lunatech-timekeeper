@@ -34,7 +34,7 @@ public class TimeSheetService {
         return TimeSheet.findByIdOptional(id);
     }
 
-    public List<TimeSheetResponse> listAllResponses(AuthenticationContext ctx) {
+    public List<TimeSheetResponse> findAll(AuthenticationContext ctx) {
         return streamAll(ctx, TimeSheetResponse::bind, Collectors.toList());
     }
 
@@ -50,6 +50,7 @@ public class TimeSheetService {
         return timeSheet.id;
     }
 
+    // FIXME : It doesn't test if it is active
     public List<TimeSheetResponse> findAllActivesForUser(AuthenticationContext ctx){
         return streamAll(ctx, TimeSheetResponse::bind, Collectors.toList());
     }
