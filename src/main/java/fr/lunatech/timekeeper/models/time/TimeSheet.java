@@ -42,7 +42,7 @@ public class TimeSheet extends PanacheEntityBase {
     public Integer maxDuration; // eg 21
 
     @Null
-    public String durationUnit; // DAYS
+    public TimeUnit durationUnit; // DAYS
 
     // -------------------------------
     @OneToMany(cascade = CascadeType.ALL)
