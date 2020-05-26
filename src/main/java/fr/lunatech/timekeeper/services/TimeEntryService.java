@@ -10,6 +10,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
+import javax.validation.constraints.NotNull;
 
 @ApplicationScoped
 public class TimeEntryService {
@@ -22,9 +23,9 @@ public class TimeEntryService {
     TimeSheetService timeSheetService;
 
     @Transactional
-    public Long createTimeEntry(TimeEntryRequest request, AuthenticationContext ctx, Enum TimeUnit) {
+    public Long createTimeEntry(Long timeSheetId, TimeEntryRequest request, AuthenticationContext ctx, Enum TimeUnit) {
         logger.debug("Create a new TimeEntry with {}, {}", request, ctx);
-        final TimeEntry timeEntry = request.unbind( timeSheetService::findById, ctx);
+        final TimeEntry timeEntry = request.unbind( timeSheetId, timeSheetService::findById, ctx);
         try {
             timeEntry.persistAndFlush();
         } catch (PersistenceException pe) {

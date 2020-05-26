@@ -25,7 +25,7 @@ public class TimeSheet extends PanacheEntityBase {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @Null
+    @NotNull
     public User owner;
 
     @Enumerated(EnumType.STRING)

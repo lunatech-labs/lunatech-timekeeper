@@ -23,10 +23,6 @@ public class TimeEntry extends PanacheEntityBase {
     @ManyToOne(targetEntity = TimeSheet.class, cascade = CascadeType.DETACH)
     public TimeSheet timeSheet;
 
-    // ??? pas forcément nécessaire
-    @ManyToOne(targetEntity = User.class, cascade = CascadeType.DETACH)
-    public User owner;
-
     @NotNull
     public LocalDateTime startDateTime;
 

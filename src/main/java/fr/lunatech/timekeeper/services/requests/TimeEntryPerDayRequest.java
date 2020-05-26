@@ -24,25 +24,21 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
     private final Boolean billable;
 
     @NotNull
-    private final Long timeSheetId;
-
-    @NotNull
     private final LocalDate date;
 
     @JsonbCreator
     public TimeEntryPerDayRequest(
             @NotBlank String comment,
             @NotNull Boolean billable,
-            @NotNull Long timeSheetId,
             @NotNull LocalDate date
     ) {
         this.comment = comment;
         this.billable = billable;
-        this.timeSheetId = timeSheetId;
         this.date = date;
     }
 
     public TimeEntry unbind(
+            @NotNull Long timeSheetId,
             @NotNull Function<Long, Optional<TimeSheet>> findTimeSheet,
             @NotNull AuthenticationContext ctx
     ) {
@@ -51,7 +47,7 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
         timeEntry.comment = getComment();
         timeEntry.startDateTime = this.date.atStartOfDay();
         timeEntry.endDateTime = null ;
-        timeEntry.timeSheet = findTimeSheet.apply(getTimeSheetId()).orElseThrow(() -> new IllegalEntityStateException("TimeSheet not found for id " + getTimeSheetId()));
+        timeEntry.timeSheet = findTimeSheet.apply(timeSheetId).orElseThrow(() -> new IllegalEntityStateException("TimeSheet not found for id " + timeSheetId));
         return timeEntry;
     }
 
@@ -63,10 +59,6 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
         return billable;
     }
 
-    public Long getTimeSheetId() {
-        return timeSheetId;
-    }
-
     public LocalDate getDate() {
         return date;
     }
@@ -76,7 +68,6 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
         return "TimeEntryPerDayRequest{" +
                 "comment='" + comment + '\'' +
                 ", billable=" + billable +
-                ", timeSheetId=" + timeSheetId +
                 ", date='" + date +
                 '}';
     }
