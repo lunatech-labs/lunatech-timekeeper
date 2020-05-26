@@ -1,6 +1,5 @@
 package fr.lunatech.timekeeper.services.responses;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 
@@ -50,7 +49,7 @@ public class TimeSheetResponse {
                 sheet.defaultIsBillable,
                 sheet.expirationDate,
                 sheet.maxDuration,
-                sheet.durationUnit,
+                sheet.durationUnit.name(),
                 sheet.entries.stream().map(TimeSheetResponse.TimeEntryResponse::bind)
                         .collect(Collectors.toList())
         );
