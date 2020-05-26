@@ -60,10 +60,7 @@ public class ProjectService {
             throw new CreateResourceException(String.format("Project was not created due to constraint violation"));
         }
         Stream<TimeSheetRequest> timeSheetRequests = project.users.stream().map(user -> new TimeSheetRequest(project.id, user.user.id, TimeUnit.HOURLY, project.billable, null, null, TimeUnit.HOURLY));
-        timeSheetRequests.forEach(timeSheetRequest -> {
-            var createdId = timeSheetService.createTimeSheet(timeSheetRequest, ctx);
-            System.out.println(" ⭐ yolo "+createdId);
-        });
+        timeSheetRequests.forEach(timeSheetRequest -> timeSheetService.createTimeSheet(timeSheetRequest, ctx));
         return project.id;
     }
 
