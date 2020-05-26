@@ -1,7 +1,8 @@
 package fr.lunatech.timekeeper.timeutils;
 
 import fr.lunatech.timekeeper.models.User;
-import fr.lunatech.timekeeper.models.time.Event;
+import fr.lunatech.timekeeper.models.time.UserEvent;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -13,6 +14,6 @@ public class Week {
 
     public User owner;
 
-    public List<Event> events;
+    public List<UserEvent> userEvents;
 
 }

@@ -1,6 +1,6 @@
 package fr.lunatech.timekeeper.services.responses;
 
-import fr.lunatech.timekeeper.models.time.Event;
+import fr.lunatech.timekeeper.models.time.UserEvent;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.timeutils.Week;
 
@@ -16,24 +16,24 @@ public final class WeekResponse {
     private final LocalDate firstDayOfWeek;
 
     @NotNull
-    private final List<Event> events;
+    private final List<UserEvent> userEvents;
 
     private final List<TimeSheetResponse> sheets;
 
     public WeekResponse(
             @NotBlank LocalDate firstDayOfWeek,
-            @NotNull List<Event> events,
+            @NotNull List<UserEvent> userEvents,
             @NotNull List<TimeSheetResponse> sheets
     ) {
         this.firstDayOfWeek = firstDayOfWeek;
-        this.events = events;
+        this.userEvents = userEvents;
         this.sheets = sheets;
     }
 
     public static WeekResponse bind(@NotNull Week week, List<TimeSheet> sheets) {
         return new WeekResponse(
                 week.firstDayOfWeek,
-                week.events,
+                week.userEvents,
                 sheets.stream()
                 .map(TimeSheetResponse::bind)
                 .collect(Collectors.toList())
@@ -44,8 +44,8 @@ public final class WeekResponse {
         return firstDayOfWeek;
     }
 
-    public List<Event> getEvents() {
-        return events;
+    public List<UserEvent> getUserEvents() {
+        return userEvents;
     }
 
     public List<TimeSheetResponse> getSheets() {
