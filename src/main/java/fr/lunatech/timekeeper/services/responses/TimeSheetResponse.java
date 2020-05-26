@@ -57,7 +57,7 @@ public class TimeSheetResponse {
                 sheet.defaultIsBillable,
                 sheet.expirationDate,
                 sheet.maxDuration,
-                sheet.durationUnit,
+                sheet.durationUnit.name(),
                 sheet.entries.stream().map(TimeSheetResponse.TimeEntryResponse::bind)
                         .collect(Collectors.toList())
         );
