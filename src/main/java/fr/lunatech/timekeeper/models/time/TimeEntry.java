@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "timeentry")
+@Table(name = "timeentries")
 public class TimeEntry extends PanacheEntityBase {
 
     @Id
@@ -20,11 +20,13 @@ public class TimeEntry extends PanacheEntityBase {
     @Column(name = "comment", length = 255)
     public String comment;
 
-    @ManyToOne(targetEntity = TimeSheet.class, cascade = CascadeType.DETACH)
+    @ManyToOne
+    @JoinColumn(name = "timeSheet_id", nullable = false)
     public TimeSheet timeSheet;
 
     // ??? pas forcément nécessaire
-    @ManyToOne(targetEntity = User.class, cascade = CascadeType.DETACH)
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     public User owner;
 
     @NotNull
