@@ -1,11 +1,11 @@
 import React from 'react';
-import MainPage from '../MainPage/MainPage';
-import ShowProject from '../../components/Projects/ShowProject';
-import {useTimeKeeperAPI} from '../../utils/services';
+import MainPage from 'pages/MainPage/MainPage';
+import ShowProject from 'components/Projects/ShowProject';
+import {useTimeKeeperAPI} from 'utils/services';
 import {Alert, Button} from 'antd';
 import {Link, useRouteMatch} from 'react-router-dom';
 import EditOutlined from '@ant-design/icons/lib/icons/EditOutlined';
-import '../../components/Button/BtnGeneral.less';
+import 'components/Button/BtnGeneral.less';
 
 const DetailProjectPage = () => {
 

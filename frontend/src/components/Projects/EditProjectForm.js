@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, Avatar, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin, Row, Col} from 'antd';
-import {useTimeKeeperAPI, useTimeKeeperAPIPut} from '../../utils/services';
+import {useTimeKeeperAPI, useTimeKeeperAPIPut} from 'utils/services';
 import {Link, Redirect, useRouteMatch} from 'react-router-dom';
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined';
 import PropTypes from 'prop-types';
 import './EditProjectForm.less';
-import TitleSection from '../Title/TitleSection';
+import TitleSection from 'components/Title/TitleSection';
 import {CheckOutlined, CloseOutlined} from '@ant-design/icons';
-import '../../components/Button/BtnGeneral.less';
+import 'components/Button/BtnGeneral.less';
 
 
 const {TextArea} = Input;

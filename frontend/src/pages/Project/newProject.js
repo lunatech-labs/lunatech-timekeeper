@@ -1,7 +1,7 @@
 import React from 'react';
 
-import MainPage from '../MainPage/MainPage';
-import NewProjectForm from '../../components/Projects/NewProjectForm';
+import MainPage from 'pages/MainPage/MainPage';
+import NewProjectForm from 'components/Projects/NewProjectForm';
 
 const NewProjectPage = () => {
   return (

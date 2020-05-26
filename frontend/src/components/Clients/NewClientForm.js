@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, Button, Form, Input, message} from 'antd';
 import {Link, Redirect} from 'react-router-dom';
-import {useTimeKeeperAPIPost} from '../../utils/services';
+import {useTimeKeeperAPIPost} from 'utils/services';
 import Space from 'antd/lib/space';
 import {CheckOutlined, CloseOutlined} from '@ant-design/icons';
-import '../../components/Button/BtnGeneral.less';
+import 'components/Button/BtnGeneral.less';
 
 const {TextArea} = Input;
 

@@ -2,7 +2,7 @@ import React from 'react';
 import {Avatar, Menu, Dropdown} from 'antd';
 import './HeaderProfile.less';
 import {useKeycloak} from '@react-keycloak/web';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
 const HeaderProfile = ({ user }) => {
 
@@ -22,7 +22,7 @@ const HeaderProfile = ({ user }) => {
         {!!keycloak.authenticated && (
           <a onClick={() => keycloak.logout()}>Logout</a>
         )}
-        </Menu.Item>
+      </Menu.Item>
     </Menu>
   );
 

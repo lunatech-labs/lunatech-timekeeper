@@ -1,6 +1,6 @@
 import React from 'react';
 import ShowUserPage from './ShowUserPage.jsx';
-import MainPage from '../MainPage/MainPage';
+import MainPage from 'pages/MainPage/MainPage';
 
 const HomePage = () => {
   return (

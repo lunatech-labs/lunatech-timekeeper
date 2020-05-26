@@ -1,9 +1,9 @@
 import React from 'react';
 import {Alert, Avatar, Spin, Table} from 'antd';
-import {useTimeKeeperAPI} from '../../utils/services';
+import {useTimeKeeperAPI} from 'utils/services';
 import './UserList.less';
 import Button from 'antd/lib/button';
-import TagMember from '../Tag/TagMember';
+import TagMember from 'components/Tag/TagMember';
 
 const UserList = () => {
   const usersResponse = useTimeKeeperAPI('/api/users');

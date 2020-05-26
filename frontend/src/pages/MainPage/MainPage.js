@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import {Alert, Layout, Typography} from 'antd';
 import './MainPage.less';
-import Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs';
-import SidebarLeft from '../../components/SidebarLeft/SidebarLeft';
-import TopBar from '../../components/TopBar/TopBar';
+import Breadcrumbs from 'components/Breadcrumbs/Breadcrumbs';
+import SidebarLeft from 'components/SidebarLeft/SidebarLeft';
+import TopBar from 'components/TopBar/TopBar';
 import PropTypes from 'prop-types';
-import {useTimeKeeperAPI} from '../../utils/services';
+import {useTimeKeeperAPI} from 'utils/services';
 
 
 const { Title } = Typography;

@@ -1,7 +1,7 @@
 import React from 'react';
 
-import NewClientForm from '../../components/Clients/NewClientForm.js';
-import MainPage from '../MainPage/MainPage';
+import NewClientForm from 'components/Clients/NewClientForm.js';
+import MainPage from 'pages/MainPage/MainPage';
 
 const NewClientPage = () => {
   return (

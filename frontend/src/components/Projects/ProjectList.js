@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Alert, Avatar, Button, Card, Collapse, Divider, Dropdown, List, Menu, Spin} from 'antd';
-import logo from '../../img/logo_timekeeper_homepage.png';
-import {useTimeKeeperAPI} from '../../utils/services';
+import logo from 'img/logo_timekeeper_homepage.png';
+import {useTimeKeeperAPI} from 'utils/services';
 import EditFilled from '@ant-design/icons/lib/icons/EditFilled';
 import UserOutlined from '@ant-design/icons/lib/icons/UserOutlined';
 import LockFilled from '@ant-design/icons/lib/icons/LockFilled';
@@ -15,7 +15,7 @@ import Meta from 'antd/lib/card/Meta';
 import './ProjectList.less';
 import ProjectMemberTag from './ProjectMemberTag';
 import EyeFilled from '@ant-design/icons/lib/icons/EyeFilled';
-import TitleSection from '../Title/TitleSection';
+import TitleSection from 'components/Title/TitleSection';
 import DownOutlined from '@ant-design/icons/lib/icons/DownOutlined';
 import PropTypes from 'prop-types';
 

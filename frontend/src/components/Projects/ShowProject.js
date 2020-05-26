@@ -8,10 +8,10 @@ import {
   UserOutlined,
   LockOutlined,
 } from '@ant-design/icons';
-import TitleSection from '../Title/TitleSection';
-import CardLg from '../Card/CardLg';
-import CardMember from '../Card/CardMember';
-import TagMember from '../Tag/TagMember';
+import TitleSection from 'components/Title/TitleSection';
+import CardLg from 'components/Card/CardLg';
+import CardMember from 'components/Card/CardMember';
+import TagMember from 'components/Tag/TagMember';
 
 const {Title} = Typography;
 

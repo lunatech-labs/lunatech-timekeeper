@@ -1,6 +1,6 @@
 import React from 'react';
-import EditClientForm from '../../components/Clients/EditClientForm';
-import MainPage from '../MainPage/MainPage';
+import EditClientForm from 'components/Clients/EditClientForm';
+import MainPage from 'pages/MainPage/MainPage';
 
 
 const EditClientPage = () => {

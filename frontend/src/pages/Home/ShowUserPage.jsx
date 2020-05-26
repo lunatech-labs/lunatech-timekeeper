@@ -1,8 +1,8 @@
 import React from 'react';
 import {Alert} from 'antd';
-import ShowUser from '../../components/Users/ShowUser';
+import ShowUser from 'components/Users/ShowUser';
 import './index.less';
-import {useTimeKeeperAPI} from '../../utils/services';
+import {useTimeKeeperAPI} from 'utils/services';
 
 const ShowUserPage = () => {
 

@@ -1,8 +1,8 @@
 import React  from 'react';
 import {Layout} from 'antd';
 import './SidebarLeft.less';
-import Logo from '../Logo/Logo';
-import MenuSidebar from '../MenuSidebar/MenuSidebar';
+import Logo from 'components/Logo/Logo';
+import MenuSidebar from 'components/MenuSidebar/MenuSidebar';
 import PropTypes from 'prop-types';
 
 const { Sider } = Layout;

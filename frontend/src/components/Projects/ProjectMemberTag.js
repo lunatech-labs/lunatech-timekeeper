@@ -2,7 +2,7 @@ import React from 'react';
 import './ProjectMemberTag.less';
 import PropTypes from 'prop-types';
 import {Avatar} from 'antd';
-import TagMember from '../Tag/TagMember';
+import TagMember from 'components/Tag/TagMember';
 
 const ProjectMemberTag = ({ member }) => {
   return (
