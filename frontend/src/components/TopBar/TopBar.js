@@ -3,8 +3,8 @@ import {MenuUnfoldOutlined, MenuFoldOutlined, BellOutlined} from '@ant-design/ic
 import {Layout, Avatar, Badge} from 'antd';
 import './TopBar.less';
 import PropTypes from 'prop-types';
-import OrganizationPictureFR from '../../img/organization_icon_fr.png';
-import OrganizationPictureNL from '../../img/organization_icon_nl.png';
+import OrganizationPictureFR from 'img/organization_icon_fr.png';
+import OrganizationPictureNL from 'img/organization_icon_nl.png';
 import HeaderProfile from './HeaderProfile';
 
 const { Header } = Layout;
@@ -50,6 +50,7 @@ const TopBar = ({ collapsed, toggle, user }) => {
 TopBar.propTypes = {
   collapsed: PropTypes.bool.isRequired,
   toggle: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired
 };
 
 export default TopBar;
