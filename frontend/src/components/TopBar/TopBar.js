@@ -1,14 +1,11 @@
 import React, {useState} from 'react';
-import {
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
-  BellOutlined,
-} from '@ant-design/icons';
+import {MenuUnfoldOutlined, MenuFoldOutlined, BellOutlined} from '@ant-design/icons';
 import {Layout, Avatar, Badge} from 'antd';
 import './TopBar.less';
 import PropTypes from 'prop-types';
 import OrganizationPictureFR from '../../img/organization_icon_fr.png';
 import OrganizationPictureNL from '../../img/organization_icon_nl.png';
+import HeaderProfile from './HeaderProfile';
 
 const { Header } = Layout;
 
@@ -17,14 +14,6 @@ const TopBar = ({ collapsed, toggle, user }) => {
 
   const alertChangeState = () => {
     setAlert(!alert);
-  };
-
-  const displayProfile = (profiles) => {
-    if(profiles.includes('Admin')){
-      return 'Admin';
-    } else {
-      return 'User';
-    }
   };
 
   const displayOrganizationPicture = (email) => {
@@ -51,13 +40,9 @@ const TopBar = ({ collapsed, toggle, user }) => {
             <BellOutlined />
           </Badge>
         </div>
-        <div className="tk_Header_Profile">
-          <Avatar src={user.picture} />
-          <p>{user.name}<br/><span>{displayProfile(user.profiles)}</span></p>
-        </div>
+        <HeaderProfile user={user} />
         <Avatar shape="square" size="large" src={displayOrganizationPicture(user.email)} />
       </div>
-
     </Header>
   );
 };
@@ -65,7 +50,6 @@ const TopBar = ({ collapsed, toggle, user }) => {
 TopBar.propTypes = {
   collapsed: PropTypes.bool.isRequired,
   toggle: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired
 };
 
 export default TopBar;

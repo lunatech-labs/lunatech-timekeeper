@@ -4,6 +4,7 @@ import {Link, Redirect} from 'react-router-dom';
 import {useTimeKeeperAPIPost} from '../../utils/services';
 import Space from 'antd/lib/space';
 import {CheckOutlined, CloseOutlined} from '@ant-design/icons';
+import '../../components/Button/BtnGeneral.less';
 
 const {TextArea} = Input;
 
