@@ -2,14 +2,11 @@ import React, {useEffect, useState} from 'react';
 import {Link, Redirect} from 'react-router-dom';
 import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
 import {Alert, Avatar, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin, Row, Col, Tooltip} from 'antd';
-import {
-  DeleteFilled,
-  CloseOutlined,
-  CheckOutlined,
-} from '@ant-design/icons';
+import {DeleteFilled, CloseOutlined, CheckOutlined} from '@ant-design/icons';
 import './NewProjectForm.less';
 import PropTypes from 'prop-types';
 import TitleSection from '../Title/TitleSection';
+import '../../components/Button/BtnGeneral.less';
 
 
 const {TextArea} = Input;

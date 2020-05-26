@@ -5,6 +5,7 @@ import {useTimeKeeperAPI} from '../../utils/services';
 import {Alert, Button} from 'antd';
 import {Link, useRouteMatch} from 'react-router-dom';
 import EditOutlined from '@ant-design/icons/lib/icons/EditOutlined';
+import '../../components/Button/BtnGeneral.less';
 
 const DetailProjectPage = () => {
 
