@@ -30,14 +30,14 @@ public class PersonalTimesheetsResource implements PersonalTimesheetsResourceApi
     @Inject
     AuthenticationContextProvider authentication;
 
-    @RolesAllowed({"user"})
+    @RolesAllowed({"user", "admin"})
     @Override
     public List<TimeSheetResponse> getAllTimeSheet() {
         final var ctx = authentication.context();
         return timeSheetService.listAllResponses(ctx);
     }
 
-    @RolesAllowed({"user"})
+    @RolesAllowed({"user", "admin"})
     @Override
     public WeekResponse getCurrentWeek() {
         final var ctx = authentication.context();
@@ -45,7 +45,7 @@ public class PersonalTimesheetsResource implements PersonalTimesheetsResourceApi
                 .orElseThrow(NotFoundException::new);
     }
 
-    @RolesAllowed({"user"})
+    @RolesAllowed({"user", "admin"})
     @Override
     public List<WeekResponse> getCurrentMonth() {
         // Recupere les TimeSheets actives

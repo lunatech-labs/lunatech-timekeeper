@@ -57,9 +57,9 @@ public class ProjectService {
         try {
             project.persistAndFlush();
         } catch (PersistenceException pe) {
+            pe.printStackTrace();
             throw new CreateResourceException(String.format("Project was not created due to constraint violation"));
         }
-        System.out.println(request);
         Stream<TimeSheetRequest> timeSheetRequests = project.users.stream().map(user -> new TimeSheetRequest(project.id, user.user.id, TimeUnit.HOURLY, project.billable, null, null, TimeUnit.HOURLY.toString()));
         timeSheetRequests.forEach(timeSheetRequest -> timeSheetService.createTimeSheet(timeSheetRequest, ctx));
         return project.id;

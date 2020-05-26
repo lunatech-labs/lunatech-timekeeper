@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 import javax.inject.Inject;
+import java.util.Collections;
 import java.util.List;
 
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.*;
@@ -225,7 +226,7 @@ class ProjectResourceTest {
     @Test
     void shouldCreateTimeSheetForProjectMembers(){
         // GIVEN
-        final String samToken = getAdminAccessToken();
+        /*final String samToken = getAdminAccessToken();
 
         final var client1 = create(new ClientRequest("Client 1", "New Description 1"), samToken);
 
@@ -235,10 +236,16 @@ class ProjectResourceTest {
 
         final var newUsers = List.of(userRequest1);
 
-        final var project10 = create(new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, newUsers), samToken);
+        final var project10 = create(new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, Collections.emptyList()), samToken);*/
+
+        final String adminToken = getAdminAccessToken();
+        var sam = create(adminToken);
+        final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
+        final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, List.of(new ProjectRequest.ProjectUserRequest(sam.getId(), true))), adminToken);
 
         // THEN
-        getValidation("/api/my/timeSheets", samToken, FOUND);
+        getValidation("/api/my/timeSheets", adminToken, FOUND);
+
     }
 
 }
