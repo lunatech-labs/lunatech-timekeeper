@@ -11,18 +11,11 @@ class TimeExtractorTest {
 
     @Test
     void shouldExtractDuration() {
-        assertEquals(   Duration.parse("PT4H") , TimeExtractor.extractDuration("4h"));
-        assertEquals(   Duration.parse("PT8H") , TimeExtractor.extractDuration("8h"));
-        assertEquals(   Duration.parse("PT8H") , TimeExtractor.extractDuration("1d"));
-        assertEquals(   Duration.parse("PT1H") , TimeExtractor.extractDuration("1h"));
-        assertEquals(   Duration.parse("PT1H30M") , TimeExtractor.extractDuration("1h30mn"));
+        assertEquals(   Duration.parse("PT4H") , TimeExtractor.extractDuration("PT4H"));
+        assertEquals(   Duration.parse("PT8H") , TimeExtractor.extractDuration("PT8H"));
+        assertEquals(   Duration.parse("PT8H") , TimeExtractor.extractDuration("PT8H"));
+        assertEquals(   Duration.parse("PT1H") , TimeExtractor.extractDuration("PT1H"));
+        assertEquals(   Duration.parse("PT1H30M") , TimeExtractor.extractDuration("PT1H30M"));
     }
 
-    @Test
-    void extractStartTime() {
-    }
-
-    @Test
-    void extractEndTime() {
-    }
 }

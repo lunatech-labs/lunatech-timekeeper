@@ -4,12 +4,10 @@ import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.services.AuthenticationContext;
 import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
-import fr.lunatech.timekeeper.timeutils.TimeExtractor;
 
 import javax.json.bind.annotation.JsonbCreator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.Function;
