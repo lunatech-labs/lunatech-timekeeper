@@ -36,9 +36,9 @@ public class TimeSheetRequest {
     public Integer maxDuration; // eg 21
 
     @Null
-    public String durationUnit; // DAYS
+    public TimeUnit durationUnit; // DAYS
 
-    public TimeSheetRequest(@NotNull Long projectId, @NotNull Long ownerId, TimeUnit timeUnit, Boolean defaultIsBillable, @Null LocalDate expirationDate, @Null Integer maxDuration, @Null String durationUnit) {
+    public TimeSheetRequest(@NotNull Long projectId, @NotNull Long ownerId, TimeUnit timeUnit, Boolean defaultIsBillable, @Null LocalDate expirationDate, @Null Integer maxDuration, @Null TimeUnit durationUnit) {
         this.projectId = projectId;
         this.ownerId = ownerId;
         this.timeUnit = timeUnit;
@@ -88,7 +88,7 @@ public class TimeSheetRequest {
         return maxDuration;
     }
 
-    public String getDurationUnit() {
+    public TimeUnit getDurationUnit() {
         return durationUnit;
     }
 }
