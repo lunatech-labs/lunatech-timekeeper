@@ -5,12 +5,16 @@ import fr.lunatech.timekeeper.resources.utils.TestUtils;
 import fr.lunatech.timekeeper.services.requests.ClientRequest;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
+import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
+import fr.lunatech.timekeeper.timeutils.TimeUnit;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.parsing.Parser;
 import org.flywaydb.core.Flyway;
+import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
@@ -20,6 +24,7 @@ import java.util.List;
 
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ProjectDef;
+import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TimeSheetDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
@@ -35,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @QuarkusTestResource(KeycloakTestResource.class)
 @DisabledIfEnvironmentVariable(named = "ENV", matches = "fast-test-only")
 class ProjectResourceTest {
+
 
     @Inject
     Flyway flyway;
@@ -224,27 +230,28 @@ class ProjectResourceTest {
     }
 
     @Test
-    void shouldCreateTimeSheetForProjectMembers(){
+    void shouldCreateTimeSheetForProjectMembers() {
+        RestAssured.defaultParser = Parser.JSON;
         // GIVEN
-        /*final String samToken = getAdminAccessToken();
-
-        final var client1 = create(new ClientRequest("Client 1", "New Description 1"), samToken);
-
-        var sam = create(samToken);
-
-        final var userRequest1 = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
-
-        final var newUsers = List.of(userRequest1);
-
-        final var project10 = create(new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, Collections.emptyList()), samToken);*/
-
         final String adminToken = getAdminAccessToken();
-        var sam = create(adminToken);
-        final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
-        final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, List.of(new ProjectRequest.ProjectUserRequest(sam.getId(), true))), adminToken);
+        final String jimmyToken = getUserAccessToken();
 
-        // THEN
-        getValidation("/api/my/timeSheets", adminToken, FOUND);
+        var sam = create(adminToken);
+        var jimmy = create(jimmyToken);
+        final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
+
+        ProjectRequest.ProjectUserRequest samProjectRequest = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
+        ProjectRequest.ProjectUserRequest jimmyProjectRequest = new ProjectRequest.ProjectUserRequest(jimmy.getId(), false);
+
+        List<ProjectRequest.ProjectUserRequest> newUsers = List.of(samProjectRequest, jimmyProjectRequest);
+
+        final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
+
+        // THEN`
+        final var expectedTimeSheetSam = new TimeSheetResponse(4L, project, sam, TimeUnit.HOURLY.toString(), true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(5L, project, jimmy, TimeUnit.HOURLY.toString(), true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+
+        getValidation(TimeSheetDef.uri, adminToken, OK).body(CoreMatchers.hasItems(toJson(expectedTimeSheetSam), toJson(expectedTimeSheetJimmy)));
 
     }
 

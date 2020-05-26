@@ -58,7 +58,7 @@ public class TimeSheetService {
             Function<TimeSheet, TimeSheetResponse> bind,
             Collector<TimeSheetResponse, ?, R> collector
     ) {
-        try (final Stream<TimeSheet> timesheets = Project.streamAll()) {
+        try (final Stream<TimeSheet> timesheets = TimeSheet.streamAll()) {
             return timesheets
                     .filter(ctx::canAccess)
                     .map(bind)

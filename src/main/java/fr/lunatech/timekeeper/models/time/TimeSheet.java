@@ -15,6 +15,10 @@ import java.util.List;
 @Entity
 @Table(name = "timesheets")
 public class TimeSheet extends PanacheEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Long id;
+
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false)
     @NotNull
