@@ -26,7 +26,7 @@ public class TimeSheet extends PanacheEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @Null
+    @NotNull
     public User owner;
 
     @Enumerated(EnumType.STRING)
@@ -43,7 +43,7 @@ public class TimeSheet extends PanacheEntity {
     public Integer maxDuration; // eg 21
 
     @Null
-    public String durationUnit; // DAYS
+    public TimeUnit durationUnit; // DAYS
 
     // -------------------------------
     @OneToMany(mappedBy = "timeSheet")

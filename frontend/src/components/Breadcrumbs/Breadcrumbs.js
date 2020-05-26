@@ -8,7 +8,8 @@ const breadcrumbNameMap = {
   '/clients/new': 'New client',
   '/users': 'Users',
   '/projects': 'Projects',
-  '/projects/new': 'New project'
+  '/projects/new': 'New project',
+  '/time_entries': 'Time entries'
 };
 
 // The dynamic breadcrumb must be used for an exact pathname only.
@@ -16,7 +17,7 @@ const breadcrumbNameMap = {
 // The regex must be simple
 const breadcrumbDynamicMap = {
   '/projects/(\\d+)/edit': (name) => `Edit project ${name}`,
-  '/projects/(\\d+)': (name) => name || "Project details",
+  '/projects/(\\d+)': (name) => name || 'Project details',
   '/clients/(\\d+)/edit': (name) => `Edit client ${name}`,
 };
 

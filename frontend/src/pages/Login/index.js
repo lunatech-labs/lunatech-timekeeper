@@ -5,7 +5,6 @@ import {Button, Layout, Row, Col, Typography} from 'antd';
 
 import Logo from '../../img/logo.png';
 import LoginBackground from '../../img/login_Background.png';
-import HttpsRedirect from 'react-https-redirect';
 
 import './Login.less';
 
@@ -22,31 +21,29 @@ const LoginPage = withRouter(
     }, [keycloak]);
 
     return (
-      <HttpsRedirect>
-        <Layout>
-          <Content>
-            <Row>
-              <Col className="login_LeftPart" span={9}>
-                <div className="logo_Tk">
-                  <img src={Logo} alt=""/>
-                </div>
-                <div className="title_Tk">
-                  <Title>Simple time tracking. Powerful reporting.</Title>
-                  <Paragraph>Turn your team on to productivity.</Paragraph>
-                </div>
+      <Layout>
+        <Content>
+          <Row>
+            <Col className="login_LeftPart" span={9}>
+              <div className="logo_Tk">
+                <img src={Logo} alt=""/>
+              </div>
+              <div className="title_Tk">
+                <Title>Simple time tracking. Powerful reporting.</Title>
+                <Paragraph>Turn your team on to productivity.</Paragraph>
+              </div>
 
-                <Button type="primary" onClick={login} danger>
+              <Button type="primary" onClick={login} danger>
                                     Login
-                </Button>
+              </Button>
 
-              </Col>
-              <Col className="login_RightPart" span={15}>
-                <img src={LoginBackground} alt=""/>
-              </Col>
-            </Row>
-          </Content>
-        </Layout>
-      </HttpsRedirect>
+            </Col>
+            <Col className="login_RightPart" span={15}>
+              <img src={LoginBackground} alt=""/>
+            </Col>
+          </Row>
+        </Content>
+      </Layout>
     );
   })
 );

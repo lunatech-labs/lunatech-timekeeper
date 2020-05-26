@@ -3,6 +3,7 @@ package fr.lunatech.timekeeper.resources;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.resources.openapi.PersonalTimesheetsResourceApi;
 import fr.lunatech.timekeeper.resources.providers.AuthenticationContextProvider;
+import fr.lunatech.timekeeper.services.WeekService;
 import fr.lunatech.timekeeper.services.TimeSheetService;
 import fr.lunatech.timekeeper.services.WeekService;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
@@ -41,11 +42,11 @@ public class PersonalTimesheetsResource implements PersonalTimesheetsResourceApi
     @Override
     public WeekResponse getCurrentWeek() {
         final var ctx = authentication.context();
-        return weekService.getCurrentWeek(ctx.getUserId())
+        return weekService.getCurrentWeek(ctx)
                 .orElseThrow(NotFoundException::new);
     }
 
-    @RolesAllowed({"user", "admin"})
+    @RolesAllowed({"user"})
     @Override
     public List<WeekResponse> getCurrentMonth() {
         // Recupere les TimeSheets actives

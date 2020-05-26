@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 
 import {UserOutlined, DesktopOutlined, PieChartOutlined} from '@ant-design/icons';
 import FolderOpenOutlined from '@ant-design/icons/lib/icons/FolderOpenOutlined';
+import ClockCircleOutlined from '@ant-design/icons/lib/icons/ClockCircleOutlined';
 
 class MenuSidebar extends Component {
   render() {
@@ -36,6 +37,12 @@ class MenuSidebar extends Component {
           <Link to="/projects">
             <FolderOpenOutlined />
             <span>Projects</span>
+          </Link>
+        </Menu.Item>
+        <Menu.Item className="tk_MenuItem" key="/time_entries">
+          <Link to="/time_entries">
+            <ClockCircleOutlined />
+            <span>Time entries</span>
           </Link>
         </Menu.Item>
       </Menu>

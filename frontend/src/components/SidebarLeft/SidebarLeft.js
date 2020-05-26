@@ -3,7 +3,6 @@ import {Layout} from 'antd';
 import './SidebarLeft.less';
 import Logo from '../Logo/Logo';
 import MenuSidebar from '../MenuSidebar/MenuSidebar';
-import BtnLogout from '../BtnLogout/BtnLogout';
 import PropTypes from 'prop-types';
 
 const { Sider } = Layout;
@@ -14,7 +13,6 @@ const SidebarLeft = ({ collapsed }) => {
     <Sider width={240} id="tk_LeftSidebar" className="site-layout-background" trigger={null} collapsible collapsed={collapsed}>
       <Logo />
       <MenuSidebar/>
-      <BtnLogout/>
     </Sider>
   );
 };

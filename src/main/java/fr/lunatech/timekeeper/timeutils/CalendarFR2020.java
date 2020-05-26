@@ -30,7 +30,7 @@ public class CalendarFR2020 implements Calendar {
             , new PublicHoliday(LocalDate.of(2020, 8, 15), "L'Assomption de Marie", "Assumption Day", "FR", true)
             , new PublicHoliday(LocalDate.of(2020, 11, 1), "La Toussaint", "All Saints' Day", "FR", true)
             , new PublicHoliday(LocalDate.of(2020, 11, 11), "Armistice de 1918", "Armistice Day", "FR", true)
-            , new PublicHoliday(LocalDate.of(2020, 25, 12), "Noël", "Christmas Day", "FR", true)
+            , new PublicHoliday(LocalDate.of(2020, 12, 25), "Noël", "Christmas Day", "FR", true)
     );
 
     final List<LocalDate> holidays = publicHolidays.stream().map(publicHoliday -> publicHoliday.date).collect(Collectors.toList());

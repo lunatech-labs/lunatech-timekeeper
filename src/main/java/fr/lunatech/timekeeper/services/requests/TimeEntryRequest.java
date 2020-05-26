@@ -10,6 +10,7 @@ import java.util.function.Function;
 
 public interface TimeEntryRequest {
     TimeEntry unbind(
+            @NotNull Long timeSheetId,
             @NotNull Function<Long, Optional<TimeSheet>> findTimeSheet,
             @NotNull AuthenticationContext ctx
     );
