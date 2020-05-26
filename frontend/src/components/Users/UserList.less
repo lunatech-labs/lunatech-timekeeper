@@ -27,53 +27,58 @@
           padding-bottom: 2px;
           border-bottom: 0;
           font-weight: 400;
-          border-top: 1px solid rgba(216, 216, 216, 0.1);
           border-radius: 0;
         }
       }
     }
-
     tbody {
       tr {
         background: @darkGray_Tk;
-
         td {
           border-bottom: none;
-
-          &:first-child {
+          &:first-child, &:nth-child(5) div {
             border-top-left-radius: 6px;
             border-bottom-left-radius: 6px;
           }
-
-          &:last-child {
+          &:last-child, &:last-child div {
             border-top-right-radius: 6px;
             border-bottom-right-radius: 6px;
+            div {margin-right: 16px;}
           }
-
+          &:nth-child(5),
+          &:last-child {
+            padding: 0;
+            div {
+              background: @black_Tk;
+              padding: 4px 16px;
+              margin-bottom: 8px;
+              &:first-child {margin-top: 16px;}
+              &:last-child {margin-bottom: 16px;}
+              height: 40px;
+              display: flex;
+              align-items: center;
+            }
+          }
         }
       }
     }
   }
 }
-
 .ant-pagination-prev button, .ant-pagination-next button {
   background-color: @mediumGray_Tk !important;
   color: @lightGray_Tk !important;
   border: none !important;
 }
-
 .ant-pagination-item {
   background-color: transparent !important;
   color: @lightGray_Tk !important;
   border: none !important;
 }
-
 .ant-pagination-item:not(.ant-pagination-item-active) button {
   background-color: transparent !important;
   color: @lightGray_Tk !important;
   border: none !important;
 }
-
 .ant-pagination-disabled button {
   color: @darkGray_Tk !important;
 }

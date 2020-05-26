@@ -35,7 +35,7 @@ const DetailProjectPage = () => {
   }
 
   return (
-    <MainPage title="Project details" actions={<Link key='editLink' to={`/projects/${data.id}/edit`}><Button id="tk_Btn" className="tk_BtnPrimary" icon={<EditOutlined />}>Edit project</Button></Link>}>
+    <MainPage title="Project details" entityName={data.name} actions={<Link key='editLink' to={`/projects/${data.id}/edit`}><Button id="tk_Btn" className="tk_BtnPrimary" icon={<EditOutlined />}>Edit project</Button></Link>}>
       <ShowProject project={data} />
     </MainPage>
   );

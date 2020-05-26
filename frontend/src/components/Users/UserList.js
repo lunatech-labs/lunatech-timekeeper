@@ -2,8 +2,8 @@ import React from 'react';
 import {Alert, Avatar, Spin, Table} from 'antd';
 import {useTimeKeeperAPI} from '../../utils/services';
 import './UserList.less';
-import FlagFilled from '@ant-design/icons/lib/icons/FlagFilled';
 import Button from 'antd/lib/button';
+import TagMember from '../Tag/TagMember';
 
 const UserList = () => {
   const usersResponse = useTimeKeeperAPI('/api/users');
@@ -50,11 +50,10 @@ const UserList = () => {
       render: (value) => value.map(v => <div key={`project-${v.name}-${v.userId}`}>{v.name}</div>)
     },
     {
-      title: 'Manager',
+      title: 'Role',
       dataIndex: 'projects',
-      key: 'manager',
-      align: 'center',
-      render: (value) => value.map(v => <div key={`role-${v.name}-${v.userId}`}>{value ? <FlagFilled style={{ fontSize: '18px'}} /> : '' }</div>)
+      key: 'projects',
+      render: (value) => value.map(v => <div key={`role-${v.name}-${v.userId}`}>{<TagMember isManager={v.manager} />}</div>)
     }
   ];
 
@@ -91,9 +90,12 @@ const UserList = () => {
 
   return (
     <React.Fragment>
-      <div>
+      <div className="tk_SubHeader">
         <p>{usersResponse.data.length} Users</p>
+        <div className="tk_SubHeader_RightPart">
+        </div>
       </div>
+
       <Table id="tk_Table"
         dataSource={usersResponse.data.map(user => userToUserData(user))}
         columns={columns} pagination={{ position:['bottomCenter'], pageSize:20, hideOnSinglePage:true, itemRender: paginationItemRender }}

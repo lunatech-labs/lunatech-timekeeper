@@ -1,7 +1,8 @@
 import React  from 'react';
 import { Button } from 'antd';
-import './BtnLogout.less';
+import './BtnGeneral.less';
 import {useKeycloak} from '@react-keycloak/web';
+import {LogoutOutlined} from '@ant-design/icons';
 
 const BtnLogout = ( ) => {
   const { keycloak } = useKeycloak();
@@ -9,9 +10,7 @@ const BtnLogout = ( ) => {
   return (
     <React.Fragment>
       {!!keycloak.authenticated && (
-        <Button onClick={() => keycloak.logout()} type="primary" className="logoutButton">
-                    Logout
-        </Button>
+        <Button onClick={() => keycloak.logout()} id="tk_Btn" className="tk_BtnPrimary"><LogoutOutlined />Logout</Button>
       )}
     </React.Fragment>
   );

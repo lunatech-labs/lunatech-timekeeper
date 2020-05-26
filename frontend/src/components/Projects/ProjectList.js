@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Alert, Avatar, Button, Card, Col, Collapse, Divider, Dropdown, List, Menu, Row, Spin} from 'antd';
+import {Alert, Avatar, Button, Card, Collapse, Divider, Dropdown, List, Menu, Spin} from 'antd';
 import logo from '../../img/logo_timekeeper_homepage.png';
 import {useTimeKeeperAPI} from '../../utils/services';
 import EditFilled from '@ant-design/icons/lib/icons/EditFilled';
@@ -65,7 +65,14 @@ const ProjectList = () => {
       };
       data.push(newData);
     });
-    return data;
+    return data.sort((a, b) => {
+      if (!a.client) {
+        return -1;
+      } else if (!b.client) {
+        return 1;
+      }
+      return a.client.name.localeCompare(b.client.name);
+    });
   };
 
   const groupByMenu = (
@@ -73,58 +80,45 @@ const ProjectList = () => {
       <Menu.Item key="All">
         All
       </Menu.Item>
-      <Menu.Item key="Project">
-        Project
+      <Menu.Item key="Client">
+        Client
       </Menu.Item>
     </Menu>
   );
 
   const groupByComponent = (
     <React.Fragment>
-      <Row gutter={[16, 16]}>
-        <Col span={8}>
-          <p>Group by :</p>
-        </Col>
-        <Col span={8}>
-          <Dropdown overlay={groupByMenu}>
-            <a className="ant-dropdown-link">
-              {groupBy} <DownOutlined />
-            </a>
-          </Dropdown>
-        </Col>
-      </Row>
+      <p>Group by :</p>
+      <Dropdown overlay={groupByMenu}>
+        <a className="ant-dropdown-link">
+          {groupBy} <DownOutlined/>
+        </a>
+      </Dropdown>
     </React.Fragment>
   );
 
-
   const filterMenu = (
-    <Menu onClick={({ key }) => setFilterText(key)}>
+    <Menu onClick={({key}) => setFilterText(key)}>
       <Menu.Item key="All">
-                All
+        All
       </Menu.Item>
       <Menu.Item key="Private">
-                Private
+        Private
       </Menu.Item>
       <Menu.Item key="Public">
-                Public
+        Public
       </Menu.Item>
     </Menu>
   );
 
   const filterComponent = (
     <React.Fragment>
-      <Row gutter={[16, 16]}>
-        <Col span={8}>
-          <p>Filter by :</p>
-        </Col>
-        <Col span={8}>
-          <Dropdown overlay={filterMenu}>
-            <a className="ant-dropdown-link">
-              {filterText} <DownOutlined />
-            </a>
-          </Dropdown>
-        </Col>
-      </Row>
+      <p>Filter by :</p>
+      <Dropdown overlay={filterMenu}>
+        <a className="ant-dropdown-link">
+          {filterText} <DownOutlined/>
+        </a>
+      </Dropdown>
     </React.Fragment>
   );
 
@@ -165,7 +159,10 @@ const ProjectList = () => {
             <Space size={'middle'}>
               <Avatar src={logo} shape={'square'} size="large"/>
               <div className="tk_Card_Sm_Header">
-                <p>{item.name}<span>{item.client ? '| ' + item.client.name : ''}</span></p>
+                <div>
+                  <p>{item.name}</p>
+                  <p>{item.client ? item.client.name : 'No client'}</p>
+                </div>
                 <p>{item.publicAccess ? <UnlockOutlined/> :
                   <LockFilled/>}<span>{item.publicAccess ? ' Public' : ' Private project'}</span></p>
               </div>
@@ -183,7 +180,7 @@ const ProjectList = () => {
           actions={[
             <Collapse bordered={false} expandIconPosition={'right'} key="projects">
               <Panel header={<Space
-                size="small"><UserOutlined/>{item.users.length}{item.users.length === 1 ? 'member' : 'members'}</Space>}
+                size="small"><UserOutlined/>{item.users.length}{item.users.length <= 1 ? 'member' : 'members'}</Space>}
               key="members">
                 <List
                   className={'tk_Project_MemberList'}
@@ -211,28 +208,25 @@ const ProjectList = () => {
 
   return (
     <React.Fragment>
-      <Row>
-        <Col span={16}>
-          <p>{data.length} project(s) | {Array.from(new Set(data.filter((project) => project.client !== undefined).map((project) => project.client.id))).length} client(s)</p>
-        </Col>
-        <Col span={4}>
-          {filterComponent}
-        </Col>
-        <Col span={4}>
-          {groupByComponent}
-        </Col>
-      </Row>
+      <div className="tk_SubHeader">
+        <p>{data.length} project(s)
+          | {Array.from(new Set(data.filter((project) => project.client !== undefined).map((project) => project.client.id))).length} client(s)</p>
+        <div className="tk_SubHeader_RightPart">
+          <div className="tk_SubHeader_Filters">{filterComponent}</div>
+          <div className="tk_SubHeader_Filters">{groupByComponent}</div>
+        </div>
+      </div>
 
       {groupBy === 'All' ?
-        <DataList data={data}/>:
+        <DataList data={data}/> :
         groupByClient().map(data =>
           <div key={`projects-of-clients-${(data.client && data.client.id) || 0}`}>
             <TitleSection title={(data.client && data.client.name) || 'No client'}/>
             <Divider/>
             <DataList data={data.projects}/>
-          </div>)
+          </div>
+        )
       }
-
     </React.Fragment>
   );
 };

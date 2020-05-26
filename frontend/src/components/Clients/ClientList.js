@@ -13,7 +13,6 @@ import Input from 'antd/lib/input';
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined';
 import Meta from 'antd/lib/card/Meta';
 
-
 const { Panel } = Collapse;
 
 const ClientList = () => {
@@ -54,18 +53,17 @@ const ClientList = () => {
 
   return (
     <React.Fragment>
-      <div style={{position: 'relative'}}>
-        <AutoComplete
-          style={{ width: 160 }}
-          onSearch={onSearch}
-          className="tk_Search_Input"
-        >
-          <Input size="large" placeholder="Search in clients" allowClear  prefix={<SearchOutlined />} />
-        </AutoComplete>
-        <div>
-          <p>{clientsFiltered().length} Clients</p>
+      <div className="tk_SubHeader">
+        <p>{clientsFiltered().length} Clients</p>
+        <div className="tk_SubHeader_RightPart">
+          <div className="tk_Search_Input">
+            <AutoComplete onSearch={onSearch}>
+              <Input size="large" placeholder="Search in clients" allowClear  prefix={<SearchOutlined />} />
+            </AutoComplete>
+          </div>
         </div>
       </div>
+
       <List
         id="tk_List"
         grid={{ gutter: 32, column: 3 }}
@@ -93,10 +91,10 @@ const ClientList = () => {
                 <Collapse bordered={false} expandIconPosition={'right'} key="projects">
                   <Panel header={<Space size="small"><FolderFilled />{'List of projects'}</Space>} key="1">
                     <List
-                      className={'projectList'}
+                      className={'tk_Project_MemberList'}
                       dataSource={item.projects}
                       renderItem={projectItem => (
-                        <List.Item>{projectItem.name} <Tag className="usersTag" icon={<UserOutlined />}>{projectItem.userCount}</Tag></List.Item>
+                        <List.Item>{projectItem.name} <Tag id="tk_UsersTag" icon={<UserOutlined />}>{projectItem.userCount}</Tag></List.Item>
                       )}
                     />
                   </Panel>

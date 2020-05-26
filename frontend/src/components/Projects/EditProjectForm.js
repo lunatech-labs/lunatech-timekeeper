@@ -6,6 +6,7 @@ import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined';
 import PropTypes from 'prop-types';
 import './EditProjectForm.less';
 import TitleSection from '../Title/TitleSection';
+import {CheckOutlined, CloseOutlined} from '@ant-design/icons';
 
 
 const {TextArea} = Input;
@@ -82,7 +83,6 @@ const EditProjectForm = () => {
       value: PropTypes.string
     };
     return (
-
       <Form
         id="tk_Form"
         layout="vertical"
@@ -172,11 +172,11 @@ const EditProjectForm = () => {
               >
                 {(fields, {add, remove}) => {
                   return (
-                    <Form.Item label="Users">
+                    <Form.Item label="Users :">
                       <Form.Item>
                         <Select
+                          className="tk_Select"
                           showSearch
-                          style={{width: 200}}
                           placeholder="Select a user"
                           optionFilterProp="children"
                           onSelect={(value) => add({id: value, manager: false})}
@@ -191,50 +191,56 @@ const EditProjectForm = () => {
                           }
                         </Select>
                       </Form.Item>
+                      <p className="tk_LabelForm">Added members :</p>
                       {fields.length === 0 ? 'There is no members on the project' :
                         fields.map((field, index) => {
                           const id = [index, 'id'];
                           const manager = [index, 'manager'];
                           return (
-                            <Form.Item key={field.key} required={false}>
-                              <Space>
-                                <Form.Item
-                                  noStyle
-                                  name={id}
-                                >
-                                  <UserPicture/>
-                                </Form.Item>
-                                <Form.Item
-                                  noStyle
-                                  name={id}
-                                  rules={[{required: true}]}
-                                >
-                                  <Input type="hidden"/>
-                                </Form.Item>
-                                <Form.Item
-                                  style={{marginRight: '80px'}}
-                                  name={id}
-                                >
-                                  <UserName/>
-                                </Form.Item>
-                                <Form.Item
-                                  noStyle
-                                  name={manager}
-                                  valuePropName="checked"
-                                >
-                                  <Checkbox/>
-                                </Form.Item>
-                                <DeleteOutlined
-                                  className="dynamic-delete-button"
-                                  style={{margin: '0 8px'}}
-                                  onClick={() => {
-                                    remove(index);
-                                  }}
-                                />
-                              </Space>
-                            </Form.Item>
+                            <div id="tk_Card_MemberList" key={field.key} required={false}>
+                              <Form.Item>
+                                <div>
+                                  <Form.Item
+                                    noStyle
+                                    name={id}
+                                  >
+                                    <UserPicture/>
+                                  </Form.Item>
+                                  <Form.Item
+                                    noStyle
+                                    name={id}
+                                    rules={[{required: true}]}
+                                  >
+                                    <Input type="hidden"/>
+                                  </Form.Item>
+                                  <Form.Item
+                                    style={{marginRight: '80px'}}
+                                    name={id}
+                                  >
+                                    <UserName/>
+                                  </Form.Item>
+                                </div>
+                                <div>
+                                  <Form.Item
+                                    noStyle
+                                    name={manager}
+                                    valuePropName="checked"
+                                  >
+                                    <Checkbox className="tk_Crown_Checkbox"/>
+                                  </Form.Item>
+                                  <DeleteOutlined
+                                    className="dynamic-delete-button"
+                                    style={{margin: '0 8px'}}
+                                    onClick={() => {
+                                      remove(index);
+                                    }}
+                                  />
+                                </div>
+                              </Form.Item>
+                            </div>
                           );
-                        })}
+                        })
+                      }
                     </Form.Item>
                   );
                 }}
@@ -243,19 +249,12 @@ const EditProjectForm = () => {
           </Row>
         </div>
         <Form.Item>
-          <Space size="middle" style={{right: 0, position: 'absolute'}}>
-            <Link key="cancelLink" to={'/projects'}>
-              <Button htmlType="button">Cancel</Button>
-            </Link>
-            <Button type="primary" htmlType="submit">Submit</Button>
+          <Space className="tk_JcFe" size="middle" align="center">
+            <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={'/projects'}><CloseOutlined />Cancel</Link>
+            <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit"><CheckOutlined />Submit</Button>
           </Space>
         </Form.Item>
       </Form>
-
-
-
-
-
     );
   }
 
@@ -279,7 +278,6 @@ const EditProjectForm = () => {
             </Form.Item>
           </Form>
         </Spin>
-
       </React.Fragment>
     );
   }
@@ -294,8 +292,6 @@ const EditProjectForm = () => {
       </React.Fragment>
     );
   }
-
 };
-
 
 export default EditProjectForm;
