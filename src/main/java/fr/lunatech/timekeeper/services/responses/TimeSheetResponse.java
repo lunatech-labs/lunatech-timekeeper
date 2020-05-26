@@ -1,5 +1,6 @@
 package fr.lunatech.timekeeper.services.responses;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 
@@ -27,14 +28,6 @@ public class TimeSheetResponse {
     public String durationUnit; // DAYS
 
     public List<TimeEntryResponse> entries;
-
-    // This functional helper should indicate if a TimeSheet is over budget in term of time or days
-    // TODO it requires unit test and more work
-    public Boolean isOverTimeOrBudget() {
-        var isOverTime = LocalDate.now().isAfter(expirationDate);
-        var isOverBudget = entries.size() > maxDuration;
-        return isOverBudget || isOverTime;
-    }
 
     public TimeSheetResponse(Long id, ProjectResponse project, UserResponse owner, String timeUnit, Boolean defaultIsBillable, LocalDate expirationDate, Integer maxDuration, String durationUnit, List<TimeEntryResponse> entries) {
         this.id = id;
