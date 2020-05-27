@@ -1,7 +1,6 @@
 package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.*;
-import fr.lunatech.timekeeper.models.time.TimeSheet;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
