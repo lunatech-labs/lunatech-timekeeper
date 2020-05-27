@@ -32,7 +32,7 @@ public class PersonalTimesheetsResource implements PersonalTimesheetsResourceApi
     @Override
     public List<TimeSheetResponse> getAllTimeSheet() {
         final var ctx = authentication.context();
-        return timeSheetService.findAll(ctx);
+        return timeSheetService.findAllActivesForUser(ctx);
     }
 
     @RolesAllowed({"user", "admin"})
