@@ -67,9 +67,9 @@ const ProjectList = () => {
     });
     return data.sort((a, b) => {
       if (!a.client) {
-        return -1;
-      } else if (!b.client) {
         return 1;
+      } else if (!b.client) {
+        return -1;
       }
       return a.client.name.localeCompare(b.client.name);
     });
