@@ -1,3 +1,7 @@
+DROP TABLE IF EXISTS timesheets_time_entry CASCADE ;
+DROP TABLE IF EXISTS time_entry CASCADE ;
+DROP TABLE IF EXISTS timesheets CASCADE ;
+
 create table user_events
 (
     id int8 not null
