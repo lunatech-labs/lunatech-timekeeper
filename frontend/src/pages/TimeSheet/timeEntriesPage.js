@@ -29,11 +29,12 @@ const TimeEntriesPage = () => {
         dateTime: firstDayOfWeek.clone().add(8, 'hour')
       }]
     }
-  ]
+  ];
   return (
     <MainPage title="Time entries">
       <WeekCalendar
         firstDay={firstDayOfWeek}
+        disabledWeekEnd={true}
         dateCellRender={(data, date, disabled) => {
           return (
             <div>

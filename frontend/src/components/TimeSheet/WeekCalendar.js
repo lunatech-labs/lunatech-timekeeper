@@ -1,7 +1,8 @@
 import React from 'react';
-import {Col, Row} from "antd";
+import {Button, Col, Row} from "antd";
 import CardWeekCalendar from "../Card/CardWeekCalendar";
 import PropTypes from 'prop-types';
+import {PlusCircleOutlined} from "@ant-design/icons";
 
 
 const moment = require('moment');
@@ -21,6 +22,7 @@ const WeekCalendar = (props) => {
   const headerDateFormat = props.headerDateFormat || 'ddd';
   const dataByDays = daysToData();
   const isWeekEnd = (date) => date.isoWeekday() === 6 || date.isoWeekday() === 7;
+  const isDisabled = (item) => (item.day && item.day.disabled) || (props.disabledWeekEnd && isWeekEnd(item.date))
   return (
     <Row gutter={[24, 16]}>
       {dataByDays.map(item => {
@@ -32,9 +34,9 @@ const WeekCalendar = (props) => {
           };
           return (
             <Col span={3}>
-              {item.date.format(headerDateFormat)}
-              <CardWeekCalendar disabled={(item.day && item.day.disabled) || isWeekEnd(item.date)}>
-                {item.date.format(dateFormat)}
+              <div>{item.date.format(headerDateFormat)}</div>
+              <CardWeekCalendar disabled={isDisabled(item)}>
+                <p>{item.date.format(dateFormat)} <Button type="primary" shape="circle" disabled={isDisabled(item)} icon={<PlusCircleOutlined />} /></p>
                 {renderDay()}
               </CardWeekCalendar>
             </Col>
