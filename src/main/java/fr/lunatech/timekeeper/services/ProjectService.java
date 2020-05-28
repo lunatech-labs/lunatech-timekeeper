@@ -76,7 +76,15 @@ public class ProjectService {
                             .stream()
                             .filter(request::notContains)
                             .forEach(PanacheEntityBase::delete))
-                    .map(project -> project.id)
+                    .map(project -> {
+                        if(!timeSheetService.hasAlreadyATimeSheet(project.id, ctx)){
+                            project.users
+                                    .stream()
+                                    .map(projectUser -> timeSheetService.createDefault(project, projectUser.user))
+                                    .forEach(timeSheet -> timeSheetService.createTimeSheet(timeSheet, ctx));
+                        }
+                        return project.id;
+                    })
                     .findFirst();
             transaction.commit();
             return updatedProject;

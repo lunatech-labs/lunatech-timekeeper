@@ -30,7 +30,6 @@ public class TimeSheetService {
         return TimeSheet.findByIdOptional(id);
     }
 
-
     public TimeSheet createDefault(Project project, User owner) {
         TimeSheet timeSheet = new TimeSheet();
         timeSheet.project = project;
@@ -42,6 +41,17 @@ public class TimeSheetService {
         timeSheet.durationUnit = TimeUnit.HOURLY;
         timeSheet.entries = Collections.emptyList();
         return timeSheet;
+    }
+
+    Boolean hasAlreadyATimeSheet(Long projectId, AuthenticationContext ctx){
+        List<TimeSheetResponse> timeSheetResponse = streamAll(ctx, TimeSheetResponse::bind, Collectors.toList())
+                .stream()
+                .filter(timeSheet -> timeSheet.project.getId() == projectId)
+                .collect(Collectors.toList());
+        if(timeSheetResponse.isEmpty()){
+            return false;
+        }
+        return true;
     }
 
     @Transactional
