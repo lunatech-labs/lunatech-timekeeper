@@ -18,6 +18,7 @@ import javax.transaction.SystemException;
 import javax.transaction.Transactional;
 import javax.transaction.UserTransaction;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -69,13 +70,14 @@ public class ProjectService {
         logger.debug("Modify project for for id={} with {}, {}", id, request, ctx);
         try {
             transaction.begin(); // See https://quarkus.io/guides/transaction API Approach
+            final var projectUsers = findById(id, ctx).map(p -> Collections.unmodifiableList(p.users));
             final var updatedProject = findById(id, ctx)
                     .stream()
                     .map(project -> request.unbind(project, clientService::findById, userService::findById, ctx))
-                    .peek(project -> project.users
-                            .stream()
+                    .peek(project -> projectUsers.ifPresent(usersPersisted ->
+                            usersPersisted.stream()
                             .filter(request::notContains)
-                            .forEach(PanacheEntityBase::delete))
+                            .forEach(PanacheEntityBase::delete)))
                     .map(project -> project.id)
                     .findFirst();
             transaction.commit();
