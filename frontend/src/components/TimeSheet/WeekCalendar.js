@@ -2,7 +2,7 @@ import React from 'react';
 import {Button, Col, Row} from "antd";
 import CardWeekCalendar from "../Card/CardWeekCalendar";
 import PropTypes from 'prop-types';
-import {PlusCircleOutlined} from "@ant-design/icons";
+import PlusOutlined from "@ant-design/icons/lib/icons/PlusOutlined";
 
 
 const moment = require('moment');
@@ -22,7 +22,7 @@ const WeekCalendar = (props) => {
   const headerDateFormat = props.headerDateFormat || 'ddd';
   const dataByDays = daysToData();
   const isWeekEnd = (date) => date.isoWeekday() === 6 || date.isoWeekday() === 7;
-  const isDisabled = (item) => (item.day && item.day.disabled) || (props.disabledWeekEnd && isWeekEnd(item.date))
+  const isDisabled = (item) => (item.day && item.day.disabled) || (props.disabledWeekEnd && isWeekEnd(item.date));
   return (
     <Row gutter={[24, 16]}>
       {dataByDays.map(item => {
@@ -36,7 +36,7 @@ const WeekCalendar = (props) => {
             <Col span={3}>
               <div>{item.date.format(headerDateFormat)}</div>
               <CardWeekCalendar disabled={isDisabled(item)}>
-                <p>{item.date.format(dateFormat)} <Button type="primary" shape="circle" disabled={isDisabled(item)} icon={<PlusCircleOutlined />} /></p>
+                <p>{item.date.format(dateFormat)} <Button type="primary" shape="circle" disabled={isDisabled(item)} icon={<PlusOutlined />} /></p>
                 {renderDay()}
               </CardWeekCalendar>
             </Col>
