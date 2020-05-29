@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './CardWeekCalendar.less'
+import './CardWeekCalendar.less';
 const CardWeekCalendar = ( {children, disabled, onMouseOver, onMouseLeave} ) => {
 
   return (
