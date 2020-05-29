@@ -35,6 +35,7 @@ const TimeEntriesPage = () => {
       <WeekCalendar
         firstDay={firstDayOfWeek}
         disabledWeekEnd={true}
+        hiddenButtons={false}
         dateCellRender={(data, date, disabled) => {
           return (
             <div>
