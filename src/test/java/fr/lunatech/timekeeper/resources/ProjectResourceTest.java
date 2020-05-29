@@ -54,6 +54,7 @@ class ProjectResourceTest {
 
     @Test
     void shouldCreateProjectWhenAdminProfile() {
+        System.out.println("==============================================");
         final String adminToken = getAdminAccessToken();
 
         final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
@@ -64,6 +65,9 @@ class ProjectResourceTest {
 
     @Test
     void shouldCreateProjectWhenUserProfile() {
+        System.out.println("==============================================");
+        System.out.println("shouldCreateProjectWhenUserProfile");
+        System.out.println("==============================================");
         final String adminToken = getAdminAccessToken();
         final String userAccessToken = getUserAccessToken();
         final var client = create(new ClientRequest("NewClient 2", "Un client créé en tant qu'admin"), adminToken);
@@ -75,6 +79,9 @@ class ProjectResourceTest {
 
     @Test
     void shouldNotCreateProjectWithDuplicateName() {
+        System.out.println("==============================================");
+        System.out.println("shouldNotCreateProjectWithDuplicateName");
+        System.out.println("==============================================");
         final String adminToken = getAdminAccessToken();
 
         final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
@@ -85,23 +92,34 @@ class ProjectResourceTest {
         } catch (HttpTestRuntimeException httpError) {
             assertEquals(400, httpError.getHttpStatus());
             assertEquals("application/json", httpError.getMimeType());
+            System.out.println("400");
+            assertEquals("application/json", httpError.getMimeType());
         }
     }
 
     @Test
     void shouldNotFindUnknownProject() {
+        System.out.println("==============================================");
+        System.out.println("shouldNotFindUnknownProject");
+        System.out.println("==============================================");
         final String userAccessToken = getUserAccessToken();
         getValidation(ProjectDef.uriWithid(99999L), userAccessToken, NOT_FOUND);
     }
 
     @Test
     void shouldFindAllProjectsEmpty() {
+        System.out.println("==============================================");
+        System.out.println("shouldFindAllProjectsEmpty");
+        System.out.println("==============================================");
         final String userToken = getUserAccessToken();
         getValidation(ProjectDef.uri, userToken, OK).body(is("[]"));
     }
 
     @Test
     void shouldFindAllPublicProjects() {
+        System.out.println("==============================================");
+        System.out.println("shouldFindAllPublicProjects");
+        System.out.println("==============================================");
 
         final String adminToken = getAdminAccessToken();
         final String userToken = getUserAccessToken();
@@ -118,6 +136,9 @@ class ProjectResourceTest {
 
     @Test
     void shouldModifyProjectWithEmptyListOfUsers() {
+        System.out.println("==============================================");
+        System.out.println("shouldModifyProjectWithEmptyListOfUsers");
+        System.out.println("==============================================");
         // GIVEN
         final String adminToken = getAdminAccessToken();
         final var client1 = create(new ClientRequest("Client 1", "New Description 1"), adminToken);
@@ -140,6 +161,9 @@ class ProjectResourceTest {
 
     @Test
     void shouldAddMemberToProject() {
+        System.out.println("==============================================");
+        System.out.println("shouldAddMemberToProject");
+        System.out.println("==============================================");
         // GIVEN
         final String adminToken = getAdminAccessToken();
         final String samToken = getAdminAccessToken();
@@ -183,6 +207,9 @@ class ProjectResourceTest {
 
     @Test
     void shouldNotAcceptInvalidListOfUsers() {
+        System.out.println("==============================================");
+        System.out.println("shouldNotAcceptInvalidListOfUsers");
+        System.out.println("==============================================");
         // GIVEN
         final String adminToken = getAdminAccessToken();
         final String merryToken = getUser2AccessToken();
@@ -209,6 +236,9 @@ class ProjectResourceTest {
 
     @Test
     void shouldNotAddMemberToProjectWithUnknownUser() {
+        System.out.println("==============================================");
+        System.out.println("shouldNotAddMemberToProjectWithUnknownUser");
+        System.out.println("==============================================");
         // GIVEN
         final String adminToken = getAdminAccessToken();
         final var client1 = create(new ClientRequest("Client 1", "New Description 1"), adminToken);
@@ -232,6 +262,9 @@ class ProjectResourceTest {
 
     @Test
     void shouldCreateTimeSheetForProjectMembers() {
+        System.out.println("==============================================");
+        System.out.println("shouldCreateTimeSheetForProjectMembers");
+        System.out.println("==============================================");
         // GIVEN
         final String adminToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
@@ -247,7 +280,7 @@ class ProjectResourceTest {
 
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
 
-        // THEN`
+        // THEN
         final var expectedTimeSheetSam = new TimeSheetResponse(8L, project, sam, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
         final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, project, jimmy, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
@@ -259,6 +292,9 @@ class ProjectResourceTest {
 
     @Test
     void shouldNotCreateTimeSheetForNonProjectMembers() {
+        System.out.println("==============================================");
+        System.out.println("shouldNotCreateTimeSheetForNonProjectMembers");
+        System.out.println("==============================================");
         // GIVEN
         final String adminToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
