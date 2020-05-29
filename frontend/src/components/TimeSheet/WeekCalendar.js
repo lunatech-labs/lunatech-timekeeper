@@ -1,33 +1,74 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Col, Row, Select} from "antd";
 import CardWeekCalendar from "../Card/CardWeekCalendar";
 import PropTypes from 'prop-types';
 import PlusOutlined from "@ant-design/icons/lib/icons/PlusOutlined";
+import LeftCircleOutlined from "@ant-design/icons/lib/icons/LeftCircleOutlined";
+import RightCircleOutlined from "@ant-design/icons/lib/icons/RightCircleOutlined";
 
 
 const moment = require('moment');
+
+const renderWeekYear = (start, end) => {
+  const panelFormatWithYear = "DD MMM YYYY";
+  const panelFormat = "DD MMM";
+  if ((start.isSame(end, 'month') && start.isSame(end, 'year'))) {
+    // same month, same year => 22 - 25 May 2020
+    return `${start.format("DD")} - ${end.format(panelFormatWithYear)}`;
+  } else if ((!start.isSame(end, 'month') && start.isSame(end, 'year'))) {
+    // different months, same year => 22 Jan - 01 Feb 2020
+    return `${start.format(panelFormat)} - ${end.format(panelFormatWithYear)}`
+  } else {
+    return `${start.format(panelFormatWithYear)} - ${end.format(panelFormatWithYear)}`
+  }
+};
+
+const renderWeekRange = (start, end) => {
+  const panelFormat = "DD MMM";
+  if (start.isSame(end, 'month')) {
+    return `${start.format("DD")} - ${end.format(panelFormat)}`
+  } else {
+    return `${start.format(panelFormat)} - ${end.format(panelFormat)}`
+  }
+};
+
+
+const numberOfWeek = 30;
+const weekRangeOfDate = () => {
+  const startOfCurrentWeek = moment().startOf('week').add(1, 'day');
+  return [...Array(numberOfWeek).keys()].map(i => {
+    const toAdd = i - 7;
+    const start = startOfCurrentWeek.clone().add(toAdd, 'week');
+    const end = start.clone().endOf('week').add(1, 'day');
+    return {
+      id: toAdd,
+      start: start,
+      end: end
+    }
+  })
+};
+
+
 const WeekCalendar = (props) => {
   const [showButton, setShowButton] = useState(-1);
-  const weekRangeOfDate = () => {
-    const startOfCurrentWeek = moment().startOf('week').add(1, 'day');
-    return [...Array(30).keys()].map(i => {
-      const toAdd = i - 7;
-      const start = startOfCurrentWeek.clone().add(toAdd, 'week');
-      const end = start.clone().endOf('week').add(1, 'day');
-      return {
-        start: start,
-        end: end
-      }
-    })
-  };
-  const renderWeekRange = (start, end) => {
-    const panelFormat = "DD MMM";
-    if (start.isSame(end, 'month')) {
-      return `${start.format("DD")} - ${end.format(panelFormat)}`
-    } else {
-      return `${start.format(panelFormat)} - ${end.format(panelFormat)}`
+  const [weekSelected, setWeekSelected] = useState(0);
+
+  useEffect(() => {
+    const weekRange = weekRangeOfDateMap.get(weekSelected);
+    if (weekRange && props.onPanelChange) {
+      const {id, start, end} = weekRange;
+      props.onPanelChange(id, start, end);
     }
+  }, [weekSelected]);
+
+  const weekRanges = weekRangeOfDate();
+  const weekRangeOfDateToMap = () => {
+    const map = new Map();
+    weekRanges.forEach((item) => map.set(item.id, item))
+    return map;
   };
+  const weekRangeOfDateMap = weekRangeOfDateToMap();
+
   const daysToData = () => {
     const daysOfWeek = [...Array(7).keys()].map(i => props.firstDay.clone().add(i, 'days'));
     return daysOfWeek.map(dayOfWeek => {
@@ -44,17 +85,31 @@ const WeekCalendar = (props) => {
   const isWeekEnd = (date) => date.isoWeekday() === 6 || date.isoWeekday() === 7;
   const isDisabled = (item) => (item.day && item.day.disabled) || (props.disabledWeekEnd && isWeekEnd(item.date));
 
-  const weeksPanel = weekRangeOfDate();
+  const WeekNavigator = () => {
+    const weekRangeIds = weekRanges.map(weekRange => weekRange.id);
+    const weekRange = weekRangeOfDateMap.get(weekSelected);
+    const {start, end} = weekRange;
+    const disableLeft = !weekRangeIds.includes(weekSelected - 1);
+    const disableRight = !weekRangeIds.includes(weekSelected + 1);
+    return (
+      <div>
+        <Button icon={<LeftCircleOutlined/>} disabled={disableLeft} shape='circle' onClick={() => setWeekSelected(weekSelected - 1)}/>
+        {renderWeekYear(start, end)}
+        <Button icon={<RightCircleOutlined/>} disabled={disableRight} shape='circle' onClick={() => setWeekSelected(weekSelected + 1)}/>
+      </div>
+    )
+  };
+
   return (
     <div>
       <div id='week-calendar-panel'>
-        <Select>
-          <option>Select a range</option>
-          {weeksPanel.map(({start, end}) => {
+        <WeekNavigator/>
+        <Select onChange={id => setWeekSelected(id)} style={{width: 300}} defaultValue={0} value={weekSelected}>
+          {weekRanges.map(({id, start, end}) => {
             return (
-              <option>
+              <Select.Option key={`date-range-${id}`} value={id} disabled={id === weekSelected}>
                 {renderWeekRange(start, end)}
-              </option>
+              </Select.Option>
             )
           })}
         </Select>
@@ -68,7 +123,7 @@ const WeekCalendar = (props) => {
               }
             };
             return (
-              <Col span={3}>
+              <Col key={`day-card-${index}`} span={3}>
                 <div>{item.date.format(headerDateFormat)}</div>
                 <CardWeekCalendar
                   disabled={isDisabled(item)} onMouseOver={() => setShowButton(index)}
@@ -76,7 +131,6 @@ const WeekCalendar = (props) => {
                   <p>{item.date.format(dateFormat)}
                     {((props.hiddenButtons && showButton === index) || (!props.hiddenButtons)) &&
                     <Button type="primary" shape="circle" disabled={isDisabled(item)} icon={<PlusOutlined/>}/>}
-                    {/*<Button type="primary" disabled={isDisabled(item)} shape="circle" icon={<PlusOutlined/>}/>*/}
                   </p>
                   {renderDay()}
                 </CardWeekCalendar>
@@ -86,12 +140,11 @@ const WeekCalendar = (props) => {
         )}
       </Row>
     </div>
-
   )
 };
 
 WeekCalendar.propTypes = {
-  dateCellRender: PropTypes.func.isRequired, //TODO : dayCellRender
+  dateCellRender: PropTypes.func.isRequired,
   dateFormat: PropTypes.string,
   headerDateFormat: PropTypes.string,
   disabledWeekEnd: PropTypes.bool,
