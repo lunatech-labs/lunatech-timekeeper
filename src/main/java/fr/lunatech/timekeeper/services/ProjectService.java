@@ -66,7 +66,7 @@ public class ProjectService {
         return project.id;
     }
 
-    public Optional<Long> update(Long id, ProjectRequest request, AuthenticationContext ctx)  {
+    public Optional<Long> update(Long id, ProjectRequest request, AuthenticationContext ctx) {
         logger.debug("Modify project for for id={} with {}, {}", id, request, ctx);
         try {
             transaction.begin(); // See https://quarkus.io/guides/transaction API Approach
@@ -76,17 +76,16 @@ public class ProjectService {
                     .map(project -> request.unbind(project, clientService::findById, userService::findById, ctx))
                     .peek(project -> projectUsers.ifPresent(usersPersisted ->
                             usersPersisted.stream()
-                            .filter(request::notContains)
-                            .forEach(PanacheEntityBase::delete))
-                    .map(project -> {
-                        if(!timeSheetService.hasAlreadyATimeSheet(project.id, ctx)){
-                            project.users
-                                    .stream()
-                                    .map(projectUser -> timeSheetService.createDefault(project, projectUser.user))
-                                    .forEach(timeSheet -> timeSheetService.createTimeSheet(timeSheet, ctx));
-                        }
-                        return project.id;
+                                    .filter(request::notContains)
+                                    .forEach(PanacheEntityBase::delete)))
+                    .peek(project -> {
+                        project.users
+                                .stream()
+                                .filter(projectUser -> !timeSheetService.hasAlreadyATimeSheet(project.id, projectUser.user.id))
+                                .map(projectUser -> timeSheetService.createDefault(project, projectUser.user))
+                                .forEach(timeSheet -> timeSheetService.createTimeSheet(timeSheet, ctx));
                     })
+                    .map(project -> project.id)
                     .findFirst();
             transaction.commit();
             return updatedProject;
@@ -98,7 +97,7 @@ public class ProjectService {
                     transaction.rollback();
                 }
             } catch (SystemException ex) {
-                logger.error("Tried to rollback in ProjectService but failed",ex);
+                logger.error("Tried to rollback in ProjectService but failed", ex);
             }
             throw new UpdateResourceException("Cannot update a Project, invalid projectRequest");
         }

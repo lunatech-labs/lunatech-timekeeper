@@ -43,15 +43,8 @@ public class TimeSheetService {
         return timeSheet;
     }
 
-    Boolean hasAlreadyATimeSheet(Long projectId, AuthenticationContext ctx){
-        List<TimeSheetResponse> timeSheetResponse = streamAll(ctx, TimeSheetResponse::bind, Collectors.toList())
-                .stream()
-                .filter(timeSheet -> timeSheet.project.getId() == projectId)
-                .collect(Collectors.toList());
-        if(timeSheetResponse.isEmpty()){
-            return false;
-        }
-        return true;
+    Boolean hasAlreadyATimeSheet(Long projectId, Long userId){
+        return TimeSheet.stream("user_id = ?1 and project_id = ?2", userId, projectId).count() > 0;
     }
 
     @Transactional
