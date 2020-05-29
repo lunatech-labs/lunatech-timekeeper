@@ -16,13 +16,12 @@ import java.util.List;
 @Table(name = "timesheets")
 public class TimeSheet extends PanacheEntity {
     @ManyToOne
-    @JoinColumn(name = "project_id", nullable = false)
+    @JoinColumn(name = "project_id")
     @NotNull
     public Project project;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    @NotNull
+    @ManyToOne(cascade = CascadeType.DETACH)
+    @JoinColumn(name = "user_id", nullable = false)
     public User owner;
 
     @Enumerated(EnumType.STRING)
