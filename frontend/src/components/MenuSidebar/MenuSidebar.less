@@ -1,6 +1,28 @@
+@import '../../timekeeper-theme.less';
+
 #tk_Menu {
-  margin-top: 64px;
+  margin-top: 32px;
   .tk_MenuItem {
     margin: 0;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    &:hover {
+      background: rgba(39, 40, 54, .5);
+    }
+    a {
+      span:first-child {
+        margin-right: 16px;
+      }
+    }
+  }
+  .ant-menu-item-selected {
+    background: @black_Tk;
+    border-left: 3px solid @red_Tk;
+    a {
+      span:first-child {
+        color: @red_Tk;
+      }
+    }
   }
 }

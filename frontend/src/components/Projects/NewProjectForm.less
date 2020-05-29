@@ -34,19 +34,19 @@
 #tk_Form {
   input {
     background: none;
-    border: 1px solid rgba(145, 145, 160, 0.8);
+    border: 1px solid rgba(145, 145, 160, 0.4);
     height: 40px;
   }
   .ant-select-selector {
     background: none;
-    &:hover {border: 1px solid rgba(145, 145, 160, 0.8);}
+    &:hover {border: 1px solid rgba(145, 145, 160, 0.4);}
     height: 40px;
     display: flex;
     align-items: center;
   }
   textarea {
     background: none;
-    border: 1px solid rgba(145, 145, 160, 0.8);
+    border: 1px solid rgba(145, 145, 160, 0.4);
   }
 }
 .tk_Crown_Checkbox {
@@ -56,6 +56,9 @@
   font-size: 14px;
 }
 .tk_Select {
+  .ant-select-selector {
+    border: 1px solid rgba(145, 145, 160, 0.4)!important;
+  }
   .ant-select-arrow {
     color: @white_Tk;
   }
