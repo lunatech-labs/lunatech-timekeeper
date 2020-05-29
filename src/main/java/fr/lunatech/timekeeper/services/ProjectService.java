@@ -93,8 +93,10 @@ public class ProjectService {
             // There are many various exceptions, we catch Throwable but this is arguable.
             logger.warn("Could not update a Project due to an exception {}", e.getMessage());
             try {
-                if (transaction.getStatus() != Status.STATUS_MARKED_ROLLBACK && transaction.getStatus() != Status.STATUS_NO_TRANSACTION) {
+                if (transaction.getStatus() != Status.STATUS_NO_TRANSACTION) {
                     transaction.rollback();
+                }else{
+                    logger.warn("Tried to rollback in ProjectService but no active transaction");
                 }
             } catch (SystemException ex) {
                 logger.error("Tried to rollback in ProjectService but failed", ex);
