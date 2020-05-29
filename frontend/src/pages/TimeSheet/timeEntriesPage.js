@@ -13,7 +13,7 @@ const TimeEntriesPage = () => {
   useEffect(
     () => {
       //TODO : Fetch your data or select your week
-      if(!currentFirstDay) {
+      if (!currentFirstDay) {
         return;
       }
     }, [currentFirstDay]);
@@ -75,14 +75,17 @@ const TimeEntriesPage = () => {
           return (
             <div>
               {data.map(entry => {
-                return (
-                  <div key={`badge-entry-${entry.date.format('dd-mm-yyyy')}`}>
-                    <Badge
-                      status={(entry && entry.name) ? 'success' : 'error'}
-                      text={(entry && entry.name) ? `name : ${entry.name} ${entry.dateTime && `(${entry.dateTime.format('hh:mm')})`}` : 'Nothing to render'}
-                    />
-                  </div>
-                );
+                if (entry) {
+                  console.log(entry);
+                  return (
+                    <div key={`badge-entry-${entry.dateTime && entry.dateTime.format('yyyy-mm-dd-hh-mm')}`}>
+                      <Badge
+                        status={(entry && entry.name) ? 'success' : 'error'}
+                        text={(entry && entry.name) ? `name : ${entry.name} ${entry.dateTime && `(${entry.dateTime.format('hh:mm')})`}` : 'Nothing to render'}
+                      />
+                    </div>
+                  );
+                }
               })}
             </div>
           );
