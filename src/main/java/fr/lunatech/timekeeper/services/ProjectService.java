@@ -70,21 +70,21 @@ public class ProjectService {
         logger.debug("Modify project for for id={} with {}, {}", id, request, ctx);
         try {
             transaction.begin(); // See https://quarkus.io/guides/transaction API Approach
-            final var projectUsers = findById(id, ctx).map(p -> Collections.unmodifiableList(p.users));
+            final var projectPersisted = findById(id, ctx);
+            // Delete the old members
+            projectPersisted.ifPresent(project -> project.users.stream()
+                    .filter(request::notContains)
+                    .forEach(PanacheEntityBase::delete));
+
             final var updatedProject = findById(id, ctx)
                     .stream()
                     .map(project -> request.unbind(project, clientService::findById, userService::findById, ctx))
-                    .peek(project -> projectUsers.ifPresent(usersPersisted ->
-                            usersPersisted.stream()
-                                    .filter(request::notContains)
-                                    .forEach(PanacheEntityBase::delete)))
-                    .peek(project -> {
-                        project.users
-                                .stream()
-                                .filter(projectUser -> !timeSheetService.hasAlreadyATimeSheet(project.id, projectUser.user.id))
-                                .map(projectUser -> timeSheetService.createDefault(project, projectUser.user))
-                                .forEach(timeSheet -> timeSheetService.createTimeSheet(timeSheet, ctx));
-                    })
+                    // Create the timesheets for the new members
+                    .peek(project -> project.users
+                            .stream()
+                            .filter(projectUser -> !timeSheetService.hasAlreadyATimeSheet(project.id, projectUser.user.id))
+                            .map(projectUser -> timeSheetService.createDefault(project, projectUser.user))
+                            .forEach(timeSheet -> timeSheetService.createTimeSheet(timeSheet, ctx)))
                     .map(project -> project.id)
                     .findFirst();
             transaction.commit();
