@@ -6,7 +6,6 @@ import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined';
 import PropTypes from 'prop-types';
 import './EditProjectForm.less';
 import TitleSection from '../Title/TitleSection';
-import {CheckOutlined, CloseOutlined} from '@ant-design/icons';
 import '../../components/Button/BtnGeneral.less';
 
 
