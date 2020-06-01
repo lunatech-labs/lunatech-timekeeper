@@ -54,6 +54,9 @@ const TopBar = ({ collapsed, toggle, user }) => {
 TopBar.propTypes = {
   collapsed: PropTypes.bool.isRequired,
   toggle: PropTypes.func.isRequired,
+  user: PropTypes.shape({
+    email: PropTypes.string
+  })
 };
 
 export default TopBar;
