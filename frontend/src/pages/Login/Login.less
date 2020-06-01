@@ -1,30 +1,57 @@
-/* ---------- STRUCTURE ---------- */
-.login_LeftPart {
+@import '../../timekeeper-theme.less';
+
+
+/* ---------- LEFT PART ---------- */
+#login_LeftPart {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: 100px 70px;
-    background: white;
+    background: @black_Tk;
+    padding: 60px;
+    .logo_Tk {
+        display: flex;
+        align-items: center;
+        margin-bottom: auto;
+        img {
+            width: 48px;
+            margin-right: 16px;
+        }
+        p {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+        button {
+            width: 170px;
+        }
+    }
+    #title_Tk {
+        width: 400px;
+        margin: 0 30px;
+        h1 {
+            font-weight: 700;
+            font-size: 42px;
+            color: @white_Tk;
+            margin-bottom: 24px;
+        }
+        p {
+            font-weight: 300;
+            font-size: 32px;
+            color: @lightGray_Tk;
+            line-height: 38px;
+            margin-bottom: 48px;
+        }
+    }
+    .bottom_Tk {margin-top: auto;}
 }
-.login_RightPart {
+/* ---------- RIGHT PART ---------- */
+#login_RightPart {
     height: 100vh;
     display: flex;
     align-items: center;
     background: #F8F9FC;
-}
-.login_RightPart img {
-    width: 70%;
-    margin-top: 100px;
-}
-/* ---------- LOGO ---------- */
-.logo_Tk img {width: 75%;}
-/* ---------- TITLE ---------- */
-.title_Tk h1 {
-    font-weight: 700;
-    color: #333642!important;
-}
-.title_Tk div {
-    font-size: 24px;
-    color: #B7BAC5;
+    img {
+        max-width: 70%;
+        margin-top: 100px;
+    }
 }
