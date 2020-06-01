@@ -2,11 +2,12 @@ import React, {useEffect, useState} from 'react';
 import MainPage from '../MainPage/MainPage';
 import WeekCalendar from '../../components/TimeSheet/WeekCalendar';
 import {Badge} from 'antd';
+import momentUtil from '../../utils/momentsUtil';
 
-const moment = require('moment');
+const {moment} = momentUtil();
 
 const TimeEntriesPage = () => {
-  const firstDayOfCurrentWeek = moment().startOf('week').add(1, 'day');
+  const firstDayOfCurrentWeek = moment().startOf('week');
   const today = () => firstDayOfCurrentWeek.clone();
   const [currentFirstDay, setCurrentFirstDay] = useState(today);
 
@@ -76,7 +77,6 @@ const TimeEntriesPage = () => {
             <div>
               {data.map(entry => {
                 if (entry) {
-                  console.log(entry);
                   return (
                     <div key={`badge-entry-${entry.dateTime && entry.dateTime.format('yyyy-mm-dd-hh-mm')}`}>
                       <Badge
@@ -90,7 +90,7 @@ const TimeEntriesPage = () => {
             </div>
           );
         }}
-        days={data[1]}
+        days={data[0]}
       />
     </MainPage>
   );
