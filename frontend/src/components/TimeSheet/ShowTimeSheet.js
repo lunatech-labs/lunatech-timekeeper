@@ -1,16 +1,16 @@
 import React from 'react';
 import {Alert, Col, Divider, Row} from "antd";
 import TagProjectClient from "../Tag/TagProjectClient";
-import './ShowTimesheet.less';
+import './ShowTimeSheet.less';
 import {DollarOutlined} from "@ant-design/icons";
 import ClockCircleOutlined from '@ant-design/icons/lib/icons/ClockCircleOutlined';
 import ProjectMemberTag from "../Projects/ProjectMemberTag";
 import CalendarOutlined from "@ant-design/icons/lib/icons/CalendarOutlined";
 import {useTimeKeeperAPI} from "../../utils/services";
 import momentUtil from "../../utils/momentsUtil";
-
+import PropTypes from 'prop-types';
 const moment = momentUtil;
-const ShowTimesheet = ({project, member}) => {
+const ShowTimeSheet = ({project, member}) => {
   const {data, error, loading} = useTimeKeeperAPI(`/projects/${project.id}/user/${member.id}/timesheets`);
 
   const TimeSheets = ({timeSheets}) => {
@@ -37,11 +37,13 @@ const ShowTimesheet = ({project, member}) => {
   };
 
   TimeSheets.propTypes = {
-    id: PropTypes.number.isRequired,
-    defaultIsBillable: PropTypes.bool.isRequired,
-    expirationDate: PropTypes.object,
-    maxDuration: PropTypes.number,
-    durationUnit: PropTypes.string,
+    timeSheets: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      defaultIsBillable: PropTypes.bool.isRequired,
+      expirationDate: PropTypes.object,
+      maxDuration: PropTypes.number,
+      durationUnit: PropTypes.string
+    }))
   };
 
   if (error) {
@@ -49,7 +51,7 @@ const ShowTimesheet = ({project, member}) => {
     return (
       <React.Fragment>
         <Alert title='Server error'
-               message='Failed to load projects from Quarkus backend server'
+               message='Failed to load time sheets from Quarkus backend server'
                type='error'
                description={errorReason}
         />
@@ -71,8 +73,7 @@ const ShowTimesheet = ({project, member}) => {
       <TimeSheets timeSheets={data}/>
     </div>
   );
-
 };
 
 
-export default ShowTimesheet;
+export default ShowTimeSheet;

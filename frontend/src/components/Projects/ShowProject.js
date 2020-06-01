@@ -9,7 +9,7 @@ import CardMember from '../Card/CardMember';
 import TagMember from '../Tag/TagMember';
 import Tooltip from "antd/es/tooltip";
 import TagProjectClient from "../Tag/TagProjectClient";
-import ShowTimesheet from "../TimeSheet/ShowTimesheet";
+import ShowTimeSheet from "../TimeSheet/ShowTimeSheet";
 
 const {Title} = Typography;
 
@@ -44,17 +44,17 @@ const ShowProject = ({project}) => {
   };
 
 
-  const ModalTimesheet = () => {
+  const ModalTimeSheet = () => {
     return (
       <Modal visible={modalVisible} closable={true} footer={null} onCancel={(e) => setModalVisible(false)}>
-        <ShowTimesheet project={project} member={selectedMember}/>
+        <ShowTimeSheet project={project} member={selectedMember} width={820}/>
       </Modal>
     )
   };
 
   return (
     <div>
-      <ModalTimesheet/>
+      <ModalTimeSheet/>
       <CardLg>
         <Title level={2}>{project.name}</Title>
         <Row gutter={32}>
