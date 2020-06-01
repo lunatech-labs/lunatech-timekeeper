@@ -30,10 +30,15 @@ const TopBar = ({ collapsed, toggle, user }) => {
 
   return (
     <Header id="tk_Header" className="site-layout-background">
-      {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-        className: 'trigger',
-        onClick: toggle,
-      })}
+      <div className="tk_Header_Left">
+        {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+          className: 'trigger',
+          onClick: toggle,
+        })}
+        <div className="tk_Header_Organization">
+          <Avatar shape="square"  src={displayOrganizationPicture(user.email)} />
+        </div>
+      </div>
       <div className="tk_Header_Right">
         <div className="tk_Header_Notif">
           <Badge dot={alert} onClick={alertChangeState}>
@@ -41,7 +46,6 @@ const TopBar = ({ collapsed, toggle, user }) => {
           </Badge>
         </div>
         <HeaderProfile user={user} />
-        <Avatar shape="square" size="large" src={displayOrganizationPicture(user.email)} />
       </div>
     </Header>
   );
@@ -50,6 +54,9 @@ const TopBar = ({ collapsed, toggle, user }) => {
 TopBar.propTypes = {
   collapsed: PropTypes.bool.isRequired,
   toggle: PropTypes.func.isRequired,
+  user: PropTypes.shape({
+    email: PropTypes.string
+  })
 };
 
 export default TopBar;

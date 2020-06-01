@@ -16,20 +16,18 @@ public class TimeSheetResponse {
     public ProjectLightResponse project;
 
     public Long ownerId;
-    public Boolean defaultIsBillable;
-    public LocalDate expirationDate;
-    public Integer maxDuration; // eg 21
-    public String durationUnit; // DAYS
-    public List<TimeEntryResponse> entries;
+
     private String timeUnit;
 
-    // This functional helper should indicate if a TimeSheet is over budget in term of time or days
-    // TODO it requires unit test and more work
-    public Boolean isOverTimeOrBudget() {
-        var isOverTime = LocalDate.now().isAfter(expirationDate);
-        var isOverBudget = entries.size() > maxDuration;
-        return isOverBudget || isOverTime;
-    }
+    public Boolean defaultIsBillable;
+
+    public LocalDate expirationDate;
+
+    public Integer maxDuration; // eg 21
+
+    public String durationUnit; // DAYS
+
+    public List<TimeEntryResponse> entries;
 
     public TimeSheetResponse(Long id, ProjectLightResponse project, UserResponse owner, String timeUnit, Boolean defaultIsBillable, LocalDate expirationDate, Integer maxDuration, String durationUnit, List<TimeEntryResponse> entries) {
         this.id = id;

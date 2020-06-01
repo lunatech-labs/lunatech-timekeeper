@@ -1,6 +1,7 @@
 package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.Project;
+import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.resources.exceptions.UpdateResourceException;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
@@ -37,6 +38,9 @@ public class ProjectService {
     @Inject
     UserService userService;
 
+    @Inject
+    TimeSheetService timeSheetService;
+
     public Optional<ProjectResponse> findResponseById(Long id, AuthenticationContext ctx) {
         return findById(id, ctx).map(ProjectResponse::bind);
     }
@@ -54,6 +58,10 @@ public class ProjectService {
         } catch (PersistenceException pe) {
             throw new CreateResourceException(String.format("Project was not created due to constraint violation"));
         }
+        Stream<TimeSheet> timeSheets = project.users
+                .stream()
+                .map(projectUser -> timeSheetService.createDefault(project, projectUser.user));
+        timeSheets.forEach(timeSheet -> timeSheetService.createTimeSheet(timeSheet, ctx));
         return project.id;
     }
 

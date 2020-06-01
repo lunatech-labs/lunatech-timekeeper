@@ -7,23 +7,31 @@ import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.project.ProjectClientResponse;
 import fr.lunatech.timekeeper.services.responses.project.ProjectResponse;
 import fr.lunatech.timekeeper.services.responses.project.ProjectUserResponse;
+import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
+import fr.lunatech.timekeeper.timeutils.TimeUnit;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.parsing.Parser;
 import org.flywaydb.core.Flyway;
+import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 import javax.inject.Inject;
+import java.util.Collections;
 import java.util.List;
 
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ProjectDef;
+import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TimeSheetDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.putValidation;
+import static fr.lunatech.timekeeper.resources.utils.TestUtils.*;
 import static fr.lunatech.timekeeper.resources.utils.TestUtils.toJson;
 import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.Response.Status.*;
@@ -106,7 +114,7 @@ class ProjectResourceTest {
         final var project11 = create(new ProjectRequest("Some Project 11", false, "other description", client1.getId(), true, emptyList()), adminToken);
         final var project20 = create(new ProjectRequest("Some Project 20", true, "some description", client2.getId(), true, emptyList()), adminToken);
 
-        getValidation(ProjectDef.uri, userToken, OK).body(is(TestUtils.listOfTasJson(project10, project11, project20)));
+        getValidation(ProjectDef.uri, userToken, OK).body(is(listOfTasJson(project10, project11, project20)));
     }
 
     @Test
@@ -223,4 +231,47 @@ class ProjectResourceTest {
         putValidation(ProjectDef.uriWithid(project10.getId()), adminToken, updateProjectRequest, BAD_REQUEST);
     }
 
+    @Test
+    void shouldCreateTimeSheetForProjectMembers() {
+        // GIVEN
+        final String adminToken = getAdminAccessToken();
+        final String jimmyToken = getUserAccessToken();
+
+        var sam = create(adminToken);
+        var jimmy = create(jimmyToken);
+        final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
+
+        ProjectRequest.ProjectUserRequest samProjectRequest = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
+        ProjectRequest.ProjectUserRequest jimmyProjectRequest = new ProjectRequest.ProjectUserRequest(jimmy.getId(), false);
+
+        List<ProjectRequest.ProjectUserRequest> newUsers = List.of(samProjectRequest, jimmyProjectRequest);
+
+        final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
+
+        // THEN`
+        final var expectedTimeSheetSam = new TimeSheetResponse(8L, project, sam, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, project, jimmy, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+
+
+        getValidation(TimeSheetDef.uri, adminToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetSam))));
+        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetJimmy))));
+
+    }
+
+    @Test
+    void shouldNotCreateTimeSheetForNonProjectMembers() {
+        // GIVEN
+        final String adminToken = getAdminAccessToken();
+        final String jimmyToken = getUserAccessToken();
+
+        final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
+
+        List<ProjectRequest.ProjectUserRequest> newUsers = Collections.emptyList();
+
+        final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
+
+        // THEN
+        getValidation(TimeSheetDef.uri, adminToken, OK).body(is("[]"));
+        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is("[]"));
+    }
 }

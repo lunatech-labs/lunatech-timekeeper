@@ -9,7 +9,7 @@ const ProjectsPage = () => {
   return (
     <MainPage
       title={'List of projects'}
-      actions={<Link id="tk_Btn" className="tk_BtnPrimary" key='addLink' to={'/projects/new'}><PlusOutlined />Add a project</Link>}
+      actions={<Link id="tk_Btn" className="tk_BtnPrimary" key='addLink' to={'/projects/new'}>Add a project</Link>}
     >
       <ProjectList/>
     </MainPage>

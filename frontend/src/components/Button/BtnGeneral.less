@@ -3,22 +3,22 @@
 #tk_Btn {
   height: 40px;
   border-radius: 4px;
-  font-size: 14px;
   border: none;
   color: @white_Tk;
-  padding: 0 16px;
+  padding: 0 32px;
   display: flex;
   align-items: center;
-  span:first-child {
-    margin-right: 8px;
-  }
-  span:last-child {
-    margin-left: 0;
-  }
 }
 #tk_Btn.tk_BtnPrimary {
   background: @red_Tk;
+  &:hover {
+    background: #BF191F;
+  }
 }
 #tk_Btn.tk_BtnSecondary {
-  background: @mediumGray_Tk;
+  background: none;
+  &:hover {
+    background: rgba(39, 40, 54, .2);
+    color: @lightGray_Tk;
+  }
 }

@@ -1,9 +1,9 @@
 import React, {useCallback} from 'react';
-import {Redirect, withRouter} from 'react-router-dom';
+import {Link, Redirect, withRouter} from 'react-router-dom';
 import {withKeycloak} from '@react-keycloak/web';
 import {Button, Layout, Row, Col, Typography} from 'antd';
 
-import Logo from '../../img/logo.png';
+import Logo from '../../img/logo_TK_homepage_x2_retina.png';
 import LoginBackground from '../../img/login_Background.png';
 
 import './Login.less';
@@ -24,21 +24,20 @@ const LoginPage = withRouter(
       <Layout>
         <Content>
           <Row>
-            <Col className="login_LeftPart" span={9}>
+            <Col id="login_LeftPart" span={10}>
               <div className="logo_Tk">
                 <img src={Logo} alt=""/>
+                <p>timekeeper</p>
               </div>
-              <div className="title_Tk">
+              <div id="title_Tk">
                 <Title>Simple time tracking. Powerful reporting.</Title>
-                <Paragraph>Turn your team on to productivity.</Paragraph>
+                <p>Turn your team on to productivity.</p>
+                <Button id="tk_Btn" className="tk_BtnPrimary" onClick={login}>Sign up</Button>
               </div>
-
-              <Button type="primary" onClick={login} danger>
-                                    Login
-              </Button>
-
+              <div className="bottom_Tk">
+              </div>
             </Col>
-            <Col className="login_RightPart" span={15}>
+            <Col id="login_RightPart" span={14}>
               <img src={LoginBackground} alt=""/>
             </Col>
           </Row>
