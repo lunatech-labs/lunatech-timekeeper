@@ -1,2 +1,87 @@
 @import '../../timekeeper-theme.less';
 
+#tk_WeekCalendar_Head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(216, 216, 216, 0.1);
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  > div:first-child {
+    display: flex;
+    align-items: center;
+    p {
+      margin: 0 10px;
+      color: @lightGray_Tk;
+    }
+    button {
+      background: none;
+      border-radius: 0;
+      border: 1px solid @mediumGray_Tk;
+      color: @lightGray_Tk;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      &:first-child {
+        border-top-left-radius: 2px;
+        border-bottom-left-radius: 2px;
+      }
+      &:last-child {
+        border-top-right-radius: 2px;
+        border-bottom-right-radius: 2px;
+      }
+      span {font-size: 12px;}
+      &:hover {
+        border-color: @red_Tk;
+        color: @red_Tk;
+      }
+    }
+  }
+  > div:last-child {
+    display: flex;
+    align-items: center;
+    .ant-select {
+      width: 140px;
+      margin-right: 32px;
+      color: @lightGray_Tk;
+      .ant-select-selector {
+        background: none;
+        &:hover {
+          border: 1px solid @red_Tk;
+        }
+      }
+      .ant-select-arrow {
+        color: @lightGray_Tk;
+      }
+    }
+    .ant-radio-group {
+      .ant-radio-button-wrapper {
+        border: 1px solid @lightGray_Tk;
+      }
+      .ant-radio-button-wrapper:not(:first-child)::before {
+        background-color: @red_Tk;
+      }
+      .ant-radio-button-wrapper-checked {
+        border: 1px solid @red_Tk;
+        color: @red_Tk;
+      }
+
+    }
+  }
+}
+#tk_WeekCalendar_Body {
+  display: flex;
+  margin: 0 -8px;
+  > div {
+    width: 14.2857142857%;
+    margin: 0 8px;
+  }
+}
+.tk_WeekCalendar_Day {
+ > p {
+   text-transform: uppercase;
+   text-align: center;
+   color: @lightGray_Tk;
+   margin-bottom: 16px;
+ }
+}
