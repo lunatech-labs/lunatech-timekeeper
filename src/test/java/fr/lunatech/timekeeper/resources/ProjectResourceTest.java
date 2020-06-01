@@ -273,4 +273,15 @@ class ProjectResourceTest {
         getValidation(TimeSheetDef.uri, adminToken, OK).body(is("[]"));
         getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is("[]"));
     }
+
+
+    @Test
+    void shouldretrieveTimeSheetForProjectMembers(){
+        /// TODO
+        //GIVEN : my project has meember which has timesheet
+        //WHEN : I ask for timesheet
+        //THEN : I see'em
+
+    }
+
 }
