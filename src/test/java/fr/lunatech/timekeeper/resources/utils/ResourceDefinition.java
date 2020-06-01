@@ -4,6 +4,8 @@ import fr.lunatech.timekeeper.services.requests.ClientRequest;
 import fr.lunatech.timekeeper.services.requests.OrganizationRequest;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.*;
+import fr.lunatech.timekeeper.services.responses.project.ProjectLightResponse;
+import fr.lunatech.timekeeper.services.responses.project.ProjectResponse;
 
 import static fr.lunatech.timekeeper.resources.utils.TypeDefinition.apply;
 
@@ -13,6 +15,7 @@ public enum ResourceDefinition {
     OrganizationDef("/api/organizations", apply(OrganizationRequest.class, OrganizationResponse.class)),
     UserDef("/api/users", apply(Void.class, UserResponse.class)),
     ProjectDef("/api/projects", apply(ProjectRequest.class, ProjectResponse.class)),
+    ProjectLightDef("/api/projects/optimized", apply(ProjectRequest.class, ProjectLightResponse.class)),
     TimeSheetDef("/api/my/timeSheets", apply(Void.class, TimeSheetResponse.class));
 
     final public String uri;

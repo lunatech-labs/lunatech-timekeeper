@@ -1,21 +1,17 @@
 package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.resources.utils.HttpTestRuntimeException;
-import fr.lunatech.timekeeper.resources.utils.TestUtils;
 import fr.lunatech.timekeeper.services.requests.ClientRequest;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
+import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import fr.lunatech.timekeeper.services.responses.project.ProjectClientResponse;
 import fr.lunatech.timekeeper.services.responses.project.ProjectResponse;
 import fr.lunatech.timekeeper.services.responses.project.ProjectUserResponse;
-import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.RestAssured;
-import io.restassured.parsing.Parser;
 import org.flywaydb.core.Flyway;
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
@@ -27,11 +23,10 @@ import java.util.List;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ProjectDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TimeSheetDef;
-import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
-import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
+import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.putValidation;
-import static fr.lunatech.timekeeper.resources.utils.TestUtils.*;
+import static fr.lunatech.timekeeper.resources.utils.TestUtils.listOfTasJson;
 import static fr.lunatech.timekeeper.resources.utils.TestUtils.toJson;
 import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.Response.Status.*;
@@ -247,10 +242,11 @@ class ProjectResourceTest {
         List<ProjectRequest.ProjectUserRequest> newUsers = List.of(samProjectRequest, jimmyProjectRequest);
 
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
+        final var lightProject = read(project.getId(), adminToken);
 
         // THEN`
-        final var expectedTimeSheetSam = new TimeSheetResponse(8L, project, sam, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, project, jimmy, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetSam = new TimeSheetResponse(8L, lightProject, sam, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, lightProject, jimmy, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
 
         getValidation(TimeSheetDef.uri, adminToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetSam))));

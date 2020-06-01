@@ -5,6 +5,7 @@ import fr.lunatech.timekeeper.services.requests.OrganizationRequest;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.ClientResponse;
 import fr.lunatech.timekeeper.services.responses.OrganizationResponse;
+import fr.lunatech.timekeeper.services.responses.project.ProjectLightResponse;
 import fr.lunatech.timekeeper.services.responses.project.ProjectResponse;
 import fr.lunatech.timekeeper.services.responses.UserResponse;
 
@@ -14,6 +15,10 @@ public class ResourceFactory {
 
     public static ProjectResponse create(ProjectRequest project, String token) {
         return InternalResourceUtils.createResource(project, ProjectDef.uri, ProjectResponse.class, token);
+    }
+
+    public static ProjectLightResponse read(Long id, String token) {
+        return InternalResourceUtils.readResource(id, ProjectLightDef.uri, ProjectLightResponse.class, token);
     }
 
     public static ClientResponse create(ClientRequest client, String token) {

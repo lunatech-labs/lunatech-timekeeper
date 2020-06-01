@@ -5,6 +5,7 @@ import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.resources.exceptions.UpdateResourceException;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
+import fr.lunatech.timekeeper.services.responses.project.ProjectLightResponse;
 import fr.lunatech.timekeeper.services.responses.project.ProjectResponse;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import org.slf4j.Logger;
@@ -43,6 +44,10 @@ public class ProjectService {
 
     public Optional<ProjectResponse> findResponseById(Long id, AuthenticationContext ctx) {
         return findById(id, ctx).map(ProjectResponse::bind);
+    }
+
+    public Optional<ProjectLightResponse> findLightResponseById(Long id, AuthenticationContext ctx) {
+        return findById(id, ctx).map(ProjectLightResponse::bind);
     }
 
     public List<ProjectResponse> listAllResponses(AuthenticationContext ctx) {

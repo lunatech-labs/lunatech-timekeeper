@@ -4,6 +4,7 @@ import fr.lunatech.timekeeper.resources.openapi.ProjectResourceApi;
 import fr.lunatech.timekeeper.resources.providers.AuthenticationContextProvider;
 import fr.lunatech.timekeeper.services.ProjectService;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
+import fr.lunatech.timekeeper.services.responses.project.ProjectLightResponse;
 import fr.lunatech.timekeeper.services.responses.project.ProjectResponse;
 
 import javax.annotation.security.RolesAllowed;
@@ -44,6 +45,14 @@ public class ProjectResource implements ProjectResourceApi {
     public ProjectResponse getProject(Long id) {
         final var ctx = authentication.context();
         return projectService.findResponseById(id, ctx)
+                .orElseThrow(() -> new NotFoundException(String.format("Project not found for id=%d", id)));
+    }
+
+    @RolesAllowed({"user", "admin"})
+    @Override
+    public ProjectLightResponse getLightProject(Long id) {
+        final var ctx = authentication.context();
+        return projectService.findLightResponseById(id, ctx)
                 .orElseThrow(() -> new NotFoundException(String.format("Project not found for id=%d", id)));
     }
 
