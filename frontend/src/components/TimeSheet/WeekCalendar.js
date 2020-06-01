@@ -5,8 +5,9 @@ import PropTypes from 'prop-types';
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined';
 import LeftCircleOutlined from '@ant-design/icons/lib/icons/LeftCircleOutlined';
 import RightCircleOutlined from '@ant-design/icons/lib/icons/RightCircleOutlined';
+import momentUtil from '../../utils/momentsUtil';
 
-const moment = require('moment');
+const {moment} = momentUtil();
 
 const renderWeekYear = (start, end) => {
   const panelFormatWithYear = 'DD MMM YYYY';
@@ -34,11 +35,11 @@ const renderWeekRange = (start, end) => {
 
 const numberOfWeek = 30;
 const weekRangeOfDate = () => {
-  const startOfCurrentWeek = moment().startOf('week').add(1, 'day');
+  const startOfCurrentWeek = moment().startOf('week');
   return [...Array(numberOfWeek).keys()].map(i => {
     const toAdd = i - 7;
     const start = startOfCurrentWeek.clone().add(toAdd, 'week');
-    const end = start.clone().endOf('week').add(1, 'day');
+    const end = start.clone().endOf('week');
     return {
       id: toAdd,
       start: start,
@@ -161,7 +162,7 @@ WeekCalendar.propTypes = {
   headerDateFormat: PropTypes.string,
   disabledWeekEnd: PropTypes.bool,
   firstDay: PropTypes.object.isRequired,
-  // locale: TODO
+  locale: PropTypes.string,
   days: PropTypes.arrayOf(
     PropTypes.shape({
       date: PropTypes.object,
