@@ -10,7 +10,7 @@ const ClientsPage = () => {
     <MainPage
       title="List of clients"
       actions={
-        <Link id="tk_Btn" className="tk_BtnPrimary" to={'/clients/new'}><PlusOutlined />Add Client</Link>
+        <Link id="tk_Btn" className="tk_BtnPrimary" to={'/clients/new'}>Add Client</Link>
       }
     >
       <ClientList/>

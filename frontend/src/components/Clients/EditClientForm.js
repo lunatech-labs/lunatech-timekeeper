@@ -72,8 +72,8 @@ const EditClientForm = () => {
           </div>
           <Form.Item>
             <Space className="tk_JcFe" size="middle" align="center">
-              <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={'/clients'}><CloseOutlined />Cancel</Link>
-              <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit"><CheckOutlined />Submit</Button>
+              <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={'/clients'}>Cancel</Link>
+              <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Submit</Button>
             </Space>
           </Form.Item>
         </Form>
