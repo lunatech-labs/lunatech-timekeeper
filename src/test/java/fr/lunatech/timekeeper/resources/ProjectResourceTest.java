@@ -85,7 +85,6 @@ class ProjectResourceTest {
         } catch (HttpTestRuntimeException httpError) {
             assertEquals(400, httpError.getHttpStatus());
             assertEquals("application/json", httpError.getMimeType());
-            assertEquals("application/json", httpError.getMimeType());
         }
     }
 
