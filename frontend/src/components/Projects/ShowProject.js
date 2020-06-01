@@ -2,12 +2,11 @@ import React, {useState} from 'react';
 import {Avatar, Col, Modal, Row, Typography} from 'antd';
 import './ShowProject.less';
 import PropTypes from 'prop-types';
-import {DesktopOutlined, DollarOutlined, LockOutlined, UserOutlined,} from '@ant-design/icons';
+import {DesktopOutlined, DollarOutlined, LockOutlined, SnippetsFilled, UserOutlined,} from '@ant-design/icons';
 import TitleSection from '../Title/TitleSection';
 import CardLg from '../Card/CardLg';
 import CardMember from '../Card/CardMember';
 import TagMember from '../Tag/TagMember';
-import SnippetsOutlined from "@ant-design/icons/lib/icons/SnippetsOutlined";
 import Tooltip from "antd/es/tooltip";
 import TagProjectClient from "../Tag/TagProjectClient";
 import ShowTimesheet from "../TimeSheet/ShowTimesheet";
@@ -34,7 +33,7 @@ const ShowProject = ({project}) => {
           </div>
           <TagMember isManager={user.manager}/>
           <Tooltip title='Time sheet'>
-            <SnippetsOutlined onClick={() => {
+            <SnippetsFilled onClick={() => {
               setModalVisible(true);
               setSelectedMember(user)
             }}/>
@@ -55,7 +54,7 @@ const ShowProject = ({project}) => {
 
   return (
     <div>
-      <ModalTimesheet />
+      <ModalTimesheet/>
       <CardLg>
         <Title level={2}>{project.name}</Title>
         <Row gutter={32}>

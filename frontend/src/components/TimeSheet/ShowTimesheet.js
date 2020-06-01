@@ -1,31 +1,78 @@
 import React from 'react';
-import {Col, Divider, Row, Tag} from "antd";
+import {Alert, Col, Divider, Row} from "antd";
 import TagProjectClient from "../Tag/TagProjectClient";
-import TitleSection from "../Title/TitleSection";
 import './ShowTimesheet.less';
-import {DesktopOutlined, DollarOutlined, LockOutlined, UserOutlined} from "@ant-design/icons";
+import {DollarOutlined} from "@ant-design/icons";
 import ClockCircleOutlined from '@ant-design/icons/lib/icons/ClockCircleOutlined';
-import CardMember from "../Card/CardMember";
 import ProjectMemberTag from "../Projects/ProjectMemberTag";
-const ShowTimesheet = ({timesheet, project, member}) => {
-  return (
-    <div>
-      <h1>Individual time sheet</h1>
-      <h2>{project.name}</h2><TagProjectClient client={project.client} />
-      <div><ProjectMemberTag member={member}/></div>
-      <Divider/>
+import CalendarOutlined from "@ant-design/icons/lib/icons/CalendarOutlined";
+import {useTimeKeeperAPI} from "../../utils/services";
+import momentUtil from "../../utils/momentsUtil";
+
+const moment = momentUtil;
+const ShowTimesheet = ({project, member}) => {
+  const {data, error, loading} = useTimeKeeperAPI(`/projects/${project.id}/user/${member.id}/timesheets`);
+
+  const TimeSheets = ({timeSheets}) => {
+    if (timeSheets.size === 0) {
+      return <div>No time sheets</div>
+    } else {
+      return timeSheets.map(item =>
+        <div>
+          <p>Edit</p>
           <Row gutter={32}>
             <Col span={12}>
-              <p className="tk_ProjectAtt"><ClockCircleOutlined/> TimeUnit : Half day</p>
-              <p className="tk_ProjectAtt"><UserOutlined/> End date : 2020/06/30</p>
+              <p className="tk_information"><ClockCircleOutlined/> TimeUnit : {item.durationUnit}</p>
+              <p className="tk_information"><CalendarOutlined/> End date
+                : {moment(item.expirationDate).format('yyyy/MM/dd')}</p>
             </Col>
             <Col span={12}>
-              <p className="tk_ProjectAtt"><DollarOutlined/> Number of days : 21</p>
-              <p className="tk_ProjectAtt"><DollarOutlined/> Billable : yes</p>
+              <p className="tk_information"><CalendarOutlined/> Number of days : {item.maxDuration}</p>
+              <p className="tk_information"><DollarOutlined/> Billable : {item.defaultIsBillable}</p>
             </Col>
           </Row>
+        </div>
+      );
+    }
+  };
+
+  TimeSheets.propTypes = {
+    id: PropTypes.number.isRequired,
+    defaultIsBillable: PropTypes.bool.isRequired,
+    expirationDate: PropTypes.object,
+    maxDuration: PropTypes.number,
+    durationUnit: PropTypes.string,
+  };
+
+  if (error) {
+    let errorReason = 'Message: ' + error;
+    return (
+      <React.Fragment>
+        <Alert title='Server error'
+               message='Failed to load projects from Quarkus backend server'
+               type='error'
+               description={errorReason}
+        />
+      </React.Fragment>
+    );
+  }
+  if (loading) {
+    return (
+      <div>loading...</div>
+    );
+  }
+
+  return (
+    <div>
+      <div><h1>Individual time sheet</h1></div>
+      <h2>{project.name}</h2><TagProjectClient client={project.client}/>
+      <div><ProjectMemberTag member={member}/></div>
+      <Divider/>
+      <TimeSheets timeSheets={data}/>
     </div>
-  )
+  );
+
 };
+
 
 export default ShowTimesheet;
