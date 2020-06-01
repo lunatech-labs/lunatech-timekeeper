@@ -11,7 +11,10 @@ const CardLg = ( {children} ) => {
 };
 
 CardLg.propTypes = {
-  children: PropTypes.arrayOf(PropTypes.element)
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node
+  ]).isRequired
 };
 
 export default CardLg;
