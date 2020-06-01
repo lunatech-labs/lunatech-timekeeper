@@ -4,13 +4,14 @@ import fr.lunatech.timekeeper.resources.utils.HttpTestRuntimeException;
 import fr.lunatech.timekeeper.resources.utils.TestUtils;
 import fr.lunatech.timekeeper.services.requests.ClientRequest;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
-import fr.lunatech.timekeeper.services.responses.ProjectResponse;
+import fr.lunatech.timekeeper.services.responses.project.ProjectClientResponse;
+import fr.lunatech.timekeeper.services.responses.project.ProjectResponse;
+import fr.lunatech.timekeeper.services.responses.project.ProjectUserResponse;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
@@ -119,7 +120,7 @@ class ProjectResourceTest {
                 , updatedProject.getName()
                 , updatedProject.isBillable()
                 , updatedProject.getDescription()
-                , new ProjectResponse.ProjectClientResponse(client1.getId(), client1.getName())
+                , new ProjectClientResponse(client1.getId(), client1.getName())
                 , emptyList()
                 , updatedProject.isPublicAccess());
 
@@ -155,14 +156,14 @@ class ProjectResourceTest {
                 , newUsers);
 
         final var expectedProjectUsers = List.of(
-                new ProjectResponse.ProjectUserResponse(sam.getId(), true, sam.getName(), sam.getPicture())
-                , new ProjectResponse.ProjectUserResponse(jimmy.getId(), false, jimmy.getName(), jimmy.getPicture())
+                new ProjectUserResponse(sam.getId(), true, sam.getName(), sam.getPicture())
+                , new ProjectUserResponse(jimmy.getId(), false, jimmy.getName(), jimmy.getPicture())
         );
         final var expectedProject = new ProjectResponse(project10.getId()
                 , updatedProjectWithTwoUsers.getName()
                 , updatedProjectWithTwoUsers.isBillable()
                 , updatedProjectWithTwoUsers.getDescription()
-                , new ProjectResponse.ProjectClientResponse(client1.getId(), client1.getName())
+                , new ProjectClientResponse(client1.getId(), client1.getName())
                 , expectedProjectUsers
                 , updatedProjectWithTwoUsers.isPublicAccess());
 

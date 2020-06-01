@@ -5,7 +5,7 @@ import fr.lunatech.timekeeper.services.requests.OrganizationRequest;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.ClientResponse;
 import fr.lunatech.timekeeper.services.responses.OrganizationResponse;
-import fr.lunatech.timekeeper.services.responses.ProjectResponse;
+import fr.lunatech.timekeeper.services.responses.project.ProjectResponse;
 import fr.lunatech.timekeeper.services.responses.UserResponse;
 
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.*;

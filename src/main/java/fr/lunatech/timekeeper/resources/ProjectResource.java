@@ -4,7 +4,7 @@ import fr.lunatech.timekeeper.resources.openapi.ProjectResourceApi;
 import fr.lunatech.timekeeper.resources.providers.AuthenticationContextProvider;
 import fr.lunatech.timekeeper.services.ProjectService;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
-import fr.lunatech.timekeeper.services.responses.ProjectResponse;
+import fr.lunatech.timekeeper.services.responses.project.ProjectResponse;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;

@@ -2,6 +2,7 @@ package fr.lunatech.timekeeper.services.responses;
 
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
+import fr.lunatech.timekeeper.services.responses.project.ProjectLightResponse;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -12,21 +13,15 @@ import java.util.stream.Collectors;
 public class TimeSheetResponse {
     public Long id;
 
-    public ProjectResponse project;
+    public ProjectLightResponse project;
 
     public Long ownerId;
-
-    private String timeUnit;
-
     public Boolean defaultIsBillable;
-
     public LocalDate expirationDate;
-
     public Integer maxDuration; // eg 21
-
     public String durationUnit; // DAYS
-
     public List<TimeEntryResponse> entries;
+    private String timeUnit;
 
     // This functional helper should indicate if a TimeSheet is over budget in term of time or days
     // TODO it requires unit test and more work
@@ -36,7 +31,7 @@ public class TimeSheetResponse {
         return isOverBudget || isOverTime;
     }
 
-    public TimeSheetResponse(Long id, ProjectResponse project, UserResponse owner, String timeUnit, Boolean defaultIsBillable, LocalDate expirationDate, Integer maxDuration, String durationUnit, List<TimeEntryResponse> entries) {
+    public TimeSheetResponse(Long id, ProjectLightResponse project, UserResponse owner, String timeUnit, Boolean defaultIsBillable, LocalDate expirationDate, Integer maxDuration, String durationUnit, List<TimeEntryResponse> entries) {
         this.id = id;
         this.project = project;
         this.ownerId = owner.getId();
@@ -51,7 +46,7 @@ public class TimeSheetResponse {
     public static TimeSheetResponse bind(@NotNull TimeSheet sheet) {
         return new TimeSheetResponse(
                 sheet.id,
-                ProjectResponse.bind(sheet.project),
+                ProjectLightResponse.bind(sheet.project),
                 UserResponse.bind(sheet.owner),
                 sheet.timeUnit.name(),
                 sheet.defaultIsBillable,
