@@ -162,7 +162,6 @@ WeekCalendar.propTypes = {
   headerDateFormat: PropTypes.string,
   disabledWeekEnd: PropTypes.bool,
   firstDay: PropTypes.object.isRequired,
-  locale: PropTypes.string,
   days: PropTypes.arrayOf(
     PropTypes.shape({
       date: PropTypes.object,
