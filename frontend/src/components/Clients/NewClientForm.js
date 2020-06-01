@@ -3,7 +3,6 @@ import {Alert, Button, Form, Input, message} from 'antd';
 import {Link, Redirect} from 'react-router-dom';
 import {useTimeKeeperAPIPost} from '../../utils/services';
 import Space from 'antd/lib/space';
-import {CheckOutlined, CloseOutlined} from '@ant-design/icons';
 import '../../components/Button/BtnGeneral.less';
 
 const {TextArea} = Input;
@@ -82,10 +81,10 @@ const ClientForm = () => {
               placeholder="A short description about this client"
             />
           </Form.Item>
-            <Space className="tk_JcFe" size="middle" align="center">
-              <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={'/clients'}>Cancel</Link>
-              <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Submit</Button>
-            </Space>
+          <Space className="tk_JcFe" size="middle" align="center">
+            <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={'/clients'}>Cancel</Link>
+            <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Submit</Button>
+          </Space>
         </div>
       </Form>
     </React.Fragment>
