@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import MainPage from '../MainPage/MainPage';
 import WeekCalendar from '../../components/TimeSheet/WeekCalendar';
-import {Badge} from 'antd';
 import momentUtil from '../../utils/momentsUtil';
+import TimeEntry from "../../components/TimeEntry/TimeEntry";
 
 const {moment} = momentUtil();
 
@@ -34,15 +34,15 @@ const TimeEntriesPage = () => {
       data: [{
         name: 'It is tuesday my dudes',
         description: 'First element of the day',
-        client: {
+        project: {
           id: 1,
-          name: 'Darva'
+          name: 'Agira'
         },
         dateTime: today().add(4, 'hour')
       },{
         name: 'It is tuesday my dudes',
         description: 'Second element of the day',
-        client: {
+        project: {
           id: 1,
           name: 'Google'
         },
@@ -50,7 +50,7 @@ const TimeEntriesPage = () => {
       },{
         name: 'It is tuesday my dudes',
         description: 'Second element of the day',
-        client: {
+        project: {
           id: 1,
           name: 'SPACE X'
         },
@@ -63,11 +63,19 @@ const TimeEntriesPage = () => {
       data: [{
         name: 'It is wednesday my dudes',
         description: 'First element of the day',
-        dateTime: today().add(1, 'hour')
+        dateTime: today().add(1, 'hour'),
+        project: {
+          id: 1,
+          name: 'Agira'
+        },
       }, {
         name: 'It is wednesday my dudes',
         description: 'Second element of the day',
-        dateTime: today().add(2, 'hour')
+        dateTime: today().add(2, 'hour'),
+        project: {
+          id: 1,
+          name: 'Agira'
+        },
       }]
     }
   ];
@@ -86,9 +94,9 @@ const TimeEntriesPage = () => {
         name: 'AGIRA BIEN',
         description: 'EQUIPE LT',
         dateTime: today().add(1, 'week').add(4, 'hour'),
-        client: {
+        project: {
           id: 1,
-          name: 'Darva'
+          name: 'Agira'
         }
       }, {
         name: 'It is wednesday my dudes of week 2',
@@ -112,22 +120,7 @@ const TimeEntriesPage = () => {
               {data.map(entry => {
                 if (entry) {
                   return (
-                    <div key={`badge-entry-${entry.dateTime && entry.dateTime.format('yyyy-mm-dd-hh-mm')}`}>
-                      <Badge
-                        status={(entry && entry.name) ? 'success' : 'error'}
-                        text={(entry && entry.name) ? `name : ${entry.name} ` : 'Nothing to render'}
-                      />
-                      <p>
-
-                      </p>
-                      <p>
-                        {(entry && entry.client && entry.client.name) ? entry.client.name: 'No client'}
-                      </p>
-
-                      <p>
-                        {entry.dateTime.format('hh:mm')}
-                      </p>
-                    </div>
+                    <TimeEntry entry={entry}/>
                   );
                 }
               })}

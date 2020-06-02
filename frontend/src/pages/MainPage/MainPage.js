@@ -16,7 +16,7 @@ const MainPage = ({ title, children, actions, entityName, ...rest }) => {
   const { data, error, loading } = useTimeKeeperAPI('/api/users/me');
 
 
-  const [collapsed, toggle] = useState(false);
+  const [collapsed, toggle] = useState(true);
 
   if (error) {
     return (

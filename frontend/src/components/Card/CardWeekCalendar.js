@@ -20,6 +20,4 @@ CardWeekCalendar.propTypes = {
   onMouseLeave: PropTypes.func
 };
 
-
-
 export default CardWeekCalendar;
