@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import {Link, Redirect, withRouter} from 'react-router-dom';
+import {Redirect, withRouter} from 'react-router-dom';
 import {withKeycloak} from '@react-keycloak/web';
 import {Button, Layout, Row, Col, Typography} from 'antd';
 
@@ -9,7 +9,7 @@ import LoginBackground from '../../img/login_Background.png';
 import './Login.less';
 
 const {Content} = Layout;
-const {Title, Paragraph} = Typography;
+const {Title} = Typography;
 
 const LoginPage = withRouter(
   withKeycloak(({keycloak, location}) => {

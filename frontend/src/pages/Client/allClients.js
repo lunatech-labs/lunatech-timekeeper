@@ -2,7 +2,6 @@ import React from 'react';
 import ClientList from '../../components/Clients/ClientList';
 import MainPage from '../MainPage/MainPage';
 import {Link} from 'react-router-dom';
-import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined';
 import '../../components/Button/BtnGeneral.less';
 
 const ClientsPage = () => {
