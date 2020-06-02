@@ -25,6 +25,36 @@ const TimeEntriesPage = () => {
       disabled: true,
       data: [{
         name: 'First Day of the week is a day off',
+        dateTime: today().add(8, 'hour')
+      }]
+    },
+    {
+      date: today().add(1, 'day'),
+      disabled: false,
+      data: [{
+        name: 'It is tuesday my dudes',
+        description: 'First element of the day',
+        client: {
+          id: 1,
+          name: 'Darva'
+        },
+        dateTime: today().add(4, 'hour')
+      },{
+        name: 'It is tuesday my dudes',
+        description: 'Second element of the day',
+        client: {
+          id: 1,
+          name: 'Google'
+        },
+        dateTime: today().add(2, 'hour')
+      },{
+        name: 'It is tuesday my dudes',
+        description: 'Second element of the day',
+        client: {
+          id: 1,
+          name: 'SPACE X'
+        },
+        dateTime: today().add(1, 'hour')
       }]
     },
     {
@@ -33,11 +63,11 @@ const TimeEntriesPage = () => {
       data: [{
         name: 'It is wednesday my dudes',
         description: 'First element of the day',
-        dateTime: today().add(4, 'hour')
+        dateTime: today().add(1, 'hour')
       }, {
         name: 'It is wednesday my dudes',
         description: 'Second element of the day',
-        dateTime: today().add(8, 'hour')
+        dateTime: today().add(2, 'hour')
       }]
     }
   ];
@@ -53,9 +83,13 @@ const TimeEntriesPage = () => {
       date: today().add(2, 'day').add(1, 'week'),
       disabled: false,
       data: [{
-        name: 'It is wednesday my dudes of week 2',
-        description: 'First element of the day',
-        dateTime: today().add(1, 'week').add(4, 'hour')
+        name: 'AGIRA BIEN',
+        description: 'EQUIPE LT',
+        dateTime: today().add(1, 'week').add(4, 'hour'),
+        client: {
+          id: 1,
+          name: 'Darva'
+        }
       }, {
         name: 'It is wednesday my dudes of week 2',
         description: 'Second element of the day',
@@ -81,8 +115,18 @@ const TimeEntriesPage = () => {
                     <div key={`badge-entry-${entry.dateTime && entry.dateTime.format('yyyy-mm-dd-hh-mm')}`}>
                       <Badge
                         status={(entry && entry.name) ? 'success' : 'error'}
-                        text={(entry && entry.name) ? `name : ${entry.name} ${entry.dateTime && `(${entry.dateTime.format('hh:mm')})`}` : 'Nothing to render'}
+                        text={(entry && entry.name) ? `name : ${entry.name} ` : 'Nothing to render'}
                       />
+                      <p>
+
+                      </p>
+                      <p>
+                        {(entry && entry.client && entry.client.name) ? entry.client.name: 'No client'}
+                      </p>
+
+                      <p>
+                        {entry.dateTime.format('hh:mm')}
+                      </p>
                     </div>
                   );
                 }
