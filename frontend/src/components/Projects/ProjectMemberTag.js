@@ -9,7 +9,7 @@ const ProjectMemberTag = ({ member }) => {
   return (
     <CardMember>
       <div>
-        <Avatar src={member.picture} shape={'square'} size="large"/>
+        <Avatar src={member.picture}/>
         <p>{member.name}</p>
       </div>
       <TagMember isManager={member.manager} />

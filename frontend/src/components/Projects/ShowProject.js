@@ -81,9 +81,7 @@ const ShowProject = ({project}) => {
                   : {project.publicAccess ? 'Public' : 'Private'}</p>
               </Col>
             </Row>
-            <Col span={24}>
-              <p className="tk_ProjectDesc">{project.description}</p>
-            </Col>
+            <p className="tk_ProjectDesc">{project.description}</p>
           </Col>
           <Col span={12}>
             <TitleSection title="Members"/>
