@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Col, Radio, Row, Select} from 'antd';
+import {Button, Radio, Select} from 'antd';
 import CardWeekCalendar from '../Card/CardWeekCalendar';
 import PropTypes from 'prop-types';
-import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined';
-import LeftCircleOutlined from '@ant-design/icons/lib/icons/LeftCircleOutlined';
-import RightCircleOutlined from '@ant-design/icons/lib/icons/RightCircleOutlined';
+import { RightOutlined, LeftOutlined, PlusOutlined } from '@ant-design/icons';
+import './WeekCalendar.less';
 
 const moment = require('moment');
 
@@ -93,17 +92,15 @@ const WeekCalendar = (props) => {
     const disableRight = !weekRangeIds.includes(weekSelected + 1);
     return (
       <div>
-        <Button icon={<LeftCircleOutlined/>} disabled={disableLeft} shape='circle'
-          onClick={() => setWeekSelected(weekSelected - 1)}/>
-        {renderWeekYear(start, end)}
-        <Button icon={<RightCircleOutlined/>} disabled={disableRight} shape='circle'
-          onClick={() => setWeekSelected(weekSelected + 1)}/>
+        <Button icon={<LeftOutlined/>} disabled={disableLeft} shape='circle' onClick={() => setWeekSelected(weekSelected - 1)}/>
+        <p>{renderWeekYear(start, end)}</p>
+        <Button icon={<RightOutlined/>} disabled={disableRight} shape='circle' onClick={() => setWeekSelected(weekSelected + 1)}/>
       </div>
     );
   };
 
   const WeekNavigatorSelect = () =>
-    <Select onChange={id => setWeekSelected(id)} style={{width: 300}} defaultValue={0} value={weekSelected}>
+    <Select onChange={id => setWeekSelected(id)} defaultValue={0} value={weekSelected}>
       {weekRanges.map(({id, start, end}) => {
         return (
           <Select.Option key={`date-range-${id}`} value={id} disabled={id === weekSelected}>
@@ -120,13 +117,16 @@ const WeekCalendar = (props) => {
     </Radio.Group>;
 
   return (
-    <div>
-      <div id='week-calendar-panel'>
+    <div id="tk_WeekCalendar">
+      <div id="tk_WeekCalendar_Head">
         <WeekNavigator/>
-        <WeekNavigatorSelect/>
-        <SelectionMode/>
+        <div>
+          <WeekNavigatorSelect/>
+          <SelectionMode/>
+        </div>
       </div>
-      <Row gutter={[24, 16]}>
+
+      <div id="tk_WeekCalendar_Body">
         {dataByDays.map((item, index) => {
           const renderDay = () => {
             if (item && item.day) {
@@ -135,22 +135,21 @@ const WeekCalendar = (props) => {
             }
           };
           return (
-            <Col key={`day-card-${index}`} span={3}>
-              <div>{item.date.format(headerDateFormat)}</div>
-              <CardWeekCalendar
-                disabled={isDisabled(item)} onMouseOver={() => setShowButton(index)}
-                onMouseLeave={() => setShowButton(-1)}>
-                <p>{item.date.format(dateFormat)}
+            <div className="tk_WeekCalendar_Day" key={`day-card-${index}`}>
+              <p>{item.date.format(headerDateFormat)}</p>
+              <CardWeekCalendar disabled={isDisabled(item)} onMouseOver={() => setShowButton(index)} onMouseLeave={() => setShowButton(-1)}>
+                <div className="tk_CardWeekCalendar_Head">{item.date.format(dateFormat)}
                   {((props.hiddenButtons && showButton === index) || (!props.hiddenButtons)) &&
-                    <Button type="primary" shape="circle" disabled={isDisabled(item)} icon={<PlusOutlined/>}/>}
-                </p>
-                {renderDay()}
+                  <Button shape="circle" disabled={isDisabled(item)} icon={<PlusOutlined/>}/>}
+                </div>
+                <div className="tk_CardWeekCalendar_Body">
+                  {renderDay()}
+                </div>
               </CardWeekCalendar>
-            </Col>
+            </div>
           );
-        }
-        )}
-      </Row>
+        })}
+      </div>
     </div>
   );
 };
