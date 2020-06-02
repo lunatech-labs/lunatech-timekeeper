@@ -46,8 +46,13 @@ const ShowProject = ({project}) => {
 
   const ModalTimeSheet = () => {
     return (
-      <Modal visible={modalVisible} closable={true} footer={null} onCancel={(e) => setModalVisible(false)}>
-        <ShowTimeSheet project={project} member={selectedMember} width={820}/>
+      <Modal
+        visible={modalVisible}
+        closable={true}
+        footer={null}
+        onCancel={() => setModalVisible(false)}
+      >
+        <ShowTimeSheet project={project} member={selectedMember} />
       </Modal>
     )
   };
