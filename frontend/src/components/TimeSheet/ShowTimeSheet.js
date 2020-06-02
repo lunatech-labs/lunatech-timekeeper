@@ -8,7 +8,6 @@ import ProjectMemberTag from '../Projects/ProjectMemberTag';
 import CalendarOutlined from '@ant-design/icons/lib/icons/CalendarOutlined';
 import {useTimeKeeperAPI} from '../../utils/services';
 import PropTypes from 'prop-types';
-import CardMember from "../Card/CardMember";
 const moment = require('moment');
 const format = (s) => moment(s, 'YYYY-MM-DD').format('YYYY/MM/DD');
 const ShowTimeSheet = ({project, member}) => {
@@ -69,7 +68,7 @@ const ShowTimeSheet = ({project, member}) => {
     <div>
       <div><h1>Individual time sheet</h1></div>
       <h2>{project.name}</h2><TagProjectClient client={project.client}/>
-      <CardMember><ProjectMemberTag member={member}/></CardMember>
+      <ProjectMemberTag member={member}/>
       <Divider/>
       <TimeSheets timeSheets={data}/>
     </div>
