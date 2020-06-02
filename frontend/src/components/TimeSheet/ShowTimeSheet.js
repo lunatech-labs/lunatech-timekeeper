@@ -1,11 +1,10 @@
 import React from 'react';
-import {Alert, Col, Divider, Row} from 'antd';
+import {Alert, Col, Row} from 'antd';
 import TagProjectClient from '../Tag/TagProjectClient';
 import './ShowTimeSheet.less';
-import {DollarOutlined} from '@ant-design/icons';
-import ClockCircleOutlined from '@ant-design/icons/lib/icons/ClockCircleOutlined';
+import {DollarOutlined, ClockCircleOutlined, CalendarOutlined, FieldTimeOutlined} from '@ant-design/icons';
 import ProjectMemberTag from '../Projects/ProjectMemberTag';
-import CalendarOutlined from '@ant-design/icons/lib/icons/CalendarOutlined';
+import Separator from '../Separator/Separator';
 import {useTimeKeeperAPI} from '../../utils/services';
 import PropTypes from 'prop-types';
 const moment = require('moment');
@@ -19,16 +18,15 @@ const ShowTimeSheet = ({project, member}) => {
     } else {
       return timeSheets.map(item =>
         <div key={`timesheet-information-${item.id}`}>
-          <p>Edit</p>
           <Row gutter={32}>
             <Col span={12}>
-              <p className="tk_information"><ClockCircleOutlined/> TimeUnit : {item.durationUnit}</p>
-              <p className="tk_information"><CalendarOutlined/> End date
+              <p className="tk_Information"><ClockCircleOutlined/> TimeUnit : {item.durationUnit}</p>
+              <p className="tk_Information"><CalendarOutlined/> End date
                 : {item.expirationDate ? format(item.expirationDate) : '----/--/--'}</p>
             </Col>
             <Col span={12}>
-              <p className="tk_information"><CalendarOutlined/> Number of days : {item.maxDuration}</p>
-              <p className="tk_information"><DollarOutlined/> Billable : {item.defaultIsBillable ? 'Yes' : 'No'}</p>
+              <p className="tk_Information"><CalendarOutlined/> Number of days : {item.maxDuration}</p>
+              <p className="tk_Information"><DollarOutlined/> Billable : {item.defaultIsBillable ? 'Yes' : 'No'}</p>
             </Col>
           </Row>
         </div>
@@ -65,12 +63,23 @@ const ShowTimeSheet = ({project, member}) => {
   }
 
   return (
-    <div>
-      <div><h1>Individual time sheet</h1></div>
-      <h2>{project.name}</h2><TagProjectClient client={project.client}/>
-      <ProjectMemberTag member={member}/>
-      <Divider/>
-      <TimeSheets timeSheets={data}/>
+    <div className="tk_ModalTop">
+      <div className="tk_ModalTopHead">
+        <h1>Individual time sheet</h1>
+        <a href="#">Edit (TO DO)</a>
+      </div>
+      <div className="tk_ModalTopBody">
+        <div class="tk_ModalTopProject">
+          <div>
+            <h2>{project.name}</h2>
+            <Separator/>
+            <TagProjectClient client={project.client}/>
+          </div>
+          <p><FieldTimeOutlined />Days left: (TO DO)</p>
+        </div>
+        <ProjectMemberTag member={member}/>
+        <TimeSheets timeSheets={data}/>
+      </div>
     </div>
   );
 };
