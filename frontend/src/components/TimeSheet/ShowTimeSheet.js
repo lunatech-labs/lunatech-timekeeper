@@ -7,11 +7,11 @@ import ClockCircleOutlined from '@ant-design/icons/lib/icons/ClockCircleOutlined
 import ProjectMemberTag from '../Projects/ProjectMemberTag';
 import CalendarOutlined from '@ant-design/icons/lib/icons/CalendarOutlined';
 import {useTimeKeeperAPI} from '../../utils/services';
-import momentUtil from '../../utils/momentsUtil';
 import PropTypes from 'prop-types';
-const moment = momentUtil;
+const moment = require('moment');
+const format = (s) => moment(s, 'YYYY-MM-DD').format('YYYY/MM/DD');
 const ShowTimeSheet = ({project, member}) => {
-  const {data, error, loading} = useTimeKeeperAPI(`/api/projects/${project.id}/users/${member.id}`); ///{idProject}/users/{idUser}
+  const {data, error, loading} = useTimeKeeperAPI(`/api/projects/${project.id}/users/${member.id}`);
 
   const TimeSheets = ({timeSheets}) => {
     if (timeSheets.size === 0) {
@@ -24,7 +24,7 @@ const ShowTimeSheet = ({project, member}) => {
             <Col span={12}>
               <p className="tk_information"><ClockCircleOutlined/> TimeUnit : {item.durationUnit}</p>
               <p className="tk_information"><CalendarOutlined/> End date
-                : {item.expirationDate ? moment(item.expirationDate).format('yyyy/MM/dd') : '----/--/--'}</p>
+                : {item.expirationDate ? format(item.expirationDate) : '----/--/--'}</p>
             </Col>
             <Col span={12}>
               <p className="tk_information"><CalendarOutlined/> Number of days : {item.maxDuration}</p>
@@ -40,7 +40,7 @@ const ShowTimeSheet = ({project, member}) => {
     timeSheets: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.number.isRequired,
       defaultIsBillable: PropTypes.bool.isRequired,
-      expirationDate: PropTypes.object,
+      expirationDate: PropTypes.string,
       maxDuration: PropTypes.number,
       durationUnit: PropTypes.string
     }))
@@ -75,5 +75,13 @@ const ShowTimeSheet = ({project, member}) => {
   );
 };
 
+ShowTimeSheet.propTypes = {
+  project: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    client: PropTypes.object
+  }),
+  member: PropTypes.object
+};
 
 export default ShowTimeSheet;
