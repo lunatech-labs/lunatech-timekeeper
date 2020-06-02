@@ -7,9 +7,9 @@ import TitleSection from '../Title/TitleSection';
 import CardLg from '../Card/CardLg';
 import CardMember from '../Card/CardMember';
 import TagMember from '../Tag/TagMember';
-import Tooltip from 'antd/es/tooltip';
 import TagProjectClient from '../Tag/TagProjectClient';
 import ShowTimeSheet from '../TimeSheet/ShowTimeSheet';
+import Tooltip from 'antd/lib/tooltip';
 import Separator from '../Separator/Separator';
 
 const {Title} = Typography;
