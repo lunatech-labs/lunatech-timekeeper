@@ -7,6 +7,7 @@ import ProjectMemberTag from '../Projects/ProjectMemberTag';
 import Separator from '../Separator/Separator';
 import {useTimeKeeperAPI} from '../../utils/services';
 import PropTypes from 'prop-types';
+import CardMember from '../Card/CardMember';
 const moment = require('moment');
 const format = (s) => moment(s, 'YYYY-MM-DD').format('YYYY/MM/DD');
 const ShowTimeSheet = ({project, member}) => {
