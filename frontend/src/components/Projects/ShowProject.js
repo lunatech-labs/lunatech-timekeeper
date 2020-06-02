@@ -9,6 +9,7 @@ import CardMember from '../Card/CardMember';
 import TagMember from '../Tag/TagMember';
 import TagProjectClient from '../Tag/TagProjectClient';
 import ShowTimeSheet from '../TimeSheet/ShowTimeSheet';
+import Separator from '../Separator/Separator';
 import Tooltip from 'antd/lib/tooltip';
 
 const {Title} = Typography;
@@ -31,13 +32,16 @@ const ShowProject = ({project}) => {
             <Avatar src={user.picture}/>
             <p>{user.name}</p>
           </div>
-          <TagMember isManager={user.manager}/>
-          <Tooltip title='Time sheet'>
-            <SnippetsFilled onClick={() => {
-              setModalVisible(true);
-              setSelectedMember(user);
-            }}/>
-          </Tooltip>
+          <div>
+            <TagMember isManager={user.manager}/>
+            <Separator/>
+            <Tooltip title='Time sheet'>
+              <SnippetsFilled onClick={() => {
+                setModalVisible(true);
+                setSelectedMember(user);
+              }}/>
+            </Tooltip>
+          </div>
         </CardMember>
       );
     }
@@ -51,6 +55,7 @@ const ShowProject = ({project}) => {
         closable={true}
         footer={null}
         onCancel={() => setModalVisible(false)}
+        width={"37.5%"}
       >
         <ShowTimeSheet project={project} member={selectedMember} />
       </Modal>
@@ -76,9 +81,7 @@ const ShowProject = ({project}) => {
                   : {project.publicAccess ? 'Public' : 'Private'}</p>
               </Col>
             </Row>
-            <Col span={24}>
-              <p className="tk_ProjectDesc">{project.description}</p>
-            </Col>
+            <p className="tk_ProjectDesc">{project.description}</p>
           </Col>
           <Col span={12}>
             <TitleSection title="Members"/>

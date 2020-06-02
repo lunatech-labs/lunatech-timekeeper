@@ -3,14 +3,17 @@ import './ProjectMemberTag.less';
 import PropTypes from 'prop-types';
 import {Avatar} from 'antd';
 import TagMember from '../Tag/TagMember';
+import CardMember from "../Card/CardMember";
 
 const ProjectMemberTag = ({ member }) => {
   return (
-    <React.Fragment>
-      <Avatar src={member.picture} shape={'square'} size="large"/>
-      {member.name}
+    <CardMember>
+      <div>
+        <Avatar src={member.picture}/>
+        <p>{member.name}</p>
+      </div>
       <TagMember isManager={member.manager} />
-    </React.Fragment>
+    </CardMember>
   );
 };
 
