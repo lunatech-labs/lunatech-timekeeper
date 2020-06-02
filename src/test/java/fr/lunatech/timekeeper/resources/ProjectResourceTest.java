@@ -361,7 +361,7 @@ class ProjectResourceTest {
     }
 
     @Test
-    void shouldNotChangeMembersTimeSheetsWhenYouAddANewMember(){
+    void shouldNotChangeListOfTimeSheetsForExistingMembersWhenANewMemberIsAdded(){
         // GIVEN
         final String adminToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
