@@ -75,7 +75,7 @@ public interface ProjectResourceApi {
     @Path("optimized/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Retrieve a project",
-            description = "Retrieve a project with the details.")
+            description = "Retrieve a project with the details, but without the list of project users")
     @Tag(ref = "projects")
     @APIResponses(value = {
             @APIResponse(
