@@ -3,6 +3,7 @@ import MainPage from '../MainPage/MainPage';
 import WeekCalendar from '../../components/TimeSheet/WeekCalendar';
 import {Badge} from 'antd';
 import momentUtil from '../../utils/momentsUtil';
+import TimeEntryForm from "../../components/TimeEntry/TimeEntryForm";
 
 const {moment} = momentUtil();
 
@@ -67,6 +68,7 @@ const TimeEntriesPage = () => {
 
   return (
     <MainPage title="Time entries">
+      <TimeEntryForm moment={moment()}/>
       <WeekCalendar
         firstDay={currentFirstDay}
         disabledWeekEnd={true}
