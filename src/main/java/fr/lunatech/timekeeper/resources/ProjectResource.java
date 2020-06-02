@@ -67,7 +67,7 @@ public class ProjectResource implements ProjectResourceApi {
         final var ctx = authentication.context();
         List<TimeSheetResponse> response = timeSheetService.findAllForProjectForUser(ctx, idProject, idUser);
         if (response.isEmpty()){
-            throw new NotFoundException(String.format("No timesheets found for project_id=%d, and user_id=?d", idProject, idUser));
+            throw new NotFoundException(String.format("No timesheet found for project_id=%d, and user_id=%d", idProject, idUser));
         }
         return response;
     }
