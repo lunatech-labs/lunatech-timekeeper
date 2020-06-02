@@ -33,8 +33,8 @@ const renderWeekRange = (start, end) => {
 
 
 const numberOfWeek = 30;
-const weekRangeOfDate = () => {
-  const startOfCurrentWeek = moment().startOf('week');
+const weekRangeOfDate = (firstDay) => {
+  const startOfCurrentWeek = firstDay || moment().startOf('week');
   return [...Array(numberOfWeek).keys()].map(i => {
     const toAdd = i - 7;
     const start = startOfCurrentWeek.clone().add(toAdd, 'week');
@@ -51,6 +51,7 @@ const weekRangeOfDate = () => {
 const WeekCalendar = (props) => {
   const [showButton, setShowButton] = useState(-1);
   const [weekSelected, setWeekSelected] = useState(0);
+  const [weekRanges] = useState(weekRangeOfDate(props.firstDay));
   useEffect(() => {
     const weekRange = weekRangeOfDateMap.get(weekSelected);
     if (weekRange && props.onPanelChange) {
@@ -61,7 +62,6 @@ const WeekCalendar = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [weekSelected]);
 
-  const weekRanges = weekRangeOfDate();
   const weekRangeOfDateToMap = () => {
     const map = new Map();
     weekRanges.forEach((item) => map.set(item.id, item));
@@ -70,7 +70,7 @@ const WeekCalendar = (props) => {
   const weekRangeOfDateMap = weekRangeOfDateToMap();
 
   const daysToData = () => {
-    const daysOfWeek = [...Array(7).keys()].map(i => props.firstDay.clone().add(i, 'days'));
+    const daysOfWeek = [...Array(7).keys()].map(i => props.firstDay.clone().add(i, 'day'));
     return daysOfWeek.map(dayOfWeek => {
       const day = props.days.find(day => day.date.isSame(moment(dayOfWeek), 'day'));
       return {
