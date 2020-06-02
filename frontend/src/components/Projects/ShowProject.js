@@ -7,9 +7,9 @@ import TitleSection from '../Title/TitleSection';
 import CardLg from '../Card/CardLg';
 import CardMember from '../Card/CardMember';
 import TagMember from '../Tag/TagMember';
-import Tooltip from "antd/es/tooltip";
-import TagProjectClient from "../Tag/TagProjectClient";
-import ShowTimeSheet from "../TimeSheet/ShowTimeSheet";
+import Tooltip from 'antd/es/tooltip';
+import TagProjectClient from '../Tag/TagProjectClient';
+import ShowTimeSheet from '../TimeSheet/ShowTimeSheet';
 
 const {Title} = Typography;
 
@@ -35,7 +35,7 @@ const ShowProject = ({project}) => {
           <Tooltip title='Time sheet'>
             <SnippetsFilled onClick={() => {
               setModalVisible(true);
-              setSelectedMember(user)
+              setSelectedMember(user);
             }}/>
           </Tooltip>
         </CardMember>
@@ -54,7 +54,7 @@ const ShowProject = ({project}) => {
       >
         <ShowTimeSheet project={project} member={selectedMember} />
       </Modal>
-    )
+    );
   };
 
   return (
