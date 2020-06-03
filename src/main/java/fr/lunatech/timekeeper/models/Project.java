@@ -50,4 +50,8 @@ public class Project extends PanacheEntity {
                         .findFirst()
                 );
     }
+
+    public Boolean getBillable() {
+        return billable;
+    }
 }

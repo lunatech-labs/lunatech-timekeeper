@@ -4,7 +4,6 @@ import fr.lunatech.timekeeper.models.Project;
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -16,13 +15,12 @@ import java.util.List;
 @Table(name = "timesheets")
 public class TimeSheet extends PanacheEntity {
     @ManyToOne
-    @JoinColumn(name = "project_id", nullable = false)
+    @JoinColumn(name = "project_id")
     @NotNull
     public Project project;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    @NotNull
+    @ManyToOne(cascade = CascadeType.DETACH)
+    @JoinColumn(name = "user_id", nullable = false)
     public User owner;
 
     @Enumerated(EnumType.STRING)
@@ -45,4 +43,16 @@ public class TimeSheet extends PanacheEntity {
     @OneToMany(mappedBy = "timeSheet")
     public List<TimeEntry> entries;
 
+    public TimeSheet() {}
+
+    public TimeSheet(@NotNull Project project, User owner, TimeUnit timeUnit, Boolean defaultIsBillable, @Null LocalDate expirationDate, @Null Integer maxDuration, @Null TimeUnit durationUnit, List<TimeEntry> entries) {
+        this.project = project;
+        this.owner = owner;
+        this.timeUnit = timeUnit;
+        this.defaultIsBillable = defaultIsBillable;
+        this.expirationDate = expirationDate;
+        this.maxDuration = maxDuration;
+        this.durationUnit = durationUnit;
+        this.entries = entries;
+    }
 }
