@@ -4,12 +4,14 @@ import fr.lunatech.timekeeper.models.Project;
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
+import fr.lunatech.timekeeper.services.requests.TimeSheetRequest;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
 import java.util.Collection;
@@ -26,12 +28,23 @@ public class TimeSheetService {
 
     private static Logger logger = LoggerFactory.getLogger(TimeSheetService.class);
 
-    Optional<TimeSheet> findById(Long id) {
-        return TimeSheet.findByIdOptional(id);
-    }
+    @Inject
+    ProjectService projectService;
+
+    @Inject
+    UserService userService;
 
     Boolean userHasNoTimeSheet(Long projectId, Long userId){
         return TimeSheet.stream("user_id = ?1 and project_id = ?2", userId, projectId).count() == 0;
+    }
+
+    public Optional<TimeSheetResponse> findTimeSheetById(Long id , AuthenticationContext ctx){
+        return findById(id,ctx).map(TimeSheetResponse::bind);
+    }
+
+    public long create(TimeSheetRequest request, AuthenticationContext ctx){
+        TimeSheet timeSheet = request.unbind(projectService::findById, userService::findById, ctx);
+        return createTimeSheet(timeSheet,ctx);
     }
 
     @Transactional
@@ -41,9 +54,17 @@ public class TimeSheetService {
         try {
             timeSheet.persistAndFlush();
         } catch (PersistenceException pe) {
-            throw new CreateResourceException(String.format("Timesheet was not created due to constraint violation"));
+            throw new CreateResourceException("Timesheet was not created due to constraint violation");
         }
         return timeSheet.id;
+    }
+
+    @Transactional
+    public Optional<Long> update (Long id, TimeSheetRequest request, AuthenticationContext ctx){
+        logger.info("Modify timesheet for id={} with {}, {}", id,request,ctx);
+        return findById(id,ctx)
+                .map(timeSheet -> request.unbind(projectService::findById,userService::findById,ctx))
+                .map(timeSheet -> timeSheet.id);
     }
 
     // FIXME : It doesn't test if it is active
