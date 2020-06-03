@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 public class ProjectResource implements ProjectResourceApi {
 
@@ -41,9 +42,9 @@ public class ProjectResource implements ProjectResourceApi {
 
     @RolesAllowed({"user", "admin"})
     @Override
-    public ProjectResponse getProject(Long id) {
+    public ProjectResponse getProject(Long id, Optional<Boolean> optimized) {
         final var ctx = authentication.context();
-        return projectService.findResponseById(id, ctx)
+        return projectService.findResponseById(id, optimized, ctx)
                 .orElseThrow(() -> new NotFoundException(String.format("Project not found for id=%d", id)));
     }
 

@@ -17,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
+import java.util.Optional;
 
 import static javax.ws.rs.core.HttpHeaders.LOCATION;
 
@@ -56,7 +57,8 @@ public interface ProjectResourceApi {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Retrieve a project",
-            description = "Retrieve a project with the details and the list of project users and their respective roles.")
+            description = " if optimized is false or is not precised: Retrieve a project with the details and the list of project users and their respective roles.\n" +
+                    "else: Retrieve a project without list of users")
     @Tag(ref = "projects")
     @APIResponses(value = {
             @APIResponse(
@@ -68,7 +70,7 @@ public interface ProjectResourceApi {
                     description = "Project not found"
             )
     })
-    ProjectResponse getProject(@PathParam("id") Long id);
+    ProjectResponse getProject(@PathParam("id") Long id, @QueryParam("optimized") Optional<Boolean> optimized);
 
     @PUT
     @Path("/{id}")
