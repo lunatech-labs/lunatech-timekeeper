@@ -21,6 +21,7 @@ public class TimeSheetResource implements TimeSheetResourceApi {
     @Inject
     AuthenticationContextProvider authentication;
 
+    // TODO Do i really need this ? Remove it in service too if not
     @RolesAllowed({"user", "admin"})
     @Override
     public Response createTimeSheet(TimeSheetRequest request, UriInfo uriInfo) {
