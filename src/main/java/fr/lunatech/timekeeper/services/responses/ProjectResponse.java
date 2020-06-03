@@ -67,7 +67,7 @@ public final class ProjectResponse {
                 ofNullable(project.client)
                         .map(ProjectClientResponse::bind)
                         .orElse(null),
-                optimized.isPresent() && optimized.orElse(false) ? null : users,
+                optimized.orElse(false) ? null : users,
                 project.publicAccess
         );
     }
