@@ -416,7 +416,6 @@ class ProjectResourceTest {
         Map<String, String> params = new HashMap<>();
         params.put("optimized", "true");
         final var fullProject = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
-        final var projectResponse = read(fullProject.getId(), params, adminToken);
         final var attemptProjectResponse = new ProjectResponse(
                 4L, "Some Project",
                 true,
