@@ -19,12 +19,14 @@ const TimeEntry = ({entry}) => {
   const size = computeSize(entry.dateTime)
 
   return (
-    <div className="PagoLand" key={`badge-entry-${entry.dateTime && entry.dateTime.format('yyyy-mm-dd-hh-mm')}`}>
-      <Badge
-        status={(entry && entry.name) ? 'success' : 'error'}
-        text={(entry && entry.name) ? `${entry.name}` : 'Nothing to render'}
-      />
-      <p>{(entry && entry.project && entry.project.name) ? entry.project.name: ''}</p>
+    <div className="tk_TaskCard" key={`badge-entry-${entry.dateTime && entry.dateTime.format('yyyy-mm-dd-hh-mm')}`}>
+      <div>
+        <Badge
+          status={(entry && entry.name) ? 'success' : 'error'}
+          text={(entry && entry.name) ? `${entry.name}` : 'Nothing to render'}
+        />
+        <p>{(entry && entry.project && entry.project.name) ? entry.project.name: ''}</p>
+      </div>
       <p><FieldTimeOutlined />{entry.dateTime.format('hh:mm')}</p>
     </div>
   );
