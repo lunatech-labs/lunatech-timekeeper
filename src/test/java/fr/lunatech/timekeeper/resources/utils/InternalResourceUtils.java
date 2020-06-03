@@ -24,7 +24,6 @@ import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 final class InternalResourceUtils {
 
     private final static String SLASH = "/";
-    private final static String EH = "&";
     private final static String LOCATION = "location";
     private final static Logger logger = LoggerFactory.getLogger(InternalResourceUtils.class);
 
