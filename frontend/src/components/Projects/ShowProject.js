@@ -9,8 +9,8 @@ import CardMember from '../Card/CardMember';
 import TagMember from '../Tag/TagMember';
 import TagProjectClient from '../Tag/TagProjectClient';
 import ShowTimeSheet from '../TimeSheet/ShowTimeSheet';
-import Tooltip from 'antd/lib/tooltip';
 import Separator from '../Separator/Separator';
+import Tooltip from 'antd/lib/tooltip';
 
 const {Title} = Typography;
 

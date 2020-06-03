@@ -270,6 +270,7 @@ class ProjectResourceTest {
         getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is("[]"));
     }
 
+
     @Test
     void shouldretrieveTimeSheetForProjectMembers(){
         // GIVEN : 2 users of 1 project for 1 client
@@ -292,6 +293,7 @@ class ProjectResourceTest {
         // THEN : I can see the timeSheet by project by member
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(listOfTasJson(expectedTimeSheetJimmy)));
     }
+
 
     @Test
     void shouldCreateTimeSheetForUsersDuringProjectUpdate(){
