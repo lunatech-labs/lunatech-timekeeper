@@ -71,4 +71,9 @@ public class TimeSheetService {
                     .collect(collector);
         }
     }
+
+    Optional<TimeSheet> findById(Long id, AuthenticationContext ctx) {
+        return TimeSheet.<TimeSheet>findByIdOptional(id)
+                .filter(timeSheet -> ctx.canAccess(timeSheet.project));
+    }
 }

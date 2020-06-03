@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public final class TimeEntryPerHourRequest implements TimeEntryRequest {
@@ -80,5 +81,10 @@ public final class TimeEntryPerHourRequest implements TimeEntryRequest {
                 ", startDateTime='" + startDateTime + '\'' +
                 ", endDateTime='" + endDateTime + '\'' +
                 '}';
+    }
+    @Override
+    //TODO
+    public TimeEntry unbind(@NotNull Long timeSheetId, @NotNull BiFunction<Long, AuthenticationContext, Optional<TimeSheet>> findTimeSheet, @NotNull AuthenticationContext ctx) {
+        return null;
     }
 }

@@ -96,11 +96,14 @@ export const useTimeKeeperAPIPost = (urlAPI, formData, booleanCallback) => {
   }, [urlAPI, initialized, keycloak]
   );
 
-  return useRequest((formData) => ({
-    url: process.env.REACT_APP_QUARKUS_BACKEND + urlAPI,
-    method: 'post',
-    data: formData
-  }), {
+  return useRequest((formData) => {
+    console.log(formData)
+    return ({
+      url: process.env.REACT_APP_QUARKUS_BACKEND + urlAPI,
+      method: 'post',
+      data: formData
+    })
+  }, {
     manual: true,
     onSuccess: () => {
       if (booleanCallback) {

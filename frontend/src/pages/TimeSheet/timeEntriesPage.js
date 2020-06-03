@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import MainPage from '../MainPage/MainPage';
 import WeekCalendar from '../../components/TimeSheet/WeekCalendar';
-import {Badge} from 'antd';
+import {Badge, Form, Modal} from 'antd';
 import momentUtil from '../../utils/momentsUtil';
 import TimeEntryForm from "../../components/TimeEntry/TimeEntryForm";
 
@@ -11,7 +11,9 @@ const TimeEntriesPage = () => {
   const firstDayOfCurrentWeek = moment().startOf('week');
   const today = () => firstDayOfCurrentWeek.clone();
   const [currentFirstDay, setCurrentFirstDay] = useState(today);
-
+  const [visibleEntryModal, setVisibleEntryModal] = useState(false);
+  const [taskMoment, setTaskMoment] = useState(moment());
+  const [form] = Form.useForm();
   useEffect(
     () => {
       //TODO : Fetch your data or select your week
@@ -68,12 +70,26 @@ const TimeEntriesPage = () => {
 
   return (
     <MainPage title="Time entries">
-      <TimeEntryForm moment={moment()}/>
+      <Modal
+        visible={visibleEntryModal}
+        onCancel={() => {
+          setVisibleEntryModal(false)
+          form.resetFields();
+        }}
+      >
+        <TimeEntryForm moment={taskMoment} form={form}/>
+      </Modal>
+
       <WeekCalendar
         firstDay={currentFirstDay}
         disabledWeekEnd={true}
         hiddenButtons={false}
         onPanelChange={(id, start) => setCurrentFirstDay(start)}
+        onClickAddTask={(e, m) => {
+          console.log(m)
+          setTaskMoment(m);
+          setVisibleEntryModal(true);
+        }}
         dateCellRender={(data) => {
           return (
             <div>

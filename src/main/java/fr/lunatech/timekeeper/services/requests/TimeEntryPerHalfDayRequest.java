@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public final class TimeEntryPerHalfDayRequest implements TimeEntryRequest{
@@ -82,5 +83,11 @@ public final class TimeEntryPerHalfDayRequest implements TimeEntryRequest{
                 ", date='" + date + '\'' +
                 ", isMorning='" + isMorning + '\'' +
                 '}';
+    }
+
+    @Override
+    //TODO
+    public TimeEntry unbind(@NotNull Long timeSheetId, @NotNull BiFunction<Long, AuthenticationContext, Optional<TimeSheet>> findTimeSheet, @NotNull AuthenticationContext ctx) {
+        return null;
     }
 }

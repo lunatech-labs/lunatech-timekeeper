@@ -150,7 +150,7 @@ const WeekCalendar = (props) => {
                     shape="circle"
                     disabled={isDisabled(item)}
                     icon={<PlusOutlined/>}
-                    onClick={(e, moment) => props.onClickAddTask && props.onClickAddTask(e, moment)}/>}
+                    onClick={(e) => props.onClickAddTask && props.onClickAddTask(e, item.date)}/>}
                 </div>
                 <div className="tk_CardWeekCalendar_Body">
                   {renderDay()}

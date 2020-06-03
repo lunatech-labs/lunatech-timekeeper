@@ -4,12 +4,15 @@ import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.services.AuthenticationContext;
 import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
+import fr.lunatech.timekeeper.timeutils.DateFormat;
 
 import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbDateFormat;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public final class TimeEntryPerDayRequest implements TimeEntryRequest {
@@ -21,6 +24,7 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
     private final Boolean billable;
 
     @NotNull
+    @JsonbDateFormat(DateFormat.DEFAULT_DATE_TIME_PATTERN)
     private final LocalDate date;
 
     @JsonbCreator
@@ -36,15 +40,15 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
 
     public TimeEntry unbind(
             @NotNull Long timeSheetId,
-            @NotNull Function<Long, Optional<TimeSheet>> findTimeSheet,
+            @NotNull BiFunction<Long, AuthenticationContext, Optional<TimeSheet>> findTimeSheet,
             @NotNull AuthenticationContext ctx
     ) {
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.billable = getBillable();
         timeEntry.comment = getComment();
-        timeEntry.startDateTime = this.date.atStartOfDay();
-        timeEntry.endDateTime = null ;
-        timeEntry.timeSheet = findTimeSheet.apply(timeSheetId).orElseThrow(() -> new IllegalEntityStateException("TimeSheet not found for id " + timeSheetId));
+        timeEntry.startDateTime = this.date.atTime(9, 0);
+        timeEntry.endDateTime = this.date.atTime(17, 0);
+        timeEntry.timeSheet = findTimeSheet.apply(timeSheetId, ctx).orElseThrow(() -> new IllegalEntityStateException("TimeSheet not found for id " + timeSheetId));
         return timeEntry;
     }
 
