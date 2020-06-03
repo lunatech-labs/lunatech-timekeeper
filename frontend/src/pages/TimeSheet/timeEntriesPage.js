@@ -76,8 +76,12 @@ const TimeEntriesPage = () => {
           setVisibleEntryModal(false)
           form.resetFields();
         }}
+        destroyOnClose={true}
+        afterClose={() => form.resetFields()}
       >
-        <TimeEntryForm moment={taskMoment} form={form}/>
+        <TimeEntryForm moment={taskMoment} form={form} onSuccess={() =>{
+          setVisibleEntryModal(false)
+        }}/>
       </Modal>
 
       <WeekCalendar
@@ -86,7 +90,6 @@ const TimeEntriesPage = () => {
         hiddenButtons={false}
         onPanelChange={(id, start) => setCurrentFirstDay(start)}
         onClickAddTask={(e, m) => {
-          console.log(m)
           setTaskMoment(m);
           setVisibleEntryModal(true);
         }}
