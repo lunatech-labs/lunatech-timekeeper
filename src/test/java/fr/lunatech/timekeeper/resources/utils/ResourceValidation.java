@@ -2,6 +2,8 @@ package fr.lunatech.timekeeper.resources.utils;
 
 import io.restassured.response.ValidatableResponse;
 
+import java.util.Map;
+
 import static fr.lunatech.timekeeper.resources.utils.VerbDefinition.*;
 
 public class ResourceValidation {
@@ -19,6 +21,10 @@ public class ResourceValidation {
     }
 
     public static <T> ValidatableResponse getValidation(String uri, String token, javax.ws.rs.core.Response.Status status) {
+        return InternalResourceUtils.<T>resourceValidation(GET, uri, token, status);
+    }
+
+    public static <T> ValidatableResponse getValidation(String uri, Map<String, String> params, String token, javax.ws.rs.core.Response.Status status) {
         return InternalResourceUtils.<T>resourceValidation(GET, uri, token, status);
     }
 }

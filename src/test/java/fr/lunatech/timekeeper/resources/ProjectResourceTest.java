@@ -425,6 +425,6 @@ class ProjectResourceTest {
                 null, true
         );
         // THEN
-        assertEquals(toJson(projectResponse), toJson(attemptProjectResponse));
+        getValidation(ProjectDef.uriWithid(fullProject.getId(), params), adminToken, OK).body(is(toJson(attemptProjectResponse)));
     }
 }

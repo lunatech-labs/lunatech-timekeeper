@@ -19,7 +19,7 @@ public class ResourceFactory {
     }
 
     public static ProjectResponse read(Long id, Map<String, String> params, String token) {
-        return InternalResourceUtils.readResourceWithParan(id, params, ProjectDef.uri, ProjectResponse.class, token);
+        return InternalResourceUtils.readResource(id, params, ProjectDef.uri, ProjectResponse.class, token);
     }
 
     public static ClientResponse create(ClientRequest client, String token) {
