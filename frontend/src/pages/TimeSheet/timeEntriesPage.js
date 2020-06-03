@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import MainPage from '../MainPage/MainPage';
 import WeekCalendar from '../../components/TimeSheet/WeekCalendar';
-import momentUtil from '../../utils/momentsUtil';
-import TimeEntry from "../../components/TimeEntry/TimeEntry";
-import {Badge} from 'antd';
+import TimeEntry from '../../components/TimeEntry/TimeEntry';
 
 const moment = require('moment');
 
