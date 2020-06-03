@@ -26,7 +26,7 @@ import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TimeShee
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.putValidation;
-import static fr.lunatech.timekeeper.resources.utils.TestUtils.listOfTasJson;
+import static fr.lunatech.timekeeper.resources.utils.TestUtils.*;
 import static fr.lunatech.timekeeper.resources.utils.TestUtils.toJson;
 import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.Response.Status.*;
@@ -244,7 +244,7 @@ class ProjectResourceTest {
 
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
 
-        // THEN`
+        // THEN
         final var expectedTimeSheetSam = new TimeSheetResponse(8L, project, sam, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
         final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, project, jimmy, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
@@ -269,6 +269,140 @@ class ProjectResourceTest {
         // THEN
         getValidation(TimeSheetDef.uri, adminToken, OK).body(is("[]"));
         getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is("[]"));
+    }
+
+    @Test
+    void shouldCreateTimeSheetForUsersDuringProjectUpdate(){
+        // GIVEN
+        final String adminToken = getAdminAccessToken();
+        final String jimmyToken = getUserAccessToken();
+
+        final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
+
+        final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, emptyList()), adminToken);
+
+        var sam = create(adminToken);
+        var jimmy = create(jimmyToken);
+        final var samProjectRequest = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
+        final var jimmyProjectRequest = new ProjectRequest.ProjectUserRequest(jimmy.getId(), false);
+        List<ProjectRequest.ProjectUserRequest> newUsers = List.of(samProjectRequest, jimmyProjectRequest);
+
+        final var updatedProjectWithTwoUsers = new ProjectRequest("Some Project"
+                , true
+                , "some description"
+                , client.getId()
+                , true
+                , newUsers);
+
+        final var expectedProjectUsers = List.of(
+                new ProjectResponse.ProjectUserResponse(sam.getId(), true, sam.getName(), sam.getPicture())
+                , new ProjectResponse.ProjectUserResponse(jimmy.getId(), false, jimmy.getName(), jimmy.getPicture())
+        );
+        final var expectedProject = new ProjectResponse(project.getId()
+                , updatedProjectWithTwoUsers.getName()
+                , updatedProjectWithTwoUsers.isBillable()
+                , updatedProjectWithTwoUsers.getDescription()
+                , new ProjectResponse.ProjectClientResponse(client.getId(), client.getName())
+                , expectedProjectUsers
+                , updatedProjectWithTwoUsers.isPublicAccess());
+
+        update(updatedProjectWithTwoUsers, ProjectDef.uriWithid(project.getId()), adminToken);
+
+        // THEN
+        final var expectedTimeSheetSam = new TimeSheetResponse(8L, expectedProject, sam, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, expectedProject, jimmy, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+
+        getValidation(TimeSheetDef.uri, adminToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetSam))));
+        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetJimmy))));
+    }
+
+    @Test
+    void shouldNotDeleteTimeSheetWhenMembersAreRemoved(){
+        // GIVEN
+        final String adminToken = getAdminAccessToken();
+        final String jimmyToken = getUserAccessToken();
+
+        var sam = create(adminToken);
+        var jimmy = create(jimmyToken);
+        final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
+
+        ProjectRequest.ProjectUserRequest samProjectRequest = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
+        ProjectRequest.ProjectUserRequest jimmyProjectRequest = new ProjectRequest.ProjectUserRequest(jimmy.getId(), false);
+
+        List<ProjectRequest.ProjectUserRequest> newUsers = List.of(samProjectRequest, jimmyProjectRequest);
+
+        final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
+
+        final var updatedProjectWithTwoUsers = new ProjectRequest("Some Project"
+                , true
+                , "some description"
+                , client.getId()
+                , true
+                , Collections.emptyList());
+
+        final var expectedProject = new ProjectResponse(project.getId()
+                , updatedProjectWithTwoUsers.getName()
+                , updatedProjectWithTwoUsers.isBillable()
+                , updatedProjectWithTwoUsers.getDescription()
+                , new ProjectResponse.ProjectClientResponse(client.getId(), client.getName())
+                , Collections.emptyList()
+                , updatedProjectWithTwoUsers.isPublicAccess());
+
+        update(updatedProjectWithTwoUsers, ProjectDef.uriWithid(project.getId()), adminToken);
+
+        // THEN
+        final var expectedTimeSheetSam = new TimeSheetResponse(8L, expectedProject, sam, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, expectedProject, jimmy, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+
+        getValidation(TimeSheetDef.uri, adminToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetSam))));
+        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetJimmy))));
+    }
+
+    @Test
+    void shouldNotChangeListOfTimeSheetsForExistingMembersWhenANewMemberIsAdded(){
+        // GIVEN
+        final String adminToken = getAdminAccessToken();
+        final String jimmyToken = getUserAccessToken();
+
+        var sam = create(adminToken);
+        var jimmy = create(jimmyToken);
+        final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
+
+        ProjectRequest.ProjectUserRequest samProjectRequest = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
+        ProjectRequest.ProjectUserRequest jimmyProjectRequest = new ProjectRequest.ProjectUserRequest(jimmy.getId(), false);
+
+        List<ProjectRequest.ProjectUserRequest> newUsers = List.of(jimmyProjectRequest);
+
+        final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
+
+        List<ProjectRequest.ProjectUserRequest> newUsers2 = List.of(jimmyProjectRequest, samProjectRequest);
+
+        final var updatedProjectWithTwoUsers = new ProjectRequest("Some Project"
+                , true
+                , "some description"
+                , client.getId()
+                , true
+                , newUsers2);
+
+        final var expectedProjectUsers = List.of(
+                new ProjectResponse.ProjectUserResponse(jimmy.getId(), false, jimmy.getName(), jimmy.getPicture())
+                , new ProjectResponse.ProjectUserResponse(sam.getId(), true, sam.getName(), sam.getPicture())
+        );
+
+        final var expectedProject = new ProjectResponse(project.getId()
+                , updatedProjectWithTwoUsers.getName()
+                , updatedProjectWithTwoUsers.isBillable()
+                , updatedProjectWithTwoUsers.getDescription()
+                , new ProjectResponse.ProjectClientResponse(client.getId(), client.getName())
+                , expectedProjectUsers
+                , updatedProjectWithTwoUsers.isPublicAccess());
+
+        update(updatedProjectWithTwoUsers, ProjectDef.uriWithid(project.getId()), adminToken);
+
+        // THEN
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(7L, expectedProject, jimmy, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+
+        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetJimmy))));
     }
 
     @Test

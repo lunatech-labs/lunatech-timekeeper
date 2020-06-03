@@ -1,7 +1,6 @@
 package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.Project;
-import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.resources.exceptions.UpdateResourceException;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
-import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.Transactional;
 import javax.transaction.UserTransaction;
@@ -58,24 +56,29 @@ public class ProjectService {
         } catch (PersistenceException pe) {
             throw new CreateResourceException(String.format("Project was not created due to constraint violation"));
         }
-        Stream<TimeSheet> timeSheets = project.users
-                .stream()
-                .map(projectUser -> timeSheetService.createDefault(project, projectUser.user));
-        timeSheets.forEach(timeSheet -> timeSheetService.createTimeSheet(timeSheet, ctx));
+        project.users
+                .forEach(projectUser -> timeSheetService.createDefaultTimeSheet(project, projectUser.user, ctx));
         return project.id;
     }
 
-    public Optional<Long> update(Long id, ProjectRequest request, AuthenticationContext ctx)  {
+    public Optional<Long> update(Long id, ProjectRequest request, AuthenticationContext ctx) {
         logger.debug("Modify project for for id={} with {}, {}", id, request, ctx);
         try {
             transaction.begin(); // See https://quarkus.io/guides/transaction API Approach
+            final var maybeProject = findById(id, ctx);
+            // Delete the old members
+            maybeProject.ifPresent(project -> project.users.stream()
+                    .filter(request::notContains)
+                    .forEach(PanacheEntityBase::delete));
+
             final var updatedProject = findById(id, ctx)
                     .stream()
                     .map(project -> request.unbind(project, clientService::findById, userService::findById, ctx))
+                    // Create the timesheets for the new members
                     .peek(project -> project.users
                             .stream()
-                            .filter(request::notContains)
-                            .forEach(PanacheEntityBase::delete))
+                            .filter(projectUser -> timeSheetService.userHasNoTimeSheet(project.id, projectUser.user.id))
+                            .forEach(projectUser -> timeSheetService.createDefaultTimeSheet(project, projectUser.user, ctx)))
                     .map(project -> project.id)
                     .findFirst();
             transaction.commit();
@@ -84,11 +87,9 @@ public class ProjectService {
             // There are many various exceptions, we catch Throwable but this is arguable.
             logger.warn("Could not update a Project due to an exception {}", e.getMessage());
             try {
-                if (transaction.getStatus() != Status.STATUS_MARKED_ROLLBACK && transaction.getStatus() != Status.STATUS_NO_TRANSACTION) {
-                    transaction.rollback();
-                }
+                transaction.rollback();
             } catch (SystemException ex) {
-                logger.error("Tried to rollback in ProjectService but failed",ex);
+                logger.error("Tried to rollback in ProjectService but failed", ex);
             }
             throw new UpdateResourceException("Cannot update a Project, invalid projectRequest");
         }
