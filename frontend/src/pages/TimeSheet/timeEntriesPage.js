@@ -2,12 +2,11 @@ import React, {useEffect, useState} from 'react';
 import MainPage from '../MainPage/MainPage';
 import WeekCalendar from '../../components/TimeSheet/WeekCalendar';
 import {Badge} from 'antd';
-import momentUtil from '../../utils/momentsUtil';
 
-const {moment} = momentUtil();
+const moment = require('moment');
 
 const TimeEntriesPage = () => {
-  const firstDayOfCurrentWeek = moment().startOf('week');
+  const firstDayOfCurrentWeek = moment().startOf('week').add(1, 'day');
   const today = () => firstDayOfCurrentWeek.clone();
   const [currentFirstDay, setCurrentFirstDay] = useState(today);
 
