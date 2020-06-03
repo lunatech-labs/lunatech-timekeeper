@@ -13,7 +13,6 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public final class TimeEntryPerDayRequest implements TimeEntryRequest {
 

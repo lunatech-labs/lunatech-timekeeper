@@ -4,8 +4,10 @@ import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.services.AuthenticationContext;
 import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
+import fr.lunatech.timekeeper.timeutils.DateFormat;
 
 import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbDateFormat;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -22,9 +24,11 @@ public final class TimeEntryPerHourRequest implements TimeEntryRequest {
     private final Boolean billable;
 
     @NotNull
+    @JsonbDateFormat(DateFormat.DEFAULT_DATE_TIME_PATTERN)
     private final LocalDateTime startDateTime;
 
     @NotNull
+    @JsonbDateFormat(DateFormat.DEFAULT_DATE_TIME_PATTERN)
     private final LocalDateTime endDateTime;
 
     @JsonbCreator
@@ -42,7 +46,7 @@ public final class TimeEntryPerHourRequest implements TimeEntryRequest {
 
     public TimeEntry unbind(
             @NotNull Long timeSheetId,
-            @NotNull Function<Long, Optional<TimeSheet>> findTimeSheet,
+            @NotNull BiFunction<Long, AuthenticationContext, Optional<TimeSheet>> findTimeSheet,
             @NotNull AuthenticationContext ctx
     ) {
         TimeEntry timeEntry = new TimeEntry();
@@ -53,7 +57,7 @@ public final class TimeEntryPerHourRequest implements TimeEntryRequest {
         if (startDateTime.isAfter(endDateTime)) {
             throw new IllegalEntityStateException("Start dateTime cannot be after endDateTime, invalid entry");
         }
-        timeEntry.timeSheet = findTimeSheet.apply(timeSheetId).orElseThrow(() -> new IllegalEntityStateException("TimeSheet not found for id " + timeSheetId));
+        timeEntry.timeSheet = findTimeSheet.apply(timeSheetId, ctx).orElseThrow(() -> new IllegalEntityStateException("TimeSheet not found for id " + timeSheetId));
         return timeEntry;
     }
 
@@ -81,10 +85,5 @@ public final class TimeEntryPerHourRequest implements TimeEntryRequest {
                 ", startDateTime='" + startDateTime + '\'' +
                 ", endDateTime='" + endDateTime + '\'' +
                 '}';
-    }
-    @Override
-    //TODO
-    public TimeEntry unbind(@NotNull Long timeSheetId, @NotNull BiFunction<Long, AuthenticationContext, Optional<TimeSheet>> findTimeSheet, @NotNull AuthenticationContext ctx) {
-        return null;
     }
 }
