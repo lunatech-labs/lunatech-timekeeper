@@ -1,7 +1,6 @@
 package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.resources.utils.HttpTestRuntimeException;
-import fr.lunatech.timekeeper.resources.utils.TestUtils;
 import fr.lunatech.timekeeper.services.requests.ClientRequest;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
@@ -10,26 +9,24 @@ import fr.lunatech.timekeeper.timeutils.TimeUnit;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.RestAssured;
-import io.restassured.parsing.Parser;
 import org.flywaydb.core.Flyway;
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 import javax.inject.Inject;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ProjectDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TimeSheetDef;
-import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
-import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
+import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.putValidation;
-import static fr.lunatech.timekeeper.resources.utils.TestUtils.*;
+import static fr.lunatech.timekeeper.resources.utils.TestUtils.listOfTasJson;
 import static fr.lunatech.timekeeper.resources.utils.TestUtils.toJson;
 import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.Response.Status.*;
@@ -272,5 +269,28 @@ class ProjectResourceTest {
         // THEN
         getValidation(TimeSheetDef.uri, adminToken, OK).body(is("[]"));
         getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is("[]"));
+    }
+
+    @Test
+    void shouldLoadAProjectWithoutUsers() {
+        // GIVEN
+        final String adminToken = getAdminAccessToken();
+
+        final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
+
+        List<ProjectRequest.ProjectUserRequest> newUsers = Collections.emptyList();
+        Map<String, String> params = new HashMap<>();
+        params.put("optimized", "true");
+        final var fullProject = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
+        final var projectResponse = read(fullProject.getId(), params, adminToken);
+        final var attemptProjectResponse = new ProjectResponse(
+                4L, "Some Project",
+                true,
+                "some description",
+                new ProjectResponse.ProjectClientResponse(client.getId(), client.getName()),
+                null, true
+        );
+        // THEN
+        assertEquals(toJson(projectResponse), toJson(attemptProjectResponse));
     }
 }

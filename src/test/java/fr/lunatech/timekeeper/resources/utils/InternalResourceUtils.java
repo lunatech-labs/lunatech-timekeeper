@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.HttpMethod;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
@@ -23,6 +24,7 @@ import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 final class InternalResourceUtils {
 
     private final static String SLASH = "/";
+    private final static String EH = "&";
     private final static String LOCATION = "location";
     private final static Logger logger = LoggerFactory.getLogger(InternalResourceUtils.class);
 
@@ -62,9 +64,9 @@ final class InternalResourceUtils {
         logger.debug(String.format("Status code   : %s", status));
 
         if (location == null || status < 200) {
-            throw new HttpTestRuntimeException(status, reqSpec.getBody().print() , reqSpec.getContentType());
+            throw new HttpTestRuntimeException(status, reqSpec.getBody().print(), reqSpec.getContentType());
         } else {
-            final String id = Iterables.<String>getLast(Arrays.stream(reqSpec.header(LOCATION).split(SLASH)).collect(Collectors.toList()));
+            final String id = Iterables.getLast(Arrays.stream(reqSpec.header(LOCATION).split(SLASH)).collect(Collectors.toList()));
 
             return given()
                     .auth().preemptive().oauth2(token)
@@ -94,6 +96,34 @@ final class InternalResourceUtils {
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
                 .get(uri_root + SLASH + id)
+                .body()
+                .as(type);
+    }
+
+    private static String paramUrlResolver(Map<String, String> params) {
+        final StringBuilder builder = new StringBuilder();
+        params.forEach((key, value) -> {
+            builder.append("&").append(key).append("=").append(value);
+        });
+        return "?" + builder.replace(0, 1, "").toString();
+    }
+
+    static <R> R readResourceWithParan(Long id, Map<String, String> params, String uri_root, Class<R> type, String token) {
+        final var queryParams = paramUrlResolver(params);
+        return given()
+                .auth().preemptive().oauth2(token)
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get(uri_root + SLASH + id + queryParams).body().as(type);
+    }
+
+    static <R> R readResourceWithParam(String id, Map<String, String> params, String uri_root, Class<R> type, String token) {
+        final var queryParams = paramUrlResolver(params);
+        return given()
+                .auth().preemptive().oauth2(token)
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get(uri_root + SLASH + id + queryParams)
                 .body()
                 .as(type);
     }

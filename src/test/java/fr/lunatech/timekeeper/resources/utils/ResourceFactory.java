@@ -8,12 +8,18 @@ import fr.lunatech.timekeeper.services.responses.OrganizationResponse;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import fr.lunatech.timekeeper.services.responses.UserResponse;
 
+import java.util.Map;
+
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.*;
 
 public class ResourceFactory {
 
     public static ProjectResponse create(ProjectRequest project, String token) {
         return InternalResourceUtils.createResource(project, ProjectDef.uri, ProjectResponse.class, token);
+    }
+
+    public static ProjectResponse read(Long id, Map<String, String> params, String token) {
+        return InternalResourceUtils.readResourceWithParan(id, params, ProjectDef.uri, ProjectResponse.class, token);
     }
 
     public static ClientResponse create(ClientRequest client, String token) {
