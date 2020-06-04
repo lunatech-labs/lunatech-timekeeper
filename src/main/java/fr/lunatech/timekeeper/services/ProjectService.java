@@ -39,8 +39,8 @@ public class ProjectService {
     @Inject
     TimeSheetService timeSheetService;
 
-    public Optional<ProjectResponse> findResponseById(Long id, AuthenticationContext ctx) {
-        return findById(id, ctx).map(ProjectResponse::bind);
+    public Optional<ProjectResponse> findResponseById(Long id, Optional<Boolean> optimized, AuthenticationContext ctx) {
+        return findById(id, ctx).map(project -> ProjectResponse.bind(project, optimized));
     }
 
     public List<ProjectResponse> listAllResponses(AuthenticationContext ctx) {

@@ -16,14 +16,15 @@ import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 import javax.inject.Inject;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ProjectDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TimeSheetDef;
+import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TimeSheetPerProjectPerUserDef;
-import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
-import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.putValidation;
 import static fr.lunatech.timekeeper.resources.utils.TestUtils.listOfTasJson;
@@ -251,6 +252,7 @@ class ProjectResourceTest {
 
         getValidation(TimeSheetDef.uri, adminToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetSam))));
         getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetJimmy))));
+
     }
 
     @Test
@@ -427,5 +429,27 @@ class ProjectResourceTest {
         final var expectedTimeSheetJimmy = new TimeSheetResponse(7L, expectedProject, jimmy, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
         getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetJimmy))));
+    }
+
+    @Test
+    void shouldLoadAProjectWithoutUsers() {
+        // GIVEN
+        final String adminToken = getAdminAccessToken();
+
+        final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
+
+        List<ProjectRequest.ProjectUserRequest> newUsers = Collections.emptyList();
+        Map<String, String> params = new HashMap<>();
+        params.put("optimized", "true");
+        final var fullProject = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
+        final var attemptProjectResponse = new ProjectResponse(
+                4L, "Some Project",
+                true,
+                "some description",
+                new ProjectResponse.ProjectClientResponse(client.getId(), client.getName()),
+                null, true
+        );
+        // THEN
+        getValidation(ProjectDef.uriWithid(fullProject.getId(), params), adminToken, OK).body(is(toJson(attemptProjectResponse)));
     }
 }

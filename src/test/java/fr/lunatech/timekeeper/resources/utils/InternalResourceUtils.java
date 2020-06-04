@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.HttpMethod;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
@@ -62,9 +64,9 @@ final class InternalResourceUtils {
         logger.debug(String.format("Status code   : %s", status));
 
         if (location == null || status < 200) {
-            throw new HttpTestRuntimeException(status, reqSpec.getBody().print() , reqSpec.getContentType());
+            throw new HttpTestRuntimeException(status, reqSpec.getBody().print(), reqSpec.getContentType());
         } else {
-            final String id = Iterables.<String>getLast(Arrays.stream(reqSpec.header(LOCATION).split(SLASH)).collect(Collectors.toList()));
+            final String id = Iterables.getLast(Arrays.stream(reqSpec.header(LOCATION).split(SLASH)).collect(Collectors.toList()));
 
             return given()
                     .auth().preemptive().oauth2(token)
@@ -81,19 +83,32 @@ final class InternalResourceUtils {
     }
 
     static <R> R readResource(Long id, String uri_root, Class<R> type, String token) {
-        return given()
-                .auth().preemptive().oauth2(token)
-                .when()
-                .header(ACCEPT, APPLICATION_JSON)
-                .get(uri_root + SLASH + id).body().as(type);
+        return readResource(id, Collections.emptyMap(), uri_root, type, token);
     }
 
     static <R> R readResource(String id, String uri_root, Class<R> type, String token) {
+        return readResource(id, Collections.emptyMap(), uri_root, type, token);
+    }
+
+    static String paramUrlResolver(Map<String, String> params) {
+        final StringBuilder builder = new StringBuilder();
+        params.forEach((key, value) -> {
+            builder.append("&").append(key).append("=").append(value);
+        });
+        return params.entrySet().size() > 0 ? "?" + builder.replace(0, 1, "").toString() : "";
+    }
+
+    static <R> R readResource(Long id, Map<String, String> params, String uri_root, Class<R> type, String token) {
+        return readResource(id.toString(), params, uri_root, type, token);
+    }
+
+    static <R> R readResource(String id, Map<String, String> params, String uri_root, Class<R> type, String token) {
+        final var queryParams = paramUrlResolver(params);
         return given()
                 .auth().preemptive().oauth2(token)
                 .when()
                 .header(ACCEPT, APPLICATION_JSON)
-                .get(uri_root + SLASH + id)
+                .get(uri_root + SLASH + id + queryParams)
                 .body()
                 .as(type);
     }
