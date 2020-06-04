@@ -83,13 +83,13 @@ class TimeSheetResourceTest {
         ProjectRequest.ProjectUserRequest samProjectRequest = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
         List<ProjectRequest.ProjectUserRequest> newUsers = List.of(samProjectRequest);
         // FIXME: see TK-359
-        Long expecteId = 6L;
+        Long expectedId = 6L;
 
         // WHEN : the project is created, a time sheet is generated for all user
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
         // verify first version
-        final var expectedTimeSheetSam = new TimeSheetResponse(expecteId, project, sam, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
-        getValidation(TimeSheetDef.uriWithid(expecteId), adminToken, OK).body(is(toJson(expectedTimeSheetSam)));
+        final var expectedTimeSheetSam = new TimeSheetResponse(expectedId, project, sam, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        getValidation(TimeSheetDef.uriWithid(expectedId), adminToken, OK).body(is(toJson(expectedTimeSheetSam)));
 
         // WHEN : AND the timesheet is updated (adding a end date a maxDuration and changing units)
         LocalDate newEndDate = LocalDate.now().plusMonths(2L);
@@ -105,11 +105,11 @@ class TimeSheetResourceTest {
         JsonbConfig config = new JsonbConfig().withFormatting(true);
         Jsonb jsonb = JsonbBuilder.create(config);
         String updatedTimeSheetBodyAsJson = jsonb.toJson(updatedTimeSheet);
-        putValidation(TimeSheetDef.uriWithid(expecteId),adminToken,updatedTimeSheetBodyAsJson, NO_CONTENT);
+        putValidation(TimeSheetDef.uriWithid(expectedId),adminToken,updatedTimeSheetBodyAsJson, NO_CONTENT);
 
         // THEN get the updated version
-        final var expectedUpdatedTimeSheetSam = new TimeSheetResponse(expecteId, project, sam, true, newEndDate, 60, TimeUnit.DAY.toString(), Collections.emptyList());
-        getValidation(TimeSheetDef.uriWithid(expecteId), adminToken, OK).body(is(toJson(expectedUpdatedTimeSheetSam)));
+        final var expectedUpdatedTimeSheetSam = new TimeSheetResponse(expectedId, project, sam, true, newEndDate, 60, TimeUnit.DAY.toString(), Collections.emptyList());
+        getValidation(TimeSheetDef.uriWithid(expectedId), adminToken, OK).body(is(toJson(expectedUpdatedTimeSheetSam)));
     }
 
 }
