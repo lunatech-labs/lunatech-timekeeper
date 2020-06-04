@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import MainPage from '../MainPage/MainPage';
 import WeekCalendar from '../../components/TimeSheet/WeekCalendar';
+import {Badge} from 'antd';
 import {Badge, Form, Modal} from 'antd';
-import momentUtil from '../../utils/momentsUtil';
 import TimeEntryForm from "../../components/TimeEntry/TimeEntryForm";
 
-const {moment} = momentUtil();
+const moment = require('moment');
 
 const TimeEntriesPage = () => {
-  const firstDayOfCurrentWeek = moment().startOf('week');
+  const firstDayOfCurrentWeek = moment().startOf('week').add(1, 'day');
   const today = () => firstDayOfCurrentWeek.clone();
   const [currentFirstDay, setCurrentFirstDay] = useState(today);
   const [visibleEntryModal, setVisibleEntryModal] = useState(false);

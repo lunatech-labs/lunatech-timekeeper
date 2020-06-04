@@ -30,23 +30,15 @@ public class TimeSheetService {
         return TimeSheet.findByIdOptional(id);
     }
 
-
-    public TimeSheet createDefault(Project project, User owner) {
-        TimeSheet timeSheet = new TimeSheet();
-        timeSheet.project = project;
-        timeSheet.owner = owner;
-        timeSheet.timeUnit = TimeUnit.HOURLY;
-        timeSheet.defaultIsBillable = project.billable;
-        timeSheet.expirationDate = null;
-        timeSheet.maxDuration = null;
-        timeSheet.durationUnit = TimeUnit.HOURLY;
-        timeSheet.entries = Collections.emptyList();
-        return timeSheet;
+    Boolean userHasNoTimeSheet(Long projectId, Long userId){
+        return TimeSheet.stream("user_id = ?1 and project_id = ?2", userId, projectId).count() == 0;
     }
 
     @Transactional
-    Long createTimeSheet(TimeSheet timeSheet, AuthenticationContext ctx) {
-        logger.info("Create a new timesheet with {}, {}", timeSheet, ctx);
+    Long createDefaultTimeSheet(Project project, User owner, AuthenticationContext ctx) {
+        TimeSheet timeSheet = new TimeSheet(project, owner, TimeUnit.HOURLY, project.getBillable(),null,null,TimeUnit.HOURLY, Collections.emptyList());
+
+        logger.info("Create a default timesheet with {}, {}", timeSheet, ctx);
         try {
             timeSheet.persistAndFlush();
         } catch (PersistenceException pe) {
@@ -59,6 +51,13 @@ public class TimeSheetService {
     public List<TimeSheetResponse> findAllActivesForUser(AuthenticationContext ctx){
         return streamAll(ctx, TimeSheetResponse::bind, Collectors.toList());
     }
+
+    public List<TimeSheetResponse> findAllForProjectForUser(AuthenticationContext ctx, long idProject, long idUser){
+        final Stream<TimeSheet> timeSheetStream = TimeSheet.stream("project_id= ?1 AND user_id= ?2", idProject, idUser);
+        return timeSheetStream.map(TimeSheetResponse::bind)
+                .collect(Collectors.toList());
+    }
+
 
     <R extends Collection<TimeSheetResponse>> R streamAll(
             AuthenticationContext ctx,

@@ -1,23 +1,23 @@
-import React from 'react';
-import {Avatar, Col, Row, Tag, Typography} from 'antd';
+import React, {useState} from 'react';
+import {Avatar, Col, Divider, Modal, Row, Typography} from 'antd';
 import './ShowProject.less';
 import PropTypes from 'prop-types';
-import {
-  DesktopOutlined,
-  DollarOutlined,
-  UserOutlined,
-  LockOutlined,
-} from '@ant-design/icons';
+import {DesktopOutlined, DollarOutlined, LockOutlined, SnippetsFilled, UserOutlined,} from '@ant-design/icons';
 import TitleSection from '../Title/TitleSection';
 import CardLg from '../Card/CardLg';
 import CardMember from '../Card/CardMember';
 import TagMember from '../Tag/TagMember';
+import TagProjectClient from '../Tag/TagProjectClient';
+import ShowTimeSheet from '../TimeSheet/ShowTimeSheet';
+import Tooltip from 'antd/lib/tooltip';
 
 const {Title} = Typography;
 
 const ShowProject = ({project}) => {
 
-  const users = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedMember, setSelectedMember] = useState();
+  const Members = () => {
     if (!project.users || project.users.length === 0) {
       return 'No user added yet';
     } else {
@@ -31,14 +31,39 @@ const ShowProject = ({project}) => {
             <Avatar src={user.picture}/>
             <p>{user.name}</p>
           </div>
-          <TagMember isManager={user.manager} />
+          <div>
+            <TagMember isManager={user.manager}/>
+            <Divider type='vertical'/>
+            <Tooltip title='Time sheet'>
+              <SnippetsFilled onClick={() => {
+                setModalVisible(true);
+                setSelectedMember(user);
+              }}/>
+            </Tooltip>
+          </div>
         </CardMember>
       );
     }
   };
 
+
+  const ModalTimeSheet = () => {
+    return (
+      <Modal
+        visible={modalVisible}
+        closable={true}
+        footer={null}
+        onCancel={() => setModalVisible(false)}
+        width={'37.5%'}
+      >
+        <ShowTimeSheet project={project} member={selectedMember} />
+      </Modal>
+    );
+  };
+
   return (
     <div>
+      <ModalTimeSheet/>
       <CardLg>
         <Title level={2}>{project.name}</Title>
         <Row gutter={32}>
@@ -46,21 +71,20 @@ const ShowProject = ({project}) => {
             <TitleSection title="Information"/>
             <Row gutter={32}>
               <Col span={12}>
-                <p className="tk_ProjectAtt"><DesktopOutlined/> Client : {project.client ?<Tag color="blue">{project.client.name}</Tag> : <span className="tk_Project_Client_Tag">No client</span>}</p>
+                <p className="tk_ProjectAtt"><DesktopOutlined/> Client : <TagProjectClient client={project.client}/></p>
                 <p className="tk_ProjectAtt"><UserOutlined/> Members : {project.users ? project.users.length : 0}</p>
               </Col>
               <Col span={12}>
                 <p className="tk_ProjectAtt"><DollarOutlined/> Billable : {project.billable ? 'Yes' : 'No'}</p>
-                <p className="tk_ProjectAtt"><LockOutlined/> Project type : {project.publicAccess ? 'Public' : 'Private'}</p>
+                <p className="tk_ProjectAtt"><LockOutlined/> Project type
+                  : {project.publicAccess ? 'Public' : 'Private'}</p>
               </Col>
             </Row>
-            <Col span={24}>
-              <p className="tk_ProjectDesc">{project.description}</p>
-            </Col>
+            <p className="tk_ProjectDesc">{project.description}</p>
           </Col>
           <Col span={12}>
             <TitleSection title="Members"/>
-            {users()}
+            <Members/>
           </Col>
         </Row>
       </CardLg>
