@@ -14,7 +14,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
-import javax.transaction.UserTransaction;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
