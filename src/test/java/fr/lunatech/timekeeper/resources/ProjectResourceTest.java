@@ -245,8 +245,8 @@ class ProjectResourceTest {
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
 
         // THEN
-        final var expectedTimeSheetSam = new TimeSheetResponse(8L, project, sam, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, project, jimmy, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetSam = new TimeSheetResponse(8L, project, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
 
         getValidation(TimeSheetDef.uri, adminToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetSam))));
@@ -288,7 +288,7 @@ class ProjectResourceTest {
 
         // FIXME: 9L expected by Panache generated ID as it's the 9th entity to be created during this test
         // when running this test alone, id 12 will be generated, assertion will fail. same for shouldCreateTimeSheetForProjectMembers test
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, project, jimmy, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
         // THEN : I can see the timeSheet by project by member
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(listOfTasJson(expectedTimeSheetJimmy)));
@@ -333,8 +333,8 @@ class ProjectResourceTest {
         update(updatedProjectWithTwoUsers, ProjectDef.uriWithid(project.getId()), adminToken);
 
         // THEN
-        final var expectedTimeSheetSam = new TimeSheetResponse(8L, expectedProject, sam, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, expectedProject, jimmy, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetSam = new TimeSheetResponse(8L, expectedProject, sam, TimeUnit.HOURLY,true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
         getValidation(TimeSheetDef.uri, adminToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetSam))));
         getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetJimmy))));
@@ -375,8 +375,8 @@ class ProjectResourceTest {
         update(updatedProjectWithTwoUsers, ProjectDef.uriWithid(project.getId()), adminToken);
 
         // THEN
-        final var expectedTimeSheetSam = new TimeSheetResponse(8L, expectedProject, sam, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, expectedProject, jimmy, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetSam = new TimeSheetResponse(8L, expectedProject, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
         getValidation(TimeSheetDef.uri, adminToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetSam))));
         getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetJimmy))));
@@ -424,7 +424,7 @@ class ProjectResourceTest {
         update(updatedProjectWithTwoUsers, ProjectDef.uriWithid(project.getId()), adminToken);
 
         // THEN
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(7L, expectedProject, jimmy, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(7L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
         getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetJimmy))));
     }

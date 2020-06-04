@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
-import {Button, Divider, Form, Input, message, Radio, Select} from "antd";
+import {Alert, Button, Divider, Form, Input, message, Radio, Select, Spin} from "antd";
 import TitleSection from "../Title/TitleSection";
-import {useTimeKeeperAPIPost} from "../../utils/services";
+import {useTimeKeeperAPI, useTimeKeeperAPIPost} from "../../utils/services";
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -106,16 +106,17 @@ const AddEntry = ({date, form, timeSheets, onSuccess}) => {
     }
   };
   return (
-    <Form initialValues={initialValues(date)} form={form}
+    <Form initialValues={initialValues(date)}
+          form={form}
           onFieldsChange={(changedFields, allFields) => console.log(changedFields, allFields)}
           onFinish={timeKeeperAPIPost.run}
           onValuesChange={onValuesChange}
     >
 
-      <Form.Item name="date">
+      <Form.Item name="date" rules={[{required: true}]}>
       </Form.Item>
 
-      <Form.Item label="Description" name="comment">
+      <Form.Item label="Description" name="comment" rules={[{required: true}]}>
         <TextArea
           rows={2}
           placeholder="What did you work on ?"
@@ -124,7 +125,9 @@ const AddEntry = ({date, form, timeSheets, onSuccess}) => {
 
       <Form.Item
         label="Project"
-        name="timeSheetId">
+        name="timeSheetId"
+        rules={[{required: true}]}
+      >
         <Select>
           <Option value={null}/>
           {timeSheets.map(timeSheet => <Option value={timeSheet.id}>{timeSheet.project.name}</Option>)}
@@ -133,6 +136,7 @@ const AddEntry = ({date, form, timeSheets, onSuccess}) => {
       <Form.Item
         label="Billable"
         name="billable"
+        rules={[{required: true}]}
       >
         <Radio.Group>
           <Radio value={true}>Yes</Radio>
@@ -147,7 +151,7 @@ const AddEntry = ({date, form, timeSheets, onSuccess}) => {
           const hourDisabled = timeUnit && timeUnit !== 'HOURLY';
           const halfDayDisabled = timeUnit && timeUnit !== 'HOURLY' && timeUnit !== 'HALFDAY';
           return (
-            <Form.Item name="timeUnit" label="Time unit">
+            <Form.Item name="timeUnit" label="Time unit" rules={[{required: true}]}>
               <Radio.Group>
                 <Radio.Button value="HOURLY" disabled={hourDisabled}>Hours</Radio.Button>
                 <Radio.Button value="HALFDAY" disabled={halfDayDisabled}>Half-day</Radio.Button>
@@ -165,13 +169,13 @@ const AddEntry = ({date, form, timeSheets, onSuccess}) => {
               return null;
             case 'HALFDAY' :
               return (
-                <Form.Item name="isMorning" label="Morning">
+                <Form.Item name="isMorning">
                 </Form.Item>
               );
             case 'HOURLY':
               return (
                 <div>
-                  <Form.Item name="numberHours" label="Number of hours">
+                  <Form.Item name="numberHours" label="Number of hours" rules={[{required: true}]}>
                     <Input/>
                   </Form.Item>
                   <Form.Item name="startDateTime">
@@ -179,10 +183,8 @@ const AddEntry = ({date, form, timeSheets, onSuccess}) => {
                   <Form.Item name="endDateTime">
                   </Form.Item>
                 </div>
-
               )
           }
-
           return (
             getFieldValue('timeUnit') === 'HOURLY' &&
             <Form.Item name="numberHours" label="Number of hours">
@@ -193,79 +195,50 @@ const AddEntry = ({date, form, timeSheets, onSuccess}) => {
       </Form.Item>
 
       <Button htmlType="submit">
-        Best bouton ever
+        Save task
       </Button>
     </Form>
   );
 };
 
-
-const timeSheets =
-  [
-    {
-      "active": true,
-      "defaultIsBillable": true,
-      "durationUnit": "Day",
-      "expirationDate": "2020-05-18",
-      "id": 8,
-      "maxDuration": 0,
-      "ownerId": 10,
-      "project": {
-        "billable": true,
-        "client": {
-          "id": 1,
-          "name": "Disney"
-        },
-        "description": "The disney's project",
-        "id": 0,
-        "name": "Disney's website",
-        "publicAccess": true,
-        //Useless
-        "users": [
-          {
-            "id": 0,
-            "manager": true,
-            "name": "string",
-            "picture": "string"
-          }
-        ]
-      },
-      "timeUnit": "HALFDAY",
-      "valid": true
-    },
-    {
-      "active": true,
-      "defaultIsBillable": false,
-      "durationUnit": "Hour",
-      "expirationDate": "2020-05-18",
-      "id": 9,
-      "maxDuration": 0,
-      "ownerId": 10,
-      "project": {
-        "billable": true,
-        "client": {
-          "id": 1,
-          "name": "Disney"
-        },
-        "description": "The Darva's project",
-        "id": 0,
-        "name": "Sinapps",
-        "publicAccess": true,
-        //Useless
-        "users": [
-          {
-            "id": 0,
-            "manager": true,
-            "name": "string",
-            "picture": "string"
-          }
-        ]
-      },
-      "timeUnit": "HOURLY",
-      "valid": true
-    }
-  ];
 const TimeEntryForm = ({moment, form, onSuccess}) => {
+  const timeSheets = useTimeKeeperAPI('/api/my/timeSheets', (form => form));
+
+  if (timeSheets.loading) {
+    return (
+      <React.Fragment>
+        <Spin size="large">
+          <Form
+            labelCol={{span: 4}}
+            wrapperCol={{span: 14}}
+            layout="horizontal"
+          >
+            <Form.Item label="Name" name="name">
+              <Input placeholder="Loading data from server..."/>
+            </Form.Item>
+            <Form.Item label="Description" name="description">
+              <TextArea
+                rows={4}
+                placeholder="Loading data from server..."
+              />
+            </Form.Item>
+          </Form>
+        </Spin>
+
+      </React.Fragment>
+    );
+  }
+
+  if (timeSheets.error) {
+    return (
+      <React.Fragment>
+        <Alert title='Server error'
+               message='Failed to load the data'
+               type='error'
+        />
+      </React.Fragment>
+    );
+  }
   return (
     <div>
       <div>
@@ -276,7 +249,7 @@ const TimeEntryForm = ({moment, form, onSuccess}) => {
 
       <Divider/>
       <TitleSection title='Add task'/>
-      <AddEntry date={moment} form={form} timeSheets={timeSheets} onSuccess={onSuccess}/>
+      <AddEntry date={moment} form={form} timeSheets={timeSheets.data} onSuccess={onSuccess}/>
     </div>
   )
 };

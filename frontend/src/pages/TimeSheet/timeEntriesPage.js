@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import MainPage from '../MainPage/MainPage';
 import WeekCalendar from '../../components/TimeSheet/WeekCalendar';
-import {Badge} from 'antd';
 import {Badge, Form, Modal} from 'antd';
 import TimeEntryForm from "../../components/TimeEntry/TimeEntryForm";
 
@@ -68,20 +67,20 @@ const TimeEntriesPage = () => {
   ];
   const data = [staticData, staticDataWeek2];
 
+  const openModal = () => setVisibleEntryModal(true);
+  const closeModal = () => setVisibleEntryModal(false);
+  const resetForm = () => form.resetFields()
   return (
     <MainPage title="Time entries">
       <Modal
         visible={visibleEntryModal}
-        onCancel={() => {
-          setVisibleEntryModal(false)
-          form.resetFields();
-        }}
+        onCancel={closeModal}
         destroyOnClose={true}
-        afterClose={() => form.resetFields()}
+        afterClose={resetForm}
+        width={'37.5%'}
+        footer={null}
       >
-        <TimeEntryForm moment={taskMoment} form={form} onSuccess={() =>{
-          setVisibleEntryModal(false)
-        }}/>
+        <TimeEntryForm moment={taskMoment} form={form} onSuccess={closeModal}/>
       </Modal>
 
       <WeekCalendar
@@ -91,7 +90,7 @@ const TimeEntriesPage = () => {
         onPanelChange={(id, start) => setCurrentFirstDay(start)}
         onClickAddTask={(e, m) => {
           setTaskMoment(m);
-          setVisibleEntryModal(true);
+          openModal();
         }}
         dateCellRender={(data) => {
           return (
@@ -106,6 +105,8 @@ const TimeEntriesPage = () => {
                       />
                     </div>
                   );
+                } else {
+                  return null;
                 }
               })}
             </div>
