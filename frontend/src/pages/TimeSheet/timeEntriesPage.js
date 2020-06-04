@@ -38,8 +38,7 @@ const TimeEntriesPage = () => {
           name: 'Agira'
         },
         dateTime: today().add(4, 'hour')
-      },
-        {
+      }, {
         name: 'It is tuesday my dudes',
         description: 'Second element of the day',
         project: {
@@ -47,7 +46,7 @@ const TimeEntriesPage = () => {
           name: 'Google'
         },
         dateTime: today().add(2, 'hour')
-      },{
+      }, {
         name: 'It is tuesday my dudes',
         description: 'Second element of the day',
         project: {
@@ -71,7 +70,55 @@ const TimeEntriesPage = () => {
       }, {
         name: 'It is wednesday my dudes',
         description: 'Second element of the day',
-        dateTime: today().add(2, 'hour'),
+        dateTime: today().add(1, 'hour'),
+        project: {
+          id: 1,
+          name: 'Agira'
+        },
+      }, {
+        name: 'It is wednesday my dudes',
+        description: 'Third element of the day',
+        dateTime: today().add(1, 'hour'),
+        project: {
+          id: 1,
+          name: 'Agira'
+        },
+      }, {
+        name: 'It is wednesday my dudes',
+        description: 'Fourth element of the day',
+        dateTime: today().add(1, 'hour'),
+        project: {
+          id: 1,
+          name: 'Agira'
+        },
+      }, {
+        name: 'It is wednesday my dudes',
+        description: 'Fifth element of the day',
+        dateTime: today().add(1, 'hour'),
+        project: {
+          id: 1,
+          name: 'Agira'
+        },
+      }, {
+        name: 'It is wednesday my dudes',
+        description: 'Sixth element of the day',
+        dateTime: today().add(1, 'hour'),
+        project: {
+          id: 1,
+          name: 'Agira'
+        },
+      }, {
+        name: 'It is wednesday my dudes',
+        description: 'Seventh element of the day',
+        dateTime: today().add(1, 'hour'),
+        project: {
+          id: 1,
+          name: 'Agira'
+        },
+      }, {
+        name: 'It is wednesday my dudes',
+        description: 'Eighth element of the day',
+        dateTime: today().add(1, 'hour'),
         project: {
           id: 1,
           name: 'Agira'
