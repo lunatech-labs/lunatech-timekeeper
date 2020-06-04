@@ -7,6 +7,7 @@ import fr.lunatech.timekeeper.services.AuthenticationContext;
 import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
 
+import javax.json.bind.annotation.JsonbCreator;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
@@ -38,6 +39,7 @@ public class TimeSheetRequest {
     @Null
     public TimeUnit durationUnit; // DAYS
 
+    @JsonbCreator
     public TimeSheetRequest(@NotNull Long projectId, @NotNull Long ownerId, TimeUnit timeUnit, Boolean defaultIsBillable, @Null LocalDate expirationDate, @Null Integer maxDuration, @Null TimeUnit durationUnit) {
         this.projectId = projectId;
         this.ownerId = ownerId;
@@ -49,19 +51,27 @@ public class TimeSheetRequest {
     }
 
     public TimeSheet unbind(
+            @NotNull TimeSheet timeSheet,
             @NotNull BiFunction<Long, AuthenticationContext, Optional<Project>> findProject,
             @NotNull BiFunction<Long, AuthenticationContext, Optional<User>> findOwner,
             @NotNull AuthenticationContext ctx
-    ) {
-        TimeSheet timeSheet = new TimeSheet();
+    ){
         timeSheet.project = findProject.apply(getProjectId(), ctx).orElseThrow(() -> new IllegalEntityStateException("Project not found for id " + getProjectId()));
-        timeSheet.owner = findOwner.apply(getOwnerId(), ctx).orElseThrow(() -> new IllegalEntityStateException("Owner not found for id " + getProjectId()));
+        timeSheet.owner = findOwner.apply(getOwnerId(), ctx).orElseThrow(() -> new IllegalEntityStateException("Owner not found for id " + getOwnerId()));
         timeSheet.timeUnit = getTimeUnit();
         timeSheet.defaultIsBillable = getDefaultIsBillable();
         timeSheet.expirationDate = getExpirationDate();
         timeSheet.maxDuration = getMaxDuration();
         timeSheet.durationUnit = getDurationUnit();
         return timeSheet;
+    }
+
+    public TimeSheet unbind(
+            @NotNull BiFunction<Long, AuthenticationContext, Optional<Project>> findProject,
+            @NotNull BiFunction<Long, AuthenticationContext, Optional<User>> findOwner,
+            @NotNull AuthenticationContext ctx
+    ) {
+        return unbind(new TimeSheet(), findProject,findOwner,ctx);
     }
 
     public Long getProjectId() {

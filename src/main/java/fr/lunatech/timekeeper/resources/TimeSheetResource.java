@@ -43,7 +43,7 @@ public class TimeSheetResource implements TimeSheetResourceApi {
     @Override
     public Response updateTimeSheet(Long id, TimeSheetRequest request) {
         final var ctx = authentication.context();
-        timeSheetService.update(id,request,ctx)
+        timeSheetService.update(id, request, ctx)
                 .orElseThrow(NotFoundException::new);
         return Response.noContent().build();
     }

@@ -20,7 +20,7 @@ import java.util.List;
 
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ProjectDef;
-import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TimeSheetDef;
+import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.PersonalTimeSheetDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TimeSheetPerProjectPerUserDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
@@ -249,8 +249,8 @@ class ProjectResourceTest {
         final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, project, jimmy, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
 
-        getValidation(TimeSheetDef.uri, adminToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetSam))));
-        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetJimmy))));
+        getValidation(PersonalTimeSheetDef.uri, adminToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetSam))));
+        getValidation(PersonalTimeSheetDef.uri, jimmyToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetJimmy))));
 
     }
 
@@ -267,8 +267,8 @@ class ProjectResourceTest {
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
 
         // THEN
-        getValidation(TimeSheetDef.uri, adminToken, OK).body(is("[]"));
-        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is("[]"));
+        getValidation(PersonalTimeSheetDef.uri, adminToken, OK).body(is("[]"));
+        getValidation(PersonalTimeSheetDef.uri, jimmyToken, OK).body(is("[]"));
     }
 
 
@@ -287,7 +287,7 @@ class ProjectResourceTest {
         // WHEN creating the project, timesheets for all members are generated
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
 
-        // FIXME: 9L expected by Panache generated ID as it's the 9th entity to be created during this test
+        // FIXME: see TK-359
         // when running this test alone, id 12 will be generated, assertion will fail. same for shouldCreateTimeSheetForProjectMembers test
         final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, project, jimmy, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 

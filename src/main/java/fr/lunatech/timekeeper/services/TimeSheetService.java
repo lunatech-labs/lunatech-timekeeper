@@ -14,6 +14,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
+import javax.transaction.UserTransaction;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -48,13 +49,13 @@ public class TimeSheetService {
         return timeSheet;
     }
 
-    public Optional<TimeSheetResponse> findTimeSheetById(Long id , AuthenticationContext ctx){
-        return findById(id,ctx).map(TimeSheetResponse::bind);
+    public Optional<TimeSheetResponse> findTimeSheetById(Long id, AuthenticationContext ctx) {
+        return findById(id, ctx).map(TimeSheetResponse::bind);
     }
 
-    public long create(TimeSheetRequest request, AuthenticationContext ctx){
+    public long create(TimeSheetRequest request, AuthenticationContext ctx) {
         TimeSheet timeSheet = request.unbind(projectService::findById, userService::findById, ctx);
-        return createTimeSheet(timeSheet,ctx);
+        return createTimeSheet(timeSheet, ctx);
     }
 
     @Transactional
@@ -69,19 +70,19 @@ public class TimeSheetService {
     }
 
     @Transactional
-    public Optional<Long> update (Long id, TimeSheetRequest request, AuthenticationContext ctx){
-        logger.info("Modify timesheet for id={} with {}, {}", id,request,ctx);
-        return findById(id,ctx)
-                .map(timeSheet -> request.unbind(projectService::findById,userService::findById,ctx))
+    public Optional<Long> update(Long id, TimeSheetRequest request, AuthenticationContext ctx) {
+        logger.info("Modify timesheet for id={} with {}, {}", id, request, ctx);
+        return findById(id, ctx)
+                .map(timeSheet -> request.unbind(timeSheet, projectService::findById, userService::findById, ctx))
                 .map(timeSheet -> timeSheet.id);
     }
 
     // FIXME : It doesn't test if it is active
-    public List<TimeSheetResponse> findAllActivesForUser(AuthenticationContext ctx){
+    public List<TimeSheetResponse> findAllActivesForUser(AuthenticationContext ctx) {
         return streamAll(ctx, TimeSheetResponse::bind, Collectors.toList());
     }
 
-    public List<TimeSheetResponse> findAllForProjectForUser(AuthenticationContext ctx, long idProject, long idUser){
+    public List<TimeSheetResponse> findAllForProjectForUser(AuthenticationContext ctx, long idProject, long idUser) {
         final Stream<TimeSheet> timeSheetStream = TimeSheet.stream("project_id= ?1 AND user_id= ?2", idProject, idUser);
         return timeSheetStream.map(TimeSheetResponse::bind)
                 .collect(Collectors.toList());
