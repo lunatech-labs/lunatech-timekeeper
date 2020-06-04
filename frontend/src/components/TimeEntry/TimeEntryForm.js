@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
-import {Alert, Button, Divider, Form, Input, message, Radio, Select, Spin} from "antd";
+import {Alert, Button, Divider, Form, Input, message, Radio, Select, Space, Spin} from "antd";
 import TitleSection from "../Title/TitleSection";
 import {useTimeKeeperAPI, useTimeKeeperAPIPost} from "../../utils/services";
+import {Link} from "react-router-dom";
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -60,14 +61,14 @@ const url = (form) => {
   return `/api/timeSheet/${timeSheetId}/timeEntry/${prefix}`;
 };
 
-const AddEntry = ({date, form, timeSheets, onSuccess}) => {
+const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
   const [entryCreated, setEntryCreated] = useState(false);
   const [selectedTimeSheet, setSelectedTimeSheet] = useState();
   const timeKeeperAPIPost = useTimeKeeperAPIPost(url(form), (form => form), setEntryCreated);
   useEffect(() => {
     if (entryCreated) {
       message.success('Entry was created');
-      onSuccess();
+      onSuccess && onSuccess();
     }
   }, [entryCreated, onSuccess]);
   useEffect(() => {
@@ -194,14 +195,15 @@ const AddEntry = ({date, form, timeSheets, onSuccess}) => {
         }}
       </Form.Item>
 
-      <Button htmlType="submit">
-        Save task
-      </Button>
+      <Space className="tk_JcFe" size="middle" align="center">
+        <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" onClick={e => onCancel && onCancel(e)}>Cancel</Link>
+        <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Save task</Button>
+      </Space>
     </Form>
   );
 };
 
-const TimeEntryForm = ({moment, form, onSuccess}) => {
+const TimeEntryForm = ({moment, form, onSuccess, onCancel}) => {
   const timeSheets = useTimeKeeperAPI('/api/my/timeSheets', (form => form));
 
   if (timeSheets.loading) {
@@ -249,7 +251,7 @@ const TimeEntryForm = ({moment, form, onSuccess}) => {
 
       <Divider/>
       <TitleSection title='Add task'/>
-      <AddEntry date={moment} form={form} timeSheets={timeSheets.data} onSuccess={onSuccess}/>
+      <AddEntry date={moment} form={form} timeSheets={timeSheets.data} onSuccess={onSuccess} onCancel={onCancel}/>
     </div>
   )
 };

@@ -80,7 +80,7 @@ const TimeEntriesPage = () => {
         width={'37.5%'}
         footer={null}
       >
-        <TimeEntryForm moment={taskMoment} form={form} onSuccess={closeModal}/>
+        <TimeEntryForm moment={taskMoment} form={form} onSuccess={closeModal} onCancel={closeModal}/>
       </Modal>
 
       <WeekCalendar
