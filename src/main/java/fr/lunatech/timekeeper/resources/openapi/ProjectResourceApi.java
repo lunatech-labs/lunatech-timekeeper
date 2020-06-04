@@ -2,6 +2,7 @@ package fr.lunatech.timekeeper.resources.openapi;
 
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
+import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.headers.Header;
@@ -89,5 +90,23 @@ public interface ProjectResourceApi {
             )
     })
     Response updateProject(@PathParam("id") Long id, @RequestBody ProjectRequest request);
+
+    @GET
+    @Path("/{idProject}/users/{idUser}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Retrieve all timesheets of a member of a project",
+            description = "Retrieve all timesheets of a member of a project with the details")
+    @Tag(ref = "projects")
+    @APIResponses(value = {
+            @APIResponse(
+                    responseCode = "200",
+                    description = "Timesheets retrieved"
+            ),
+            @APIResponse(
+                    responseCode = "404",
+                    description = "Timesheets not found"
+            )
+    })
+    List<TimeSheetResponse> getTimeSheetsForProjectForUser(@PathParam("idProject") long idProject, @PathParam("idUser") long idUser);
 
 }

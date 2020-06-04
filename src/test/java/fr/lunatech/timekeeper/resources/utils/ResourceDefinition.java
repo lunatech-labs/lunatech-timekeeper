@@ -17,6 +17,7 @@ public enum ResourceDefinition {
     OrganizationDef("/api/organizations", apply(OrganizationRequest.class, OrganizationResponse.class)),
     UserDef("/api/users", apply(Void.class, UserResponse.class)),
     ProjectDef("/api/projects", apply(ProjectRequest.class, ProjectResponse.class)),
+    TimeSheetPerProjectPerUserDef("/api/projects/%d/users/%d", apply(Void.class, TimeSheetResponse.class)),
     TimeSheetDef("/api/my/timeSheets", apply(Void.class, TimeSheetResponse.class));
 
     final public String uri;
@@ -33,6 +34,10 @@ public enum ResourceDefinition {
 
     public String uriWithid(Long id, Map<String, String> params) {
         return String.format("%s/%s", this.uri, id) + paramUrlResolver(params);
+    }
+
+    public String uriWithMultiId(Long... ids) {
+        return String.format(this.uri,ids);
     }
 
 }

@@ -1,6 +1,6 @@
 @import '../../timekeeper-theme.less';
 
-.tk_Card_Member {
+.tk_CardMember {
   background: @black_Tk;
   display: flex;
   align-items: center;
@@ -8,10 +8,16 @@
   height: 50px;
   padding: 0 16px;
   margin-bottom: 5px;
+  border-radius: 4px;
+  width: 100%;
   &:last-child {margin-bottom: 0;}
   > div {
     display: flex;
     align-items: center;
     p {margin: 0 0 0 12px;}
+    svg {
+      color: @lightGray_Tk;
+      &:hover {color: @white_Tk;}
+    }
   }
 }

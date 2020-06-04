@@ -3,8 +3,10 @@ package fr.lunatech.timekeeper.resources;
 import fr.lunatech.timekeeper.resources.openapi.ProjectResourceApi;
 import fr.lunatech.timekeeper.resources.providers.AuthenticationContextProvider;
 import fr.lunatech.timekeeper.services.ProjectService;
+import fr.lunatech.timekeeper.services.TimeSheetService;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
+import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -20,6 +22,9 @@ public class ProjectResource implements ProjectResourceApi {
 
     @Inject
     ProjectService projectService;
+
+    @Inject
+    TimeSheetService timeSheetService;
 
     @Inject
     AuthenticationContextProvider authentication;
@@ -52,8 +57,19 @@ public class ProjectResource implements ProjectResourceApi {
     @Override
     public Response updateProject(Long id, @Valid ProjectRequest request) {
         final var ctx = authentication.context();
-            projectService.update(id, request, ctx)
-                    .orElseThrow(() -> new NotFoundException(String.format("Project not found for id=%d", id)));
+        projectService.update(id, request, ctx)
+                .orElseThrow(() -> new NotFoundException(String.format("Project not found for id=%d", id)));
         return Response.noContent().build();
+    }
+
+    @RolesAllowed({"user", "admin"})
+    @Override
+    public List<TimeSheetResponse> getTimeSheetsForProjectForUser(long idProject, long idUser) {
+        final var ctx = authentication.context();
+        List<TimeSheetResponse> response = timeSheetService.findAllForProjectForUser(ctx, idProject, idUser);
+        if (response.isEmpty()){
+            throw new NotFoundException(String.format("No timesheet found for project_id=%d, and user_id=%d", idProject, idUser));
+        }
+        return response;
     }
 }

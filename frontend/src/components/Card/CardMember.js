@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 const CardMember = ( {children} ) => {
 
   return (
-    <div className="tk_Card_Member">
+    <div className="tk_CardMember">
       {children}
     </div>
   );
