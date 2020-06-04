@@ -52,6 +52,13 @@ public class TimeSheetService {
         return streamAll(ctx, TimeSheetResponse::bind, Collectors.toList());
     }
 
+    public List<TimeSheetResponse> findAllForProjectForUser(AuthenticationContext ctx, long idProject, long idUser){
+        final Stream<TimeSheet> timeSheetStream = TimeSheet.stream("project_id= ?1 AND user_id= ?2", idProject, idUser);
+        return timeSheetStream.map(TimeSheetResponse::bind)
+                .collect(Collectors.toList());
+    }
+
+
     <R extends Collection<TimeSheetResponse>> R streamAll(
             AuthenticationContext ctx,
             Function<TimeSheet, TimeSheetResponse> bind,
