@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Avatar, Col, Modal, Row, Typography} from 'antd';
+import {Avatar, Col, Divider, Modal, Row, Typography} from 'antd';
 import './ShowProject.less';
 import PropTypes from 'prop-types';
 import {DesktopOutlined, DollarOutlined, LockOutlined, SnippetsFilled, UserOutlined,} from '@ant-design/icons';
@@ -9,7 +9,6 @@ import CardMember from '../Card/CardMember';
 import TagMember from '../Tag/TagMember';
 import TagProjectClient from '../Tag/TagProjectClient';
 import ShowTimeSheet from '../TimeSheet/ShowTimeSheet';
-import Separator from '../Separator/Separator';
 import Tooltip from 'antd/lib/tooltip';
 
 const {Title} = Typography;
@@ -34,7 +33,7 @@ const ShowProject = ({project}) => {
           </div>
           <div>
             <TagMember isManager={user.manager}/>
-            <Separator/>
+            <Divider type='vertical'/>
             <Tooltip title='Time sheet'>
               <SnippetsFilled onClick={() => {
                 setModalVisible(true);
@@ -55,7 +54,7 @@ const ShowProject = ({project}) => {
         closable={true}
         footer={null}
         onCancel={() => setModalVisible(false)}
-        width={"37.5%"}
+        width={'37.5%'}
       >
         <ShowTimeSheet project={project} member={selectedMember} />
       </Modal>

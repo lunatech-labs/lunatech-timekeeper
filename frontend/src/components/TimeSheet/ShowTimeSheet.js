@@ -1,13 +1,11 @@
 import React from 'react';
-import {Alert, Col, Row} from 'antd';
+import {Alert, Col, Divider, Row} from 'antd';
 import TagProjectClient from '../Tag/TagProjectClient';
 import './ShowTimeSheet.less';
 import {DollarOutlined, ClockCircleOutlined, CalendarOutlined, FieldTimeOutlined} from '@ant-design/icons';
 import ProjectMemberTag from '../Projects/ProjectMemberTag';
-import Separator from '../Separator/Separator';
 import {useTimeKeeperAPI} from '../../utils/services';
 import PropTypes from 'prop-types';
-import CardMember from '../Card/CardMember';
 const moment = require('moment');
 const format = (s) => moment(s, 'YYYY-MM-DD').format('YYYY/MM/DD');
 const ShowTimeSheet = ({project, member}) => {
@@ -70,10 +68,10 @@ const ShowTimeSheet = ({project, member}) => {
         <a href="#">Edit (TO DO)</a>
       </div>
       <div className="tk_ModalTopBody">
-        <div class="tk_ModalTopProject">
+        <div className="tk_ModalTopProject">
           <div>
             <h2>{project.name}</h2>
-            <Separator/>
+            <Divider type='vertical'/>
             <TagProjectClient client={project.client}/>
           </div>
           <p><FieldTimeOutlined />Days left: (TO DO)</p>
