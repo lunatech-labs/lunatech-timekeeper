@@ -250,8 +250,8 @@ class ProjectResourceTest {
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
 
-        getValidation(TimeSheetDef.uri, adminToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(List.of(expectedTimeSheetSam))));
-        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(List.of(expectedTimeSheetJimmy))));
+        getValidation(PersonalTimeSheetDef.uri, adminToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(List.of(expectedTimeSheetSam))));
+        getValidation(PersonalTimeSheetDef.uri, jimmyToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(List.of(expectedTimeSheetJimmy))));
     }
 
     @Test
@@ -267,8 +267,8 @@ class ProjectResourceTest {
         create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
 
         // THEN
-        getValidation(TimeSheetDef.uri, adminToken, OK).body(is("[]"));
-        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is("[]"));
+        getValidation(PersonalTimeSheetDef.uri, adminToken, OK).body(is("[]"));
+        getValidation(PersonalTimeSheetDef.uri, jimmyToken, OK).body(is("[]"));
     }
 
 

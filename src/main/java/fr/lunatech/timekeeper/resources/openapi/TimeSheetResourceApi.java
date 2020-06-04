@@ -21,7 +21,7 @@ import javax.ws.rs.core.UriInfo;
 
 import static javax.ws.rs.core.HttpHeaders.LOCATION;
 
-@Path("/timesheets")
+@Path("/time-sheets")
 public interface TimeSheetResourceApi {
 
 
