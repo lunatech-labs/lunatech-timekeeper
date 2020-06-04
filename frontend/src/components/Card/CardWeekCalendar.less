@@ -6,6 +6,8 @@
   border-radius: 4px;
   min-height: 370px;
   box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2);
+  height: 400px;
+  position: relative;
   &[disabled] {
     pointer-events: none;
     opacity: 0.5;
@@ -17,9 +19,15 @@
     align-items: center;
     justify-content: space-between;
     padding: 16px 8px 16px 16px;
-    color: @lightGray_Tk;
+    color: #9191A0;
     font-size: 20px;
     height: 64px;
+    position: absolute;
+    background: #323342;
+    width: 100%;
+    z-index: 6;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
     button {
       background-color: @black_Tk;
       color: @lightGray_Tk;
@@ -30,7 +38,12 @@
       span {font-size: 12px;}
     }
   }
-  .tk_CardWeekCalendar_Body {padding: 0 8px 16px 8px;}
+  .tk_CardWeekCalendar_Body {
+    padding: 0 8px 16px 8px;
+    overflow: scroll;
+    padding-top: 64px;
+    height: 400px;
+  }
 }
 .tk_CardWeekCalendar:hover button {
   background-color: @red_Tk;

@@ -37,8 +37,21 @@ const TimeEntriesPage = () => {
           id: 1,
           name: 'Agira'
         },
-        dateTime: today().add(4, 'hour')
-      },{
+        dateTime: today().add(1, 'hour')
+      },
+      {
+        date: today().add(1, 'day'),
+        disabled: false,
+        data: [{
+          name: 'It is tuesday my dudes',
+          description: 'First element of the day',
+          project: {
+            id: 1,
+            name: 'Agira'
+          },
+          dateTime: today().add(1, 'hour')
+        },
+        {
         name: 'It is tuesday my dudes',
         description: 'Second element of the day',
         project: {

@@ -6,21 +6,16 @@ import PropTypes from 'prop-types';
 
 const TimeEntry = ({entry}) => {
 
+  const computeSize = (dateTime) => {
+    const minimumSize = 75;
 
-  //TODO GEOFFROY need it
-  // const computeSize = (dateTime) => {
-  //   const minimumSize = 90;
-  //
-  //   //return minimumSize + (dateTime.hours() -1) * 30
-  //
-  //   //style={{height: `${size}px`}}
-  //
-  //   return 45 * dateTime.hours();
-  // };
-  //const size = computeSize(entry.dateTime);
+    return minimumSize + (dateTime.hours() -1) * 40
+  };
+
+  const size = computeSize(entry.dateTime);
 
   return (
-    <div className="tk_TaskCard" key={`badge-entry-${entry.dateTime && entry.dateTime.format('yyyy-mm-dd-hh-mm')}`}>
+    <div className="tk_TaskCard" style={{height: `${size}px`}} key={`badge-entry-${entry.dateTime && entry.dateTime.format('yyyy-mm-dd-hh-mm')}`}>
       <div>
         <Badge
           status={(entry && entry.name) ? 'success' : 'error'}
