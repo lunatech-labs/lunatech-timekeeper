@@ -1,17 +1,26 @@
-import React from 'react';
-import {Alert, Col, Row} from 'antd';
+import React, {useState} from 'react';
+import {Alert, Button, Col, Divider, Modal, Row} from 'antd';
 import TagProjectClient from '../Tag/TagProjectClient';
 import './ShowTimeSheet.less';
-import {DollarOutlined, ClockCircleOutlined, CalendarOutlined, FieldTimeOutlined} from '@ant-design/icons';
+import {
+  DollarOutlined,
+  ClockCircleOutlined,
+  CalendarOutlined,
+  FieldTimeOutlined,
+  SnippetsFilled
+} from '@ant-design/icons';
 import ProjectMemberTag from '../Projects/ProjectMemberTag';
 import Separator from '../Separator/Separator';
 import {useTimeKeeperAPI} from '../../utils/services';
 import PropTypes from 'prop-types';
 import CardMember from '../Card/CardMember';
+import Tooltip from "antd/lib/tooltip";
+import EditTimeSheetForm from "./EditTimeSheetForm";
 const moment = require('moment');
 const format = (s) => moment(s, 'YYYY-MM-DD').format('YYYY/MM/DD');
 const ShowTimeSheet = ({project, member}) => {
   const {data, error, loading} = useTimeKeeperAPI(`/api/projects/${project.id}/users/${member.id}`);
+  const [selectedTimeSheet, setSelectedTimeSheet] = useState()
 
   const TimeSheets = ({timeSheets}) => {
     if (timeSheets.size === 0) {
@@ -30,6 +39,14 @@ const ShowTimeSheet = ({project, member}) => {
               <p className="tk_Information"><DollarOutlined/> Billable : {item.defaultIsBillable ? 'Yes' : 'No'}</p>
             </Col>
           </Row>
+          <Separator/>
+          <Tooltip title='Time sheet'>
+            <SnippetsFilled onClick={() => {
+              setSelectedTimeSheet(item);
+            }}/>
+          </Tooltip>
+          <Divider/>
+          {selectedTimeSheet && <EditTimeSheetForm timesheet={selectedTimeSheet} />}
         </div>
       );
     }
@@ -67,7 +84,6 @@ const ShowTimeSheet = ({project, member}) => {
     <div className="tk_ModalTop">
       <div className="tk_ModalTopHead">
         <h1>Individual time sheet</h1>
-        <a href="#">Edit (TO DO)</a>
       </div>
       <div className="tk_ModalTopBody">
         <div class="tk_ModalTopProject">

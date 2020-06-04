@@ -102,10 +102,7 @@ class TimeSheetResourceTest {
                 TimeUnit.DAY
         );
         // in order to avoid Jackson seralization by rest-assured, serialise now
-        JsonbConfig config = new JsonbConfig().withFormatting(true);
-        Jsonb jsonb = JsonbBuilder.create(config);
-        String updatedTimeSheetBodyAsJson = jsonb.toJson(updatedTimeSheet);
-        putValidation(TimeSheetDef.uriWithid(expectedId),adminToken,updatedTimeSheetBodyAsJson, NO_CONTENT);
+        putValidation(TimeSheetDef.uriWithid(expectedId),adminToken,toJson(updatedTimeSheet), NO_CONTENT);
 
         // THEN get the updated version
         final var expectedUpdatedTimeSheetSam = new TimeSheetResponse(expectedId, project, sam, true, newEndDate, 60, TimeUnit.DAY.toString(), Collections.emptyList());
