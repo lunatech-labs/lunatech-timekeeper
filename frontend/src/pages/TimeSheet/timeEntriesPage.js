@@ -60,7 +60,7 @@ const TimeEntriesPage = () => {
       date: today().add(2, 'day'),
       disabled: false,
       data: [{
-        name: 'It is wednesday my dudes',
+        name: 'Ticket 1307, 1308 Ecran recherche INSEE NIR & Ticket 1556 Filters number increment',
         description: 'First element of the day',
         dateTime: today().add(1, 'hour'),
         project: {
@@ -68,7 +68,7 @@ const TimeEntriesPage = () => {
           name: 'Agira'
         },
       }, {
-        name: 'It is wednesday my dudes',
+        name: 'Ticket 681 Ecran suivi échanges Dependance Admin',
         description: 'Second element of the day',
         dateTime: today().add(1, 'hour'),
         project: {
@@ -76,7 +76,7 @@ const TimeEntriesPage = () => {
           name: 'Agira'
         },
       }, {
-        name: 'It is wednesday my dudes',
+        name: 'Ticket 1013 & 1000 suivi des échanges vie et dépendance sociétés dassurance',
         description: 'Third element of the day',
         dateTime: today().add(1, 'hour'),
         project: {
@@ -84,7 +84,7 @@ const TimeEntriesPage = () => {
           name: 'Agira'
         },
       }, {
-        name: 'It is wednesday my dudes',
+        name: 'Ticket 1443 Filter date problem IE corrections doublon datepicker',
         description: 'Fourth element of the day',
         dateTime: today().add(1, 'hour'),
         project: {

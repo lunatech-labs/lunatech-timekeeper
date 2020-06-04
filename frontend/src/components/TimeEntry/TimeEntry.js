@@ -9,7 +9,7 @@ const TimeEntry = ({entry}) => {
   const computeSize = (dateTime) => {
     const minimumSize = 75;
 
-    return minimumSize + (dateTime.hours() -1) * 40
+    return minimumSize + (dateTime.hours() -1) * 50
   };
 
   const size = computeSize(entry.dateTime);
