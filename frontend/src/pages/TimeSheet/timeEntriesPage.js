@@ -116,7 +116,7 @@ const TimeEntriesPage = () => {
           name: 'Agira'
         },
       }, {
-        name: 'It is wednesday my dudes',
+        name: 'It is wednesday my dudes OK ANAAAAAAAAAAAASSSSANANSNSNANSNASN',
         description: 'Eighth element of the day',
         dateTime: today().add(1, 'hour'),
         project: {
