@@ -1,0 +1,62 @@
+@import '../../timekeeper-theme.less';
+
+.tk_TaskCard {
+  margin-bottom: 8px;
+  background: @black_Tk;
+  padding: 8px;
+  border-left: 2px solid #1890FF;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  > div {
+    span {
+      span:first-child {
+        display: none;
+      }
+
+      span:last-child {
+        width: 100%;
+        margin-left: 0;
+        padding: 0px;
+        font-size: 12px;
+        text-transform: capitalize;
+        display: -webkit-box;
+        height: @line-height * @lines-to-show; /* Fallback for non-webkit */
+        line-height: @line-height;
+        -webkit-line-clamp: @lines-to-show;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    p {
+      color: @lightGray_Tk;
+      font-size: 11px;
+      margin-bottom: 0;
+    }
+  }
+
+  > p {
+    margin-bottom: 0;
+    color: #1890FF;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    span {
+      margin-right: 4px;
+    }
+  }
+
+  p {
+    margin-bottom: 0;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}

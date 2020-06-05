@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import MainPage from '../MainPage/MainPage';
 import WeekCalendar from '../../components/TimeSheet/WeekCalendar';
-import {Badge} from 'antd';
+import TimeEntry from '../../components/TimeEntry/TimeEntry';
+import {useTimeKeeperAPI} from '../../utils/services';
+import {Alert} from 'antd';
 
 const moment = require('moment');
 
@@ -14,55 +16,54 @@ const TimeEntriesPage = () => {
     () => {
       //TODO : Fetch your data or select your week
       if (!currentFirstDay) {
-        return;
+
       }
     }, [currentFirstDay]);
 
-  const staticData = [
-    {
-      date: today(),
-      disabled: true,
-      data: [{
-        name: 'First Day of the week is a day off',
-      }]
-    },
-    {
-      date: today().add(2, 'day'),
-      disabled: false,
-      data: [{
-        name: 'It is wednesday my dudes',
-        description: 'First element of the day',
-        dateTime: today().add(4, 'hour')
-      }, {
-        name: 'It is wednesday my dudes',
-        description: 'Second element of the day',
-        dateTime: today().add(8, 'hour')
-      }]
-    }
-  ];
-  const staticDataWeek2 = [
-    {
-      date: today().add(1, 'week'),
-      disabled: false,
-      data: [{
-        name: 'First Day of the second week',
-      }]
-    },
-    {
-      date: today().add(2, 'day').add(1, 'week'),
-      disabled: false,
-      data: [{
-        name: 'It is wednesday my dudes of week 2',
-        description: 'First element of the day',
-        dateTime: today().add(1, 'week').add(4, 'hour')
-      }, {
-        name: 'It is wednesday my dudes of week 2',
-        description: 'Second element of the day',
-        dateTime: today().add(1, 'week').add(8, 'hour')
-      }]
-    }
-  ];
-  const data = [staticData, staticDataWeek2];
+  const {data, loading, error} = useTimeKeeperAPI('/api/my/currentWeek');
+
+  if (loading) {
+    return (
+      <div>loading...</div>
+    );
+  }
+
+  if (error) {
+    return (
+      <React.Fragment>
+        <Alert title='Server error'
+               message='Failed to load the list of clients'
+               type='error'
+               description='check that the authenticated User has role [user] on Quarkus'
+        />
+      </React.Fragment>
+    );
+  }
+
+  if (data) {
+    console.log('week:', JSON.stringify(data));
+  }
+
+  //https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-an-array-of-objects/34890276#34890276
+  const groupBy = function (xs, key) {
+    return xs.reduce(function (rv, x) {
+      (rv[key(x)] = rv[key(x)] || []).push(x);
+      return rv;
+    }, {});
+  };
+  const datas = Object.entries(groupBy(data.sheets.flatMap(({entries, project}) => entries.map(x => ({
+    ...x,
+    project
+  }))), entry => moment((entry.endDateTime)))).map(([key, value]) => ({
+    data: value,
+    date: moment(key),
+    disabled: false
+  }));
+
+  console.log('groupBY',
+    datas
+  );
+
 
   return (
     <MainPage title="Time entries">
@@ -71,25 +72,20 @@ const TimeEntriesPage = () => {
         disabledWeekEnd={true}
         hiddenButtons={false}
         onPanelChange={(id, start) => setCurrentFirstDay(start)}
-        dateCellRender={(data) => {
+        dateCellRender={(data, date, disabled) => {
           return (
             <div>
               {data.map(entry => {
                 if (entry) {
                   return (
-                    <div key={`badge-entry-${entry.dateTime && entry.dateTime.format('yyyy-mm-dd-hh-mm')}`}>
-                      <Badge
-                        status={(entry && entry.name) ? 'success' : 'error'}
-                        text={(entry && entry.name) ? `name : ${entry.name} ${entry.dateTime && `(${entry.dateTime.format('hh:mm')})`}` : 'Nothing to render'}
-                      />
-                    </div>
+                    <TimeEntry entry={entry}/>
                   );
                 }
               })}
             </div>
           );
         }}
-        days={data[0]}
+        days={datas}
       />
     </MainPage>
   );
