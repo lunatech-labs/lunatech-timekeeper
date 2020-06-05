@@ -13,8 +13,9 @@ const TimeEntry = ({entry}) => {
     return minimumSize + (dateTime.hours() - 1) * 50;
   };
 
-
-  const date = (moment(entry.startDateTime));
+//FIXME BUG 1 heure de décalage
+  const date = (moment(Date.parse(entry.endDateTime) - (Date.parse(entry.startDateTime))));
+  console.log('date', date);
   const size = computeSize(date);
   return (
     <div className="tk_TaskCard" style={{height: `${size}px`}}
