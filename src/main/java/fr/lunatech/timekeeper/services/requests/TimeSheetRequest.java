@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
+// TODO remove non updatable fields
 public class TimeSheetRequest {
     @NotNull
     public Long projectId;

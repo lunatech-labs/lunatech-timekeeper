@@ -56,7 +56,7 @@ const ShowProject = ({project}) => {
         footer={null}
         onCancel={() => setModalVisible(false)}
         width={"37.5%"}
-      >²
+      >
         <ShowTimeSheet project={project} member={selectedMember} />
       </Modal>
     );
