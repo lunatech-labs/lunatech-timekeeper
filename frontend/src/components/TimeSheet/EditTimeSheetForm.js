@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, Button, Form, Input, message, Spin,} from 'antd';
 import {Link, Redirect, useRouteMatch} from 'react-router-dom';
-import useTimeKeeperAPIPut from '../../utils/services';
+import {useTimeKeeperAPIPut} from '../../utils/services';
 import Space from 'antd/lib/space';
 import '../../components/Button/BtnGeneral.less';
 
