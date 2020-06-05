@@ -87,7 +87,7 @@ const ClientList = () => {
                   <Button type="link" size="small" ghost shape="circle" icon={<EditFilled/>} href={`/clients/${item.id}/edit`}/>
                 </Tooltip>
               ]}
-              actions={[
+              actions={[ item.projects.length === 0 ? <Panel id="tk_ProjectNoCollapse" header={<Space size="small"><FolderFilled />{'No project'}</Space>} key="1"/> :
                 <Collapse bordered={false} expandIconPosition={'right'} key="projects">
                   <Panel header={<Space size="small"><FolderFilled />{'List of projects'}</Space>} key="1">
                     <List
