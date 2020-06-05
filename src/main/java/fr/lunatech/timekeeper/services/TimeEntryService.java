@@ -23,8 +23,7 @@ public class TimeEntryService {
     @Transactional
     public Long createTimeEntry(Long timeSheetId, TimeEntryRequest request, AuthenticationContext ctx, Enum TimeUnit) {
         logger.debug("Create a new TimeEntry with {}, {}", request, ctx);
-        // TODO check that the user can create the timeEntry for this timesheet
-        var ts = TimeSheet.findByIdOptional(timeSheetId);
+        // TODO check that the user can create the timeEntry for this time entry
         final TimeEntry timeEntry = request.unbind( timeSheetId, timeSheetService::findById, ctx);
         try {
             timeEntry.persistAndFlush();

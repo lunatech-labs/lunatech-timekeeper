@@ -15,7 +15,7 @@ public class CreateResourceExceptionMapper implements ExceptionMapper<CreateReso
 
     @Override
     public Response toResponse(CreateResourceException e) {
-        logger.warn(e.getMessage());
+        logger.warn( "CreateResourceException: " + e.getMessage());
         // We could use also a CONFLICT but since we do not check the exact constraint name, we prefer to use a
         // more generic "Bad request" http response here.
         return Response.status(Response.Status.BAD_REQUEST)

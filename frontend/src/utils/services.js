@@ -97,7 +97,6 @@ export const useTimeKeeperAPIPost = (urlAPI, formData, booleanCallback) => {
   );
 
   return useRequest((formData) => {
-    console.log(formData)
     return ({
       url: process.env.REACT_APP_QUARKUS_BACKEND + urlAPI,
       method: 'post',

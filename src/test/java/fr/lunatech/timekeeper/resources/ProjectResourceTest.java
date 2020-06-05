@@ -1,6 +1,7 @@
 package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.resources.utils.HttpTestRuntimeException;
+import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
 import fr.lunatech.timekeeper.services.requests.ClientRequest;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
@@ -19,15 +20,11 @@ import java.util.Collections;
 import java.util.List;
 
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.*;
-import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ProjectDef;
-import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TimeSheetDef;
-import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TimeSheetPerProjectPerUserDef;
+import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.putValidation;
-import static fr.lunatech.timekeeper.resources.utils.TestUtils.listOfTasJson;
-import static fr.lunatech.timekeeper.resources.utils.TestUtils.toJson;
 import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.Response.Status.*;
 import static org.hamcrest.CoreMatchers.is;
@@ -39,6 +36,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisabledIfEnvironmentVariable(named = "ENV", matches = "fast-test-only")
 class ProjectResourceTest {
 
+    @Inject
+    TimeKeeperTestUtils timeKeeperTestUtils;
 
     @Inject
     Flyway flyway;
@@ -56,7 +55,7 @@ class ProjectResourceTest {
         final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, emptyList()), adminToken);
 
-        getValidation(ProjectDef.uriWithid(project.getId()), adminToken, OK).body(is(toJson(project)));
+        getValidation(ProjectDef.uriWithid(project.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(project)));
     }
 
     @Test
@@ -67,7 +66,7 @@ class ProjectResourceTest {
 
         final var project = create(new ProjectRequest("Some Project", true, "un projet peut aussi etre créé par un user", client.getId(), true, emptyList()), userAccessToken);
 
-        getValidation(ProjectDef.uriWithid(project.getId()), userAccessToken, OK).body(is(toJson(project)));
+        getValidation(ProjectDef.uriWithid(project.getId()), userAccessToken, OK).body(is(timeKeeperTestUtils.toJson(project)));
     }
 
     @Test
@@ -76,11 +75,22 @@ class ProjectResourceTest {
 
         final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
         create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, emptyList()), adminToken);
-
+        ProjectRequest projectRequestDuplicatedName = new ProjectRequest("Some Project", false, "some other description", client.getId(), true, emptyList());
         try {
-            create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, emptyList()), adminToken);
+            create(projectRequestDuplicatedName, adminToken);
         } catch (HttpTestRuntimeException httpError) {
-            assertEquals(400, httpError.getHttpStatus());
+
+            System.out.println("1 " + httpError);
+            System.out.println("2 " + httpError.getHttpMessage());
+            System.out.println("3 " + httpError.getHttpStatus());
+            System.out.println("4 " + httpError.getLocalizedMessage());
+            System.out.println("5 " + httpError.getMessage());
+            System.out.println("6 " + httpError.getCause());
+            httpError.printStackTrace();
+            System.out.println("8 " + httpError.getSuppressed());
+
+            // TODO ici on a un souci avec le framework de test qui retourne 200 et pas 400
+             assertEquals(400, httpError.getHttpStatus());
             assertEquals("application/json", httpError.getMimeType());
         }
     }
@@ -110,7 +120,7 @@ class ProjectResourceTest {
         final var project11 = create(new ProjectRequest("Some Project 11", false, "other description", client1.getId(), true, emptyList()), adminToken);
         final var project20 = create(new ProjectRequest("Some Project 20", true, "some description", client2.getId(), true, emptyList()), adminToken);
 
-        getValidation(ProjectDef.uri, userToken, OK).body(is(listOfTasJson(project10, project11, project20)));
+        getValidation(ProjectDef.uri, userToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(project10, project11, project20)));
     }
 
     @Test
@@ -132,7 +142,7 @@ class ProjectResourceTest {
         update(updatedProject, ProjectDef.uriWithid(originalProject.getId()), adminToken);
 
         // THEN
-        getValidation(ProjectDef.uriWithid(originalProject.getId()), adminToken, OK).body(is(toJson(expectedUpdatedProject)));
+        getValidation(ProjectDef.uriWithid(originalProject.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedUpdatedProject)));
     }
 
     @Test
@@ -175,7 +185,7 @@ class ProjectResourceTest {
         update(updatedProjectWithTwoUsers, ProjectDef.uriWithid(project10.getId()), adminToken);
 
         // THEN
-        getValidation(ProjectDef.uriWithid(project10.getId()), adminToken, OK).body(is(toJson(expectedProject)));
+        getValidation(ProjectDef.uriWithid(project10.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedProject)));
     }
 
     @Test
@@ -249,8 +259,8 @@ class ProjectResourceTest {
         final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
 
-        getValidation(TimeSheetDef.uri, adminToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetSam))));
-        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetJimmy))));
+        getValidation(TimeSheetDef.uri, adminToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(List.of(expectedTimeSheetSam))));
+        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(List.of(expectedTimeSheetJimmy))));
     }
 
     @Test
@@ -272,7 +282,7 @@ class ProjectResourceTest {
 
 
     @Test
-    void shouldretrieveTimeSheetForProjectMembers(){
+    void shouldretrieveTimeSheetForProjectMembers() {
         // GIVEN : 2 users of 1 project for 1 client
         final String adminToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
@@ -291,12 +301,12 @@ class ProjectResourceTest {
         final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
         // THEN : I can see the timeSheet by project by member
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(listOfTasJson(expectedTimeSheetJimmy)));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedTimeSheetJimmy)));
     }
 
 
     @Test
-    void shouldCreateTimeSheetForUsersDuringProjectUpdate(){
+    void shouldCreateTimeSheetForUsersDuringProjectUpdate() {
         // GIVEN
         final String adminToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
@@ -333,15 +343,15 @@ class ProjectResourceTest {
         update(updatedProjectWithTwoUsers, ProjectDef.uriWithid(project.getId()), adminToken);
 
         // THEN
-        final var expectedTimeSheetSam = new TimeSheetResponse(8L, expectedProject, sam, TimeUnit.HOURLY,true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetSam = new TimeSheetResponse(8L, expectedProject, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
         final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
-        getValidation(TimeSheetDef.uri, adminToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetSam))));
-        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetJimmy))));
+        getValidation(TimeSheetDef.uri, adminToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(List.of(expectedTimeSheetSam))));
+        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(List.of(expectedTimeSheetJimmy))));
     }
 
     @Test
-    void shouldNotDeleteTimeSheetWhenMembersAreRemoved(){
+    void shouldNotDeleteTimeSheetWhenMembersAreRemoved() {
         // GIVEN
         final String adminToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
@@ -378,12 +388,12 @@ class ProjectResourceTest {
         final var expectedTimeSheetSam = new TimeSheetResponse(8L, expectedProject, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
         final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
-        getValidation(TimeSheetDef.uri, adminToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetSam))));
-        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetJimmy))));
+        getValidation(TimeSheetDef.uri, adminToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(List.of(expectedTimeSheetSam))));
+        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(List.of(expectedTimeSheetJimmy))));
     }
 
     @Test
-    void shouldNotChangeListOfTimeSheetsForExistingMembersWhenANewMemberIsAdded(){
+    void shouldNotChangeListOfTimeSheetsForExistingMembersWhenANewMemberIsAdded() {
         // GIVEN
         final String adminToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
@@ -426,6 +436,6 @@ class ProjectResourceTest {
         // THEN
         final var expectedTimeSheetJimmy = new TimeSheetResponse(7L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
-        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(listOfTasJson(List.of(expectedTimeSheetJimmy))));
+        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(List.of(expectedTimeSheetJimmy))));
     }
 }

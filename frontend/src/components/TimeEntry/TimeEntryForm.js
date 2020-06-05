@@ -3,11 +3,10 @@ import PropTypes from 'prop-types';
 import {Alert, Button, Divider, Form, Input, message, Radio, Select, Space, Spin} from "antd";
 import TitleSection from "../Title/TitleSection";
 import {useTimeKeeperAPI, useTimeKeeperAPIPost} from "../../utils/services";
-import {Link} from "react-router-dom";
 
 const {Option} = Select;
 const {TextArea} = Input;
-
+const moment = require('moment');
 const initialValues = (defaultDate) => {
   return {
     "comment": null,
@@ -114,7 +113,7 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
           onValuesChange={onValuesChange}
     >
 
-      <Form.Item name="date" rules={[{required: true}]}>
+      <Form.Item name="date" noStyle={true}>
       </Form.Item>
 
       <Form.Item label="Description" name="comment" rules={[{required: true}]}>
@@ -131,7 +130,7 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
       >
         <Select>
           <Option value={null}/>
-          {timeSheets.map(timeSheet => <Option value={timeSheet.id}>{timeSheet.project.name}</Option>)}
+          {timeSheets.map(timeSheet => <Option key={`select-timesheet-${timeSheet.id}`} value={timeSheet.id}>{timeSheet.project.name}</Option>)}
         </Select>
       </Form.Item>
       <Form.Item
@@ -170,7 +169,7 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
               return null;
             case 'HALFDAY' :
               return (
-                <Form.Item name="isMorning">
+                <Form.Item name="isMorning" noStyle={true}>
                 </Form.Item>
               );
             case 'HOURLY':
@@ -179,24 +178,20 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
                   <Form.Item name="numberHours" label="Number of hours" rules={[{required: true}]}>
                     <Input/>
                   </Form.Item>
-                  <Form.Item name="startDateTime">
+                  <Form.Item name="startDateTime" noStyle={true}>
                   </Form.Item>
-                  <Form.Item name="endDateTime">
+                  <Form.Item name="endDateTime" noStyle={true}>
                   </Form.Item>
                 </div>
-              )
+              );
+            default:
+              return null;
           }
-          return (
-            getFieldValue('timeUnit') === 'HOURLY' &&
-            <Form.Item name="numberHours" label="Number of hours">
-              <Input/>
-            </Form.Item>
-          );
         }}
       </Form.Item>
 
       <Space className="tk_JcFe" size="middle" align="center">
-        <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" onClick={e => onCancel && onCancel(e)}>Cancel</Link>
+        <Button id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" onClick={e => onCancel && onCancel(e)}>Cancel</Button>
         <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Save task</Button>
       </Space>
     </Form>

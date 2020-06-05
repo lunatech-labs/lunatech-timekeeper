@@ -1,5 +1,6 @@
 package fr.lunatech.timekeeper.services.responses;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
@@ -68,9 +69,11 @@ public class TimeSheetResponse {
         private final String comment;
 
         @NotNull
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
         private final LocalDateTime startDateTime;
 
         @NotNull
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
         private final LocalDateTime endDateTime;
 
         public TimeEntryResponse(
@@ -116,5 +119,20 @@ public class TimeSheetResponse {
         public LocalDateTime getEndDateTime() {
             return endDateTime;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "TimeSheetResponse{" +
+                "id=" + id +
+                ", project=" + project +
+                ", ownerId=" + ownerId +
+                ", timeUnit=" + timeUnit +
+                ", defaultIsBillable=" + defaultIsBillable +
+                ", expirationDate=" + expirationDate +
+                ", maxDuration=" + maxDuration +
+                ", durationUnit='" + durationUnit + '\'' +
+                ", entries=" + entries +
+                '}';
     }
 }

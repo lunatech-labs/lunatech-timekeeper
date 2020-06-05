@@ -54,4 +54,18 @@ public class Project extends PanacheEntity {
     public Boolean getBillable() {
         return billable;
     }
+
+    @Override
+    public String toString() {
+        return "Project{" +
+                " id=" + id +
+                ", name='" + name + '\'' +
+                ", billable=" + billable +
+                ", description='" + description + '\'' +
+                ", publicAccess=" + publicAccess +
+                ", organization=" + organization +
+                ", client=" + client +
+                ", users=" + users +
+                '}';
+    }
 }

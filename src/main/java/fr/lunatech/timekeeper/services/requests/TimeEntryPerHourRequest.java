@@ -6,14 +6,12 @@ import fr.lunatech.timekeeper.services.AuthenticationContext;
 import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.timeutils.DateFormat;
 
-import javax.json.bind.annotation.JsonbCreator;
-import javax.json.bind.annotation.JsonbDateFormat;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.function.BiFunction;
-import java.util.function.Function;
+
 
 public final class TimeEntryPerHourRequest implements TimeEntryRequest {
 
@@ -24,14 +22,11 @@ public final class TimeEntryPerHourRequest implements TimeEntryRequest {
     private final Boolean billable;
 
     @NotNull
-    @JsonbDateFormat(DateFormat.DEFAULT_DATE_TIME_PATTERN)
     private final LocalDateTime startDateTime;
 
     @NotNull
-    @JsonbDateFormat(DateFormat.DEFAULT_DATE_TIME_PATTERN)
     private final LocalDateTime endDateTime;
 
-    @JsonbCreator
     public TimeEntryPerHourRequest(
             @NotBlank String comment,
             @NotNull Boolean billable,

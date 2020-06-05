@@ -1,6 +1,6 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.resources.utils.TestUtils;
+import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
 import fr.lunatech.timekeeper.services.requests.ClientRequest;
 import fr.lunatech.timekeeper.services.responses.ClientResponse;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -19,7 +19,6 @@ import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ClientDe
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.*;
-import static fr.lunatech.timekeeper.resources.utils.TestUtils.toJson;
 import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.Response.Status.*;
 import static org.hamcrest.CoreMatchers.is;
@@ -33,6 +32,9 @@ class ClientResourceTest {
     @Inject
     Flyway flyway;
 
+    @Inject
+    TimeKeeperTestUtils timeKeeperTestUtils;
+
     @AfterEach
     void cleanDB() {
         flyway.clean();
@@ -44,7 +46,7 @@ class ClientResourceTest {
         final String samToken = getAdminAccessToken();
 
         final var client = create(new ClientRequest("NewClient", "NewDescription"), samToken);
-        getValidation(ClientDef.uriWithid(client.getId()), samToken, OK).body(is(toJson(client)));
+        getValidation(ClientDef.uriWithid(client.getId()), samToken, OK).body(is(timeKeeperTestUtils.toJson(client)));
     }
 
     @Test
@@ -75,7 +77,7 @@ class ClientResourceTest {
         final var client1 = create(new ClientRequest("NewClient", "NewDescription"), samToken);
         final var client2 = create(new ClientRequest("NewClient2", "NewDescription2"), samToken);
 
-        getValidation(ClientDef.uri, jimmyToken, OK).body(is(TestUtils.listOfTasJson(client1, client2)));
+        getValidation(ClientDef.uri, jimmyToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(client1, client2)));
     }
 
     @Test
@@ -96,7 +98,7 @@ class ClientResourceTest {
 
         final var expectedClient = new ClientResponse(client.getId(), "NewClient", "NewDescription2", emptyList());
 
-        getValidation(ClientDef.uriWithid(client.getId()), samToken, OK).body(is(toJson(expectedClient)));
+        getValidation(ClientDef.uriWithid(client.getId()), samToken, OK).body(is(timeKeeperTestUtils.toJson(expectedClient)));
     }
 
     @Test

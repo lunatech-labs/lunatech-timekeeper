@@ -55,6 +55,7 @@ public final class ProjectResponse {
     }
 
     public static ProjectResponse bind(@NotNull Project project) {
+        System.out.println(project);
         return new ProjectResponse(
                 project.id,
                 project.name,
@@ -185,5 +186,26 @@ public final class ProjectResponse {
         public String getName() {
             return name;
         }
+
+        @Override
+        public String toString() {
+            return "ProjectClientResponse{" +
+                    "id=" + id +
+                    ", name='" + name + '\'' +
+                    '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "ProjectResponse{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", billable=" + billable +
+                ", description='" + description + '\'' +
+                ", client=" + client +
+                ", users=" + users +
+                ", publicAccess=" + publicAccess +
+                '}';
     }
 }
