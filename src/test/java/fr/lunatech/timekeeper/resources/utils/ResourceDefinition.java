@@ -6,6 +6,10 @@ import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.requests.TimeEntryPerDayRequest;
 import fr.lunatech.timekeeper.services.responses.*;
 
+import java.util.Collections;
+import java.util.Map;
+
+import static fr.lunatech.timekeeper.resources.utils.InternalResourceUtils.paramUrlResolver;
 import static fr.lunatech.timekeeper.resources.utils.TypeDefinition.apply;
 
 public enum ResourceDefinition {
@@ -27,7 +31,11 @@ public enum ResourceDefinition {
     }
 
     public String uriWithid(Long id) {
-        return String.format("%s/%s", this.uri, id);
+        return uriWithid(id, Collections.emptyMap());
+    }
+
+    public String uriWithid(Long id, Map<String, String> params) {
+        return String.format("%s/%s", this.uri, id) + paramUrlResolver(params);
     }
 
     public String uriWithArgs(Object... args) {

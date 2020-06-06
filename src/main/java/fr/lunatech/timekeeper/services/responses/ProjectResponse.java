@@ -30,7 +30,7 @@ public final class ProjectResponse {
     @Null
     private final ProjectClientResponse client;
 
-    @NotNull
+    @Null
     private final List<ProjectUserResponse> users;
 
     @NotNull
@@ -42,7 +42,7 @@ public final class ProjectResponse {
             @NotNull Boolean billable,
             @NotNull String description,
             @Null ProjectClientResponse client,
-            @NotNull List<ProjectUserResponse> users,
+            @Null List<ProjectUserResponse> users,
             @NotNull Boolean publicAccess
     ) {
         this.id = id;
@@ -54,8 +54,11 @@ public final class ProjectResponse {
         this.publicAccess = publicAccess;
     }
 
-    public static ProjectResponse bind(@NotNull Project project) {
-        System.out.println(project);
+    public static ProjectResponse bind(@NotNull Project project, Optional<Boolean> optimized) {
+        final var users = project.users
+                .stream()
+                .map(ProjectUserResponse::bind)
+                .collect(Collectors.toList());
         return new ProjectResponse(
                 project.id,
                 project.name,
@@ -64,13 +67,15 @@ public final class ProjectResponse {
                 ofNullable(project.client)
                         .map(ProjectClientResponse::bind)
                         .orElse(null),
-                project.users
-                        .stream()
-                        .map(ProjectUserResponse::bind)
-                        .collect(Collectors.toList()),
+                optimized.orElse(false) ? null : users,
                 project.publicAccess
         );
     }
+
+    public static ProjectResponse bind(@NotNull Project project) {
+        return bind(project, Optional.empty());
+    }
+
 
     public Long getId() {
         return id;
