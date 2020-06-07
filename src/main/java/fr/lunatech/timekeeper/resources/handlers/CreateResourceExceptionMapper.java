@@ -23,7 +23,8 @@ public class CreateResourceExceptionMapper implements ExceptionMapper<CreateReso
                 .status(Response.Status.BAD_REQUEST)
                 .type(MediaType.APPLICATION_JSON)
                 .entity(Json.createObjectBuilder()
-                        .add("message", String.format("%s", e.getMessage())) // e.getMessage can be null, but JSON format requires a value.
+                        // e.getMessage can be null, but JSON format requires a value. This is why there is a String.format here
+                        .add("message", String.format("%s", e.getMessage()))
                         .build())
                 .build();
     }

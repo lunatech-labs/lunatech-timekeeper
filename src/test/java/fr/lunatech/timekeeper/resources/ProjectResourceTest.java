@@ -54,8 +54,8 @@ class ProjectResourceTest {
     void shouldCreateProjectWhenAdminProfile() {
         final String adminToken = getAdminAccessToken();
 
-        final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
-        final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, emptyList()), adminToken);
+        final var client = create(new ClientRequest("NewClient1", "NewDescription"), adminToken);
+        final var project = create(new ProjectRequest("Some Project1", true, "some description", client.getId(), true, emptyList()), adminToken);
 
         getValidation(ProjectDef.uriWithid(project.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(project)));
     }
@@ -66,7 +66,7 @@ class ProjectResourceTest {
         final String userAccessToken = getUserAccessToken();
         final var client = create(new ClientRequest("NewClient 2", "Un client créé en tant qu'admin"), adminToken);
 
-        final var project = create(new ProjectRequest("Some Project", true, "un projet peut aussi etre créé par un user", client.getId(), true, emptyList()), userAccessToken);
+        final var project = create(new ProjectRequest("Some Project 2", true, "un projet peut aussi etre créé par un user", client.getId(), true, emptyList()), userAccessToken);
 
         getValidation(ProjectDef.uriWithid(project.getId()), userAccessToken, OK).body(is(timeKeeperTestUtils.toJson(project)));
     }
@@ -75,25 +75,14 @@ class ProjectResourceTest {
     void shouldNotCreateProjectWithDuplicateName() {
         final String adminToken = getAdminAccessToken();
 
-        final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
-        create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, emptyList()), adminToken);
-        ProjectRequest projectRequestDuplicatedName = new ProjectRequest("Some Project", false, "some other description", client.getId(), true, emptyList());
+        final var client = create(new ClientRequest("NewClient 3", "NewDescription"), adminToken);
+        create(new ProjectRequest("Same name", true, "some description", client.getId(), true, emptyList()), adminToken);
+        ProjectRequest projectRequestDuplicatedName = new ProjectRequest("Same name", false, "some other description", client.getId(), true, emptyList());
         try {
             create(projectRequestDuplicatedName, adminToken);
         } catch (HttpTestRuntimeException httpError) {
-
-            System.out.println("1 " + httpError);
-            System.out.println("2 " + httpError.getHttpMessage());
-            System.out.println("3 " + httpError.getHttpStatus());
-            System.out.println("4 " + httpError.getLocalizedMessage());
-            System.out.println("5 " + httpError.getMessage());
-            System.out.println("6 " + httpError.getCause());
-            httpError.printStackTrace();
-            System.out.println("8 " + httpError.getSuppressed());
-
-            // TODO ici on a un souci avec le framework de test qui retourne 200 et pas 400
-            assertEquals(400, httpError.getHttpStatus());
             assertEquals("application/json", httpError.getMimeType());
+            assertEquals(400, httpError.getHttpStatus());
         }
     }
 
@@ -115,8 +104,8 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String userToken = getUserAccessToken();
 
-        final var client1 = create(new ClientRequest("Client 1", "New Description 1"), adminToken);
-        final var client2 = create(new ClientRequest("Client 2", "New Description 2"), adminToken);
+        final var client1 = create(new ClientRequest("Client 10", "New Description 1"), adminToken);
+        final var client2 = create(new ClientRequest("Client 20", "New Description 2"), adminToken);
 
         final var project10 = create(new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, emptyList()), adminToken);
         final var project11 = create(new ProjectRequest("Some Project 11", false, "other description", client1.getId(), true, emptyList()), adminToken);
@@ -129,7 +118,7 @@ class ProjectResourceTest {
     void shouldModifyProjectWithEmptyListOfUsers() {
         // GIVEN
         final String adminToken = getAdminAccessToken();
-        final var client1 = create(new ClientRequest("Client 1", "New Description 1"), adminToken);
+        final var client1 = create(new ClientRequest("Client 11", "New Description 1"), adminToken);
         final var originalProject = create(new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, emptyList()), adminToken);
         final var updatedProject = new ProjectRequest("Some Project 10 updated", false, "updated description", client1.getId(), false, emptyList());
         final var expectedUpdatedProject = new ProjectResponse(originalProject.getId()
@@ -154,8 +143,8 @@ class ProjectResourceTest {
         final String samToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
 
-        final var client1 = create(new ClientRequest("Client 1", "New Description 1"), adminToken);
-        final var project10 = create(new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, emptyList()), adminToken);
+        final var client1 = create(new ClientRequest("Client 146", "New Description 1"), adminToken);
+        final var project10 = create(new ProjectRequest("Some Project 147", true, "some description", client1.getId(), true, emptyList()), adminToken);
 
         var sam = create(samToken);
         var jimmy = create(jimmyToken);
@@ -197,8 +186,8 @@ class ProjectResourceTest {
         final String merryToken = getUser2AccessToken();
 
         var sam = create(merryToken);
-        final var client1 = create(new ClientRequest("Client 1", "New Description 1"), adminToken);
-        final var project10 = create(new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, emptyList()), adminToken);
+        final var client1 = create(new ClientRequest("Client", "New Description 1"), adminToken);
+        final var project10 = create(new ProjectRequest("Some Project with the same user", true, "some description", client1.getId(), true, emptyList()), adminToken);
 
         final var userRequest1 = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
 
