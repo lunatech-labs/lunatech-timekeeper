@@ -61,18 +61,18 @@ class TimeEntryResourceTest {
 
         final ProjectResponse project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
 
-        // FIXME: 9L expected by Panache generated ID as it's the 9th entity to be created during this test
-        // when running this test alone, id 12 will be generated, assertion will fail. same for shouldCreateTimeSheetForProjectMembers test
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(12L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        // ID is 2 since Jimmy timesheet is created after Sam's one - Sam is added before Jimmy to the Project
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedTimeSheetJimmy)));
         LocalDateTime date = LocalDateTime.of(2020, 1, 1, 15, 0);
         TimeEntryPerDayRequest today = new TimeEntryPerDayRequest("Today, I did this test", true, date);
 
-        // WHEN I CREATE a timeSheetEntry
-        create(12L, today, jimmyToken);
+        // WHEN I CREATE a timeSheetEntry for TS 2
+        create(2L, today, jimmyToken);
 
-        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(13L, true, "Today, I did this test", date.withHour(9).withMinute(0), date.withHour(17).withMinute(0));
+        // THEN
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, true, "Today, I did this test", date.withHour(9).withMinute(0), date.withHour(17).withMinute(0));
         expectedTimeSheetJimmy.entries = List.of(expectedTimeEntry);
         List<TimeSheetResponse> ts = Arrays.<TimeSheetResponse>asList(expectedTimeSheetJimmy);
         var expected = timeKeeperTestUtils.toJson(ts);

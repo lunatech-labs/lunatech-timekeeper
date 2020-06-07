@@ -86,7 +86,7 @@ public class OrganizationResourceTest {
                 "lunatech.fr",
                 emptyList(),
                 Lists.newArrayList(new OrganizationResponse.OrganizationUserResponse(
-                        2L,
+                        1L,
                         "Clark Kent",
                         "clark@lunatech.fr",
                         "clark.png",

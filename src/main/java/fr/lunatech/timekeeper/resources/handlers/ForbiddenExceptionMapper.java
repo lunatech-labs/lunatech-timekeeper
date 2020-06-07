@@ -18,8 +18,7 @@ public class ForbiddenExceptionMapper implements ExceptionMapper<ForbiddenExcept
     @Override
     public Response toResponse(ForbiddenException e) {
         if (e.getMessage() == null) {
-            logger.warn("ForbiddenException but no reason was specified. You should specify why the access was forbidden.");
-
+            logger.warn("ForbiddenException");
             return Response
                     .status(Response.Status.FORBIDDEN)
                     .type(MediaType.APPLICATION_JSON)

@@ -82,7 +82,6 @@ class ClientResourceTest {
     @Test
     void shouldFindAllClientsEmpty() {
         final String jimmyToken = getUserAccessToken();
-
         getValidation(ClientDef.uri, jimmyToken, OK).body(is("[]"));
     }
 
@@ -104,7 +103,6 @@ class ClientResourceTest {
         final String jimmyToken = getUserAccessToken();
 
         final var client = create(new ClientRequest("Client created by Sam", "a valid new client"), samToken);
-
         final ClientRequest client2 = new ClientRequest("Client cannot be modified by user", "Client cannot be modified by user");
 
         putValidation(ClientDef.uriWithid(client.getId()), jimmyToken, client2, FORBIDDEN);
