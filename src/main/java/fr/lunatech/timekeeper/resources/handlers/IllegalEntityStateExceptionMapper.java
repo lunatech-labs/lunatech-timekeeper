@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.json.Json;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -19,6 +20,7 @@ public class IllegalEntityStateExceptionMapper implements ExceptionMapper<Illega
         logger.warn(String.format("IllegalEntityStateException %s ", e.getMessage()));
         return Response
                 .status(Response.Status.BAD_REQUEST)
+                .type(MediaType.APPLICATION_JSON)
                 .entity(Json.createObjectBuilder()
                         .add("message", e.getMessage()).build()
                 )
