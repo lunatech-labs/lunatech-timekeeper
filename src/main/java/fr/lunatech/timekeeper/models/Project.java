@@ -1,6 +1,7 @@
 package fr.lunatech.timekeeper.models;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -14,7 +15,10 @@ import static java.util.Optional.ofNullable;
 
 @Entity
 @Table(name = "projects", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "organization_id"})})
-public class Project extends PanacheEntity {
+public class Project extends PanacheEntityBase {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Long id;
 
     @ManyToOne
     @JoinColumn(name = "organization_id", nullable = false)
@@ -53,5 +57,19 @@ public class Project extends PanacheEntity {
 
     public Boolean getBillable() {
         return billable;
+    }
+
+    @Override
+    public String toString() {
+        return "Project{" +
+                " id=" + id +
+                ", name='" + name + '\'' +
+                ", billable=" + billable +
+                ", description='" + description + '\'' +
+                ", publicAccess=" + publicAccess +
+                ", organization=" + organization +
+                ", client=" + client +
+                ", users=" + users +
+                '}';
     }
 }

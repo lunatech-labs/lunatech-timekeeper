@@ -1,6 +1,6 @@
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.resources.utils.TestUtils;
+import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
 import fr.lunatech.timekeeper.services.requests.ClientRequest;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.UserResponse;
@@ -9,7 +9,6 @@ import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
@@ -36,6 +35,9 @@ class UserResourceTest {
     @Inject
     Flyway flyway;
 
+    @Inject
+    TimeKeeperTestUtils timeKeeperTestUtils;
+
     @AfterEach
     void cleanDB() {
         flyway.clean();
@@ -46,7 +48,7 @@ class UserResourceTest {
     void shouldFindUserWhenAdminProfile() {
         final String samToken = getAdminAccessToken();
         var sam = create(samToken);
-        getValidation(UserDef.uriWithid(sam.getId()), samToken,OK).body(is(TestUtils.toJson(sam)));
+        getValidation(UserDef.uriWithid(sam.getId()), samToken,OK).body(is(timeKeeperTestUtils.toJson(sam)));
     }
 
     @Test
@@ -56,8 +58,8 @@ class UserResourceTest {
         var sam = create(samToken);
         var jimmy = create(jimmyToken);
 
-        getValidation(UserDef.uriWithid(sam.getId()), jimmyToken, OK).body(is(TestUtils.toJson(sam)));
-        getValidation(UserDef.uriWithid(jimmy.getId()), jimmyToken, OK).body(is(TestUtils.toJson(jimmy)));
+        getValidation(UserDef.uriWithid(sam.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(sam)));
+        getValidation(UserDef.uriWithid(jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(jimmy)));
     }
 
     @Test
@@ -68,7 +70,7 @@ class UserResourceTest {
         var sam = create(samToken);
         var jimmy = create(jimmyToken);
 
-        getValidation(UserDef.uri, jimmyToken, OK).body(is(TestUtils.listOfTasJson(sam, jimmy)));
+        getValidation(UserDef.uri, jimmyToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(sam, jimmy)));
     }
 
     @Test
@@ -87,7 +89,7 @@ class UserResourceTest {
         var project10 = create(new ProjectRequest("Some Project", true, "some description", client1.getId(), true, emptyList()), samToken);
 
         // Check that jimmy has no project yet
-        getValidation(UserDef.uriWithid(jimmy.getId()), jimmyToken, OK).body(is(TestUtils.toJson(jimmy)));
+        getValidation(UserDef.uriWithid(jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(jimmy)));
 
         // WHEN
         // Add Jimmy to a project as a simple member
@@ -122,7 +124,7 @@ class UserResourceTest {
 
 
         // THEN
-        getValidation(UserDef.uriWithid(jimmy.getId()), jimmyToken, OK).body(is(TestUtils.toJson(expectedResult)));
+        getValidation(UserDef.uriWithid(jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(expectedResult)));
     }
 
     @Test
@@ -142,7 +144,7 @@ class UserResourceTest {
         var project10 = create(new ProjectRequest("Some Project", true, "some description", client1.getId(), true, emptyList()), samToken);
 
         // Check that teamLeadUser has no project yet
-        getValidation(UserDef.uriWithid(teamLeadUser.getId()), jimmyToken, OK).body(is(TestUtils.toJson(teamLeadUser)));
+        getValidation(UserDef.uriWithid(teamLeadUser.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(teamLeadUser)));
 
         // WHEN
         // Add teamLeadUser to a project as a team lead member
@@ -195,7 +197,7 @@ class UserResourceTest {
         );
 
         // THEN
-        getValidation(UserDef.uriWithid(teamLeadUser.getId()), jimmyToken, OK).body(is(TestUtils.toJson(expectedResult)));
-        getValidation(UserDef.uriWithid(jimmy.getId()), jimmyToken, OK).body(is(TestUtils.toJson(expectedResult2)));
+        getValidation(UserDef.uriWithid(teamLeadUser.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(expectedResult)));
+        getValidation(UserDef.uriWithid(jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(expectedResult2)));
     }
 }
