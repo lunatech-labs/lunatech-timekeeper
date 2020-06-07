@@ -18,7 +18,7 @@ public class TimeEntryService {
     private static Logger logger = LoggerFactory.getLogger(TimeEntryService.class);
 
     @Inject
-    private TimeSheetService timeSheetService;
+    protected TimeSheetService timeSheetService;
 
     @Transactional
     public Long createTimeEntry(Long timeSheetId, TimeEntryRequest request, AuthenticationContext ctx, Enum TimeUnit) {

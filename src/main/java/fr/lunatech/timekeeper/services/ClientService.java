@@ -31,7 +31,7 @@ public class ClientService {
 
     @Transactional
     public Long create(ClientRequest request, AuthenticationContext ctx) {
-        logger.info("Create a new client with {}, {}", request, ctx);
+        logger.debug("Create a new client with {}, {}", request, ctx);
         final Client client = request.unbind(ctx);
         Client.persist(client);
         return client.id;
@@ -39,7 +39,7 @@ public class ClientService {
 
     @Transactional
     public Optional<Long> update(Long id, ClientRequest request, AuthenticationContext ctx) {
-        logger.info("Modify client for id={} with {}, {}", id, request, ctx);
+        logger.debug("Modify client for id={} with {}, {}", id, request, ctx);
         return findById(id, ctx)
                 .map(client -> request.unbind(client, ctx))
                 .map(client -> client.id);

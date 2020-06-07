@@ -55,4 +55,19 @@ public class TimeSheet extends PanacheEntity {
         this.durationUnit = durationUnit;
         this.entries = entries;
     }
+
+    @Override
+    public String toString() {
+        return "TimeSheet{" +
+                ", id=" + id +
+                ", project=" + project +
+                ", owner=" + owner +
+                ", timeUnit=" + timeUnit +
+                ", defaultIsBillable=" + defaultIsBillable +
+                ", expirationDate=" + expirationDate +
+                ", maxDuration=" + maxDuration +
+                ", durationUnit=" + durationUnit +
+                ", entries=" + entries +
+                '}';
+    }
 }

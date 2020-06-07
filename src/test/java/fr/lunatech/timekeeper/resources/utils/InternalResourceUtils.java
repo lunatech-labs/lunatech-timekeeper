@@ -60,8 +60,8 @@ final class InternalResourceUtils {
 
         var location = reqSpec.header(LOCATION);
         var status = reqSpec.statusCode();
-        logger.warn(String.format("Location of created resource   : %s", location));
-        logger.warn(String.format("Status code   : %s", status));
+        logger.debug(String.format("Location of created resource   : %s", location));
+        logger.debug(String.format("Status code   : %s", status));
 
         if (location == null || status > 201) {
             throw new HttpTestRuntimeException(status, reqSpec.getBody().print(), reqSpec.getContentType());

@@ -10,6 +10,8 @@ import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
@@ -28,6 +30,7 @@ import static org.hamcrest.CoreMatchers.is;
 @QuarkusTestResource(KeycloakTestResource.class)
 @DisabledIfEnvironmentVariable(named = "ENV", matches = "fast-test-only")
 class ClientResourceTest {
+    private final static Logger logger = LoggerFactory.getLogger(ClientResourceTest.class);
 
     @Inject
     Flyway flyway;
@@ -53,24 +56,20 @@ class ClientResourceTest {
     void shouldNotCreateClientWhenUserProfile() {
         final String jimmyToken = getUserAccessToken();
 
-        final ClientRequest client = new ClientRequest("NewClient", "NewDescription");
+        final ClientRequest client = new ClientRequest("ClientShouldNotBeCreated", "Jimmy (user) is trying to create a Client...");
         postValidation(ClientDef.uri, jimmyToken, client, FORBIDDEN);
     }
 
     @Test
     void shouldNotFindUnknownClient() {
-
         final String jimmyToken = getUserAccessToken();
-
         final Long NO_EXISTING_CLIENT_ID = 243L;
-
         getValidation(ClientDef.uriWithid(NO_EXISTING_CLIENT_ID), jimmyToken, NOT_FOUND);
 
     }
 
     @Test
     void shouldFindAllClients() {
-
         final String samToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
 
@@ -82,7 +81,6 @@ class ClientResourceTest {
 
     @Test
     void shouldFindAllClientsEmpty() {
-
         final String jimmyToken = getUserAccessToken();
 
         getValidation(ClientDef.uri, jimmyToken, OK).body(is("[]"));
@@ -90,7 +88,6 @@ class ClientResourceTest {
 
     @Test
     void shouldModifyClientWhenAdminProfile() {
-
         final String samToken = getAdminAccessToken();
 
         final var client = create(new ClientRequest("NewClient", "NewDescription"), samToken);
@@ -103,13 +100,12 @@ class ClientResourceTest {
 
     @Test
     void shouldNotModifyClientWhenUserProfile() {
-
         final String samToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
 
-        final var client = create(new ClientRequest("NewClient", "NewDescription"), samToken);
+        final var client = create(new ClientRequest("Client created by Sam", "a valid new client"), samToken);
 
-        final ClientRequest client2 = new ClientRequest("NewClient", "NewDescription2");
+        final ClientRequest client2 = new ClientRequest("Client cannot be modified by user", "Client cannot be modified by user");
 
         putValidation(ClientDef.uriWithid(client.getId()), jimmyToken, client2, FORBIDDEN);
 
