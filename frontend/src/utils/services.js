@@ -101,7 +101,7 @@ export const useTimeKeeperAPIPost = (urlAPI, formData, booleanCallback) => {
       url: process.env.REACT_APP_QUARKUS_BACKEND + urlAPI,
       method: 'post',
       data: formData
-    })
+    });
   }, {
     manual: true,
     onSuccess: () => {

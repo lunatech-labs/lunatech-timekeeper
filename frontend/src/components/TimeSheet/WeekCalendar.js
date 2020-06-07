@@ -93,10 +93,10 @@ const WeekCalendar = (props) => {
     return (
       <div>
         <Button icon={<LeftOutlined/>} disabled={disableLeft} shape='circle'
-                onClick={() => setWeekSelected(weekSelected - 1)}/>
+          onClick={() => setWeekSelected(weekSelected - 1)}/>
         <p>{renderWeekYear(start, end)}</p>
         <Button icon={<RightOutlined/>} disabled={disableRight} shape='circle'
-                onClick={() => setWeekSelected(weekSelected + 1)}/>
+          onClick={() => setWeekSelected(weekSelected + 1)}/>
       </div>
     );
   };
