@@ -1,31 +1,31 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
-import {Alert, Button, Divider, Form, Input, message, Radio, Select, Space, Spin} from "antd";
-import TitleSection from "../Title/TitleSection";
-import {useTimeKeeperAPI, useTimeKeeperAPIPost} from "../../utils/services";
+import {Alert, Button, Divider, Form, Input, message, Radio, Select, Space, Spin} from 'antd';
+import TitleSection from '../Title/TitleSection';
+import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
 
 const {Option} = Select;
 const {TextArea} = Input;
 const moment = require('moment');
 const initialValues = (defaultDate) => {
   return {
-    "comment": null,
-    "billable": null,
-    "timeSheetId": null,
-    "date": defaultDate
-  }
+    'comment': null,
+    'billable': null,
+    'timeSheetId': null,
+    'date': defaultDate
+  };
 };
 // Add the additional values
 // Use the values of the form or initialize the values
 const additionalValues = (timeUnit, defaultDate, allValues) => {
   switch (timeUnit) {
-    case "DAY":
+    case 'DAY':
       return {};
-    case "HALFDAY":
+    case 'HALFDAY':
       return {
-        "isMorning": allValues.isMorning || true
+        'isMorning': allValues.isMorning || true
       };
-    case "HOURLY" :
+    case 'HOURLY' :
       const start = defaultDate.clone();
       start.set({
         hour: 9,
@@ -33,8 +33,8 @@ const additionalValues = (timeUnit, defaultDate, allValues) => {
         second: 0
       });
       return {
-        "startDateTime": allValues.startDateTime || start, //9 am by default
-        "endDateTime": allValues.endDateTime || null
+        'startDateTime': allValues.startDateTime || start, //9 am by default
+        'endDateTime': allValues.endDateTime || null
       };
     default:
       return {};
@@ -85,12 +85,12 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
           form.setFieldsValue({
             billable: timeSheet.defaultIsBillable,
             timeUnit: timeSheet.timeUnit
-          })
+          });
         } else {
           form.setFieldsValue({
             billable: false,
             timeUnit: ''
-          })
+          });
         }
         form.setFieldsValue(additionalValues(timeSheet.timeUnit, allValues.date, allValues));
         break;
@@ -99,7 +99,7 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
         break;
       case 'numberHours' :
         const end = allValues.startDateTime.clone().add(changedValues.numberHours, 'hour');
-        form.setFieldsValue({endDateTime: end})
+        form.setFieldsValue({endDateTime: end});
         break;
       default:
         break;
@@ -107,10 +107,10 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
   };
   return (
     <Form initialValues={initialValues(date)}
-          form={form}
-          onFieldsChange={(changedFields, allFields) => console.log(changedFields, allFields)}
-          onFinish={timeKeeperAPIPost.run}
-          onValuesChange={onValuesChange}
+      form={form}
+      onFieldsChange={(changedFields, allFields) => console.log(changedFields, allFields)}
+      onFinish={timeKeeperAPIPost.run}
+      onValuesChange={onValuesChange}
     >
 
       <Form.Item name="date" noStyle={true}>
@@ -230,8 +230,8 @@ const TimeEntryForm = ({moment, form, onSuccess, onCancel}) => {
     return (
       <React.Fragment>
         <Alert title='Server error'
-               message='Failed to load the data'
-               type='error'
+          message='Failed to load the data'
+          type='error'
         />
       </React.Fragment>
     );
@@ -248,7 +248,7 @@ const TimeEntryForm = ({moment, form, onSuccess, onCancel}) => {
       <TitleSection title='Add task'/>
       <AddEntry date={moment} form={form} timeSheets={timeSheets.data} onSuccess={onSuccess} onCancel={onCancel}/>
     </div>
-  )
+  );
 };
 
 TimeEntryForm.propTypes = {
