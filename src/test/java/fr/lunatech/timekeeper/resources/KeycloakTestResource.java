@@ -43,9 +43,9 @@ public class KeycloakTestResource implements QuarkusTestResourceLifecycleManager
         // Start keycloak docker image
         // We cannot use SLF4J here. This is why you see System.out.println.
         long start = System.currentTimeMillis();
-        System.out.println("[INFO] \uD83D\uDE9AStarting Keycloack as a Docker container for tests...");
+        System.out.println("[INFO] \uD83D\uDE9A Starting Keycloack as a Docker container for tests...");
         KEYCLOAK.start();
-        System.out.println(String.format("[INFO] ⭐ Keycloak started in %d ms", System.currentTimeMillis() - start));
+        System.out.println(String.format("[INFO] ⭐  Keycloak started in %d ms", System.currentTimeMillis() - start));
 
         RealmRepresentation realm = createRealm(KEYCLOAK_REALM);
 

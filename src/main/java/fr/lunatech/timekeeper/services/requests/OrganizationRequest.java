@@ -3,7 +3,6 @@ package fr.lunatech.timekeeper.services.requests;
 import fr.lunatech.timekeeper.models.Organization;
 import fr.lunatech.timekeeper.services.AuthenticationContext;
 
-import javax.json.bind.annotation.JsonbCreator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -15,7 +14,6 @@ public class OrganizationRequest {
     @NotNull
     private final String tokenName;
 
-    @JsonbCreator
     public OrganizationRequest(@NotBlank String name, @NotNull String tokenName) {
         this.name = name;
         this.tokenName = tokenName;

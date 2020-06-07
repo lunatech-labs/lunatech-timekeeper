@@ -1,6 +1,7 @@
 package fr.lunatech.timekeeper.models;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -9,7 +10,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "clients", uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})})
-public class Client extends PanacheEntity {
+public class Client extends PanacheEntityBase {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Long id;
 
     @ManyToOne
     @JoinColumn(name = "organization_id", nullable = false)

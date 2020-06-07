@@ -7,7 +7,6 @@ import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.services.AuthenticationContext;
 import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 
-import javax.json.bind.annotation.JsonbCreator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
@@ -37,7 +36,6 @@ public final class ProjectRequest {
     @NotNull
     private final List<ProjectUserRequest> users;
 
-    @JsonbCreator
     public ProjectRequest(
             @NotBlank String name,
             @NotNull Boolean billable,
@@ -134,7 +132,6 @@ public final class ProjectRequest {
         @NotNull
         private final Boolean manager;
 
-        @JsonbCreator
         public ProjectUserRequest(
                 @NotNull Long id,
                 @NotNull Boolean manager

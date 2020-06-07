@@ -2,6 +2,7 @@ package fr.lunatech.timekeeper.resources;
 
 import com.google.common.collect.Lists;
 import fr.lunatech.timekeeper.models.Profile;
+import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
 import fr.lunatech.timekeeper.services.requests.OrganizationRequest;
 import fr.lunatech.timekeeper.services.responses.OrganizationResponse;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -9,7 +10,6 @@ import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
@@ -20,8 +20,6 @@ import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.Organiza
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.*;
-import static fr.lunatech.timekeeper.resources.utils.TestUtils.listOfTasJson;
-import static fr.lunatech.timekeeper.resources.utils.TestUtils.toJson;
 import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.Response.Status.*;
 import static org.hamcrest.CoreMatchers.is;
@@ -34,6 +32,9 @@ public class OrganizationResourceTest {
 
     @Inject
     Flyway flyway;
+
+    @Inject
+    TimeKeeperTestUtils timeKeeperTestUtils;
 
     @AfterEach
     void cleanDB() {
@@ -49,7 +50,7 @@ public class OrganizationResourceTest {
         final String clarkToken = getSuperAdminAccessToken();
 
         final var organization = create(new OrganizationRequest("New Organization", "organization.org"), clarkToken);
-        getValidation(OrganizationDef.uriWithid(organization.getId()), clarkToken, OK).body(is(toJson(organization)));
+        getValidation(OrganizationDef.uriWithid(organization.getId()), clarkToken, OK).body(is(timeKeeperTestUtils.toJson(organization)));
     }
 
     @Test
@@ -85,7 +86,7 @@ public class OrganizationResourceTest {
                 "lunatech.fr",
                 emptyList(),
                 Lists.newArrayList(new OrganizationResponse.OrganizationUserResponse(
-                        2L,
+                        1L,
                         "Clark Kent",
                         "clark@lunatech.fr",
                         "clark.png",
@@ -94,7 +95,7 @@ public class OrganizationResourceTest {
                 )
         );
 
-        getValidation(OrganizationDef.uri, clarkToken, OK).body(is(listOfTasJson(lunatechOrganization, organization, organization2)));
+        getValidation(OrganizationDef.uri, clarkToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(lunatechOrganization, organization, organization2)));
     }
 
     @Test
@@ -113,7 +114,7 @@ public class OrganizationResourceTest {
                 emptyList()
         );
 
-        getValidation(OrganizationDef.uriWithid(organization.getId()), clarkToken, OK).body(is(toJson(expectedOrganization)));
+        getValidation(OrganizationDef.uriWithid(organization.getId()), clarkToken, OK).body(is(timeKeeperTestUtils.toJson(expectedOrganization)));
     }
 
     @Test

@@ -17,12 +17,14 @@ import javax.validation.constraints.NotNull;
 public class TimeEntryService {
     private static Logger logger = LoggerFactory.getLogger(TimeEntryService.class);
 
+    @Inject
+    protected TimeSheetService timeSheetService;
 
     @Transactional
     public Long createTimeEntry(Long timeSheetId, TimeEntryRequest request, AuthenticationContext ctx, Enum TimeUnit) {
         logger.debug("Create a new TimeEntry with {}, {}", request, ctx);
-        // TODO check that the user can create the timeEntry for this timesheet
-        final TimeEntry timeEntry = request.unbind( timeSheetId, TimeSheet::findByIdOptional, ctx);
+        // TODO check that the user can create the timeEntry for this time entry
+        final TimeEntry timeEntry = request.unbind( timeSheetId, timeSheetService::findById, ctx);
         try {
             timeEntry.persistAndFlush();
         } catch (PersistenceException pe) {
