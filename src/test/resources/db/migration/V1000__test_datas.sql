@@ -1,1 +1,1 @@
-insert into organizations (id, name, tokenname) values (nextval('hibernate_sequence'), 'Lunatech FR', 'lunatech.fr');
+insert into organizations (name, tokenname) values ('Lunatech FR', 'lunatech.fr');

@@ -3,7 +3,6 @@ package fr.lunatech.timekeeper.services.requests;
 import fr.lunatech.timekeeper.models.Client;
 import fr.lunatech.timekeeper.services.AuthenticationContext;
 
-import javax.json.bind.annotation.JsonbCreator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -15,7 +14,6 @@ public final class ClientRequest {
     @NotNull
     private final String description;
 
-    @JsonbCreator
     public ClientRequest(@NotBlank String name, @NotNull String description) {
         this.name = name;
         this.description = description;

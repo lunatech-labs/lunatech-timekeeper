@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Button, Radio, Select} from 'antd';
 import CardWeekCalendar from '../Card/CardWeekCalendar';
 import PropTypes from 'prop-types';
-import { RightOutlined, LeftOutlined, PlusOutlined } from '@ant-design/icons';
+import {LeftOutlined, PlusOutlined, RightOutlined} from '@ant-design/icons';
 import './WeekCalendar.less';
 
 const moment = require('moment');
@@ -92,9 +92,11 @@ const WeekCalendar = (props) => {
     const disableRight = !weekRangeIds.includes(weekSelected + 1);
     return (
       <div>
-        <Button icon={<LeftOutlined/>} disabled={disableLeft} shape='circle' onClick={() => setWeekSelected(weekSelected - 1)}/>
+        <Button icon={<LeftOutlined/>} disabled={disableLeft} shape='circle'
+          onClick={() => setWeekSelected(weekSelected - 1)}/>
         <p>{renderWeekYear(start, end)}</p>
-        <Button icon={<RightOutlined/>} disabled={disableRight} shape='circle' onClick={() => setWeekSelected(weekSelected + 1)}/>
+        <Button icon={<RightOutlined/>} disabled={disableRight} shape='circle'
+          onClick={() => setWeekSelected(weekSelected + 1)}/>
       </div>
     );
   };
@@ -137,10 +139,17 @@ const WeekCalendar = (props) => {
           return (
             <div className="tk_WeekCalendar_Day" key={`day-card-${index}`}>
               <p>{item.date.format(headerDateFormat)}</p>
-              <CardWeekCalendar disabled={isDisabled(item)} onMouseOver={() => setShowButton(index)} onMouseLeave={() => setShowButton(-1)}>
+              <CardWeekCalendar
+                disabled={isDisabled(item)}
+                onMouseOver={() => setShowButton(index)}
+                onMouseLeave={() => setShowButton(-1)}>
                 <div className="tk_CardWeekCalendar_Head">{item.date.format(dateFormat)}
                   {((props.hiddenButtons && showButton === index) || (!props.hiddenButtons)) &&
-                  <Button shape="circle" disabled={isDisabled(item)} icon={<PlusOutlined/>}/>}
+                  <Button
+                    shape="circle"
+                    disabled={isDisabled(item)}
+                    icon={<PlusOutlined/>}
+                    onClick={(e) => props.onClickAddTask && props.onClickAddTask(e, item.date)}/>}
                 </div>
                 <div className="tk_CardWeekCalendar_Body">
                   {renderDay()}
@@ -168,6 +177,7 @@ WeekCalendar.propTypes = {
     })
   ).isRequired,
   hiddenButtons: PropTypes.bool,
+  onClickAddTask: PropTypes.func, // (event, moment) => void
   onPanelChange: PropTypes.func // (id, start, end) => void
 };
 

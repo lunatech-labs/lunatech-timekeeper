@@ -1,12 +1,7 @@
 package fr.lunatech.timekeeper.resources.utils;
 
-import fr.lunatech.timekeeper.services.requests.ClientRequest;
-import fr.lunatech.timekeeper.services.requests.OrganizationRequest;
-import fr.lunatech.timekeeper.services.requests.ProjectRequest;
-import fr.lunatech.timekeeper.services.responses.ClientResponse;
-import fr.lunatech.timekeeper.services.responses.OrganizationResponse;
-import fr.lunatech.timekeeper.services.responses.ProjectResponse;
-import fr.lunatech.timekeeper.services.responses.UserResponse;
+import fr.lunatech.timekeeper.services.requests.*;
+import fr.lunatech.timekeeper.services.responses.*;
 
 import java.util.Map;
 
@@ -32,6 +27,18 @@ public class ResourceFactory {
 
     public static OrganizationResponse create(OrganizationRequest organization, String token) {
         return InternalResourceUtils.createResource(organization, OrganizationDef.uri, OrganizationResponse.class, token);
+    }
+
+    public static Void create(Long timeSheetId, TimeEntryPerDayRequest timeEntryRequest, String token) {
+        return InternalResourceUtils.createResource(timeEntryRequest, TimeEntryDayDef.uriWithArgs(timeSheetId, "day"), Void.class, token);
+    }
+
+    public static Void create(Long timeSheetId, TimeEntryPerHalfDayRequest timeEntryRequest, String token) {
+        return InternalResourceUtils.createResource(timeEntryRequest, TimeEntryDayDef.uriWithArgs(timeSheetId, "half-a-day"), Void.class, token);
+    }
+
+    public static Void create(Long timeSheetId, TimeEntryPerHourRequest timeEntryRequest, String token) {
+        return InternalResourceUtils.createResource(timeEntryRequest, TimeEntryDayDef.uriWithArgs(timeSheetId, "hour"), Void.class, token);
     }
 
     public static <P> void update(P request, String uri, String token) {

@@ -1,7 +1,10 @@
 package fr.lunatech.timekeeper.services.responses;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
+import fr.lunatech.timekeeper.timeutils.DateFormat;
+import fr.lunatech.timekeeper.timeutils.TimeUnit;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -16,6 +19,8 @@ public class TimeSheetResponse {
 
     public Long ownerId;
 
+    public TimeUnit timeUnit;
+
     public Boolean defaultIsBillable;
 
     public LocalDate expirationDate;
@@ -26,10 +31,11 @@ public class TimeSheetResponse {
 
     public List<TimeEntryResponse> entries;
 
-    public TimeSheetResponse(Long id, ProjectResponse project, UserResponse owner, Boolean defaultIsBillable, LocalDate expirationDate, Integer maxDuration, String durationUnit, List<TimeEntryResponse> entries) {
+    public TimeSheetResponse(Long id, ProjectResponse project, UserResponse owner, TimeUnit timeUnit, Boolean defaultIsBillable, LocalDate expirationDate, Integer maxDuration, String durationUnit, List<TimeEntryResponse> entries) {
         this.id = id;
         this.project = project;
         this.ownerId = owner.getId();
+        this.timeUnit = timeUnit;
         this.defaultIsBillable = defaultIsBillable;
         this.expirationDate = expirationDate;
         this.maxDuration = maxDuration;
@@ -42,6 +48,7 @@ public class TimeSheetResponse {
                 sheet.id,
                 ProjectResponse.bind(sheet.project),
                 UserResponse.bind(sheet.owner),
+                sheet.timeUnit,
                 sheet.defaultIsBillable,
                 sheet.expirationDate,
                 sheet.maxDuration,
@@ -63,9 +70,11 @@ public class TimeSheetResponse {
         private final String comment;
 
         @NotNull
+        @JsonFormat(pattern = DateFormat.DEFAULT_DATE_TIME_PATTERN)
         private final LocalDateTime startDateTime;
 
         @NotNull
+        @JsonFormat(pattern = DateFormat.DEFAULT_DATE_TIME_PATTERN)
         private final LocalDateTime endDateTime;
 
         public TimeEntryResponse(
@@ -111,5 +120,20 @@ public class TimeSheetResponse {
         public LocalDateTime getEndDateTime() {
             return endDateTime;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "TimeSheetResponse{" +
+                "id=" + id +
+                ", project=" + project +
+                ", ownerId=" + ownerId +
+                ", timeUnit=" + timeUnit +
+                ", defaultIsBillable=" + defaultIsBillable +
+                ", expirationDate=" + expirationDate +
+                ", maxDuration=" + maxDuration +
+                ", durationUnit='" + durationUnit + '\'' +
+                ", entries=" + entries +
+                '}';
     }
 }

@@ -37,8 +37,7 @@ public class TimeSheetService {
     @Transactional
     Long createDefaultTimeSheet(Project project, User owner, AuthenticationContext ctx) {
         TimeSheet timeSheet = new TimeSheet(project, owner, TimeUnit.HOURLY, project.getBillable(),null,null,TimeUnit.HOURLY, Collections.emptyList());
-
-        logger.info("Create a default timesheet with {}, {}", timeSheet, ctx);
+        logger.debug("Create a default timesheet with {}", timeSheet);
         try {
             timeSheet.persistAndFlush();
         } catch (PersistenceException pe) {
@@ -69,5 +68,10 @@ public class TimeSheetService {
                     .map(bind)
                     .collect(collector);
         }
+    }
+
+    Optional<TimeSheet> findById(Long id, AuthenticationContext ctx) {
+        return TimeSheet.<TimeSheet>findByIdOptional(id)
+                .filter(timeSheet -> ctx.canAccess(timeSheet.project));
     }
 }

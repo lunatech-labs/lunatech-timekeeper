@@ -5,7 +5,6 @@ import fr.lunatech.timekeeper.models.Profile;
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 
-import javax.json.bind.annotation.JsonbCreator;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -38,7 +37,6 @@ public final class AuthenticationRequest {
     @NotNull
     private final String organizationTokenName;
 
-    @JsonbCreator
     public AuthenticationRequest(
             @NotBlank String firstName,
             @NotBlank String lastName,

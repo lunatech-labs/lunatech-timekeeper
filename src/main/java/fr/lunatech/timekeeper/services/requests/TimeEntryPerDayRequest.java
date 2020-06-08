@@ -5,12 +5,12 @@ import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.services.AuthenticationContext;
 import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 
-import javax.json.bind.annotation.JsonbCreator;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.BiFunction;
+
 
 public final class TimeEntryPerDayRequest implements TimeEntryRequest {
 
@@ -23,7 +23,6 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
     @NotNull
     private final LocalDate date;
 
-    @JsonbCreator
     public TimeEntryPerDayRequest(
             @NotBlank String comment,
             @NotNull Boolean billable,
@@ -36,15 +35,15 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
 
     public TimeEntry unbind(
             @NotNull Long timeSheetId,
-            @NotNull Function<Long, Optional<TimeSheet>> findTimeSheet,
+            @NotNull BiFunction<Long, AuthenticationContext, Optional<TimeSheet>> findTimeSheet,
             @NotNull AuthenticationContext ctx
     ) {
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.billable = getBillable();
         timeEntry.comment = getComment();
-        timeEntry.startDateTime = this.date.atStartOfDay();
-        timeEntry.endDateTime = null ;
-        timeEntry.timeSheet = findTimeSheet.apply(timeSheetId).orElseThrow(() -> new IllegalEntityStateException("TimeSheet not found for id " + timeSheetId));
+        timeEntry.startDateTime = this.date.atStartOfDay().withHour(9).withMinute(0);
+        timeEntry.endDateTime = this.date.atStartOfDay().withHour(17).withMinute(0);
+        timeEntry.timeSheet = findTimeSheet.apply(timeSheetId, ctx).orElseThrow(() -> new IllegalEntityStateException("TimeSheet not found for id " + timeSheetId));
         return timeEntry;
     }
 
