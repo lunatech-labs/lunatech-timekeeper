@@ -1,5 +1,6 @@
 package fr.lunatech.timekeeper.services.requests;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.services.AuthenticationContext;
@@ -20,7 +21,6 @@ public final class TimeEntryPerHalfDayRequest implements TimeEntryRequest{
     private final Boolean billable;
 
     @NotNull
-   // @JsonbDateFormat(DateFormat.DEFAULT_DATE_TIME_PATTERN)
     private final LocalDate date;
 
     @NotNull
@@ -69,6 +69,7 @@ public final class TimeEntryPerHalfDayRequest implements TimeEntryRequest{
         return date;
     }
 
+    @JsonProperty(value="isMorning")
     public Boolean isMorning() {
         return isMorning;
     }

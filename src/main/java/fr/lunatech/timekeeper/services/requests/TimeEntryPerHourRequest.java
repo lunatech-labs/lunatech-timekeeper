@@ -4,7 +4,6 @@ import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.services.AuthenticationContext;
 import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
-import fr.lunatech.timekeeper.timeutils.DateFormat;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
