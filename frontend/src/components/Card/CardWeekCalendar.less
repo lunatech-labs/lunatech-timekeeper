@@ -20,6 +20,13 @@
     color: @lightGray_Tk;
     font-size: 20px;
     height: 64px;
+    position: absolute;
+    background: #323342;
+    width: 100%;
+    z-index: 6;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    p {margin-bottom: 0;}
     button {
       background-color: @black_Tk;
       color: @lightGray_Tk;
@@ -28,6 +35,10 @@
       justify-content: center;
       align-items: center;
       span {font-size: 12px;}
+    }
+    .tk_CurrentDay {
+      color: @white_Tk;
+      font-weight: 500;
     }
   }
   .tk_CardWeekCalendar_Body {

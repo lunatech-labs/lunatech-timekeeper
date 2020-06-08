@@ -136,6 +136,11 @@ const WeekCalendar = (props) => {
               return item && item.day && props.dateCellRender(data, date, disabled);
             }
           };
+
+          const today = (day) => {
+            return moment().isSame(day, 'day')
+          };
+
           return (
             <div className="tk_WeekCalendar_Day" key={`day-card-${index}`}>
               <p>{item.date.format(headerDateFormat)}</p>
@@ -143,7 +148,8 @@ const WeekCalendar = (props) => {
                 disabled={isDisabled(item)}
                 onMouseOver={() => setShowButton(index)}
                 onMouseLeave={() => setShowButton(-1)}>
-                <div className="tk_CardWeekCalendar_Head">{item.date.format(dateFormat)}
+                <div className="tk_CardWeekCalendar_Head">
+                  <p className={today(moment(item.date)) ? "tk_CurrentDay":""}>{item.date.format(dateFormat)}</p>
                   {((props.hiddenButtons && showButton === index) || (!props.hiddenButtons)) &&
                   <Button
                     shape="circle"
