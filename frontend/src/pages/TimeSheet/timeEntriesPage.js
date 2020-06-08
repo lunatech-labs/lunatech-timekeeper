@@ -54,7 +54,7 @@ const TimeEntriesPage = () => {
   const datas = Object.entries(groupBy(data.sheets.flatMap(({entries, project}) => entries.map(x => ({
     ...x,
     project
-  }))), entry => moment(entry.startDateTime).toDate())).map(([key, value]) => {
+  }))), entry => moment(entry.startDateTime).format('YYYY-MM-DD'))).map(([key, value]) => {
     return ({
       data: value,
       date: moment(key),
