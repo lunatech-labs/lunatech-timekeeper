@@ -16,9 +16,6 @@ const TimeEntry = ({entry}) => {
   const start = moment(entry.startDateTime);
   const end = moment(entry.endDateTime);
   const duration = moment.duration(end.diff(start));
-  console.log('duration', duration);
-  console.log('start', entry.startDateTime);
-  console.log('end', entry.endDateTime);
   const date = start.clone();
   date.set({
     hour: duration.asHours()

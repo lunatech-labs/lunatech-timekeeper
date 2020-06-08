@@ -44,10 +44,6 @@ const TimeEntriesPage = () => {
     );
   }
 
-  if (data) {
-    console.log('week:', JSON.stringify(data));
-  }
-
   //https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-an-array-of-objects/34890276#34890276
   const groupBy = function (xs, key) {
     return xs.reduce(function (rv, x) {
@@ -58,9 +54,7 @@ const TimeEntriesPage = () => {
   const datas = Object.entries(groupBy(data.sheets.flatMap(({entries, project}) => entries.map(x => ({
     ...x,
     project
-  }))), entry => moment((entry.endDateTime)))).map(([key, value]) => {
-    console.log(key)
-    console.log(value)
+  }))), entry => moment(entry.startDateTime).toDate())).map(([key, value]) => {
     return ({
       data: value,
       date: moment(key),
