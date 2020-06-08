@@ -207,7 +207,7 @@ const ProjectList = () => {
     <React.Fragment>
       <div className="tk_SubHeader">
         <p>{projectsFiltered.length} project(s)
-          | {Array.from(new Set(projectsFiltered.filter((project) => project.client != null).map((project) => project.client.id))).length} client(s)</p>
+          | {Array.from(new Set(projectsFiltered.filter(project => !!project.client).map((project) => project.client.id))).length} client(s)</p>
         <div className="tk_SubHeader_RightPart">
           <div className="tk_SubHeader_Filters">{filterComponent}</div>
           <div className="tk_SubHeader_Filters">{groupByComponent}</div>
