@@ -42,11 +42,6 @@ public class TimeSheetService {
         return findById(id, ctx).map(TimeSheetResponse::bind);
     }
 
-    public long create(TimeSheetRequest request, AuthenticationContext ctx) {
-        TimeSheet timeSheet = request.unbind(projectService::findById, userService::findById, ctx);
-        return createTimeSheet(timeSheet, ctx);
-    }
-
     @Transactional
     Long createDefaultTimeSheet(Project project, User owner, AuthenticationContext ctx) {
         TimeSheet timeSheet = new TimeSheet(project, owner, TimeUnit.HOURLY, project.getBillable(),null,null,TimeUnit.HOURLY, Collections.emptyList());
@@ -63,7 +58,7 @@ public class TimeSheetService {
     public Optional<Long> update(Long id, TimeSheetRequest request, AuthenticationContext ctx) {
         logger.info("Modify timesheet for id={} with {}, {}", id, request, ctx);
         return findById(id, ctx)
-                .map(timeSheet -> request.unbind(timeSheet, projectService::findById, userService::findById, ctx))
+                .map(request::unbind)
                 .map(timeSheet -> timeSheet.id);
     }
 

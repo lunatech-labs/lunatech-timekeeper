@@ -89,7 +89,7 @@ const EditTimeSheetForm = ({timesheet}) => {
                     */}
                     <Form.Item
                         label="EndDate"
-                        name="endDate"
+                        name="expirationDate"
                         rules={[
                             {
                                 required: false,

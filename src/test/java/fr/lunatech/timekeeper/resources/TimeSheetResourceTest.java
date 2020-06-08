@@ -14,9 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 import javax.inject.Inject;
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-import javax.json.bind.JsonbConfig;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -93,8 +90,7 @@ class TimeSheetResourceTest {
 
         // WHEN : AND the timesheet is updated (adding a end date a maxDuration and changing units)
         LocalDate newEndDate = LocalDate.now().plusMonths(2L);
-        TimeSheetRequest updatedTimeSheet = new TimeSheetRequest(project.getId(),
-                sam.getId(),
+        TimeSheetRequest updatedTimeSheet = new TimeSheetRequest(
                 TimeUnit.DAY,
                 true,
                 newEndDate,

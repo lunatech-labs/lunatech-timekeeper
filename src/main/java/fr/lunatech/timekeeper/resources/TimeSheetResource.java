@@ -21,15 +21,6 @@ public class TimeSheetResource implements TimeSheetResourceApi {
     @Inject
     AuthenticationContextProvider authentication;
 
-    // TODO Do i really need this ? Remove it in service too if not | NOT NEEDED
-    @RolesAllowed({"user", "admin"})
-    @Override
-    public Response createTimeSheet(TimeSheetRequest request, UriInfo uriInfo) {
-        final var ctx = authentication.context();
-        final long timeSheetId = timeSheetService.create(request,ctx);
-        final URI uri = uriInfo.getAbsolutePathBuilder().path(Long.toString(timeSheetId)).build();
-        return Response.created(uri).build();
-    }
 
     @RolesAllowed({"user", "admin"})
     @Override

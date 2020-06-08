@@ -18,11 +18,6 @@ import java.util.function.BiFunction;
 
 // TODO remove non updatable fields
 public class TimeSheetRequest {
-    @NotNull
-    public Long projectId;
-
-    @NotNull
-    public Long ownerId;
 
     @Enumerated(EnumType.STRING)
     public TimeUnit timeUnit;
@@ -41,9 +36,7 @@ public class TimeSheetRequest {
     public TimeUnit durationUnit; // DAYS
 
     @JsonbCreator
-    public TimeSheetRequest(@NotNull Long projectId, @NotNull Long ownerId, TimeUnit timeUnit, Boolean defaultIsBillable, @Null LocalDate expirationDate, @Null Integer maxDuration, @Null TimeUnit durationUnit) {
-        this.projectId = projectId;
-        this.ownerId = ownerId;
+    public TimeSheetRequest( TimeUnit timeUnit, Boolean defaultIsBillable, @Null LocalDate expirationDate, @Null Integer maxDuration, @Null TimeUnit durationUnit) {
         this.timeUnit = timeUnit;
         this.defaultIsBillable = defaultIsBillable;
         this.expirationDate = expirationDate;
@@ -51,14 +44,7 @@ public class TimeSheetRequest {
         this.durationUnit = durationUnit;
     }
 
-    public TimeSheet unbind(
-            @NotNull TimeSheet timeSheet,
-            @NotNull BiFunction<Long, AuthenticationContext, Optional<Project>> findProject,
-            @NotNull BiFunction<Long, AuthenticationContext, Optional<User>> findOwner,
-            @NotNull AuthenticationContext ctx
-    ){
-        timeSheet.project = findProject.apply(getProjectId(), ctx).orElseThrow(() -> new IllegalEntityStateException("Project not found for id " + getProjectId()));
-        timeSheet.owner = findOwner.apply(getOwnerId(), ctx).orElseThrow(() -> new IllegalEntityStateException("Owner not found for id " + getOwnerId()));
+    public TimeSheet unbind(@NotNull TimeSheet timeSheet){
         timeSheet.timeUnit = getTimeUnit();
         timeSheet.defaultIsBillable = getDefaultIsBillable();
         timeSheet.expirationDate = getExpirationDate();
@@ -67,20 +53,8 @@ public class TimeSheetRequest {
         return timeSheet;
     }
 
-    public TimeSheet unbind(
-            @NotNull BiFunction<Long, AuthenticationContext, Optional<Project>> findProject,
-            @NotNull BiFunction<Long, AuthenticationContext, Optional<User>> findOwner,
-            @NotNull AuthenticationContext ctx
-    ) {
-        return unbind(new TimeSheet(), findProject,findOwner,ctx);
-    }
-
-    public Long getProjectId() {
-        return projectId;
-    }
-
-    public Long getOwnerId() {
-        return ownerId;
+    public TimeSheet unbind() {
+        return unbind(new TimeSheet());
     }
 
     public TimeUnit getTimeUnit() {
@@ -106,8 +80,6 @@ public class TimeSheetRequest {
     @Override
     public String toString() {
         return "TimeSheetRequest{" +
-                "projectId=" + projectId +
-                ", ownerId=" + ownerId +
                 ", timeUnit=" + timeUnit +
                 ", defaultIsBillable=" + defaultIsBillable +
                 ", expirationDate=" + expirationDate +

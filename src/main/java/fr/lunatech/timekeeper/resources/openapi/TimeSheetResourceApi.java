@@ -25,22 +25,6 @@ import static javax.ws.rs.core.HttpHeaders.LOCATION;
 public interface TimeSheetResourceApi {
 
 
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Create a new time sheet",
-            description = "Create a time sheet.")
-    @Tag(ref = "timesheets")
-    @APIResponses(value = {
-            @APIResponse(
-                    responseCode = "201",
-                    description = "TimeSheet created",
-                    headers = {
-                            @Header(name = LOCATION, description = "New time sheet url", schema = @Schema(type = SchemaType.STRING))
-                    }
-            )
-    })
-    Response createTimeSheet(@RequestBody TimeSheetRequest request, @Context UriInfo uriInfo);
-
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
