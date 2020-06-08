@@ -1,7 +1,6 @@
 package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.time.TimeEntry;
-import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.services.requests.TimeEntryRequest;
 import org.slf4j.Logger;
@@ -11,7 +10,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
-import javax.validation.constraints.NotNull;
 
 @ApplicationScoped
 public class TimeEntryService {
