@@ -4,7 +4,7 @@ import './CardWeekCalendar.less';
 const CardWeekCalendar = ( {children, disabled, onMouseOver, onMouseLeave} ) => {
 
   return (
-    <div className="tk_CardWeekCalendar" disabled={disabled} onMouseOver={onMouseOver} onMouseLeave={onMouseLeave}>
+    <div className="tk_CardWeekCalendar" onMouseOver={onMouseOver} onMouseLeave={onMouseLeave}>
       {children}
     </div>
   );

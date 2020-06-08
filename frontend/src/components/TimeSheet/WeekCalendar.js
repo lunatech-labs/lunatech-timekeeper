@@ -92,11 +92,9 @@ const WeekCalendar = (props) => {
     const disableRight = !weekRangeIds.includes(weekSelected + 1);
     return (
       <div>
-        <Button icon={<LeftOutlined/>} disabled={disableLeft} shape='circle'
-          onClick={() => setWeekSelected(weekSelected - 1)}/>
+        <Button icon={<LeftOutlined/>} disabled={disableLeft} shape='circle' onClick={() => setWeekSelected(weekSelected - 1)}/>
+        <Button icon={<RightOutlined/>} disabled={disableRight} shape='circle' onClick={() => setWeekSelected(weekSelected + 1)}/>
         <p>{renderWeekYear(start, end)}</p>
-        <Button icon={<RightOutlined/>} disabled={disableRight} shape='circle'
-          onClick={() => setWeekSelected(weekSelected + 1)}/>
       </div>
     );
   };
@@ -138,18 +136,17 @@ const WeekCalendar = (props) => {
           };
 
           const today = (day) => {
-            return moment().isSame(day, 'day')
+            return moment().isSame(day, 'day');
           };
 
           return (
             <div className="tk_WeekCalendar_Day" key={`day-card-${index}`}>
               <p>{item.date.format(headerDateFormat)}</p>
               <CardWeekCalendar
-                disabled={isDisabled(item)}
                 onMouseOver={() => setShowButton(index)}
                 onMouseLeave={() => setShowButton(-1)}>
                 <div className="tk_CardWeekCalendar_Head">
-                  <p className={today(moment(item.date)) ? "tk_CurrentDay":""}>{item.date.format(dateFormat)}</p>
+                  <p className={today(moment(item.date)) ? 'tk_CurrentDay':''}>{item.date.format(dateFormat)}</p>
                   {((props.hiddenButtons && showButton === index) || (!props.hiddenButtons)) &&
                   <Button
                     shape="circle"
@@ -157,7 +154,7 @@ const WeekCalendar = (props) => {
                     icon={<PlusOutlined/>}
                     onClick={(e) => props.onClickAddTask && props.onClickAddTask(e, item.date)}/>}
                 </div>
-                <div className="tk_CardWeekCalendar_Body">
+                <div className="tk_CardWeekCalendar_Body" disabled={isDisabled(item)}>
                   {renderDay()}
                 </div>
               </CardWeekCalendar>
