@@ -6,7 +6,6 @@ import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
 
 const {Option} = Select;
 const {TextArea} = Input;
-const moment = require('moment');
 const initialValues = (defaultDate) => {
   return {
     'comment': null,
@@ -19,13 +18,15 @@ const initialValues = (defaultDate) => {
 // Use the values of the form or initialize the values
 const additionalValues = (timeUnit, defaultDate, allValues) => {
   switch (timeUnit) {
-    case 'DAY':
+    case 'DAY': {
       return {};
-    case 'HALFDAY':
+    }
+    case 'HALFDAY': {
       return {
         'isMorning': allValues.isMorning || true
       };
-    case 'HOURLY' :
+    }
+    case 'HOURLY' : {
       const start = defaultDate.clone();
       start.set({
         hour: 9,
@@ -36,8 +37,10 @@ const additionalValues = (timeUnit, defaultDate, allValues) => {
         'startDateTime': allValues.startDateTime || start, //9 am by default
         'endDateTime': allValues.endDateTime || null
       };
-    default:
+    }
+    default: {
       return {};
+    }
   }
 };
 
@@ -78,7 +81,7 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
   const onValuesChange = (changedValues, allValues) => {
     const key = Object.keys(changedValues)[0];
     switch (key) {
-      case 'timeSheetId' :
+      case 'timeSheetId' : {
         const timeSheet = timeSheets.find(item => item.id === changedValues.timeSheetId);
         setSelectedTimeSheet(timeSheet);
         if (timeSheet) {
@@ -94,16 +97,26 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
         }
         form.setFieldsValue(additionalValues(timeSheet.timeUnit, allValues.date, allValues));
         break;
-      case 'timeUnit':
+      }
+      case 'timeUnit': {
         form.setFieldsValue(additionalValues(changedValues.timeUnit, allValues.date, allValues));
         break;
-      case 'numberHours' :
+      }
+      case 'numberHours' : {
         const end = allValues.startDateTime.clone().add(changedValues.numberHours, 'hour');
         form.setFieldsValue({endDateTime: end});
         break;
+      }
       default:
         break;
     }
+  };
+  AddEntry.propTypes = {
+    date: PropTypes.object.isRequired,
+    form: PropTypes.object.isRequired,
+    timeSheets: PropTypes.array.isRequired,
+    onSuccess: PropTypes.func,
+    onCancel: PropTypes.func,
   };
   return (
     <Form initialValues={initialValues(date)}
@@ -129,7 +142,8 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
       >
         <Select>
           <Option value={null}/>
-          {timeSheets.map(timeSheet => <Option key={`select-timesheet-${timeSheet.id}`} value={timeSheet.id}>{timeSheet.project.name}</Option>)}
+          {timeSheets.map(timeSheet => <Option key={`select-timesheet-${timeSheet.id}`}
+            value={timeSheet.id}>{timeSheet.project.name}</Option>)}
         </Select>
       </Form.Item>
       <Form.Item
@@ -190,11 +204,13 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
       </Form.Item>
 
       <Space className="tk_JcFe" size="middle" align="center">
-        <Button id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" onClick={e => onCancel && onCancel(e)}>Cancel</Button>
+        <Button id="tk_Btn" className="tk_BtnSecondary" key="cancelLink"
+          onClick={e => onCancel && onCancel(e)}>Cancel</Button>
         <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Save task</Button>
       </Space>
     </Form>
   );
+
 };
 
 const TimeEntryForm = ({moment, form, onSuccess, onCancel}) => {
@@ -251,7 +267,10 @@ const TimeEntryForm = ({moment, form, onSuccess, onCancel}) => {
 };
 
 TimeEntryForm.propTypes = {
-  moment: PropTypes.object.isRequired
+  moment: PropTypes.object.isRequired,
+  form: PropTypes.object,
+  onSuccess: PropTypes.func,
+  onCancel: PropTypes.func
 };
 
 export default TimeEntryForm;
