@@ -1,5 +1,3 @@
-import React from 'react';
-import {Alert, Col, Divider, Row} from 'antd';
 import React, {useState} from 'react';
 import {Alert, Button, Col, Divider, Modal, Row} from 'antd';
 import TagProjectClient from '../Tag/TagProjectClient';
@@ -14,7 +12,6 @@ import {
 import ProjectMemberTag from '../Projects/ProjectMemberTag';
 import {useTimeKeeperAPI} from '../../utils/services';
 import PropTypes from 'prop-types';
-import CardMember from '../Card/CardMember';
 import Tooltip from "antd/lib/tooltip";
 import EditTimeSheetForm from "./EditTimeSheetForm";
 const moment = require('moment');
@@ -40,7 +37,6 @@ const ShowTimeSheet = ({project, member}) => {
               <p className="tk_Information"><DollarOutlined/> Billable : {item.defaultIsBillable ? 'Yes' : 'No'}</p>
             </Col>
           </Row>
-          <Separator/>
           <Tooltip title='Time sheet'>
             <SnippetsFilled onClick={() => {
               setSelectedTimeSheet(item);

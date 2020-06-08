@@ -1,22 +1,17 @@
 package fr.lunatech.timekeeper.services.requests;
 
-import fr.lunatech.timekeeper.models.Project;
-import fr.lunatech.timekeeper.models.User;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
-import fr.lunatech.timekeeper.services.AuthenticationContext;
-import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
+import fr.lunatech.timekeeper.timeutils.DateFormat;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
 
-import javax.json.bind.annotation.JsonbCreator;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.time.LocalDate;
-import java.util.Optional;
-import java.util.function.BiFunction;
 
-// TODO remove non updatable fields
+
 public class TimeSheetRequest {
 
     @Enumerated(EnumType.STRING)
@@ -26,6 +21,7 @@ public class TimeSheetRequest {
 
     // 1---------------
     @Null
+    @JsonFormat(pattern = DateFormat.DEFAULT_DATE_TIME_PATTERN)
     public LocalDate expirationDate;
 
     // 2 ------------------
@@ -35,7 +31,6 @@ public class TimeSheetRequest {
     @Null
     public TimeUnit durationUnit; // DAYS
 
-    @JsonbCreator
     public TimeSheetRequest( TimeUnit timeUnit, Boolean defaultIsBillable, @Null LocalDate expirationDate, @Null Integer maxDuration, @Null TimeUnit durationUnit) {
         this.timeUnit = timeUnit;
         this.defaultIsBillable = defaultIsBillable;

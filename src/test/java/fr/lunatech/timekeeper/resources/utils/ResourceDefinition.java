@@ -21,7 +21,7 @@ public enum ResourceDefinition {
     ProjectDef("/api/projects", apply(ProjectRequest.class, ProjectResponse.class)),
     TimeSheetPerProjectPerUserDef("/api/projects/%d/users/%d", apply(Void.class, TimeSheetResponse.class)),
     PersonalTimeSheetDef("/api/my/timeSheets", apply(Void.class, TimeSheetResponse.class)),
-    TimeSheetDef("/api/time-sheets", apply(TimeSheetRequest.class,TimeSheetResponse.class));
+    TimeSheetDef("/api/time-sheets", apply(TimeSheetRequest.class,TimeSheetResponse.class)),
     TimeEntryDayDef("/api/timeSheet/%d/timeEntry/%s", apply(TimeEntryPerDayRequest.class, Void.class));
 
     final public String uri;

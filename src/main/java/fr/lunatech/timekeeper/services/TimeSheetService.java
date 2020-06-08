@@ -28,12 +28,6 @@ public class TimeSheetService {
 
     private static Logger logger = LoggerFactory.getLogger(TimeSheetService.class);
 
-    @Inject
-    ProjectService projectService;
-
-    @Inject
-    UserService userService;
-
     Boolean userHasNoTimeSheet(Long projectId, Long userId){
         return TimeSheet.stream("user_id = ?1 and project_id = ?2", userId, projectId).count() == 0;
     }
@@ -57,6 +51,7 @@ public class TimeSheetService {
     @Transactional
     public Optional<Long> update(Long id, TimeSheetRequest request, AuthenticationContext ctx) {
         logger.info("Modify timesheet for id={} with {}, {}", id, request, ctx);
+        System.out.println(String.format("Modify timesheet for id=%s with %s, %s", id, request, ctx));
         return findById(id, ctx)
                 .map(request::unbind)
                 .map(timeSheet -> timeSheet.id);

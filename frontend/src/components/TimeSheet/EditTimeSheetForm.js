@@ -4,7 +4,7 @@ import {Link, Redirect, useRouteMatch} from 'react-router-dom';
 import {useTimeKeeperAPIPut} from '../../utils/services';
 import Space from 'antd/lib/space';
 import '../../components/Button/BtnGeneral.less';
-import locale from 'antd/es/date-picker/locale/fr_FR';
+import moment from 'moment';
 
 const EditTimeSheetForm = ({timesheet}) => {
 
@@ -42,23 +42,18 @@ const EditTimeSheetForm = ({timesheet}) => {
         );
     }
 
-    // The method to handle initial values of the form | USELESS, already here | not the one I don't display*
+    // The method to handle initial values of the form
     const initialValues = (timesheet) => {
         return {
             "projectId": timesheet.projectId,
             "ownerID": timesheet.ownerID,
-            "timeUnit": 'HOURLY',
+            "timeUnit": timesheet.timeUnit,
             "defaultIsBillable": timesheet.defaultIsBillable,
-            "expirationDate": timesheet.expirationDate,
+            "expirationDate": moment(timesheet.expirationDate, 'yyyy-MM-dd'),
             "maxDuration": timesheet.maxDuration,
             "durationUnit": timesheet.durationUnit
         }
     }
-
-    // The method to handle the POST form (saveTimeSheetChange) | already here, see onFinish*/
-
-
-    // The method to handle value change (onValueChange) NOT SURE IT's NEEDED
 
 
     return (
@@ -88,7 +83,7 @@ const EditTimeSheetForm = ({timesheet}) => {
                         THE End date Picker
                     */}
                     <Form.Item
-                        label="EndDate"
+                        label="End date"
                         name="expirationDate"
                         rules={[
                             {
@@ -96,7 +91,7 @@ const EditTimeSheetForm = ({timesheet}) => {
                             },
                         ]}
                     >
-                        <DatePicker locale={locale}/>
+                        <DatePicker />
                     </Form.Item>
 
                     {/*
@@ -107,8 +102,7 @@ const EditTimeSheetForm = ({timesheet}) => {
                         name="maxDuration"
                         rules={[
                             {
-                                required: true,
-                                pattern: "^[0-9]*$"
+                                required: true
                             },
                         ]}
                     >
@@ -130,6 +124,7 @@ const EditTimeSheetForm = ({timesheet}) => {
                             <Radio value={false}>No</Radio>
                         </Radio.Group>
                     </Form.Item>
+                    {/* additionnal values : must be defined to be sent */}
                     <Form.Item name='durationUnit' noStyle={true} />
                 </div>
                 <Form.Item>
