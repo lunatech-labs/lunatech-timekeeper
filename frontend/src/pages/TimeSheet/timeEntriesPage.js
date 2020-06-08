@@ -58,16 +58,15 @@ const TimeEntriesPage = () => {
   const datas = Object.entries(groupBy(data.sheets.flatMap(({entries, project}) => entries.map(x => ({
     ...x,
     project
-  }))), entry => moment((entry.endDateTime)))).map(([key, value]) => ({
-    data: value,
-    date: moment(key),
-    disabled: false
-  }));
-
-  console.log('groupBY',
-    datas
-  );
-
+  }))), entry => moment((entry.endDateTime)))).map(([key, value]) => {
+    console.log(key)
+    console.log(value)
+    return ({
+      data: value,
+      date: moment(key),
+      disabled: false
+    })
+  });
 
   const openModal = () => setVisibleEntryModal(true);
   const closeModal = () => setVisibleEntryModal(false);
@@ -90,7 +89,6 @@ const TimeEntriesPage = () => {
         disabledWeekEnd={true}
         hiddenButtons={false}
         onPanelChange={(id, start) => setCurrentFirstDay(start)}
-        dateCellRender={(data, date, disabled) => {
         onClickAddTask={(e, m) => {
           setTaskMoment(m);
           openModal();

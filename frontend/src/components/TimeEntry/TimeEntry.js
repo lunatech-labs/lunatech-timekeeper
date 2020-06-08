@@ -7,19 +7,27 @@ import PropTypes from 'prop-types';
 const moment = require('moment');
 const TimeEntry = ({entry}) => {
 
-  const computeSize = (dateTime) => {
+  const computeSize = (nbHours) => {
     const minimumSize = 75;
 
-    return minimumSize + (dateTime.hours() - 1) * 50;
+    return minimumSize + (nbHours - 1) * 50;
   };
 
-//FIXME BUG 1 heure de décalage
-  const date = (moment(Date.parse(entry.endDateTime) - (Date.parse(entry.startDateTime))));
-  console.log('date', date);
-  const size = computeSize(date);
+  const start = moment(entry.startDateTime);
+  const end = moment(entry.endDateTime);
+  const duration = moment.duration(end.diff(start));
+  console.log('duration', duration);
+  console.log('start', entry.startDateTime);
+  console.log('end', entry.endDateTime);
+  const date = start.clone();
+  date.set({
+    hour: duration.asHours()
+  });
+  const hours = duration.asHours();
+  const size = computeSize(hours);
   return (
     <div className="tk_TaskCard" style={{height: `${size}px`}}
-         key={`badge-entry-${date && date.format('yyyy-mm-dd-hh-mm')}`}>
+         key={`badge-entry-${start && start.format('yyyy-mm-dd-hh-mm')}`}>
       <div>
         <Badge
           status={(entry && entry.comment) ? 'success' : 'error'}
