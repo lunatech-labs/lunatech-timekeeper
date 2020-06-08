@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import MainPage from '../MainPage/MainPage';
 import WeekCalendar from '../../components/TimeSheet/WeekCalendar';
 import {Badge, Form, Modal} from 'antd';
-import TimeEntryForm from "../../components/TimeEntry/TimeEntryForm";
+import TimeEntryForm from '../../components/TimeEntry/TimeEntryForm';
 
 const moment = require('moment');
 
@@ -69,7 +69,7 @@ const TimeEntriesPage = () => {
 
   const openModal = () => setVisibleEntryModal(true);
   const closeModal = () => setVisibleEntryModal(false);
-  const resetForm = () => form.resetFields()
+  const resetForm = () => form.resetFields();
   return (
     <MainPage title="Time entries">
       <Modal

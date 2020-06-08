@@ -23,7 +23,6 @@ const {Panel} = Collapse;
 
 const ProjectList = () => {
 
-
   const [filterText, setFilterText] = useState('All');
 
   const [groupBy, setGroupBy] = useState('All');
@@ -202,13 +201,13 @@ const ProjectList = () => {
     data: PropTypes.array
   };
 
-  const data = projectsFilter();
+  const projectsFiltered = projectsFilter();
 
   return (
     <React.Fragment>
       <div className="tk_SubHeader">
-        <p>{data.length} project(s)
-          | {Array.from(new Set(data.filter((project) => project.client !== undefined).map((project) => project.client.id))).length} client(s)</p>
+        <p>{projectsFiltered.length} project(s)
+          | {Array.from(new Set(projectsFiltered.filter(project => !!project.client).map((project) => project.client.id))).length} client(s)</p>
         <div className="tk_SubHeader_RightPart">
           <div className="tk_SubHeader_Filters">{filterComponent}</div>
           <div className="tk_SubHeader_Filters">{groupByComponent}</div>
@@ -216,7 +215,7 @@ const ProjectList = () => {
       </div>
 
       {groupBy === 'All' ?
-        <DataList data={data}/> :
+        <DataList data={projectsFiltered}/> :
         groupByClient().map(data =>
           <div key={`projects-of-clients-${(data.client && data.client.id) || 0}`}>
             <TitleSection title={(data.client && data.client.name) || 'No client'}/>
