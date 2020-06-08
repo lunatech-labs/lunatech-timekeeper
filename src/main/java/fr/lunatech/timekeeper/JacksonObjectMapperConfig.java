@@ -5,7 +5,6 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import io.quarkus.jackson.ObjectMapperCustomizer;
 
 import javax.inject.Singleton;
-import java.util.TimeZone;
 
 @Singleton
 public class JacksonObjectMapperConfig implements ObjectMapperCustomizer {

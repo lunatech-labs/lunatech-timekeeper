@@ -4,7 +4,7 @@ import WeekCalendar from '../../components/TimeSheet/WeekCalendar';
 import TimeEntry from '../../components/TimeEntry/TimeEntry';
 import {useTimeKeeperAPI} from '../../utils/services';
 import {Alert} from 'antd';
-import {Badge, Form, Modal} from 'antd';
+import {Form, Modal} from 'antd';
 import TimeEntryForm from '../../components/TimeEntry/TimeEntryForm';
 
 const moment = require('moment');
@@ -18,9 +18,9 @@ const TimeEntriesPage = () => {
   const [form] = Form.useForm();
   useEffect(
     () => {
-      //TODO : Fetch your data or select your week
+      //TODO : Fetch your data or select your week => To complete when the WeekService is working with ranges
       if (!currentFirstDay) {
-
+        return;
       }
     }, [currentFirstDay]);
 
@@ -36,9 +36,9 @@ const TimeEntriesPage = () => {
     return (
       <React.Fragment>
         <Alert title='Server error'
-               message='Failed to load the list of clients'
-               type='error'
-               description='check that the authenticated User has role [user] on Quarkus'
+          message='Failed to load the list of clients'
+          type='error'
+          description='check that the authenticated User has role [user] on Quarkus'
         />
       </React.Fragment>
     );
@@ -59,7 +59,7 @@ const TimeEntriesPage = () => {
       data: value,
       date: moment(key),
       disabled: false
-    })
+    });
   });
 
   const openModal = () => setVisibleEntryModal(true);
