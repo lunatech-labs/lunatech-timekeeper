@@ -35,11 +35,11 @@ const TopBar = ({ collapsed, toggle, user }) => {
           className: 'trigger',
           onClick: toggle,
         })}
+      </div>
+      <div className="tk_Header_Right">
         <div className="tk_Header_Organization">
           <Avatar shape="square"  src={displayOrganizationPicture(user.email)} />
         </div>
-      </div>
-      <div className="tk_Header_Right">
         <div className="tk_Header_Notif">
           <Badge dot={alert} onClick={alertChangeState}>
             <BellOutlined />
