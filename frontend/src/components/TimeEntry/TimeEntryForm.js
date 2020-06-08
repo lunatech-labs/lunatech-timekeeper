@@ -108,7 +108,6 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
   return (
     <Form initialValues={initialValues(date)}
       form={form}
-      onFieldsChange={(changedFields, allFields) => console.log(changedFields, allFields)}
       onFinish={timeKeeperAPIPost.run}
       onValuesChange={onValuesChange}
     >
