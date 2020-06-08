@@ -1,16 +1,13 @@
 package fr.lunatech.timekeeper.services.requests;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.services.AuthenticationContext;
 import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
-import fr.lunatech.timekeeper.timeutils.DateFormat;
-
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
@@ -24,13 +21,12 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
     private final Boolean billable;
 
     @NotNull
-    @JsonFormat(pattern = DateFormat.DEFAULT_DATE_TIME_PATTERN)
-    private final LocalDateTime date;
+    private final LocalDate date;
 
     public TimeEntryPerDayRequest(
             @NotBlank String comment,
             @NotNull Boolean billable,
-            @NotNull LocalDateTime date
+            @NotNull LocalDate date
     ) {
         this.comment = comment;
         this.billable = billable;
@@ -45,8 +41,8 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.billable = getBillable();
         timeEntry.comment = getComment();
-        timeEntry.startDateTime = this.date.withHour(9).withMinute(0);
-        timeEntry.endDateTime = this.date.withHour(17).withMinute(0);
+        timeEntry.startDateTime = this.date.atStartOfDay().withHour(9).withMinute(0);
+        timeEntry.endDateTime = this.date.atStartOfDay().withHour(17).withMinute(0);
         timeEntry.timeSheet = findTimeSheet.apply(timeSheetId, ctx).orElseThrow(() -> new IllegalEntityStateException("TimeSheet not found for id " + timeSheetId));
         return timeEntry;
     }
@@ -59,7 +55,7 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
         return billable;
     }
 
-    public LocalDateTime getDate() {
+    public LocalDate getDate() {
         return date;
     }
 

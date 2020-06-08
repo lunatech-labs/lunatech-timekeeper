@@ -39,7 +39,6 @@ public enum ResourceDefinition {
     }
 
     public String uriWithArgs(Object... args) {
-        System.out.println(String.format(this.uri, args));
         return String.format(this.uri, args);
     }
 
