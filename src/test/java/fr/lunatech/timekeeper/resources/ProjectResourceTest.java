@@ -290,7 +290,7 @@ class ProjectResourceTest {
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
         // THEN : I can see the timeSheet by project by member
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedTimeSheetJimmy)));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
     }
 
 

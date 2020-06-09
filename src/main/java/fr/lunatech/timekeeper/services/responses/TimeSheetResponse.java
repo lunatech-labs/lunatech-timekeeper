@@ -23,7 +23,7 @@ public class TimeSheetResponse {
 
     public Boolean defaultIsBillable;
 
-    @JsonFormat(pattern = DateFormat.DEFAULT_DATE_PATTERN)
+    @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_PATTERN)
     public LocalDate expirationDate;
 
     public Integer maxDuration; // eg 21

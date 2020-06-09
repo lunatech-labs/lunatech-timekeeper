@@ -2,7 +2,7 @@ package fr.lunatech.timekeeper.services.requests;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
-import fr.lunatech.timekeeper.timeutils.DateFormat;
+import fr.lunatech.timekeeper.timeutils.TimeKeeperDateFormat;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
 
 import javax.persistence.EnumType;
@@ -21,7 +21,7 @@ public class TimeSheetRequest {
 
     // 1---------------
     @Null
-    @JsonFormat(pattern = DateFormat.DEFAULT_DATE_TIME_PATTERN)
+    @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_TIME_PATTERN)
     public LocalDate expirationDate;
 
     // 2 ------------------

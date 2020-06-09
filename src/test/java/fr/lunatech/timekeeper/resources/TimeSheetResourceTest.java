@@ -1,5 +1,6 @@
 package fr.lunatech.timekeeper.resources;
 
+import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
 import fr.lunatech.timekeeper.services.requests.ClientRequest;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.requests.TimeSheetRequest;
@@ -24,7 +25,6 @@ import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TimeShee
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.putValidation;
-import static fr.lunatech.timekeeper.resources.utils.TestUtils.toJson;
 import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.hamcrest.core.Is.is;
@@ -38,6 +38,9 @@ class TimeSheetResourceTest {
 
     @Inject
     Flyway flyway;
+
+    @Inject
+    TimeKeeperTestUtils timeKeeperTestUtils;
 
     @AfterEach
     void cleanDB() {
@@ -61,12 +64,12 @@ class TimeSheetResourceTest {
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
 
 
-        final var expectedTimeSheetSam = new TimeSheetResponse(8L, project, sam, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, project, jimmy, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetSam = new TimeSheetResponse(8L, project, sam, TimeUnit.DAY, null, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, project, jimmy, TimeUnit.DAY, null, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
         // THEN
-        getValidation(TimeSheetDef.uriWithid(8L),adminToken, OK).body(is(toJson(expectedTimeSheetSam)));
-        getValidation(TimeSheetDef.uriWithid(9L),adminToken, OK).body(is(toJson(expectedTimeSheetJimmy)));
+        getValidation(TimeSheetDef.uriWithid(8L),adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)));
+        getValidation(TimeSheetDef.uriWithid(9L),adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
 
     }
 
@@ -85,8 +88,8 @@ class TimeSheetResourceTest {
         // WHEN : the project is created, a time sheet is generated for all user
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
         // verify first version
-        final var expectedTimeSheetSam = new TimeSheetResponse(expectedId, project, sam, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
-        getValidation(TimeSheetDef.uriWithid(expectedId), adminToken, OK).body(is(toJson(expectedTimeSheetSam)));
+        final var expectedTimeSheetSam = new TimeSheetResponse(expectedId, project, sam, TimeUnit.DAY, null, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        getValidation(TimeSheetDef.uriWithid(expectedId), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)));
 
         // WHEN : AND the timesheet is updated (adding a end date a maxDuration and changing units)
         LocalDate newEndDate = LocalDate.now().plusMonths(2L);
@@ -97,12 +100,11 @@ class TimeSheetResourceTest {
                 60,
                 TimeUnit.DAY
         );
-        // in order to avoid Jackson seralization by rest-assured, serialise now
-        putValidation(TimeSheetDef.uriWithid(expectedId),adminToken,toJson(updatedTimeSheet), NO_CONTENT);
+        putValidation(TimeSheetDef.uriWithid(expectedId),adminToken,updatedTimeSheet, NO_CONTENT);
 
         // THEN get the updated version
-        final var expectedUpdatedTimeSheetSam = new TimeSheetResponse(expectedId, project, sam, true, newEndDate, 60, TimeUnit.DAY.toString(), Collections.emptyList());
-        getValidation(TimeSheetDef.uriWithid(expectedId), adminToken, OK).body(is(toJson(expectedUpdatedTimeSheetSam)));
+        final var expectedUpdatedTimeSheetSam = new TimeSheetResponse(expectedId, project, sam, TimeUnit.DAY, true, newEndDate, 60, TimeUnit.DAY.toString(), Collections.emptyList());
+        getValidation(TimeSheetDef.uriWithid(expectedId), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedUpdatedTimeSheetSam)));
     }
 
 }
