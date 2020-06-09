@@ -1,13 +1,17 @@
 @import '../../timekeeper-theme.less';
 
 #tk_Header {
-  z-index: 2;
+  z-index: 5;
   background: @black_Tk;
   border-bottom: 1px solid rgba(216, 216, 216, .1);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0;
+  position: fixed;
+  width: calc(100% - 240px);
+  right: 0;
+  transition: all 0.2s;
   .anticon[tabindex] {
     color: @lightGray_Tk;
     font-size: 18px;
@@ -15,6 +19,7 @@
     padding: 0 20px;
   }
 }
+.ant-layout-sider-collapsed + #tk_RightContent #tk_Header {width: calc(100% - 80px);}
 .tk_Header_Right, .tk_Header_Left {
   display: flex;
   align-items: center;
@@ -28,9 +33,7 @@
   text-align: center;
   border-left: 1px solid rgba(216, 216, 216, 0.1);
   span {
-    sup {
-      box-shadow: none;
-    }
+    sup {box-shadow: none;}
   }
 }
 .tk_Header_Organization {
