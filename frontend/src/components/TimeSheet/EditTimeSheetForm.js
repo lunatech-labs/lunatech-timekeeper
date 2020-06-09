@@ -65,68 +65,68 @@ const EditTimeSheetForm = ({timesheet}) => {
                 onFinish={timeKeeperAPIPut.run}
                 form={form}
             >
-                <div className="tk_CardLg">
 
-                    {/*
-                        THE Time unit Picker ( 3 values enum)
-                    */}
 
-                    <Form.Item name="timeUnit" label="Time unit" rules={[{required: true}]}>
-                        <Radio.Group>
-                            <Radio.Button value="HOURLY" >Hours</Radio.Button>
-                            <Radio.Button value="HALFDAY" >Half-day</Radio.Button>
-                            <Radio.Button value="DAY">Day</Radio.Button>
-                        </Radio.Group>
-                    </Form.Item>
+                {/*
+                    THE Time unit Picker ( 3 values enum)
+                */}
 
-                    {/*
-                        THE End date Picker
-                    */}
-                    <Form.Item
-                        label="End date"
-                        name="expirationDate"
-                        rules={[
-                            {
-                                required: false,
-                            },
-                        ]}
-                    >
-                        <DatePicker />
-                    </Form.Item>
+                <Form.Item name="timeUnit" label="Time unit" rules={[{required: true}]}>
+                    <Radio.Group>
+                        <Radio.Button value="HOURLY" >Hours</Radio.Button>
+                        <Radio.Button value="HALFDAY" >Half-day</Radio.Button>
+                        <Radio.Button value="DAY">Day</Radio.Button>
+                    </Radio.Group>
+                </Form.Item>
 
-                    {/*
-                        THE Number of days
-                    */}
-                    <Form.Item
-                        label="Number of days"
-                        name="maxDuration"
-                        rules={[
-                            {
-                                required: true
-                            },
-                        ]}
-                    >
-                        <Input
-                            placeholder="TimeSheet's max duration"
-                        />
-                    </Form.Item>
+                {/*
+                    THE End date Picker
+                */}
+                <Form.Item
+                    label="End date"
+                    name="expirationDate"
+                    rules={[
+                        {
+                            required: false,
+                        },
+                    ]}
+                >
+                    <DatePicker />
+                </Form.Item>
 
-                    {/*
-                        THE isBillable radio
-                    */}
-                    <Form.Item
-                        label="Billable"
-                        name="defaultIsBillable"
-                        rules={[{required: true}]}
-                    >
-                        <Radio.Group>
-                            <Radio value={true}>Yes</Radio>
-                            <Radio value={false}>No</Radio>
-                        </Radio.Group>
-                    </Form.Item>
-                    {/* additionnal values : must be defined to be sent */}
-                    <Form.Item name='durationUnit' noStyle={true} />
-                </div>
+                {/*
+                    THE Number of days
+                */}
+                <Form.Item
+                    label="Number of days"
+                    name="maxDuration"
+                    rules={[
+                        {
+                            required: true
+                        },
+                    ]}
+                >
+                    <Input
+                        placeholder="TimeSheet's max duration"
+                    />
+                </Form.Item>
+
+                {/*
+                    THE isBillable radio
+                */}
+                <Form.Item
+                    label="Billable"
+                    name="defaultIsBillable"
+                    rules={[{required: true}]}
+                >
+                    <Radio.Group>
+                        <Radio value={true}>Yes</Radio>
+                        <Radio value={false}>No</Radio>
+                    </Radio.Group>
+                </Form.Item>
+                {/* additionnal values : must be defined to be sent */}
+                <Form.Item name='durationUnit' noStyle={true} />
+
                 <Form.Item>
                     <Space className="tk_JcFe" size="middle" align="center">
                         <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={'/projects'}>Cancel</Link>
