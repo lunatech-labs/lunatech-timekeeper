@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Alert, Button, Col, Divider, Modal, Row} from 'antd';
+import {Alert, Col, Divider, Row} from 'antd';
 import TagProjectClient from '../Tag/TagProjectClient';
 import './ShowTimeSheet.less';
 import {
@@ -7,12 +7,10 @@ import {
   ClockCircleOutlined,
   CalendarOutlined,
   FieldTimeOutlined,
-  SnippetsFilled
 } from '@ant-design/icons';
 import ProjectMemberTag from '../Projects/ProjectMemberTag';
 import {useTimeKeeperAPI} from '../../utils/services';
 import PropTypes from 'prop-types';
-import Tooltip from "antd/lib/tooltip";
 import EditTimeSheetForm from "./EditTimeSheetForm";
 const moment = require('moment');
 const format = (s) => moment(s, 'YYYY-MM-DD').format('YYYY/MM/DD');
@@ -28,21 +26,15 @@ const ShowTimeSheet = ({project, member}) => {
         <div key={`timesheet-information-${item.id}`}>
           <Row gutter={32}>
             <Col span={12}>
-              <p className="tk_Information"><ClockCircleOutlined/> TimeUnit : {item.durationUnit}</p>
-              <p className="tk_Information"><CalendarOutlined/> End date
-                : {item.expirationDate ? format(item.expirationDate) : '----/--/--'}</p>
+              <p className="tk_Information"><ClockCircleOutlined/> TimeUnit: {item.durationUnit}</p>
+              <p className="tk_Information"><CalendarOutlined/> End date: {item.expirationDate ? format(item.expirationDate) : '----/--/--'}</p>
             </Col>
             <Col span={12}>
-              <p className="tk_Information"><CalendarOutlined/> Number of days : {item.maxDuration}</p>
-              <p className="tk_Information"><DollarOutlined/> Billable : {item.defaultIsBillable ? 'Yes' : 'No'}</p>
+              <p className="tk_Information"><CalendarOutlined/> Number of days: {item.maxDuration}</p>
+              <p className="tk_Information"><DollarOutlined/> Billable: {item.defaultIsBillable ? 'Yes' : 'No'}</p>
             </Col>
           </Row>
-          <Tooltip title='Time sheet'>
-            <SnippetsFilled onClick={() => {
-              setSelectedTimeSheet(item);
-            }}/>
-          </Tooltip>
-          <Divider/>
+          <a onClick={() => {setSelectedTimeSheet(item);}}>Edit timesheet</a>
           {selectedTimeSheet && <EditTimeSheetForm timesheet={selectedTimeSheet} />}
         </div>
       );
@@ -78,20 +70,24 @@ const ShowTimeSheet = ({project, member}) => {
   }
 
   return (
-    <div className="tk_ModalTop">
-      <div className="tk_ModalTopHead">
-        <h1>Individual time sheet</h1>
-      </div>
-      <div className="tk_ModalTopBody">
-        <div className="tk_ModalTopProject">
-          <div>
-            <h2>{project.name}</h2>
-            <Divider type='vertical'/>
-            <TagProjectClient client={project.client}/>
-          </div>
-          <p><FieldTimeOutlined />Days left: (TO DO)</p>
+    <div>
+      <div className="tk_ModalTop">
+        <div className="tk_ModalTopHead">
+          <h1>Individual time sheet</h1>
         </div>
-        <ProjectMemberTag member={member}/>
+        <div className="tk_ModalTopBody">
+          <div className="tk_ModalTopProject">
+            <div>
+              <h2>{project.name}</h2>
+              <Divider type='vertical'/>
+              <TagProjectClient client={project.client}/>
+            </div>
+            <p><FieldTimeOutlined />Days left: (TO DO)</p>
+          </div>
+          <ProjectMemberTag member={member}/>
+        </div>
+      </div>
+      <div className="tk_ModalBottom">
         <TimeSheets timeSheets={data}/>
       </div>
     </div>
