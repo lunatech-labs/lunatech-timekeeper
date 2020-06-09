@@ -213,7 +213,7 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
 
 };
 
-const TimeEntryForm = ({moment, form, onSuccess, onCancel}) => {
+const TimeEntryForm = ({currentDay, form, onSuccess, onCancel}) => {
   const timeSheets = useTimeKeeperAPI('/api/my/timeSheets', (form => form));
 
   if (timeSheets.loading) {
@@ -254,20 +254,20 @@ const TimeEntryForm = ({moment, form, onSuccess, onCancel}) => {
   return (
     <div>
       <div>
-        <p>{moment.format('ddd')}</p>
-        <p>{moment.format('DD')}</p>
+        <p>{currentDay.format('ddd')}</p>
+        <p>{currentDay.format('DD')}</p>
       </div>
       <h1>Day information</h1>
 
       <Divider/>
       <TitleSection title='Add task'/>
-      <AddEntry date={moment} form={form} timeSheets={timeSheets.data} onSuccess={onSuccess} onCancel={onCancel}/>
+      <AddEntry date={currentDay} form={form} timeSheets={timeSheets.data} onSuccess={onSuccess} onCancel={onCancel}/>
     </div>
   );
 };
 
 TimeEntryForm.propTypes = {
-  moment: PropTypes.object.isRequired,
+  currentDay: PropTypes.object.isRequired,
   form: PropTypes.object,
   onSuccess: PropTypes.func,
   onCancel: PropTypes.func
