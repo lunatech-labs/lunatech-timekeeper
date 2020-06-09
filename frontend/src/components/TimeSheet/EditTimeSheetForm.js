@@ -12,7 +12,6 @@ const EditTimeSheetForm = ({timesheet}) => {
 
     const timeKeeperAPIPut = useTimeKeeperAPIPut('/api/time-sheets/' + timesheet.id, (form => form), setTimeSheetUpdated);
 
-    // I dunno but it looks like I need it to prompt success update
     useEffect(() => {
         if (!timeSheetUpdated) {
             return;
@@ -20,13 +19,12 @@ const EditTimeSheetForm = ({timesheet}) => {
         message.success('Time Sheet was updated');
     }, [timeSheetUpdated]);
 
-    // I dunno but it was in EditProjectForm
     const [form] = Form.useForm();
 
     if (timeSheetUpdated) {
         return (
             <React.Fragment>
-                <Redirect to="/projects"/>
+                <Redirect to={{pathname:'/projects/'+timesheet.project.id, state: { modal: true }}}/>
             </React.Fragment>
         );
     }
@@ -45,11 +43,9 @@ const EditTimeSheetForm = ({timesheet}) => {
     // The method to handle initial values of the form
     const initialValues = (timesheet) => {
         return {
-            "projectId": timesheet.projectId,
-            "ownerID": timesheet.ownerID,
             "timeUnit": timesheet.timeUnit,
             "defaultIsBillable": timesheet.defaultIsBillable,
-            "expirationDate": moment(timesheet.expirationDate, 'yyyy-MM-dd'),
+            "expirationDate": moment(timesheet.expirationDate, 'yyyy-MM-dd').utc(),
             "maxDuration": timesheet.maxDuration,
             "durationUnit": timesheet.durationUnit
         }
@@ -62,9 +58,9 @@ const EditTimeSheetForm = ({timesheet}) => {
 
                 <Form.Item name="timeUnit" label="Time unit" rules={[{required: true}]}>
                     <Radio.Group>
-                        <Radio.Button value="HOURLY" >Hours</Radio.Button>
-                        <Radio.Button value="HALFDAY" >Half-day</Radio.Button>
                         <Radio.Button value="DAY">Day</Radio.Button>
+                        <Radio.Button value="HALFDAY" >Half-day</Radio.Button>
+                        <Radio.Button value="HOURLY" >Hours</Radio.Button>
                     </Radio.Group>
                 </Form.Item>
 
@@ -74,7 +70,7 @@ const EditTimeSheetForm = ({timesheet}) => {
 
                 <Row gutter={32}>
                     <Col className="gutter-row" span={12}>
-                        <Form.Item label="Number of days" name="maxDuration" rules={[{required: true},]}>
+                        <Form.Item label="Number of days" name="maxDuration" rules={[{required: false},]}>
                             <Input placeholder="TimeSheet's max duration"/>
                         </Form.Item>
                     </Col>
@@ -93,7 +89,7 @@ const EditTimeSheetForm = ({timesheet}) => {
 
                 <Form.Item>
                     <Space className="tk_JcFe" size="middle" align="center">
-                        <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={'/projects'}>Cancel</Link>
+                        <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={{state: { modal: true }}}>Cancel</Link>
                         <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Submit</Button>
                     </Space>
                 </Form.Item>

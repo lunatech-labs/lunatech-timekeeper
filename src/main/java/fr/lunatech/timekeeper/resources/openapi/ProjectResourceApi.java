@@ -107,6 +107,6 @@ public interface ProjectResourceApi {
                     description = "Timesheets not found"
             )
     })
-    List<TimeSheetResponse> getTimeSheetsForProjectForUser(@PathParam("idProject") long idProject, @PathParam("idUser") long idUser);
+    TimeSheetResponse getLastActiveTimeSheetForUser(@PathParam("idProject") long idProject, @PathParam("idUser") long idUser);
 
 }
