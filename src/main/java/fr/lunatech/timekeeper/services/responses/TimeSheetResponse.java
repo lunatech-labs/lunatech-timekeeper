@@ -71,11 +71,11 @@ public class TimeSheetResponse {
         private final String comment;
 
         @NotNull
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+        @JsonFormat(pattern = DateFormat.DEFAULT_DATE_TIME_PATTERN)
         private final LocalDateTime startDateTime;
 
         @NotNull
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+        @JsonFormat(pattern = DateFormat.DEFAULT_DATE_TIME_PATTERN)
         private final LocalDateTime endDateTime;
 
         public TimeEntryResponse(
