@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, Button, Form, Input, message, Spin, Radio, DatePicker} from 'antd';
+import {Alert, Button, Form, Input, message, Spin, Radio, DatePicker, Col, Row} from 'antd';
 import {Link, Redirect, useRouteMatch} from 'react-router-dom';
 import {useTimeKeeperAPIPut} from '../../utils/services';
 import Space from 'antd/lib/space';
@@ -58,18 +58,7 @@ const EditTimeSheetForm = ({timesheet}) => {
 
     return (
         <React.Fragment>
-            <Form
-                id="tk_Form"
-                layout="vertical"
-                initialValues={initialValues(timesheet)}
-                onFinish={timeKeeperAPIPut.run}
-                form={form}
-            >
-
-
-                {/*
-                    THE Time unit Picker ( 3 values enum)
-                */}
+            <Form id="tk_Form" layout="vertical" initialValues={initialValues(timesheet)} onFinish={timeKeeperAPIPut.run} form={form}>
 
                 <Form.Item name="timeUnit" label="Time unit" rules={[{required: true}]}>
                     <Radio.Group>
@@ -79,52 +68,27 @@ const EditTimeSheetForm = ({timesheet}) => {
                     </Radio.Group>
                 </Form.Item>
 
-                {/*
-                    THE End date Picker
-                */}
-                <Form.Item
-                    label="End date"
-                    name="expirationDate"
-                    rules={[
-                        {
-                            required: false,
-                        },
-                    ]}
-                >
-                    <DatePicker />
+                <Form.Item label="End date" name="expirationDate" rules={[{required: false,},]}>
+                    <DatePicker className="tk_InputDate" />
                 </Form.Item>
 
-                {/*
-                    THE Number of days
-                */}
-                <Form.Item
-                    label="Number of days"
-                    name="maxDuration"
-                    rules={[
-                        {
-                            required: true
-                        },
-                    ]}
-                >
-                    <Input
-                        placeholder="TimeSheet's max duration"
-                    />
-                </Form.Item>
+                <Row gutter={32}>
+                    <Col className="gutter-row" span={12}>
+                        <Form.Item label="Number of days" name="maxDuration" rules={[{required: true},]}>
+                            <Input placeholder="TimeSheet's max duration"/>
+                        </Form.Item>
+                    </Col>
 
-                {/*
-                    THE isBillable radio
-                */}
-                <Form.Item
-                    label="Billable"
-                    name="defaultIsBillable"
-                    rules={[{required: true}]}
-                >
-                    <Radio.Group>
-                        <Radio value={true}>Yes</Radio>
-                        <Radio value={false}>No</Radio>
-                    </Radio.Group>
-                </Form.Item>
-                {/* additionnal values : must be defined to be sent */}
+                    <Col className="gutter-row" span={12}>
+                        <Form.Item label="Billable" name="defaultIsBillable" rules={[{required: true}]}>
+                            <Radio.Group>
+                                <Radio value={true}>Yes</Radio>
+                                <Radio value={false}>No</Radio>
+                            </Radio.Group>
+                        </Form.Item>
+                    </Col>
+                </Row>
+
                 <Form.Item name='durationUnit' noStyle={true} />
 
                 <Form.Item>
@@ -136,8 +100,6 @@ const EditTimeSheetForm = ({timesheet}) => {
             </Form>
         </React.Fragment>
     );
-
-
 };
 
 export default EditTimeSheetForm;

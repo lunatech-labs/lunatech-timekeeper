@@ -48,6 +48,15 @@
     background: none;
     border: 1px solid rgba(145, 145, 160, 0.4);
   }
+  .tk_InputDate {
+    background: none;
+    width: 100%;
+    padding: 0 11px;
+    border: 1px solid rgba(145, 145, 160, 0.4);
+    input {border: none;}
+    span {color: @lightGray_Tk;}
+    .ant-picker-clear {background: @darkGray_Tk;}
+  }
 }
 .tk_Crown_Checkbox {
 }
@@ -56,12 +65,8 @@
   font-size: 14px;
 }
 .tk_Select {
-  .ant-select-selector {
-    border: 1px solid rgba(145, 145, 160, 0.4)!important;
-  }
-  .ant-select-arrow {
-    color: @white_Tk;
-  }
+  .ant-select-selector {border: 1px solid rgba(145, 145, 160, 0.4)!important;}
+  .ant-select-arrow {color: @white_Tk;}
 }
 .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
   background: none!important;
@@ -71,4 +76,7 @@
 .tk_JcFe {
   justify-content: flex-end;
   width: 100%;
+}
+.ant-picker-cell:hover:not(.ant-picker-cell-selected):not(.ant-picker-cell-range-start):not(.ant-picker-cell-range-end):not(.ant-picker-cell-range-hover-start):not(.ant-picker-cell-range-hover-end) .ant-picker-cell-inner {
+  background: @darkGray_Tk!important;
 }
