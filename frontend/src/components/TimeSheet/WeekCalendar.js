@@ -6,7 +6,6 @@ import {LeftOutlined, PlusOutlined, RightOutlined} from '@ant-design/icons';
 import './WeekCalendar.less';
 
 const moment = require('moment');
-
 const renderWeekYear = (start, end) => {
   const panelFormatWithYear = 'DD MMM YYYY';
   const panelFormat = 'DD MMM';
@@ -33,7 +32,7 @@ const renderWeekRange = (start, end) => {
 
 const numberOfWeek = 30;
 const weekRangeOfDate = (firstDay) => {
-  const startOfCurrentWeek = firstDay || moment().startOf('week');
+  const startOfCurrentWeek = firstDay || moment().utc().startOf('week');
   return [...Array(numberOfWeek).keys()].map(i => {
     const toAdd = i - 7;
     const start = startOfCurrentWeek.clone().add(toAdd, 'week');
@@ -71,7 +70,7 @@ const WeekCalendar = (props) => {
   const daysToData = () => {
     const daysOfWeek = [...Array(7).keys()].map(i => props.firstDay.clone().add(i, 'day'));
     return daysOfWeek.map(dayOfWeek => {
-      const day = props.days.find(day => day.date.isSame(moment(dayOfWeek), 'day'));
+      const day = props.days.find(day => day.date.isSame(moment(dayOfWeek).utc(), 'day'));
       return {
         date: dayOfWeek,
         day: day,

@@ -3,7 +3,7 @@ package fr.lunatech.timekeeper.services.responses;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
-import fr.lunatech.timekeeper.timeutils.DateFormat;
+import fr.lunatech.timekeeper.timeutils.TimeKeeperDateFormat;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
 
 import javax.validation.constraints.NotNull;
@@ -70,11 +70,11 @@ public class TimeSheetResponse {
         private final String comment;
 
         @NotNull
-        @JsonFormat(pattern = DateFormat.DEFAULT_DATE_TIME_PATTERN)
+        @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_TIME_PATTERN)
         private final LocalDateTime startDateTime;
 
         @NotNull
-        @JsonFormat(pattern = DateFormat.DEFAULT_DATE_TIME_PATTERN)
+        @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_TIME_PATTERN)
         private final LocalDateTime endDateTime;
 
         public TimeEntryResponse(
