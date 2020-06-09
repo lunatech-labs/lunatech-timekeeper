@@ -13,8 +13,8 @@ const TimeEntry = ({entry}) => {
     return minimumSize + (nbHours - 1) * 50;
   };
 
-  const start = moment(entry.startDateTime);
-  const end = moment(entry.endDateTime);
+  const start = moment(entry.startDateTime).utc();
+  const end = moment(entry.endDateTime).utc();
   const duration = moment.duration(end.diff(start));
   const date = start.clone();
   date.set({
