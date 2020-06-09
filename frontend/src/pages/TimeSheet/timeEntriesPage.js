@@ -10,7 +10,7 @@ import TimeEntryForm from '../../components/TimeEntry/TimeEntryForm';
 const moment = require('moment');
 
 const TimeEntriesPage = () => {
-  const firstDayOfCurrentWeek = moment().startOf('week').add(1, 'day');
+  const firstDayOfCurrentWeek = moment().utc().startOf('week').add(1, 'day');
   const today = () => firstDayOfCurrentWeek.clone();
   const [currentFirstDay, setCurrentFirstDay] = useState(today);
   const [visibleEntryModal, setVisibleEntryModal] = useState(false);
@@ -75,7 +75,7 @@ const TimeEntriesPage = () => {
         width={'37.5%'}
         footer={null}
       >
-        <TimeEntryForm moment={taskMoment} form={form} onSuccess={closeModal} onCancel={closeModal}/>
+        <TimeEntryForm currentDay={taskMoment} form={form} onSuccess={closeModal} onCancel={closeModal}/>
       </Modal>
 
       <WeekCalendar
