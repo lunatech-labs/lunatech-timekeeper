@@ -17,20 +17,13 @@ const TimeEntriesPage = () => {
   const [taskMoment, setTaskMoment] = useState(moment().utc());
   const [form] = Form.useForm();
 
-  const {data, error, loading, run} = useTimeKeeperAPI('/api/my/week/' + currentWeekNumber);
-
+  const dataFromServer = useTimeKeeperAPI('/api/my/week/' + currentWeekNumber);
   useEffect(
     () => {
-      run();
+      dataFromServer.run();
     }, [currentWeekNumber]);
 
-  if (loading) {
-    return (
-      <div>Loading...</div>
-    );
-  }
-
-  if (error) {
+  if (dataFromServer.error) {
     return (
       <React.Fragment>
         <Alert title='Server error'
@@ -49,7 +42,8 @@ const TimeEntriesPage = () => {
       return rv;
     }, {});
   };
-  const datas = Object.entries(groupBy(data.sheets.flatMap(({entries, project}) => entries.map(x => ({
+  const data = dataFromServer.loading ? [] : dataFromServer.data.sheets;
+  const datas = Object.entries(groupBy(data.flatMap(({entries, project}) => entries.map(x => ({
     ...x,
     project
   }))), entry => moment(entry.startDateTime).format('YYYY-MM-DD'))).map(([key, value]) => {
@@ -73,7 +67,10 @@ const TimeEntriesPage = () => {
         width={'37.5%'}
         footer={null}
       >
-        <TimeEntryForm currentDay={taskMoment} form={form} onSuccess={closeModal} onCancel={closeModal}/>
+        <TimeEntryForm currentDay={taskMoment} form={form} onSuccess={() => {
+          closeModal();
+          dataFromServer.run()
+        }} onCancel={closeModal}/>
       </Modal>
 
       <WeekCalendar
