@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import MainPage from '../MainPage/MainPage';
 import WeekCalendar from '../../components/TimeSheet/WeekCalendar';
 import TimeEntry from '../../components/TimeEntry/TimeEntry';
@@ -16,23 +16,21 @@ const TimeEntriesPage = () => {
   const [visibleEntryModal, setVisibleEntryModal] = useState(false);
   const [taskMoment, setTaskMoment] = useState(moment().utc());
   const [form] = Form.useForm();
+
+  const {data, error, loading, run} = useTimeKeeperAPI('/api/my/week/' + currentWeekNumber);
+
   useEffect(
     () => {
-      //TODO : Fetch your data or select your week => To complete when the WeekService is working with ranges
-      if (!currentFirstDay) {
-        return;
-      }
-    }, [currentFirstDay]);
+      run();
+    }, [currentWeekNumber]);
 
-  const resultFromServer = useTimeKeeperAPI('/api/my/week/' + currentWeekNumber);
-
-  if (resultFromServer.loading) {
+  if (loading) {
     return (
       <div>Loading...</div>
     );
   }
 
-  if (resultFromServer.error) {
+  if (error) {
     return (
       <React.Fragment>
         <Alert title='Server error'
@@ -51,7 +49,7 @@ const TimeEntriesPage = () => {
       return rv;
     }, {});
   };
-  const datas = Object.entries(groupBy(resultFromServer.data.sheets.flatMap(({entries, project}) => entries.map(x => ({
+  const datas = Object.entries(groupBy(data.sheets.flatMap(({entries, project}) => entries.map(x => ({
     ...x,
     project
   }))), entry => moment(entry.startDateTime).format('YYYY-MM-DD'))).map(([key, value]) => {
