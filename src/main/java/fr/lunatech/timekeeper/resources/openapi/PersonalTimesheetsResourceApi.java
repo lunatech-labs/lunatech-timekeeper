@@ -1,6 +1,5 @@
 package fr.lunatech.timekeeper.resources.openapi;
 
-import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import fr.lunatech.timekeeper.services.responses.WeekResponse;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -9,32 +8,13 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 @Path("/my")
 public interface PersonalTimesheetsResourceApi {
-
-    @GET
-    @Path("/timeSheets")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Retrieve timeSheets",
-            description = "Retrieve timeSheets, with details about TimeSheets")
-    @Tag(ref = "personalTimeEntry")
-    @APIResponses(value = {
-            @APIResponse(
-                    responseCode = "200",
-                    description = "TimeSheet successfully retrieved"
-            ),
-            @APIResponse(
-                    responseCode = "404",
-                    description = "No timeSheet for this user"),
-            @APIResponse(
-                    responseCode = "403",
-                    description = "Invalid JWT token")
-    })
-    List<TimeSheetResponse> getAllTimeSheet();
 
     @GET
     @Path("/currentWeek")
@@ -75,5 +55,28 @@ public interface PersonalTimesheetsResourceApi {
                     description = "Invalid JWT token")
     })
     List<WeekResponse> getCurrentMonth();
+
+    @GET
+    @Path("/week/{weekNumber}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Retrieve a specific Week for you",
+            description = "Retrieve a week in your agenda from the date, with details about TimeSheets and Events")
+    @Tag(ref = "personalTimeEntry")
+    @APIResponses(value = {
+            @APIResponse(
+                    responseCode = "200",
+                    description = "Week successfully retrieved"
+            ),
+            @APIResponse(
+                    responseCode = "400",
+                    description = "Invalid weeknumber, must be in the range 1 to 52"),
+            @APIResponse(
+                    responseCode = "404",
+                    description = "No week for this user"),
+            @APIResponse(
+                    responseCode = "403",
+                    description = "Invalid JWT token")
+    })
+    WeekResponse getWeek(@PathParam("weekNumber") Integer weekNumber);
 
 }

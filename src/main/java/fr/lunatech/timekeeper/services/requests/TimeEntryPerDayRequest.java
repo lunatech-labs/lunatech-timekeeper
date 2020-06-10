@@ -1,5 +1,6 @@
 package fr.lunatech.timekeeper.services.requests;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.services.AuthenticationContext;
@@ -11,7 +12,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public final class TimeEntryPerDayRequest implements TimeEntryRequest {
 
     @NotBlank
