@@ -28,25 +28,18 @@ public class PersonalTimesheetsResource implements PersonalTimesheetsResourceApi
     @Inject
     AuthenticationContextProvider authentication;
 
-    @RolesAllowed({"user"})
+    @RolesAllowed({"user", "admin"})
     @Override
-    public WeekResponse getCurrentWeek() {
+    public WeekResponse getWeek(Integer year, Integer weekNumber) {
+        logger.debug(String.format("Get week for year=%d weekNumber=%d", year, weekNumber));
         final var ctx = authentication.context();
-        return weekService.getCurrentWeek(ctx);
+        return weekService.getWeek(ctx, year, weekNumber);
     }
 
-    @RolesAllowed({"user"})
+    @RolesAllowed({"user", "admin"})
     @Override
-    public WeekResponse getWeek(Integer weekNumber) {
-        logger.debug(String.format("Load week %d",weekNumber));
-        final var ctx = authentication.context();
-        return weekService.getWeek(ctx,weekNumber);
-    }
-
-    @RolesAllowed({"user"})
-    @Override
-    public List<WeekResponse> getCurrentMonth() {
-        // Recupere les TimeSheets actives
+    public List<WeekResponse> getMonth(Integer year, Integer monthNumber) {
+        logger.warn(String.format("getMonth year=%d monthNumber=%d NOT IMPLEMENTED", year, monthNumber));
         return Collections.emptyList();
     }
 

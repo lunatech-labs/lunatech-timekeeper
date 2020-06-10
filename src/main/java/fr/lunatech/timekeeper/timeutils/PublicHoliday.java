@@ -1,6 +1,7 @@
 package fr.lunatech.timekeeper.timeutils;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class PublicHoliday {
     public LocalDate date;
@@ -15,6 +16,27 @@ public class PublicHoliday {
         this.name = name;
         this.countryCode = countryCode;
         this.fixedDay = fixedDay;
+    }
+
+    public String getDate() {
+        if(date==null) return null;
+        return DateTimeFormatter.ISO_LOCAL_DATE.format(date);
+    }
+
+    public String getLocalName() {
+        return localName;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public Boolean getFixedDay() {
+        return fixedDay;
     }
 }
 

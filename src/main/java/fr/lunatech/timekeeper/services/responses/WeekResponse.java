@@ -8,7 +8,11 @@ import fr.lunatech.timekeeper.timeutils.Week;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public final class WeekResponse {
@@ -44,8 +48,16 @@ public final class WeekResponse {
         );
     }
 
-    public LocalDate getFirstDayOfWeek() {
-        return firstDayOfWeek;
+    public String getFirstDayOfWeek() {
+        if(firstDayOfWeek==null) return null;
+        return DateTimeFormatter.ISO_LOCAL_DATE.format(firstDayOfWeek);
+    }
+
+    public Integer getWeekNumber() {
+        if(firstDayOfWeek==null) return null;
+        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
+        int weekNumber = firstDayOfWeek.get(woy);
+        return weekNumber;
     }
 
     public List<UserEvent> getUserEvents() {
@@ -54,5 +66,9 @@ public final class WeekResponse {
 
     public List<TimeSheetResponse> getSheets() {
         return sheets;
+    }
+
+    public List<PublicHoliday> getPublicHolidays() {
+        return publicHolidays;
     }
 }

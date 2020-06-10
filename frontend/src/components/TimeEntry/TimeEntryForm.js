@@ -214,7 +214,7 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
 };
 
 const TimeEntryForm = ({currentDay, form, onSuccess, onCancel}) => {
-  const timeSheets = useTimeKeeperAPI('/api/my/week/' + currentDay.format('w'), (form => form));
+  const timeSheets = useTimeKeeperAPI('/api/my/week/' + currentDay.format('YYYY') + '/' + currentDay.format('w'), (form => form));
 
   if (timeSheets.loading) {
     return (
