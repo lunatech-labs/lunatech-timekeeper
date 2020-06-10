@@ -30,7 +30,7 @@ const renderWeekRange = (start, end) => {
 };
 
 
-const numberOfWeek = 30;
+const numberOfWeek = 30;  // TODO ??
 const weekRangeOfDate = (firstDay) => {
   const startOfCurrentWeek = firstDay || moment().utc().startOf('week');
   return [...Array(numberOfWeek).keys()].map(i => {
