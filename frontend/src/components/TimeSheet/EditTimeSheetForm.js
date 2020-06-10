@@ -23,7 +23,14 @@ const EditTimeSheetForm = ({timesheet}) => {
   const [form] = Form.useForm();
 
   EditTimeSheetForm.propTypes = {
-    timesheet: PropTypes.object
+    timeSheet: PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      timeUnit: PropTypes.string,
+      defaultIsBillable: PropTypes.bool.isRequired,
+      expirationDate: PropTypes.string,
+      maxDuration: PropTypes.number,
+      durationUnit: PropTypes.string
+    })
   };
 
   if (timeSheetUpdated) {
@@ -45,7 +52,6 @@ const EditTimeSheetForm = ({timesheet}) => {
     );
   }
 
-  // The method to handle initial values of the form
   const initialValues = (timesheet) => {
     return {
       'timeUnit': timesheet.timeUnit,

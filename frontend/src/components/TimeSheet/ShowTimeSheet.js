@@ -2,12 +2,7 @@ import React, {useState} from 'react';
 import {Alert, Col, Divider, Row} from 'antd';
 import TagProjectClient from '../Tag/TagProjectClient';
 import './ShowTimeSheet.less';
-import {
-  DollarOutlined,
-  ClockCircleOutlined,
-  CalendarOutlined,
-  FieldTimeOutlined,
-} from '@ant-design/icons';
+import {DollarOutlined, ClockCircleOutlined, CalendarOutlined, FieldTimeOutlined} from '@ant-design/icons';
 import ProjectMemberTag from '../Projects/ProjectMemberTag';
 import {useTimeKeeperAPI} from '../../utils/services';
 import PropTypes from 'prop-types';
@@ -40,7 +35,7 @@ const ShowTimeSheet = ({project, member}) => {
             <ProjectMemberTag member={member}/>
             <Row gutter={32}>
               <Col span={12}>
-                <p className="tk_Information"><ClockCircleOutlined/> TimeUnit: {timeSheet.durationUnit}</p>
+                <p className="tk_Information"><ClockCircleOutlined/> TimeUnit: {timeSheet.timeUnit}</p>
                 <p className="tk_Information"><CalendarOutlined/> End
                   date: {timeSheet.expirationDate ? format(timeSheet.expirationDate) : '----/--/--'}</p>
               </Col>
@@ -57,8 +52,6 @@ const ShowTimeSheet = ({project, member}) => {
         </div>
 
         <div className="tk_ModalBottom">
-          {/* we do want a specific css class for edit part (bottom) and show part (top) | U kno avec Geoffroy*/}
-
           {selectedTimeSheet && <EditTimeSheetForm timesheet={selectedTimeSheet}/>}
         </div>
       </div>

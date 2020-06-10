@@ -28,7 +28,7 @@ public class TimeSheetService {
 
     private static Logger logger = LoggerFactory.getLogger(TimeSheetService.class);
 
-    Boolean userHasNoTimeSheet(Long projectId, Long userId){
+    Boolean userHasNoTimeSheet(Long projectId, Long userId) {
         return TimeSheet.stream("user_id = ?1 and project_id = ?2", userId, projectId).count() == 0;
     }
 
@@ -38,7 +38,7 @@ public class TimeSheetService {
 
     @Transactional
     Long createDefaultTimeSheet(Project project, User owner, AuthenticationContext ctx) {
-        TimeSheet timeSheet = new TimeSheet(project, owner, TimeUnit.HOURLY, project.getBillable(),null,null,TimeUnit.HOURLY, Collections.emptyList());
+        TimeSheet timeSheet = new TimeSheet(project, owner, TimeUnit.HOURLY, project.getBillable(), null, null, TimeUnit.HOURLY, Collections.emptyList());
         logger.debug("Create a default timesheet with {}", timeSheet);
         try {
             timeSheet.persistAndFlush();
@@ -51,7 +51,6 @@ public class TimeSheetService {
     @Transactional
     public Optional<Long> update(Long id, TimeSheetRequest request, AuthenticationContext ctx) {
         logger.info("Modify timesheet for id={} with {}, {}", id, request, ctx);
-        System.out.println(String.format("Modify timesheet for id=%s with %s, %s", id, request, ctx));
         return findById(id, ctx)
                 .map(request::unbind)
                 .map(timeSheet -> timeSheet.id);
