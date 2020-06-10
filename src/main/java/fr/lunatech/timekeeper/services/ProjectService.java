@@ -3,9 +3,11 @@ package fr.lunatech.timekeeper.services;
 import fr.lunatech.timekeeper.models.Project;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.resources.exceptions.UpdateResourceException;
+import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import io.quarkus.security.ForbiddenException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,9 +65,14 @@ public class ProjectService {
 
     public Optional<Long> update(Long id, ProjectRequest request, AuthenticationContext ctx) {
         logger.debug("Modify project for for id={} with {}, {}", id, request, ctx);
+        final var maybeProject = findById(id, ctx);
+        maybeProject.ifPresent(project -> {
+            if(!ctx.canEdit(project)) {
+                throw new ForbiddenException("The user can't edit this project with id : " + id);
+            }
+        });
         try {
             transaction.begin(); // See https://quarkus.io/guides/transaction API Approach
-            final var maybeProject = findById(id, ctx);
             // Delete the old members
             maybeProject.ifPresent(project -> project.users.stream()
                     .filter(request::notContains)

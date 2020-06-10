@@ -137,6 +137,47 @@ class ProjectResourceTest {
     }
 
     @Test
+    void shouldNotModifyProjectAsUserNotInProject() {
+        // GIVEN
+        final String adminToken = getAdminAccessToken();
+        final String userToken = getUserAccessToken();
+        final var client1 = create(new ClientRequest("Client 11", "New Description 1"), adminToken);
+        final var originalProject = create(new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, emptyList()), adminToken);
+        final var updatedProject = new ProjectRequest("Some Project 10 updated", false, "updated description", client1.getId(), false, emptyList());
+        // WHEN
+        try {
+            update(updatedProject, ProjectDef.uriWithid(originalProject.getId()), userToken);
+        } catch (HttpTestRuntimeException httpError) {
+            System.out.println("=================================");
+            System.out.println("Catch the error " + httpError.getMimeType());
+            System.out.println("Catch the error " + httpError.getHttpStatus());
+            System.out.println("=================================");
+            assertEquals("application/json", httpError.getMimeType());
+            assertEquals(403, httpError.getHttpStatus());
+        }
+    }
+
+    @Test
+    void shouldNotModifyProjectAsUserNotTeamLeader() {
+
+    }
+
+    @Test
+    void shouldModifyProjectAsUserAsTeamLeader() {
+
+    }
+
+    @Test
+    void shouldAccessProjectAsTeamLeader() {
+
+    }
+
+    @Test
+    void shouldNotAccessProjectAsSimpleMember() {
+
+    }
+
+    @Test
     void shouldAddMemberToProject() {
         // GIVEN
         final String adminToken = getAdminAccessToken();

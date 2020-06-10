@@ -57,6 +57,26 @@ public final class AuthenticationContext {
         }
     }
 
+    Boolean canEdit(@NotNull Project project) {
+        boolean organizationAccess = Objects.equals(getOrganization().id, project.organization.id);
+        if (!organizationAccess) {
+            return false;
+        } else if (profiles.contains(Profile.Admin)) {
+            return true;
+        } else if (project.publicAccess) {
+            return false;
+        } else {
+            Optional<ProjectUser> currentProjectUser = project.users.stream()
+                    .filter(projectUser -> projectUser.user.id.equals(userId))
+                    .findFirst();
+            if(currentProjectUser.isEmpty()) {
+                return false;
+            } else {
+                return currentProjectUser.get().manager;
+            }
+        }
+    }
+
     Boolean canAccess(@NotNull User user) {
         return Objects.equals(getOrganization().id, user.organization.id);
     }
