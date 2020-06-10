@@ -11,13 +11,13 @@ import {
 import ProjectMemberTag from '../Projects/ProjectMemberTag';
 import {useTimeKeeperAPI} from '../../utils/services';
 import PropTypes from 'prop-types';
-import EditTimeSheetForm from "./EditTimeSheetForm";
+import EditTimeSheetForm from './EditTimeSheetForm';
 
 const moment = require('moment');
 const format = (s) => moment(s, 'YYYY-MM-DD').format('YYYY/MM/DD');
 const ShowTimeSheet = ({project, member}) => {
   const {data, error, loading} = useTimeKeeperAPI(`/api/projects/${project.id}/users/${member.id}`);
-  const [selectedTimeSheet, setSelectedTimeSheet] = useState()
+  const [selectedTimeSheet, setSelectedTimeSheet] = useState();
 
   const TimeSheet = ({timeSheet}) => {
 
@@ -80,9 +80,9 @@ const ShowTimeSheet = ({project, member}) => {
     return (
       <React.Fragment>
         <Alert title='Server error'
-               message='Failed to load time sheets from Quarkus backend server'
-               type='error'
-               description={errorReason}
+          message='Failed to load time sheets from Quarkus backend server'
+          type='error'
+          description={errorReason}
         />
       </React.Fragment>
     );
