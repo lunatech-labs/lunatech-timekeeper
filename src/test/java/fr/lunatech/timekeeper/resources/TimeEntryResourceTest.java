@@ -65,7 +65,7 @@ class TimeEntryResourceTest {
         // ID is 2 since Jimmy timesheet is created after Sam's one - Sam is added before Jimmy to the Project
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedTimeSheetJimmy)));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
         LocalDate date = LocalDate.of(2020, 1, 1);
         TimeEntryPerDayRequest today = new TimeEntryPerDayRequest("Today, I did this test", true, date);
 
@@ -75,8 +75,7 @@ class TimeEntryResourceTest {
         // THEN
         TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, true, "Today, I did this test", date.atStartOfDay().withHour(9).withMinute(0), date.atStartOfDay().withHour(17).withMinute(0));
         expectedTimeSheetJimmy.entries = List.of(expectedTimeEntry);
-        List<TimeSheetResponse> ts = Arrays.<TimeSheetResponse>asList(expectedTimeSheetJimmy);
-        var expected = timeKeeperTestUtils.toJson(ts);
+        var expected = timeKeeperTestUtils.toJson(expectedTimeSheetJimmy);
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(expected));
     }
 
@@ -96,7 +95,7 @@ class TimeEntryResourceTest {
         // ID is 2 since Jimmy timesheet is created after Sam's one - Sam is added before Jimmy to the Project
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedTimeSheetJimmy)));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
         LocalDate date = LocalDate.of(2020, 1, 1);
         TimeEntryPerHalfDayRequest morning = new TimeEntryPerHalfDayRequest("This morning, I did this test", true, LocalDate.of(2020, 1, 1), true);
 
@@ -106,8 +105,7 @@ class TimeEntryResourceTest {
         // THEN
         TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, true, "This morning, I did this test", date.atStartOfDay().withHour(8).withMinute(0), date.atStartOfDay().withHour(12).withMinute(0));
         expectedTimeSheetJimmy.entries = List.of(expectedTimeEntry);
-        List<TimeSheetResponse> ts = Arrays.<TimeSheetResponse>asList(expectedTimeSheetJimmy);
-        var expected = timeKeeperTestUtils.toJson(ts);
+        var expected = timeKeeperTestUtils.toJson(expectedTimeSheetJimmy);
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(expected));
     }
 
@@ -127,7 +125,7 @@ class TimeEntryResourceTest {
         // ID is 2 since Jimmy timesheet is created after Sam's one - Sam is added before Jimmy to the Project
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedTimeSheetJimmy)));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
         LocalDateTime start = LocalDateTime.of(2020, 1, 1, 10, 0);
         LocalDateTime end = LocalDateTime.of(2020, 1, 1, 11, 0);
 
@@ -140,8 +138,7 @@ class TimeEntryResourceTest {
         // THEN
         TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, true, "This hour, I did this test", start, end);
         expectedTimeSheetJimmy.entries = List.of(expectedTimeEntry);
-        List<TimeSheetResponse> ts = Arrays.<TimeSheetResponse>asList(expectedTimeSheetJimmy);
-        var expected = timeKeeperTestUtils.toJson(ts);
+        var expected = timeKeeperTestUtils.toJson(expectedTimeSheetJimmy);
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(expected));
     }
 
@@ -161,7 +158,7 @@ class TimeEntryResourceTest {
         // ID is 2 since Jimmy timesheet is created after Sam's one - Sam is added before Jimmy to the Project
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedTimeSheetJimmy)));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
         LocalDateTime start = LocalDateTime.of(2020, 1, 1, 11, 0);
         LocalDateTime end = LocalDateTime.of(2020, 1, 1, 9, 0);
 

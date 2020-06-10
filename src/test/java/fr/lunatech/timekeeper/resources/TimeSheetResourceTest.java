@@ -64,12 +64,12 @@ class TimeSheetResourceTest {
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
 
 
-        final var expectedTimeSheetSam = new TimeSheetResponse(8L, project, sam, TimeUnit.DAY, null, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(9L, project, jimmy, TimeUnit.DAY, null, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetSam = new TimeSheetResponse(1L, project, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
         // THEN
-        getValidation(TimeSheetDef.uriWithid(8L),adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)));
-        getValidation(TimeSheetDef.uriWithid(9L),adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
+        getValidation(TimeSheetDef.uriWithid(1L),adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)));
+        getValidation(TimeSheetDef.uriWithid(2L),adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
 
     }
 
@@ -83,12 +83,12 @@ class TimeSheetResourceTest {
         ProjectRequest.ProjectUserRequest samProjectRequest = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
         List<ProjectRequest.ProjectUserRequest> newUsers = List.of(samProjectRequest);
         // FIXME: see TK-359
-        Long expectedId = 6L;
+        Long expectedId = 1L;
 
         // WHEN : the project is created, a time sheet is generated for all user
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
         // verify first version
-        final var expectedTimeSheetSam = new TimeSheetResponse(expectedId, project, sam, TimeUnit.DAY, null, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
+        final var expectedTimeSheetSam = new TimeSheetResponse(expectedId, project, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
         getValidation(TimeSheetDef.uriWithid(expectedId), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)));
 
         // WHEN : AND the timesheet is updated (adding a end date a maxDuration and changing units)
@@ -100,7 +100,7 @@ class TimeSheetResourceTest {
                 60,
                 TimeUnit.DAY
         );
-        putValidation(TimeSheetDef.uriWithid(expectedId),adminToken,updatedTimeSheet, NO_CONTENT);
+        putValidation(TimeSheetDef.uriWithid(expectedId),adminToken,timeKeeperTestUtils.toJson(updatedTimeSheet), NO_CONTENT);
 
         // THEN get the updated version
         final var expectedUpdatedTimeSheetSam = new TimeSheetResponse(expectedId, project, sam, TimeUnit.DAY, true, newEndDate, 60, TimeUnit.DAY.toString(), Collections.emptyList());

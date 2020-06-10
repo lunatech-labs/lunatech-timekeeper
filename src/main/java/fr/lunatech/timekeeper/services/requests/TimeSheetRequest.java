@@ -21,7 +21,7 @@ public class TimeSheetRequest {
 
     // 1---------------
     @Null
-    @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_TIME_PATTERN)
+    @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_PATTERN)
     public LocalDate expirationDate;
 
     // 2 ------------------

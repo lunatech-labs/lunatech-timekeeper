@@ -335,8 +335,8 @@ class ProjectResourceTest {
         final var expectedTimeSheetSam = new TimeSheetResponse(1L, expectedProject, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
-        getValidation(TimeSheetDef.uri, adminToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(List.of(expectedTimeSheetSam))));
-        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(List.of(expectedTimeSheetJimmy))));
+        getValidation(PersonalTimeSheetDef.uri, adminToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(List.of(expectedTimeSheetSam))));
+        getValidation(PersonalTimeSheetDef.uri, jimmyToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(List.of(expectedTimeSheetJimmy))));
     }
 
     @Test
@@ -377,8 +377,8 @@ class ProjectResourceTest {
         final var expectedTimeSheetSam = new TimeSheetResponse(1L, expectedProject, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
-        getValidation(TimeSheetDef.uri, adminToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(List.of(expectedTimeSheetSam))));
-        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(List.of(expectedTimeSheetJimmy))));
+        getValidation(PersonalTimeSheetDef.uri, adminToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(List.of(expectedTimeSheetSam))));
+        getValidation(PersonalTimeSheetDef.uri, jimmyToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(List.of(expectedTimeSheetJimmy))));
     }
 
     @Test
@@ -425,7 +425,7 @@ class ProjectResourceTest {
         // THEN
         final var expectedTimeSheetJimmy = new TimeSheetResponse(1L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
-        getValidation(TimeSheetDef.uri, jimmyToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(List.of(expectedTimeSheetJimmy))));
+        getValidation(PersonalTimeSheetDef.uri, jimmyToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(List.of(expectedTimeSheetJimmy))));
     }
 
     @Test
