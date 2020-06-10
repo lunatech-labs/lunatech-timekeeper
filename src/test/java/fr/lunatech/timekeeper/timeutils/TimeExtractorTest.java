@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 // Duration ISO https://en.wikipedia.org/wiki/ISO_8601#Durations
 class TimeExtractorTest {

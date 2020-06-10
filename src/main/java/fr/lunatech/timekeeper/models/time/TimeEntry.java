@@ -1,7 +1,5 @@
 package fr.lunatech.timekeeper.models.time;
 
-import fr.lunatech.timekeeper.models.User;
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
