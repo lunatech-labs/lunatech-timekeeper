@@ -23,23 +23,28 @@ const ShowTimeSheet = ({project, member}) => {
 
         return (
             <div key={`timesheet-information-${timeSheet.id}`}>
-                <Row gutter={32}>
-                    <Col span={12}>
-                        <p className="tk_Information"><ClockCircleOutlined/> TimeUnit: {timeSheet.durationUnit}</p>
-                        <p className="tk_Information"><CalendarOutlined/> End
-                            date: {timeSheet.expirationDate ? format(timeSheet.expirationDate) : '----/--/--'}</p>
-                    </Col>
-                    <Col span={12}>
-                        <p className="tk_Information"><CalendarOutlined/> Number of days: {timeSheet.maxDuration}</p>
-                        <p className="tk_Information">
-                            <DollarOutlined/> Billable: {timeSheet.defaultIsBillable ? 'Yes' : 'No'}</p>
-                    </Col>
-                </Row>
-                {/* Move this outside  show part in top, edit part in bottom*/}
-                <a onClick={() => {
-                    setSelectedTimeSheet(timeSheet);
-                }}>Edit timesheet</a>
-                {selectedTimeSheet && <EditTimeSheetForm timesheet={selectedTimeSheet}/>}
+                <div className="tk_ModalTopBody">
+                    <Row gutter={32}>
+                        <Col span={12}>
+                            <p className="tk_Information"><ClockCircleOutlined/> TimeUnit: {timeSheet.durationUnit}</p>
+                            <p className="tk_Information"><CalendarOutlined/> End
+                                date: {timeSheet.expirationDate ? format(timeSheet.expirationDate) : '----/--/--'}</p>
+                        </Col>
+                        <Col span={12}>
+                            <p className="tk_Information"><CalendarOutlined/> Number of days: {timeSheet.maxDuration}
+                            </p>
+                            <p className="tk_Information">
+                                <DollarOutlined/> Billable: {timeSheet.defaultIsBillable ? 'Yes' : 'No'}</p>
+                        </Col>
+                    </Row>
+                </div>
+                <div className="tk_ModalBottom">
+                    {/* we do want a specific css class for edit part (bottom) and show part (top) | U kno avec Geoffroy*/}
+                    <a onClick={() => {
+                        setSelectedTimeSheet(timeSheet);
+                    }}>Edit timesheet</a>
+                    {selectedTimeSheet && <EditTimeSheetForm timesheet={selectedTimeSheet}/>}
+                </div>
             </div>);
     };
 
@@ -89,9 +94,7 @@ const ShowTimeSheet = ({project, member}) => {
                     <ProjectMemberTag member={member}/>
                 </div>
             </div>
-            <div className="tk_ModalBottom">
                 <TimeSheet timeSheet={data}/>
-            </div>
         </div>
     );
 };
