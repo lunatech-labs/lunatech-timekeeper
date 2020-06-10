@@ -8,25 +8,20 @@
 @red_Tk: #F3252C;
 @gold_Tk: #FAAD14;
 
-@primary-color: #F3252C; // primary color for all components
-//@link-color: #F3252C; // link color
+@primary-color: @red_Tk; // primary color for all components
 @success-color: #52c41a; // success state color
 @warning-color: #faad14; // warning state color
 @error-color: #f5222d; // error state color
-//@heading-color: rgba(0, 0, 0, 0.85); // heading text color
-//@text-color: rgba(0, 0, 0, 0.65); // major text color
-//@text-color-secondary: rgba(0, 0, 0, 0.45); // secondary text color
-//@disabled-color: rgba(0, 0, 0, 0.25); // disable state color
-//@border-radius-base: 4px; // major border radius
-//@border-color-base: #d9d9d9; // major border color
-//@box-shadow-base: 0 2px 8px rgba(0, 0, 0, 0.15); // major shadow for layers
-
 
 // ------------------- LAYOUT BACKGROUND -------------------
 @popover-background: @darkGray_Tk;
 @body-background: @black_Tk;
 @layout-body-background: @body-background;
 @layout-header-background: @popover-background;
+
+// ------------------- GENERAL -------------------
+@border-radius-base: 4px;
+@disabled-color: @lightGray_Tk;
 
 // ------------------- TYPOGRAPHY -------------------
 // Title
@@ -40,9 +35,6 @@
 // Text time entries card ellipsis
 @line-height: 1.4;
 @lines-to-show: 1;
-
-// ------------------- GENERAL -------------------
-@border-radius-base: 4px;
 
 // ------------------- BREADCRUMB -------------------
 @breadcrumb-base-color: @text-color-secondary;
