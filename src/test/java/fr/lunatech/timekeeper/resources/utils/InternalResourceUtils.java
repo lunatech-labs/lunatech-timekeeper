@@ -33,22 +33,16 @@ final class InternalResourceUtils {
     }
 
     public static <P> RType updateResource(P request, String uri, String token) {
-        var reqSpec = given()
+        given()
                 .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(request)
-                .put(uri);
-        var status = reqSpec.statusCode();
-        logger.debug(String.format("Status code   : %s", status));
-        if (status != 204 && status > 202) {
-            throw new HttpTestRuntimeException(status, reqSpec.getBody().print(), reqSpec.getContentType());
-        } else {
-            reqSpec
-                    .then()
-                    .statusCode(NO_CONTENT.getStatusCode());
-            return RType.NoReturn;
-        }
+                .put(uri)
+                .then()
+                .statusCode(NO_CONTENT.getStatusCode());
+
+        return RType.NoReturn;
     }
 
     public static <R, P> R createResource(P request, String uri_root, Option<String> getUri, Class<R> type, String token) {

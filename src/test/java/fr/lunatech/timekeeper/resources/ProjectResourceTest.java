@@ -25,8 +25,7 @@ import static fr.lunatech.timekeeper.resources.KeycloakTestResource.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
-import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
-import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.putValidation;
+import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.*;
 import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.Response.Status.*;
 import static org.hamcrest.CoreMatchers.is;
@@ -145,12 +144,7 @@ class ProjectResourceTest {
         final var originalProject = create(new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, emptyList()), adminToken);
         final var updatedProject = new ProjectRequest("Some Project 10 updated", false, "updated description", client1.getId(), false, emptyList());
         // WHEN
-        try {
-            update(updatedProject, ProjectDef.uriWithid(originalProject.getId()), userToken);
-        } catch (HttpTestRuntimeException httpError) {
-            assertEquals("application/json", httpError.getMimeType());
-            assertEquals(403, httpError.getHttpStatus());
-        }
+        putValidation(ProjectDef.uriWithid(originalProject.getId()), userToken, updatedProject, FORBIDDEN);
     }
 
     @Test
@@ -172,12 +166,7 @@ class ProjectResourceTest {
         final var projectCreated = create(projectRequest, adminToken);
 
         // WHEN
-        try {
-            update(projectRequest, ProjectDef.uriWithid(projectCreated.getId()), userToken);
-        } catch (HttpTestRuntimeException httpError) {
-            assertEquals("application/json", httpError.getMimeType());
-            assertEquals(403, httpError.getHttpStatus());
-        }
+        putValidation(ProjectDef.uriWithid(projectCreated.getId()), userToken, projectRequest, FORBIDDEN);
     }
 
     @Test
