@@ -4,7 +4,7 @@ import {Alert, Button, Col, Form, Input, message, Radio, Row, Select, Space, Spi
 import TitleSection from '../Title/TitleSection';
 import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
 import '../Modal/ModalGeneral.less';
-import EmptyMessage from '../EmptyMessage/EmptyMessage';
+import NoDataMessage from '../NoDataMessage/NoDataMessage';
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -261,7 +261,7 @@ const TimeEntryForm = ({currentDay, form, onSuccess, onCancel}) => {
           </div>
         </div>
         <div className="tk_ModalTopBody">
-          <EmptyMessage message='No task for this day, there is still time to add one.'/>
+          <NoDataMessage message='No task for this day, there is still time to add one.'/>
         </div>
       </div>
 
