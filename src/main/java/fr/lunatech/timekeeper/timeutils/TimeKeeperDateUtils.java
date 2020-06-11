@@ -41,7 +41,7 @@ public class TimeKeeperDateUtils {
         // We can use either the User Locale or the Organization Locale.
         // But for the time being I set it to FR so the first day of week is a Monday
         // This code will need to be updated later, to adjust user preferences and maybe relies on the AuthenticationContext
-        TemporalField fieldISO = WeekFields.of(Locale.FRANCE).dayOfWeek();
+        TemporalField fieldISO = WeekFields.ISO.dayOfWeek();
         LocalDate firstDayOfWeek = inputDate.with(fieldISO, 1);
         return firstDayOfWeek;
     }
@@ -52,7 +52,7 @@ public class TimeKeeperDateUtils {
      * @return a weekNumber as Integer
      */
     public static Integer getWeekNumberFromDate(final LocalDate date) {
-        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
+        TemporalField woy = WeekFields.ISO.weekOfWeekBasedYear();
         return date.get(woy);
     }
 
