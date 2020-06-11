@@ -249,8 +249,8 @@ class ProjectResourceTest {
         final var expectedTimeSheetSam = new TimeSheetResponse(1L, project, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedTimeSheetJimmy)));
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), sam.getId()), adminToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedTimeSheetSam)));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), sam.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)));
     }
 
     @Test
@@ -289,7 +289,7 @@ class ProjectResourceTest {
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
         // THEN : I can see the timeSheet by project by member
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedTimeSheetJimmy)));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
     }
 
 
@@ -334,8 +334,8 @@ class ProjectResourceTest {
         final var expectedTimeSheetSam = new TimeSheetResponse(1L, expectedProject, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedTimeSheetJimmy)));
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), sam.getId()), adminToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedTimeSheetSam)));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), sam.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)));
     }
 
     @Test
@@ -376,8 +376,8 @@ class ProjectResourceTest {
         final var expectedTimeSheetSam = new TimeSheetResponse(1L, expectedProject, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedTimeSheetJimmy)));
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), sam.getId()), adminToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedTimeSheetSam)));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), sam.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)));
     }
 
     @Test
@@ -424,8 +424,7 @@ class ProjectResourceTest {
         // THEN
         final var expectedTimeSheetJimmy = new TimeSheetResponse(1L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
 
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedTimeSheetJimmy)));
-
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
     }
 
     @Test

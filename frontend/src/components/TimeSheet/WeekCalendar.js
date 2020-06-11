@@ -102,7 +102,7 @@ const WeekCalendar = (props) => {
     <Select onChange={id => setWeekSelected(id)} defaultValue={0} value={weekSelected}>
       {weekRanges.map(({id, start, end}) => {
         return (
-          <Select.Option key={`date-range-${id}`} value={id} disabled={id === weekSelected}>
+          <Select.Option className={`${start.isSame(moment(), 'week') ? 'tk_CurrentWeekSelect' : ''}`} key={`date-range-${id}`} value={id} disabled={id === weekSelected}>
             {renderWeekRange(start, end)}
           </Select.Option>
         );

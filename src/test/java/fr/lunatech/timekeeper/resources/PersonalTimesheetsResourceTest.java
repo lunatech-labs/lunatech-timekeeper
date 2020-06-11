@@ -66,9 +66,9 @@ public class PersonalTimesheetsResourceTest {
         List<ProjectRequest.ProjectUserRequest> newUsers = List.of(jimmyProjectRequest);
         final var project = create(new ProjectRequest("Disney Content API", true, "Project for the backend system", client.getId(), true, newUsers), adminToken);
 
-        WeekResponse response = new WeekResponse(LocalDate.of(2020,5,18), Collections.emptyList(),Collections.emptyList(),Collections.emptyList());
+        WeekResponse response = new WeekResponse(LocalDate.of(2020,5,25), Collections.emptyList(),Collections.emptyList(),Collections.emptyList());
 
-        getValidation(PersonalTimeSheetsDef.uriWithMultiInt(2020,21), adminToken, OK).body(is(timeKeeperTestUtils.toJson(response)));
+        getValidation(PersonalTimeSheetsDef.uriWithMultiInt(2020,22), adminToken, OK).body(is(timeKeeperTestUtils.toJson(response)));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class PersonalTimesheetsResourceTest {
 
         final var timesheet = new TimeSheetResponse(1L, projectResponse, jimmy, TimeUnit.HOURLY, true,null,null, "HOURLY", Collections.emptyList());
         final List<PublicHoliday> holidays = new ArrayList<>();
-        holidays.add(new PublicHoliday(LocalDate.of(2020,05,20), "Jour de l'Ascension","Ascension Day","FR",false));
+        holidays.add(new PublicHoliday(LocalDate.of(2020,05,21), "Jour de l'Ascension","Ascension Day","FR",false));
         WeekResponse response = new WeekResponse(LocalDate.of(2020,5,18), Collections.emptyList(), List.of(timesheet), holidays);
 
         getValidation(PersonalTimeSheetsDef.uriWithMultiInt(2020,21), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(response)));

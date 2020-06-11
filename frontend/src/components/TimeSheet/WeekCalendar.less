@@ -57,7 +57,7 @@
     }
     .ant-radio-group {
       .ant-radio-button-wrapper {border: 1px solid @lightGray_Tk;}
-      .ant-radio-button-wrapper:not(:first-child)::before {background-color: @red_Tk;}
+      .ant-radio-button-wrapper:not(:first-child)::before {background-color: purple;}
       .ant-radio-button-wrapper-checked {
         border: 1px solid @red_Tk;
         color: @red_Tk;
@@ -80,4 +80,16 @@
     color: @lightGray_Tk;
     margin-bottom: 16px;
   }
+}
+.ant-select-item-option-disabled {
+  color: @lightGray_Tk;
+}
+.tk_CurrentWeekSelect:before {
+  content: "•";
+  color: @red_Tk;
+  font-size: 24px;
+  height: 6px;
+  align-items: center;
+  display: flex;
+  margin: 8px 8px 0 0;
 }
