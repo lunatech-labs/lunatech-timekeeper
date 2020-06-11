@@ -1,17 +1,17 @@
 import React  from 'react';
-import './EmptyMessage.less';
+import './NoDataMessage.less';
 import PropTypes from 'prop-types';
 
-const EmptyMessage = ( {message} ) => {
+const NoDataMessage = ({message} ) => {
   return (
-    <p className="tk_EmptyMessage">
+    <p className="tk_NoDataMessage">
       {message}
     </p>
   );
 };
 
-EmptyMessage.propTypes = {
+NoDataMessage.propTypes = {
   message: PropTypes.string.isRequired
 };
 
-export default EmptyMessage;
+export default NoDataMessage;
