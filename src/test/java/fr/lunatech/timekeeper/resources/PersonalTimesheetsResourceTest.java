@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 import javax.inject.Inject;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,10 +26,8 @@ import java.util.List;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.PersonalTimeSheetsDef;
-import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ProjectDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
-import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.hamcrest.CoreMatchers.is;
 
@@ -102,7 +99,7 @@ public class PersonalTimesheetsResourceTest {
 
         final var timesheet = new TimeSheetResponse(1L, projectResponse, jimmy, TimeUnit.HOURLY, true,null,null, "HOURLY", Collections.emptyList());
         final List<PublicHoliday> holidays = new ArrayList<>();
-        holidays.add(new PublicHoliday(LocalDate.of(2020,05,21), "Jour de l'Ascension","Ascension Day","FR",false));
+        holidays.add(new PublicHoliday(LocalDate.of(2020,05,21), "Jour de l'Ascension","Ascension Day","FR"));
         WeekResponse response = new WeekResponse(LocalDate.of(2020,5,18), Collections.emptyList(), List.of(timesheet), holidays);
 
         getValidation(PersonalTimeSheetsDef.uriWithMultiInt(2020,21), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(response)));

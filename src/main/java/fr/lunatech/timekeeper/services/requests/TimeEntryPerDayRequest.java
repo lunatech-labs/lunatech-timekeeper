@@ -19,9 +19,6 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
     private final String comment;
 
     @NotNull
-    private final Boolean billable;
-
-    @NotNull
     private final LocalDate date;
 
     public TimeEntryPerDayRequest(
@@ -30,7 +27,6 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
             @NotNull LocalDate date
     ) {
         this.comment = comment;
-        this.billable = billable;
         this.date = date;
     }
 
@@ -40,7 +36,6 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
             @NotNull AuthenticationContext ctx
     ) {
         TimeEntry timeEntry = new TimeEntry();
-        timeEntry.billable = getBillable();
         timeEntry.comment = getComment();
         timeEntry.startDateTime = this.date.atStartOfDay().withHour(9).withMinute(0);
         timeEntry.endDateTime = this.date.atStartOfDay().withHour(17).withMinute(0);
@@ -52,10 +47,6 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
         return comment;
     }
 
-    public Boolean getBillable() {
-        return billable;
-    }
-
     public LocalDate getDate() {
         return date;
     }
@@ -64,7 +55,6 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
     public String toString() {
         return "TimeEntryPerDayRequest{" +
                 "comment='" + comment + '\'' +
-                ", billable=" + billable +
                 ", date='" + date +
                 '}';
     }

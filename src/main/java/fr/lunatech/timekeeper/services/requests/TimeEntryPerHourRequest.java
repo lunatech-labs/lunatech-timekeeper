@@ -19,9 +19,6 @@ public final class TimeEntryPerHourRequest implements TimeEntryRequest {
     private final String comment;
 
     @NotNull
-    private final Boolean billable;
-
-    @NotNull
     private final LocalDateTime startDateTime;
 
     @NotNull
@@ -34,7 +31,6 @@ public final class TimeEntryPerHourRequest implements TimeEntryRequest {
             @NotNull LocalDateTime endDateTime
     ) {
         this.comment = comment;
-        this.billable = billable;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
     }
@@ -45,7 +41,6 @@ public final class TimeEntryPerHourRequest implements TimeEntryRequest {
             @NotNull AuthenticationContext ctx
     ) {
         TimeEntry timeEntry = new TimeEntry();
-        timeEntry.billable = getBillable();
         timeEntry.comment = getComment();
         timeEntry.startDateTime = this.startDateTime;
         timeEntry.endDateTime = this.endDateTime;
@@ -60,10 +55,6 @@ public final class TimeEntryPerHourRequest implements TimeEntryRequest {
         return comment;
     }
 
-    public Boolean getBillable() {
-        return billable;
-    }
-
     public LocalDateTime getStartDateTime() {
         return startDateTime;
     }
@@ -76,7 +67,6 @@ public final class TimeEntryPerHourRequest implements TimeEntryRequest {
     public String toString() {
         return "TimeEntryRequest{" +
                 "comment='" + comment + '\'' +
-                ", billable=" + billable +
                 ", startDateTime='" + startDateTime + '\'' +
                 ", endDateTime='" + endDateTime + '\'' +
                 '}';

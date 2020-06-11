@@ -20,9 +20,6 @@ public final class TimeEntryPerHalfDayRequest implements TimeEntryRequest{
     private final String comment;
 
     @NotNull
-    private final Boolean billable;
-
-    @NotNull
     private final LocalDate date;
 
     @NotNull
@@ -30,12 +27,11 @@ public final class TimeEntryPerHalfDayRequest implements TimeEntryRequest{
 
     public TimeEntryPerHalfDayRequest(
             @NotBlank String comment,
-            @NotNull Boolean billable,
+
             @NotNull LocalDate date,
             @NotNull Boolean isMorning
     ) {
         this.comment = comment;
-        this.billable = billable;
         this.date = date;
         this.isMorning = isMorning;
     }
@@ -46,7 +42,6 @@ public final class TimeEntryPerHalfDayRequest implements TimeEntryRequest{
             @NotNull AuthenticationContext ctx
     ) {
         TimeEntry timeEntry = new TimeEntry();
-        timeEntry.billable = getBillable();
         timeEntry.comment = getComment();
         if(isMorning){
             timeEntry.startDateTime =  this.date.atStartOfDay().plusHours(8);
@@ -63,10 +58,6 @@ public final class TimeEntryPerHalfDayRequest implements TimeEntryRequest{
         return comment;
     }
 
-    public Boolean getBillable() {
-        return billable;
-    }
-
     public LocalDate getDate() {
         return date;
     }
@@ -80,7 +71,6 @@ public final class TimeEntryPerHalfDayRequest implements TimeEntryRequest{
     public String toString() {
         return "TimeEntryHalfADayRequest{" +
                 "comment='" + comment + '\'' +
-                ", billable=" + billable +
                 ", date='" + date + '\'' +
                 ", isMorning='" + isMorning + '\'' +
                 '}';
