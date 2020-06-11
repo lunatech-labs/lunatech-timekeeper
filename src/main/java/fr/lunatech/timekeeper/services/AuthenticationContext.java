@@ -1,6 +1,7 @@
 package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.*;
+import fr.lunatech.timekeeper.models.time.TimeSheet;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -31,6 +32,10 @@ public final class AuthenticationContext {
 
     Boolean canAccess(@NotNull Client client) {
         return Objects.equals(getOrganization().id, client.organization.id);
+    }
+
+    Boolean canAccess(@NotNull TimeSheet timeSheet) {
+        return Objects.equals(getOrganization().id, timeSheet.project.organization.id);
     }
 
     Boolean canAccess(@NotNull Organization organization) {

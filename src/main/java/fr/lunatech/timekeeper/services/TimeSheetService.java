@@ -82,6 +82,6 @@ public class TimeSheetService {
 
     Optional<TimeSheet> findById(Long id, AuthenticationContext ctx) {
         return TimeSheet.<TimeSheet>findByIdOptional(id)
-                .filter(timeSheet -> ctx.canAccess(timeSheet.project));
+                .filter(ctx::canAccess);
     }
 }
