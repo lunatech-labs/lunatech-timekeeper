@@ -9,6 +9,48 @@
   &:last-child {border-top: none;}
   span:first-child {margin-right: 6px;}
 }
+.ant-picker-dropdown {
+  .ant-picker-panel-container {
+    .ant-picker-panel {
+      .ant-picker-date-panel {
+        .ant-picker-header {
+          button {
+            color: @lightGray_Tk;
+            &:hover {color: @white_Tk;}
+          }
+          .ant-picker-header-view {
+            button {
+              color: @white_Tk;
+              &:hover {color: @red_Tk;}
+            }
+
+          }
+        }
+        .ant-picker-body {
+          tbody {
+            tr {
+              td {
+                color: @lightGray_Tk;
+                div {
+                  &:hover {
+                    background: @red_Tk;
+                    color: @white_Tk;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      .ant-picker-footer {
+        a {
+          color: @white_Tk;
+          &:hover {color: @red_Tk;}
+        }
+      }
+    }
+  }
+}
 .ant-modal-root {
   .ant-modal-wrap {
     .ant-modal {
@@ -21,8 +63,9 @@
         flex-direction: column;
         align-items: flex-end;
         border-radius: 0;
+        overflow: scroll;
         .ant-modal-close {
-          position: initial;
+          position: absolute;
           margin: 32px 64px 64px 64px;
           &:hover {color: @white_Tk;}
           .ant-modal-close-x {
@@ -40,8 +83,11 @@
     }
   }
 }
+.tk_ModalGen {
+
+}
 .tk_ModalTop {
-  padding: 0 64px;
+  padding: 96px 64px 64px 64px;
   .tk_ModalTopHead {
     display: flex;
     align-items: center;
@@ -86,4 +132,8 @@
       &:last-child {border-bottom: none;}
     }
   }
+}
+.tk_ModalBottom {
+  padding: 64px;
+  border-top: 1px solid rgba(216, 216, 216, 0.1);
 }
