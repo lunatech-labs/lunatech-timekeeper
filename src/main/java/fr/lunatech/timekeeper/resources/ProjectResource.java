@@ -64,6 +64,15 @@ public class ProjectResource implements ProjectResourceApi {
 
     @RolesAllowed({"user", "admin"})
     @Override
+    public Response joinPublicProject(Long id, Long userId) {
+        final var ctx = authentication.context();
+        projectService.joinProject(id, userId, ctx)
+                .orElseThrow(() -> new NotFoundException(String.format("Project not found for id=%d", id)));
+        return Response.noContent().build();
+    }
+
+    @RolesAllowed({"user", "admin"})
+    @Override
     public TimeSheetResponse getLastActiveTimeSheetForUser(long idProject, long idUser) {
         final var ctx = authentication.context();
         Optional<TimeSheetResponse> maybeResponse = timeSheetService.findFirstForProjectForUser(idProject, idUser);

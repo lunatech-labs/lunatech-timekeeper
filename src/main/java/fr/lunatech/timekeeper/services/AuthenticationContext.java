@@ -80,6 +80,11 @@ public final class AuthenticationContext {
         }
     }
 
+    Boolean canJoin(@NotNull Project project) {
+        boolean organizationAccess = Objects.equals(getOrganization().id, project.organization.id);
+        return organizationAccess && project.publicAccess;
+    }
+
     Boolean canAccess(@NotNull User user) {
         return Objects.equals(getOrganization().id, user.organization.id);
     }

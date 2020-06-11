@@ -101,6 +101,16 @@ public class ProjectService {
             throw new UpdateResourceException("Cannot update a Project, invalid projectRequest");
         }
     }
+    // TODO : NotImplementedYet
+    public Optional<Long> joinProject(Long id, Long userId, AuthenticationContext ctx) {
+        logger.debug("Modify project for for id={} with userId={}, {}", id, userId, ctx);
+        findById(id, ctx).ifPresent(project -> {
+            if (!ctx.canJoin(project)) {
+                throw new ForbiddenException("The user can't join this project with id : " + id);
+            }
+        });
+        return Optional.empty();
+    }
 
     Optional<Project> findById(Long id, AuthenticationContext ctx) {
         return Project.<Project>findByIdOptional(id)
