@@ -63,8 +63,6 @@ public final class AuthenticationContext {
             return false;
         } else if (profiles.contains(Profile.Admin)) {
             return true;
-        } else if (project.publicAccess) {
-            return false;
         } else {
             Optional<ProjectUser> currentProjectUser = project.users.stream()
                     .filter(projectUser -> projectUser.user.id.equals(userId))

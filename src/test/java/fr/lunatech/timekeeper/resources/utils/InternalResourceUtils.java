@@ -39,8 +39,8 @@ final class InternalResourceUtils {
                 .contentType(APPLICATION_JSON)
                 .body(request)
                 .put(uri);
-        var location = reqSpec.header(LOCATION);
         var status = reqSpec.statusCode();
+        logger.debug(String.format("Status code   : %s", status));
         if (status != 204 && status > 202) {
             throw new HttpTestRuntimeException(status, reqSpec.getBody().print(), reqSpec.getContentType());
         } else {

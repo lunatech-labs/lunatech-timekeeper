@@ -148,33 +148,123 @@ class ProjectResourceTest {
         try {
             update(updatedProject, ProjectDef.uriWithid(originalProject.getId()), userToken);
         } catch (HttpTestRuntimeException httpError) {
-            System.out.println("=================================");
-            System.out.println("Catch the error " + httpError.getMimeType());
-            System.out.println("Catch the error " + httpError.getHttpStatus());
-            System.out.println("=================================");
             assertEquals("application/json", httpError.getMimeType());
             assertEquals(403, httpError.getHttpStatus());
         }
     }
 
     @Test
-    void shouldNotModifyProjectAsUserNotTeamLeader() {
+    void shouldNotModifyProjectAsUserAsMember() {
+        // GIVEN
+        final String adminToken = getAdminAccessToken();
+        final String userToken = getUserAccessToken();
+        final var client1 = create(new ClientRequest("Client 11", "New Description 1"), adminToken);
 
+        var sam = create(adminToken);
+        var jimmy = create(userToken);
+
+        final var userRequest1 = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
+        final var userRequest2 = new ProjectRequest.ProjectUserRequest(jimmy.getId(), false);
+
+        final var expectedProjectUsers = List.of(userRequest1, userRequest2);
+
+        final var projectRequest = new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, expectedProjectUsers);
+        final var projectCreated = create(projectRequest, adminToken);
+
+        // WHEN
+        try {
+            update(projectRequest, ProjectDef.uriWithid(projectCreated.getId()), userToken);
+        } catch (HttpTestRuntimeException httpError) {
+            assertEquals("application/json", httpError.getMimeType());
+            assertEquals(403, httpError.getHttpStatus());
+        }
     }
 
     @Test
     void shouldModifyProjectAsUserAsTeamLeader() {
+        // GIVEN
+        final String adminToken = getAdminAccessToken();
+        final String userToken = getUserAccessToken();
+        final var client1 = create(new ClientRequest("Client 11", "New Description 1"), adminToken);
 
+        var sam = create(adminToken);
+        var jimmy = create(userToken);
+
+        final var userRequest1 = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
+        final var userRequest2 = new ProjectRequest.ProjectUserRequest(jimmy.getId(), true);
+
+        final var projectUserRequests = List.of(userRequest1, userRequest2);
+
+        final var projectRequest = new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, projectUserRequests);
+        final var projectCreated = create(projectRequest, adminToken);
+
+        final var updatedProject = new ProjectRequest("Some Project Updated", true, "some description", client1.getId(), true, projectUserRequests);
+
+        final var expectedProjectUsers = List.of(
+                new ProjectResponse.ProjectUserResponse(sam.getId(), true, sam.getName(), sam.getPicture()),
+                new ProjectResponse.ProjectUserResponse(jimmy.getId(), true, jimmy.getName(), jimmy.getPicture())
+        );
+
+        final var expectedUpdatedProject = new ProjectResponse(projectCreated.getId()
+                , updatedProject.getName()
+                , updatedProject.isBillable()
+                , updatedProject.getDescription()
+                , new ProjectResponse.ProjectClientResponse(client1.getId(), client1.getName())
+                , expectedProjectUsers
+                , updatedProject.isPublicAccess());
+        // WHEN
+        update(updatedProject, ProjectDef.uriWithid(projectCreated.getId()), userToken);
+        getValidation(ProjectDef.uriWithid(projectCreated.getId()), userToken, OK).body(is(timeKeeperTestUtils.toJson(expectedUpdatedProject)));
     }
 
     @Test
-    void shouldAccessProjectAsTeamLeader() {
+    void shouldAccessPrivateProjectAsTeamLeader() {
+        final String adminToken = getAdminAccessToken();
+        final String userToken = getUserAccessToken();
+        final var client1 = create(new ClientRequest("Client 11", "New Description 1"), adminToken);
 
+        var sam = create(adminToken);
+        var jimmy = create(userToken);
+
+        final var userRequest1 = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
+        final var userRequest2 = new ProjectRequest.ProjectUserRequest(jimmy.getId(), true);
+
+        final var newProjectUsers = List.of(userRequest1, userRequest2);
+
+        final var projectRequest = new ProjectRequest("Some Project 10", true, "some description", client1.getId(), false, newProjectUsers);
+        final var projectCreated = create(projectRequest, adminToken);
+        getValidation(ProjectDef.uriWithid(projectCreated.getId()), userToken, OK);
     }
 
     @Test
-    void shouldNotAccessProjectAsSimpleMember() {
+    void shouldNotAccessPrivateProjectAsSimpleMember() {
+        final String adminToken = getAdminAccessToken();
+        final String userToken = getUserAccessToken();
+        final var client1 = create(new ClientRequest("Client 11", "New Description 1"), adminToken);
 
+        var sam = create(adminToken);
+        var jimmy = create(userToken);
+
+        final var userRequest1 = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
+        final var userRequest2 = new ProjectRequest.ProjectUserRequest(jimmy.getId(), false);
+
+        final var newProjectUsers = List.of(userRequest1, userRequest2);
+
+        final var projectRequest = new ProjectRequest("Some Project 10", true, "some description", client1.getId(), false, newProjectUsers);
+        final var projectCreated = create(projectRequest, adminToken);
+        getValidation(ProjectDef.uriWithid(projectCreated.getId()), userToken, NOT_FOUND);
+    }
+
+    @Test
+    void shouldAccessToPublicProjects() {
+        final String adminToken = getAdminAccessToken();
+        final String userToken = getUserAccessToken();
+        final var client1 = create(new ClientRequest("Client 11", "New Description 1"), adminToken);
+
+        final var projectRequest = new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, Collections.emptyList());
+        final var projectCreated = create(projectRequest, adminToken);
+        getValidation(ProjectDef.uriWithid(projectCreated.getId()), userToken, OK);
+        getValidation(ProjectDef.uriWithid(projectCreated.getId()), adminToken, OK);
     }
 
     @Test
@@ -413,7 +503,7 @@ class ProjectResourceTest {
                 , updatedProjectWithTwoUsers.isPublicAccess());
 
         update(updatedProjectWithTwoUsers, ProjectDef.uriWithid(project.getId()), adminToken);
-
+        getValidation(ProjectDef.uriWithid(project.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedProject)));
         // THEN
         final var expectedTimeSheetSam = new TimeSheetResponse(1L, expectedProject, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.HOURLY.toString(), Collections.emptyList());

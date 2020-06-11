@@ -3,7 +3,6 @@ package fr.lunatech.timekeeper.services;
 import fr.lunatech.timekeeper.models.Project;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.resources.exceptions.UpdateResourceException;
-import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -14,9 +13,7 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
-import javax.transaction.SystemException;
-import javax.transaction.Transactional;
-import javax.transaction.UserTransaction;
+import javax.transaction.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +21,8 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static javax.transaction.Transactional.TxType.SUPPORTS;
 
 @ApplicationScoped
 public class ProjectService {
@@ -56,7 +55,7 @@ public class ProjectService {
         try {
             project.persistAndFlush();
         } catch (PersistenceException pe) {
-            throw new CreateResourceException(String.format("Project was not created due to constraint violation"));
+            throw new CreateResourceException("Project was not created due to constraint violation");
         }
         project.users
                 .forEach(projectUser -> timeSheetService.createDefaultTimeSheet(project, projectUser.user, ctx));
@@ -65,14 +64,15 @@ public class ProjectService {
 
     public Optional<Long> update(Long id, ProjectRequest request, AuthenticationContext ctx) {
         logger.debug("Modify project for for id={} with {}, {}", id, request, ctx);
-        final var maybeProject = findById(id, ctx);
-        maybeProject.ifPresent(project -> {
-            if(!ctx.canEdit(project)) {
+        findById(id, ctx).ifPresent(project -> {
+            if (!ctx.canEdit(project)) {
                 throw new ForbiddenException("The user can't edit this project with id : " + id);
             }
         });
         try {
             transaction.begin(); // See https://quarkus.io/guides/transaction API Approach
+            final var maybeProject = findById(id, ctx);
+
             // Delete the old members
             maybeProject.ifPresent(project -> project.users.stream()
                     .filter(request::notContains)
