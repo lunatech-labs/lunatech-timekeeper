@@ -64,12 +64,9 @@ public class ProjectResource implements ProjectResourceApi {
 
     @RolesAllowed({"user", "admin"})
     @Override
-    public List<TimeSheetResponse> getTimeSheetsForProjectForUser(long idProject, long idUser) {
+    public TimeSheetResponse getLastActiveTimeSheetForUser(long idProject, long idUser) {
         final var ctx = authentication.context();
-        List<TimeSheetResponse> response = timeSheetService.findAllForProjectForUser(ctx, idProject, idUser);
-        if (response.isEmpty()){
-            throw new NotFoundException(String.format("No timesheet found for project_id=%d, and user_id=%d", idProject, idUser));
-        }
-        return response;
+        Optional<TimeSheetResponse> maybeResponse = timeSheetService.findFirstForProjectForUser(idProject, idUser);
+        return maybeResponse.orElseThrow(() -> new NotFoundException(String.format("No timesheet found for project_id=%d, and user_id=%d", idProject, idUser)));
     }
 }
