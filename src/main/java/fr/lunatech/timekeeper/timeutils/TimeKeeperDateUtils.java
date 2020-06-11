@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.*;
@@ -63,5 +64,14 @@ public class TimeKeeperDateUtils {
      */
     public static String formatToString(final LocalDate date){
         return DateTimeFormatter.ISO_LOCAL_DATE.format(date);
+    }
+
+    /**
+     * Returns a formatted DateTime as ISO LOCAL DATE_TIME
+     * @param dateTime
+     * @return
+     */
+    public static String formatToString(final LocalDateTime dateTime) {
+        return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(dateTime);
     }
 }

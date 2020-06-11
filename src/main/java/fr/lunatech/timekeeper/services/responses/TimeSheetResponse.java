@@ -65,9 +65,6 @@ public class TimeSheetResponse {
         private final Long id;
 
         @NotNull
-        private final Boolean billable;
-
-        @NotNull
         private final String comment;
 
         @NotNull
@@ -80,13 +77,11 @@ public class TimeSheetResponse {
 
         public TimeEntryResponse(
                 @NotNull Long id,
-                @NotNull Boolean billable,
                 @NotNull String comment,
                 @NotNull LocalDateTime startDateTime,
                 @NotNull LocalDateTime endDateTime
         ) {
             this.id = id;
-            this.billable = billable;
             this.comment = comment;
             this.startDateTime = startDateTime;
             this.endDateTime = endDateTime;
@@ -95,7 +90,6 @@ public class TimeSheetResponse {
         public static TimeSheetResponse.TimeEntryResponse bind(@NotNull TimeEntry timeEntry) {
             return new TimeSheetResponse.TimeEntryResponse(
                     timeEntry.id,
-                    timeEntry.billable,
                     timeEntry.comment,
                     timeEntry.startDateTime,
                     timeEntry.endDateTime
@@ -104,10 +98,6 @@ public class TimeSheetResponse {
 
         public Long getId() {
             return id;
-        }
-
-        public Boolean getBillable() {
-            return billable;
         }
 
         public String getComment() {

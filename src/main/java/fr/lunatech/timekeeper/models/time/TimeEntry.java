@@ -13,8 +13,6 @@ public class TimeEntry extends PanacheEntityBase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
-    public Boolean billable;
-
     @Column(name = "comment", length = 255)
     public String comment;
 

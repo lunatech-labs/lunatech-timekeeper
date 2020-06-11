@@ -12,6 +12,7 @@ import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,9 +50,21 @@ public class WeekService {
 
         List<TimeSheetResponse> timeSheets = timeSheetService.findAllActivesForUser(ctx);
 
-        var userEvents = new ArrayList<UserEvent>(); // TODO retrieve the specific user's events such as holidays
+
+        // Fake DATA - Temporary
+        // Fake DATA - start
+        var nicolasDaysOff = new UserEvent();
+        nicolasDaysOff.startDateTime= LocalDate.of(2020,05,22).atStartOfDay();
+        nicolasDaysOff.endDateTime=LocalDate.of(2020,05,23).atStartOfDay();
+        nicolasDaysOff.description="Journée de congès";
+        nicolasDaysOff.eventType="vacations";
+        nicolasDaysOff.id=1L;
+        var userEvents = new ArrayList<UserEvent>();
+        userEvents.add(nicolasDaysOff);
+        // Fake DATA - END
+
         var desiredDate = TimeKeeperDateUtils.getFirstDayOfWeekFromWeekNumber(year, weekNumber);
-        var publicHolidays = CalendarFactory.instanceFor("fr",year).getPublicHolidaysForWeekNumber(weekNumber);
+        var publicHolidays = CalendarFactory.instanceFor("FR",year).getPublicHolidaysForWeekNumber(weekNumber);
 
         WeekResponse weekResponse = new WeekResponse(TimeKeeperDateUtils.adjustToFirstDayOfWeek(desiredDate)
                 , userEvents
