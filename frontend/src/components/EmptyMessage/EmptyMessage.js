@@ -2,19 +2,16 @@ import React  from 'react';
 import './EmptyMessage.less';
 import PropTypes from 'prop-types';
 
-const EmptyMessage = ( {children} ) => {
+const EmptyMessage = ( {message} ) => {
   return (
     <p className="tk_EmptyMessage">
-      {children}
+      {message}
     </p>
   );
 };
 
 EmptyMessage.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node
-  ]).isRequired
+  message: PropTypes.string.isRequired
 };
 
 export default EmptyMessage;

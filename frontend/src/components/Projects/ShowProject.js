@@ -10,7 +10,7 @@ import TagMember from '../Tag/TagMember';
 import TagProjectClient from '../Tag/TagProjectClient';
 import ShowTimeSheet from '../TimeSheet/ShowTimeSheet';
 import Tooltip from 'antd/lib/tooltip';
-import EmptyMessage from "../EmptyMessage/EmptyMessage";
+import EmptyMessage from '../EmptyMessage/EmptyMessage';
 
 const {Title} = Typography;
 
@@ -21,8 +21,8 @@ const ShowProject = ({project}) => {
   const Members = () => {
     if (!project.users || project.users.length === 0) {
       return (
-        <EmptyMessage>There is no member on the project…</EmptyMessage>
-      )
+        <EmptyMessage message='There is no member on the project…'/>
+      );
     } else {
       const users = project.users.sort((u1, u2) => {
         const res = u2.manager - u1.manager;

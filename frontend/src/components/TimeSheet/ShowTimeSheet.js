@@ -65,7 +65,8 @@ const ShowTimeSheet = ({project, member}) => {
       defaultIsBillable: PropTypes.bool.isRequired,
       expirationDate: PropTypes.string,
       maxDuration: PropTypes.number,
-      durationUnit: PropTypes.string
+      durationUnit: PropTypes.string,
+      timeUnit: PropTypes.string,
     })
   };
 
@@ -96,7 +97,7 @@ ShowTimeSheet.propTypes = {
   project: PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
-    client: PropTypes.object
+    client: PropTypes.object,
   }),
   member: PropTypes.object
 };

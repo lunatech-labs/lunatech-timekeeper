@@ -261,7 +261,7 @@ const TimeEntryForm = ({currentDay, form, onSuccess, onCancel}) => {
           </div>
         </div>
         <div className="tk_ModalTopBody">
-          <EmptyMessage>No task for this day, there is still time to add one.</EmptyMessage>
+          <EmptyMessage message='No task for this day, there is still time to add one.'/>
         </div>
       </div>
 
