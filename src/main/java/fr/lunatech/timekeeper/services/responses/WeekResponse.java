@@ -3,6 +3,7 @@ package fr.lunatech.timekeeper.services.responses;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.models.time.UserEvent;
 import fr.lunatech.timekeeper.timeutils.PublicHoliday;
+import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 import fr.lunatech.timekeeper.timeutils.Week;
 
 import javax.validation.constraints.NotBlank;
@@ -50,14 +51,12 @@ public final class WeekResponse {
 
     public String getFirstDayOfWeek() {
         if(firstDayOfWeek==null) return null;
-        return DateTimeFormatter.ISO_LOCAL_DATE.format(firstDayOfWeek);
+        return TimeKeeperDateUtils.formatToString(firstDayOfWeek);
     }
 
     public Integer getWeekNumber() {
         if(firstDayOfWeek==null) return null;
-        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
-        int weekNumber = firstDayOfWeek.get(woy);
-        return weekNumber;
+        return TimeKeeperDateUtils.getWeekNumberFromDate(firstDayOfWeek);
     }
 
     public List<UserEvent> getUserEvents() {

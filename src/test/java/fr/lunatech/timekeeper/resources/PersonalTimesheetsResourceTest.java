@@ -7,6 +7,7 @@ import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import fr.lunatech.timekeeper.services.responses.UserResponse;
 import fr.lunatech.timekeeper.services.responses.WeekResponse;
+import fr.lunatech.timekeeper.timeutils.PublicHoliday;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import javax.inject.Inject;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -99,7 +101,9 @@ public class PersonalTimesheetsResourceTest {
 
 
         final var timesheet = new TimeSheetResponse(1L, projectResponse, jimmy, TimeUnit.HOURLY, true,null,null, "HOURLY", Collections.emptyList());
-        WeekResponse response = new WeekResponse(LocalDate.of(2020,5,18), Collections.emptyList(), List.of(timesheet),Collections.emptyList());
+        final List<PublicHoliday> holidays = new ArrayList<>();
+        holidays.add(new PublicHoliday(LocalDate.of(2020,05,20), "Jour de l'Ascension","Ascension Day","FR",false));
+        WeekResponse response = new WeekResponse(LocalDate.of(2020,5,18), Collections.emptyList(), List.of(timesheet), holidays);
 
         getValidation(PersonalTimeSheetsDef.uriWithMultiInt(2020,21), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(response)));
     }

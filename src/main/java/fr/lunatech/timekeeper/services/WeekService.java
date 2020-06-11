@@ -5,20 +5,15 @@ import fr.lunatech.timekeeper.models.time.UserEvent;
 import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import fr.lunatech.timekeeper.services.responses.WeekResponse;
+import fr.lunatech.timekeeper.timeutils.Calendar;
 import fr.lunatech.timekeeper.timeutils.CalendarFR2020;
+import fr.lunatech.timekeeper.timeutils.CalendarFactory;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.temporal.IsoFields;
-import java.time.temporal.TemporalAdjusters;
-import java.time.temporal.TemporalField;
-import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -42,8 +37,8 @@ public class WeekService {
         if (year < 1000) {
             throw new IllegalEntityStateException("Invalid year value, value must be a 4 digits positive value");
         }
-        if (weekNumber < 1 || weekNumber > 52) {
-            throw new IllegalEntityStateException("Invalid weekNumber, value must be in range [1-52]");
+        if (weekNumber < 1 || weekNumber > 53) {
+            throw new IllegalEntityStateException("Invalid weekNumber, value must be in range [1-53]");
         }
 
         Long userId = ctx.getUserId();
@@ -55,8 +50,8 @@ public class WeekService {
         List<TimeSheetResponse> timeSheets = timeSheetService.findAllActivesForUser(ctx);
 
         var userEvents = new ArrayList<UserEvent>(); // TODO retrieve the specific user's events such as holidays
-        var desiredDate = TimeKeeperDateUtils.retriveDateFromWeekNumber(weekNumber);
-        var publicHolidays = new CalendarFR2020().getPublicHolidaysForWeekNumber(weekNumber);
+        var desiredDate = TimeKeeperDateUtils.getFirstDayOfWeekFromWeekNumber(year, weekNumber);
+        var publicHolidays = CalendarFactory.instanceFor("fr",year).getPublicHolidaysForWeekNumber(weekNumber);
 
         WeekResponse weekResponse = new WeekResponse(TimeKeeperDateUtils.adjustToFirstDayOfWeek(desiredDate)
                 , userEvents
