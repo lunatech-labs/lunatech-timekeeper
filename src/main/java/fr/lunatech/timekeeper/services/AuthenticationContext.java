@@ -54,7 +54,7 @@ public final class AuthenticationContext {
             Optional<ProjectUser> currentProjectUser = project.users.stream()
                     .filter(projectUser -> projectUser.user.id.equals(userId))
                     .findFirst();
-            if(currentProjectUser.isEmpty()) {
+            if (currentProjectUser.isEmpty()) {
                 return false;
             } else {
                 return currentProjectUser.get().manager;
@@ -72,7 +72,7 @@ public final class AuthenticationContext {
             Optional<ProjectUser> currentProjectUser = project.users.stream()
                     .filter(projectUser -> projectUser.user.id.equals(userId))
                     .findFirst();
-            if(currentProjectUser.isEmpty()) {
+            if (currentProjectUser.isEmpty()) {
                 return false;
             } else {
                 return currentProjectUser.get().manager;

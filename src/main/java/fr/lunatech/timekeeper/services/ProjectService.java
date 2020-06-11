@@ -13,7 +13,9 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
-import javax.transaction.*;
+import javax.transaction.SystemException;
+import javax.transaction.Transactional;
+import javax.transaction.UserTransaction;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -21,8 +23,6 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static javax.transaction.Transactional.TxType.SUPPORTS;
 
 @ApplicationScoped
 public class ProjectService {
@@ -101,6 +101,7 @@ public class ProjectService {
             throw new UpdateResourceException("Cannot update a Project, invalid projectRequest");
         }
     }
+
     // TODO : NotImplementedYet
     public Optional<Long> joinProject(Long id, Long userId, AuthenticationContext ctx) {
         logger.debug("Modify project for for id={} with userId={}, {}", id, userId, ctx);
