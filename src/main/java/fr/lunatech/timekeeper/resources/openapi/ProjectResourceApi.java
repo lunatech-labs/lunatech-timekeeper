@@ -91,6 +91,24 @@ public interface ProjectResourceApi {
     })
     Response updateProject(@PathParam("id") Long id, @RequestBody ProjectRequest request);
 
+    @PUT
+    @Path("/{id}/join/{userId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Join a project",
+            description = "Join a public project")
+    @Tag(ref = "projects")
+    @APIResponses(value = {
+            @APIResponse(
+                    responseCode = "204",
+                    description = "Project updated"
+            ),
+            @APIResponse(
+                    responseCode = "404",
+                    description = "Project not found"
+            )
+    })
+    Response joinPublicProject(@PathParam("id") Long id, @PathParam("userId") Long userId);
+
     @GET
     @Path("/{idProject}/users/{idUser}")
     @Produces(MediaType.APPLICATION_JSON)

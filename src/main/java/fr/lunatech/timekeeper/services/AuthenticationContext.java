@@ -1,11 +1,13 @@
 package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.*;
+import fr.lunatech.timekeeper.models.time.TimeSheet;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public final class AuthenticationContext {
 
@@ -29,7 +31,11 @@ public final class AuthenticationContext {
     }
 
     Boolean canAccess(@NotNull Client client) {
-        return Objects.equals(getOrganization().id,  client.organization.id);
+        return Objects.equals(getOrganization().id, client.organization.id);
+    }
+
+    Boolean canAccess(@NotNull TimeSheet timeSheet) {
+        return Objects.equals(getOrganization().id, timeSheet.project.organization.id);
     }
 
     Boolean canAccess(@NotNull Organization organization) {
@@ -37,7 +43,46 @@ public final class AuthenticationContext {
     }
 
     Boolean canAccess(@NotNull Project project) {
-        return Objects.equals(getOrganization().id, project.organization.id);
+        boolean organizationAccess = Objects.equals(getOrganization().id, project.organization.id);
+        if (!organizationAccess) {
+            return false;
+        } else if (profiles.contains(Profile.Admin)) {
+            return true;
+        } else if (project.publicAccess) {
+            return true;
+        } else {
+            Optional<ProjectUser> currentProjectUser = project.users.stream()
+                    .filter(projectUser -> projectUser.user.id.equals(userId))
+                    .findFirst();
+            if (currentProjectUser.isEmpty()) {
+                return false;
+            } else {
+                return currentProjectUser.get().manager;
+            }
+        }
+    }
+
+    Boolean canEdit(@NotNull Project project) {
+        boolean organizationAccess = Objects.equals(getOrganization().id, project.organization.id);
+        if (!organizationAccess) {
+            return false;
+        } else if (profiles.contains(Profile.Admin)) {
+            return true;
+        } else {
+            Optional<ProjectUser> currentProjectUser = project.users.stream()
+                    .filter(projectUser -> projectUser.user.id.equals(userId))
+                    .findFirst();
+            if (currentProjectUser.isEmpty()) {
+                return false;
+            } else {
+                return currentProjectUser.get().manager;
+            }
+        }
+    }
+
+    Boolean canJoin(@NotNull Project project) {
+        boolean organizationAccess = Objects.equals(getOrganization().id, project.organization.id);
+        return organizationAccess && project.publicAccess;
     }
 
     Boolean canAccess(@NotNull User user) {

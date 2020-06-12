@@ -6,6 +6,7 @@ import fr.lunatech.timekeeper.resources.exceptions.UpdateResourceException;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import io.quarkus.security.ForbiddenException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +55,7 @@ public class ProjectService {
         try {
             project.persistAndFlush();
         } catch (PersistenceException pe) {
-            throw new CreateResourceException(String.format("Project was not created due to constraint violation"));
+            throw new CreateResourceException("Project was not created due to constraint violation");
         }
         project.users
                 .forEach(projectUser -> timeSheetService.createDefaultTimeSheet(project, projectUser.user, ctx));
@@ -63,9 +64,15 @@ public class ProjectService {
 
     public Optional<Long> update(Long id, ProjectRequest request, AuthenticationContext ctx) {
         logger.debug("Modify project for for id={} with {}, {}", id, request, ctx);
+        findById(id, ctx).ifPresent(project -> {
+            if (!ctx.canEdit(project)) {
+                throw new ForbiddenException("The user can't edit this project with id : " + id);
+            }
+        });
         try {
             transaction.begin(); // See https://quarkus.io/guides/transaction API Approach
             final var maybeProject = findById(id, ctx);
+
             // Delete the old members
             maybeProject.ifPresent(project -> project.users.stream()
                     .filter(request::notContains)
@@ -93,6 +100,17 @@ public class ProjectService {
             }
             throw new UpdateResourceException("Cannot update a Project, invalid projectRequest");
         }
+    }
+
+    // TODO : NotImplementedYet
+    public Optional<Long> joinProject(Long id, Long userId, AuthenticationContext ctx) {
+        logger.debug("Modify project for for id={} with userId={}, {}", id, userId, ctx);
+        findById(id, ctx).ifPresent(project -> {
+            if (!ctx.canJoin(project)) {
+                throw new ForbiddenException("The user with id : " + userId + " can't join this project with id : " + id);
+            }
+        });
+        return Optional.empty();
     }
 
     Optional<Project> findById(Long id, AuthenticationContext ctx) {
