@@ -1,5 +1,6 @@
 package fr.lunatech.timekeeper.services.requests;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.services.AuthenticationContext;
@@ -11,14 +12,11 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public final class TimeEntryPerDayRequest implements TimeEntryRequest {
 
     @NotBlank
     private final String comment;
-
-    @NotNull
-    private final Boolean billable;
 
     @NotNull
     private final LocalDate date;
@@ -29,7 +27,6 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
             @NotNull LocalDate date
     ) {
         this.comment = comment;
-        this.billable = billable;
         this.date = date;
     }
 
@@ -39,7 +36,6 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
             @NotNull AuthenticationContext ctx
     ) {
         TimeEntry timeEntry = new TimeEntry();
-        timeEntry.billable = getBillable();
         timeEntry.comment = getComment();
         timeEntry.startDateTime = this.date.atStartOfDay().withHour(9).withMinute(0);
         timeEntry.endDateTime = this.date.atStartOfDay().withHour(17).withMinute(0);
@@ -51,10 +47,6 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
         return comment;
     }
 
-    public Boolean getBillable() {
-        return billable;
-    }
-
     public LocalDate getDate() {
         return date;
     }
@@ -63,7 +55,6 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
     public String toString() {
         return "TimeEntryPerDayRequest{" +
                 "comment='" + comment + '\'' +
-                ", billable=" + billable +
                 ", date='" + date +
                 '}';
     }

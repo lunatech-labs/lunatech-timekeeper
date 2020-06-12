@@ -7,7 +7,6 @@
   "repository": "https://github.com/lunatech-labs/lunatech-timekeeper",
   "main": "index.js",
   "dependencies": {
-    "react-https-redirect": "^1.1.0",
     "@ant-design/icons": "latest",
     "@react-keycloak/web": "^2.0.0",
     "@testing-library/jest-dom": "^5.1.1",
@@ -19,19 +18,21 @@
     "babel-plugin-import": "^1.13.0",
     "customize-cra": "^0.9.1",
     "dayjs": "^1.8.18",
+    "eslint-plugin-react-hooks": "^0.0.0-33c3af284",
     "keycloak-js": "latest",
     "less": "^3.11.1",
     "less-loader": "^5.0.0",
+    "moment": "2.24.0",
     "node-sass": "^4.13.1",
     "prop-types": "latest",
     "react": "^16.13.0",
     "react-app-rewired": "^2.1.5",
     "react-dom": "^16.13.0",
+    "react-https-redirect": "^1.1.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
     "umi": "^3.1.1",
-    "umi-request": "^1.2.19",
-    "moment": "2.24.0"
+    "umi-request": "^1.2.19"
   },
   "scripts": {
     "start": "react-app-rewired start",

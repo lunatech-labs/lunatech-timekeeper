@@ -8,4 +8,6 @@ public interface Calendar {
 
     List<PublicHoliday> getPublicHolidays();
 
+    List<PublicHoliday> getPublicHolidaysForWeekNumber(final Integer weekNumber);
+
 }

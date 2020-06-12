@@ -214,7 +214,7 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
 };
 
 const TimeEntryForm = ({currentDay, form, onSuccess, onCancel}) => {
-  const timeSheets = useTimeKeeperAPI('/api/my/timeSheets', (form => form));
+  const timeSheets = useTimeKeeperAPI('/api/my/' + currentDay.year() + '?weekNumber=' + currentDay.isoWeek(), (form => form));
 
   if (timeSheets.loading) {
     return (
@@ -251,6 +251,7 @@ const TimeEntryForm = ({currentDay, form, onSuccess, onCancel}) => {
       </React.Fragment>
     );
   }
+
   return (
     <div className="tk_ModalGen">
       <div className="tk_ModalTop">
@@ -267,7 +268,7 @@ const TimeEntryForm = ({currentDay, form, onSuccess, onCancel}) => {
 
       <div className="tk_ModalBottom">
         <TitleSection title='Add task'/>
-        <AddEntry date={currentDay} form={form} timeSheets={timeSheets.data} onSuccess={onSuccess} onCancel={onCancel}/>
+        <AddEntry date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess} onCancel={onCancel}/>
       </div>
     </div>
   );
