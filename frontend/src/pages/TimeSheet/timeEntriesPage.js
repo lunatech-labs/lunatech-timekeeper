@@ -14,13 +14,13 @@ const TimeEntriesPage = () => {
   const [currentFirstDay, setCurrentFirstDay] = useState(today);
   const [currentWeekNumber, setCurrentWeekNumber] = useState(() => {
       const tmpDate = firstDayOfCurrentWeek.clone();
-      return tmpDate.format('YYYY') + '/' + tmpDate.format('w');
+      return tmpDate.year() + '?weekNumber=' + tmpDate.isoWeek();
   });
   const [visibleEntryModal, setVisibleEntryModal] = useState(false);
   const [taskMoment, setTaskMoment] = useState(moment().utc());
   const [form] = Form.useForm();
 
-  const dataFromServer = useTimeKeeperAPI('/api/my/week/' + currentWeekNumber);
+  const dataFromServer = useTimeKeeperAPI('/api/my/' + currentWeekNumber);
   useEffect(
     () => {
       dataFromServer.run();
@@ -82,7 +82,7 @@ const TimeEntriesPage = () => {
         hiddenButtons={false}
         onPanelChange={(id, start) => {
           setCurrentFirstDay(start); // TODO voir si c'est encore utile
-          setCurrentWeekNumber(start.format('YYYY') + '/' + start.format('w')); // TODO sinon c'est mieux avec le numero de semaine
+          setCurrentWeekNumber(start.year() + '?weekNumber=' + start.isoWeek()); // TODO sinon c'est mieux avec le numero de semaine
         }}
         onClickAddTask={(e, m) => {
           setTaskMoment(m);
