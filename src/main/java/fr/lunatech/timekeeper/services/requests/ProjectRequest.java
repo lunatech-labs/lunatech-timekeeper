@@ -1,5 +1,6 @@
 package fr.lunatech.timekeeper.services.requests;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fr.lunatech.timekeeper.models.Client;
 import fr.lunatech.timekeeper.models.Project;
 import fr.lunatech.timekeeper.models.ProjectUser;
@@ -124,6 +125,7 @@ public final class ProjectRequest {
     }
 
     /* 👤 ProjectUserRequest */
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class ProjectUserRequest {
 
         @NotNull
