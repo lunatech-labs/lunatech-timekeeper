@@ -6,10 +6,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
@@ -17,7 +14,7 @@ import java.util.List;
 public interface PersonalTimesheetsResourceApi {
 
     @GET
-    @Path("/month/{year}/{monthNumber}")
+    @Path("/{year}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Retrieve the current Month for you",
             description = "Retrieve the current mont, with details about TimeSheets and Events")
@@ -35,10 +32,10 @@ public interface PersonalTimesheetsResourceApi {
                     description = "Invalid JWT token")
     })
     List<WeekResponse> getMonth(@PathParam("year") Integer year,
-                                @PathParam("weekNumber") Integer monthNumber);
+                           @QueryParam("monthNumber") Integer monthNumber);
 
     @GET
-    @Path("/week/{year}/{weekNumber}")
+    @Path("/{year}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Retrieve the specified week of the year, for the current user token",
             description = "Retrieve a week in your agenda from the date, with details about TimeSheets and Events")
@@ -61,6 +58,7 @@ public interface PersonalTimesheetsResourceApi {
                     responseCode = "403",
                     description = "Invalid JWT token")
     })
-    WeekResponse getWeek(@PathParam("year") Integer year, @PathParam("weekNumber") Integer weekNumber);
+    WeekResponse getWeek(@PathParam("year") Integer year,
+                         @QueryParam("weekNumber") Integer weekNumber);
 
 }

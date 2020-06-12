@@ -70,10 +70,7 @@ public class UserEventResponse {
     }
 
     public String getDuration() {
-        if(startDateTime==null){
-            return "";
-        }
-        if(endDateTime==null){
+        if(startDateTime==null || endDateTime==null){
             return "";
         }
        return duration;
