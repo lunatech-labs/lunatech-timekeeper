@@ -1,15 +1,12 @@
 package fr.lunatech.timekeeper.resources.openapi;
 
-import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import fr.lunatech.timekeeper.services.responses.WeekResponse;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
@@ -17,47 +14,7 @@ import java.util.List;
 public interface PersonalTimesheetsResourceApi {
 
     @GET
-    @Path("/timeSheets")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Retrieve timeSheets",
-            description = "Retrieve timeSheets, with details about TimeSheets")
-    @Tag(ref = "personalTimeEntry")
-    @APIResponses(value = {
-            @APIResponse(
-                    responseCode = "200",
-                    description = "TimeSheet successfully retrieved"
-            ),
-            @APIResponse(
-                    responseCode = "404",
-                    description = "No timeSheet for this user"),
-            @APIResponse(
-                    responseCode = "403",
-                    description = "Invalid JWT token")
-    })
-    List<TimeSheetResponse> getAllTimeSheet();
-
-    @GET
-    @Path("/currentWeek")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Retrieve the current Week for you",
-            description = "Retrieve the current week, with details about TimeSheets and Events")
-    @Tag(ref = "personalTimeEntry")
-    @APIResponses(value = {
-            @APIResponse(
-                    responseCode = "200",
-                    description = "Week successfully retrieved"
-            ),
-            @APIResponse(
-                    responseCode = "404",
-                    description = "No current week for this user"),
-            @APIResponse(
-                    responseCode = "403",
-                    description = "Invalid JWT token")
-    })
-    WeekResponse getCurrentWeek();
-
-    @GET
-    @Path("/currentMonth")
+    @Path("/{year}/month")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Retrieve the current Month for you",
             description = "Retrieve the current mont, with details about TimeSheets and Events")
@@ -74,6 +31,34 @@ public interface PersonalTimesheetsResourceApi {
                     responseCode = "403",
                     description = "Invalid JWT token")
     })
-    List<WeekResponse> getCurrentMonth();
+    List<WeekResponse> getMonth(@PathParam("year") Integer year,
+                           @QueryParam("monthNumber") Integer monthNumber);
+
+    @GET
+    @Path("/{year}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Retrieve the specified week of the year, for the current user token",
+            description = "Retrieve a week in your agenda from the date, with details about TimeSheets and Events")
+    @Tag(ref = "personalTimeEntry")
+    @APIResponses(value = {
+            @APIResponse(
+                    responseCode = "200",
+                    description = "Week successfully retrieved"
+            ),
+            @APIResponse(
+                    responseCode = "400",
+                    description = "Invalid weeknumber, must be in the range 1 to 52"),
+            @APIResponse(
+                    responseCode = "400",
+                    description = "Invalid year value"),
+            @APIResponse(
+                    responseCode = "404",
+                    description = "No week for this user"),
+            @APIResponse(
+                    responseCode = "403",
+                    description = "Invalid JWT token")
+    })
+    WeekResponse getWeek(@PathParam("year") Integer year,
+                         @QueryParam("weekNumber") Integer weekNumber);
 
 }

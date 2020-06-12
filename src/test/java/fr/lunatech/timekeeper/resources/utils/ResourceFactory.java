@@ -1,7 +1,10 @@
 package fr.lunatech.timekeeper.resources.utils;
 
 import fr.lunatech.timekeeper.services.requests.*;
-import fr.lunatech.timekeeper.services.responses.*;
+import fr.lunatech.timekeeper.services.responses.ClientResponse;
+import fr.lunatech.timekeeper.services.responses.OrganizationResponse;
+import fr.lunatech.timekeeper.services.responses.ProjectResponse;
+import fr.lunatech.timekeeper.services.responses.UserResponse;
 
 import java.util.Map;
 

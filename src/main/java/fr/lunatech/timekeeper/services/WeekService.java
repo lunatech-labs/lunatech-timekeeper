@@ -1,24 +1,21 @@
 package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.User;
-import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.models.time.UserEvent;
+import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import fr.lunatech.timekeeper.services.responses.WeekResponse;
-import fr.lunatech.timekeeper.timeutils.CalendarFR2020;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import fr.lunatech.timekeeper.timeutils.CalendarFactory;
+import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @ApplicationScoped
 public class WeekService {
-    private static Logger logger = LoggerFactory.getLogger(WeekService.class);
 
     @Inject
     UserService userService;
@@ -26,41 +23,47 @@ public class WeekService {
     @Inject
     TimeSheetService timeSheetService;
 
-    public Optional<WeekResponse> getCurrentWeek(AuthenticationContext ctx) {
-
+    /**
+     * Loads a specific week for the current authenticated user
+     *
+     * @param ctx        is the context with the user that made this request
+     * @param year       is a 4 digit Integer value for a year
+     * @param weekNumber is an Integer value between 1 and 52
+     * @return the WeekResponse with details for this user.
+     */
+    public WeekResponse getWeek(AuthenticationContext ctx, Integer year, Integer weekNumber) {
         Long userId = ctx.getUserId();
         Optional<User> maybeUser = userService.findById(userId, ctx);
-        if(maybeUser.isEmpty()){
+        if (maybeUser.isEmpty()) {
             throw new IllegalStateException("User not found, cannot load current week");
         }
 
-        List<TimeSheetResponse> timeSheets =timeSheetService.findAllActivesForUser(ctx);
+        List<TimeSheetResponse> timeSheets = timeSheetService.findAllActivesForUser(ctx);
 
-        // TODO
-        logger.warn("TODO getCurrentWeek");
+//        // Fake DATA - Temporary - do not commit or it will break unit tests
 
-        // 3. Load the list of User Events (like sick-leave or holidays)
+//        // Fake DATA - start
+//        var nicolasDaysOff = new UserEvent();
+//        nicolasDaysOff.startDateTime= LocalDate.of(2020,05,22).atStartOfDay();
+//        nicolasDaysOff.endDateTime=LocalDate.of(2020,05,23).atStartOfDay();
+//        nicolasDaysOff.description="Journée de congès";
+//        nicolasDaysOff.eventType="vacations";
+//        nicolasDaysOff.id=1L;
+
         var userEvents = new ArrayList<UserEvent>();
+//        userEvents.add(nicolasDaysOff);
+//        // Fake DATA - END
 
-        // Fake DATA - Temporary
-        var nicolasDaysOff = new UserEvent();
-        nicolasDaysOff.startDateTime=LocalDate.of(2020,05,22).atStartOfDay();
-        nicolasDaysOff.endDateTime=LocalDate.of(2020,05,23).atStartOfDay();
-        nicolasDaysOff.description="Journée de congès";
-        nicolasDaysOff.id=1L;
+        var desiredDate = TimeKeeperDateUtils.getFirstDayOfWeekFromWeekNumber(year, weekNumber);
+        var publicHolidays = CalendarFactory.instanceFor("FR",year).getPublicHolidaysForWeekNumber(weekNumber);
 
+        WeekResponse weekResponse = new WeekResponse(TimeKeeperDateUtils.adjustToFirstDayOfWeek(desiredDate)
+                , userEvents
+                , timeSheets
+                , publicHolidays);
 
-        var publicHolidays = new CalendarFR2020().getPublicHolidays();
-
-        // 4. Create the structure and return the result
-        // Fake DATA - Temporary
-        WeekResponse weekResponse = new WeekResponse(LocalDate.of(2020,05,18)
-        , userEvents
-        , timeSheets
-        , publicHolidays);
-
-
-        return Optional.ofNullable(weekResponse);
-
+        return weekResponse;
     }
+
+
 }

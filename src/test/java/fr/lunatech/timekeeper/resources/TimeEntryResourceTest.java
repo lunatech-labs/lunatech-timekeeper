@@ -18,7 +18,6 @@ import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -73,7 +72,7 @@ class TimeEntryResourceTest {
         create(2L, today, jimmyToken);
 
         // THEN
-        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, true, "Today, I did this test", date.atStartOfDay().withHour(9).withMinute(0), date.atStartOfDay().withHour(17).withMinute(0));
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "Today, I did this test", date.atStartOfDay().withHour(9).withMinute(0), date.atStartOfDay().withHour(17).withMinute(0));
         expectedTimeSheetJimmy.entries = List.of(expectedTimeEntry);
         var expected = timeKeeperTestUtils.toJson(expectedTimeSheetJimmy);
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(expected));
@@ -97,13 +96,13 @@ class TimeEntryResourceTest {
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
         LocalDate date = LocalDate.of(2020, 1, 1);
-        TimeEntryPerHalfDayRequest morning = new TimeEntryPerHalfDayRequest("This morning, I did this test", true, LocalDate.of(2020, 1, 1), true);
+        TimeEntryPerHalfDayRequest morning = new TimeEntryPerHalfDayRequest("This morning, I did this test", LocalDate.of(2020, 1, 1), true);
 
         // WHEN I CREATE a timeSheetEntry for TS 2
         create(2L, morning, jimmyToken);
 
         // THEN
-        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, true, "This morning, I did this test", date.atStartOfDay().withHour(8).withMinute(0), date.atStartOfDay().withHour(12).withMinute(0));
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This morning, I did this test", date.atStartOfDay().withHour(8).withMinute(0), date.atStartOfDay().withHour(12).withMinute(0));
         expectedTimeSheetJimmy.entries = List.of(expectedTimeEntry);
         var expected = timeKeeperTestUtils.toJson(expectedTimeSheetJimmy);
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(expected));
@@ -136,7 +135,7 @@ class TimeEntryResourceTest {
         create(2L, hour, jimmyToken);
 
         // THEN
-        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, true, "This hour, I did this test", start, end);
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This hour, I did this test", start, end);
         expectedTimeSheetJimmy.entries = List.of(expectedTimeEntry);
         var expected = timeKeeperTestUtils.toJson(expectedTimeSheetJimmy);
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(expected));

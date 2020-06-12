@@ -4,6 +4,7 @@ import fr.lunatech.timekeeper.models.Organization;
 import fr.lunatech.timekeeper.models.Profile;
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -13,8 +14,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-
-import org.apache.commons.lang3.StringUtils;
 
 public final class AuthenticationRequest {
 
