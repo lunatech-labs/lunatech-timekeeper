@@ -32,7 +32,7 @@ public final class WeekResponse {
         this.firstDayOfWeek = firstDayOfWeek;
         this.userEvents = userEvents
                 .stream()
-                .map( userEvent -> UserEventResponse.bind(userEvent))
+                .map(UserEventResponse::bind)
                 .collect(Collectors.toList());
         this.sheets = sheets;
         this.publicHolidays = publicHolidays;
