@@ -3,40 +3,34 @@ import MainPage from '../MainPage/MainPage';
 import WeekCalendar from '../../components/TimeSheet/WeekCalendar';
 import TimeEntry from '../../components/TimeEntry/TimeEntry';
 import {useTimeKeeperAPI} from '../../utils/services';
-import {Alert} from 'antd';
-import {Form, Modal} from 'antd';
+import {Alert, Form, Modal} from 'antd';
 import TimeEntryForm from '../../components/TimeEntry/TimeEntryForm';
+import moment from 'moment';
 
-const moment = require('moment');
 
 const TimeEntriesPage = () => {
   const firstDayOfCurrentWeek = moment().utc().startOf('week').add(1, 'day');
   const today = () => firstDayOfCurrentWeek.clone();
   const [currentFirstDay, setCurrentFirstDay] = useState(today);
+  const [currentWeekNumber, setCurrentWeekNumber] = useState(() => {
+      const tmpDate = firstDayOfCurrentWeek.clone();
+      return tmpDate.year() + '?weekNumber=' + tmpDate.isoWeek();
+  });
   const [visibleEntryModal, setVisibleEntryModal] = useState(false);
-  const [taskMoment, setTaskMoment] = useState(moment());
+  const [taskMoment, setTaskMoment] = useState(moment().utc());
   const [form] = Form.useForm();
+
+  const dataFromServer = useTimeKeeperAPI('/api/my/' + currentWeekNumber);
   useEffect(
     () => {
-      //TODO : Fetch your data or select your week => To complete when the WeekService is working with ranges
-      if (!currentFirstDay) {
-        return;
-      }
-    }, [currentFirstDay]);
+      dataFromServer.run();
+    }, [currentWeekNumber]);
 
-  const {data, loading, error} = useTimeKeeperAPI('/api/my/currentWeek');
-
-  if (loading) {
-    return (
-      <div>loading...</div>
-    );
-  }
-
-  if (error) {
+  if (dataFromServer.error) {
     return (
       <React.Fragment>
         <Alert title='Server error'
-          message='Failed to load the list of clients'
+          message='Failed to load the list of TimeSheets for this user'
           type='error'
           description='check that the authenticated User has role [user] on Quarkus'
         />
@@ -51,7 +45,8 @@ const TimeEntriesPage = () => {
       return rv;
     }, {});
   };
-  const datas = Object.entries(groupBy(data.sheets.flatMap(({entries, project}) => entries.map(x => ({
+  const data = dataFromServer.loading ? [] : dataFromServer.data.sheets;
+  const datas = Object.entries(groupBy(data.flatMap(({entries, project}) => entries.map(x => ({
     ...x,
     project
   }))), entry => moment(entry.startDateTime).format('YYYY-MM-DD'))).map(([key, value]) => {
@@ -75,14 +70,20 @@ const TimeEntriesPage = () => {
         width={'37.5%'}
         footer={null}
       >
-        <TimeEntryForm currentDay={taskMoment} form={form} onSuccess={closeModal} onCancel={closeModal}/>
+        <TimeEntryForm currentDay={taskMoment} form={form} onSuccess={() => {
+          closeModal();
+          dataFromServer.run()
+        }} onCancel={closeModal}/>
       </Modal>
 
       <WeekCalendar
         firstDay={currentFirstDay}
         disabledWeekEnd={true}
         hiddenButtons={false}
-        onPanelChange={(id, start) => setCurrentFirstDay(start)}
+        onPanelChange={(id, start) => {
+          setCurrentFirstDay(start); // TODO voir si c'est encore utile
+          setCurrentWeekNumber(start.year() + '?weekNumber=' + start.isoWeek()); // TODO sinon c'est mieux avec le numero de semaine
+        }}
         onClickAddTask={(e, m) => {
           setTaskMoment(m);
           openModal();

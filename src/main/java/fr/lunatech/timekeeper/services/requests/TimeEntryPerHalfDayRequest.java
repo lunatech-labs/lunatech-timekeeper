@@ -1,5 +1,6 @@
 package fr.lunatech.timekeeper.services.requests;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
@@ -12,13 +13,11 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public final class TimeEntryPerHalfDayRequest implements TimeEntryRequest{
 
     @NotBlank
     private final String comment;
-
-    @NotNull
-    private final Boolean billable;
 
     @NotNull
     private final LocalDate date;
@@ -28,12 +27,11 @@ public final class TimeEntryPerHalfDayRequest implements TimeEntryRequest{
 
     public TimeEntryPerHalfDayRequest(
             @NotBlank String comment,
-            @NotNull Boolean billable,
+
             @NotNull LocalDate date,
             @NotNull Boolean isMorning
     ) {
         this.comment = comment;
-        this.billable = billable;
         this.date = date;
         this.isMorning = isMorning;
     }
@@ -44,7 +42,6 @@ public final class TimeEntryPerHalfDayRequest implements TimeEntryRequest{
             @NotNull AuthenticationContext ctx
     ) {
         TimeEntry timeEntry = new TimeEntry();
-        timeEntry.billable = getBillable();
         timeEntry.comment = getComment();
         if(isMorning){
             timeEntry.startDateTime =  this.date.atStartOfDay().plusHours(8);
@@ -61,10 +58,6 @@ public final class TimeEntryPerHalfDayRequest implements TimeEntryRequest{
         return comment;
     }
 
-    public Boolean getBillable() {
-        return billable;
-    }
-
     public LocalDate getDate() {
         return date;
     }
@@ -78,7 +71,6 @@ public final class TimeEntryPerHalfDayRequest implements TimeEntryRequest{
     public String toString() {
         return "TimeEntryHalfADayRequest{" +
                 "comment='" + comment + '\'' +
-                ", billable=" + billable +
                 ", date='" + date + '\'' +
                 ", isMorning='" + isMorning + '\'' +
                 '}';

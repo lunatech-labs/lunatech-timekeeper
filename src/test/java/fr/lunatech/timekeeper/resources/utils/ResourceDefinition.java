@@ -1,10 +1,6 @@
 package fr.lunatech.timekeeper.resources.utils;
 
-import fr.lunatech.timekeeper.services.requests.ClientRequest;
-import fr.lunatech.timekeeper.services.requests.OrganizationRequest;
-import fr.lunatech.timekeeper.services.requests.ProjectRequest;
-import fr.lunatech.timekeeper.services.requests.TimeEntryPerDayRequest;
-import fr.lunatech.timekeeper.services.requests.TimeSheetRequest;
+import fr.lunatech.timekeeper.services.requests.*;
 import fr.lunatech.timekeeper.services.responses.*;
 
 import java.util.Collections;
@@ -20,9 +16,9 @@ public enum ResourceDefinition {
     UserDef("/api/users", apply(Void.class, UserResponse.class)),
     ProjectDef("/api/projects", apply(ProjectRequest.class, ProjectResponse.class)),
     TimeSheetPerProjectPerUserDef("/api/projects/%d/users/%d", apply(Void.class, TimeSheetResponse.class)),
-    PersonalTimeSheetDef("/api/my/timeSheets", apply(Void.class, TimeSheetResponse.class)),
+    TimeEntryDayDef("/api/timeSheet/%d/timeEntry/%s", apply(TimeEntryPerDayRequest.class, Void.class)),
     TimeSheetDef("/api/time-sheets", apply(TimeSheetRequest.class,TimeSheetResponse.class)),
-    TimeEntryDayDef("/api/timeSheet/%d/timeEntry/%s", apply(TimeEntryPerDayRequest.class, Void.class));
+    PersonalTimeSheetsDef("/api/my/%d?weekNumber=%d", apply(Void.class, WeekResponse.class));
 
     final public String uri;
     final public TypeDefinition typeDef;
@@ -45,7 +41,10 @@ public enum ResourceDefinition {
     }
 
     public String uriWithMultiId(Long... ids) {
-        return String.format(this.uri,ids);
+        return String.format(this.uri, ids);
     }
 
+    public String uriWithMultiInt(Integer... ids) {
+        return String.format(this.uri, ids);
+    }
 }

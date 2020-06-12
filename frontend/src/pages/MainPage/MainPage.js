@@ -15,7 +15,6 @@ const { Content, Footer } = Layout;
 const MainPage = ({ title, children, actions, entityName, ...rest }) => {
   const { data, error, loading } = useTimeKeeperAPI('/api/users/me');
 
-
   const [collapsed, toggle] = useState(true);
 
   if (error) {

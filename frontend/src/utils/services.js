@@ -26,14 +26,24 @@ function errorHandler(error) {
       const promiseResult = response.json();
 
       promiseResult.then(function (bodyTxt) {
-        console.log(bodyTxt.message);
-        const errorText = 'Message from server: ' + bodyTxt.message;
-        const {status, url} = response;
+        if(bodyTxt.message.string != undefined){
+          const errorText = 'Message from server: ' + bodyTxt.message.string;
+          const {status, url} = response;
+          notification.error({
+            message: `Server error ${status}: ${url}`,
+            description: errorText,
+          });
+        }else{
+          const errorText = 'Message from server: ' + bodyTxt.message;
+          const {status, url} = response;
 
-        notification.error({
-          message: `Server error ${status}: ${url}`,
-          description: errorText,
-        });
+          notification.error({
+            message: `Server error ${status}: ${url}`,
+            description: errorText,
+          });
+        }
+
+
       });
     } else {
       return response.text().then(text => {

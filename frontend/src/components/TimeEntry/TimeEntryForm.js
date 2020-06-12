@@ -166,9 +166,9 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
           return (
             <Form.Item name="timeUnit" label="Time unit" rules={[{required: true}]}>
               <Radio.Group>
-                <Radio.Button value="HOURLY" disabled={hourDisabled}>Hours</Radio.Button>
-                <Radio.Button value="HALFDAY" disabled={halfDayDisabled}>Half-day</Radio.Button>
                 <Radio.Button value="DAY">Day</Radio.Button>
+                <Radio.Button value="HALFDAY" disabled={halfDayDisabled}>Half-day</Radio.Button>
+                <Radio.Button value="HOURLY" disabled={hourDisabled}>Hours</Radio.Button>
               </Radio.Group>
             </Form.Item>
           );
@@ -214,7 +214,7 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
 };
 
 const TimeEntryForm = ({currentDay, form, onSuccess, onCancel}) => {
-  const timeSheets = useTimeKeeperAPI('/api/my/timeSheets', (form => form));
+  const timeSheets = useTimeKeeperAPI('/api/my/' + currentDay.year() + '?weekNumber=' + currentDay.isoWeek(), (form => form));
 
   if (timeSheets.loading) {
     return (
@@ -251,6 +251,7 @@ const TimeEntryForm = ({currentDay, form, onSuccess, onCancel}) => {
       </React.Fragment>
     );
   }
+
   return (
     <div>
       <div>
@@ -261,7 +262,7 @@ const TimeEntryForm = ({currentDay, form, onSuccess, onCancel}) => {
 
       <Divider/>
       <TitleSection title='Add task'/>
-      <AddEntry date={currentDay} form={form} timeSheets={timeSheets.data} onSuccess={onSuccess} onCancel={onCancel}/>
+      <AddEntry date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess} onCancel={onCancel}/>
     </div>
   );
 };

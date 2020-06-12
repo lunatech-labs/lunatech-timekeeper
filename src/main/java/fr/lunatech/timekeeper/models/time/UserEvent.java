@@ -1,6 +1,5 @@
 package fr.lunatech.timekeeper.models.time;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
@@ -26,13 +25,20 @@ public class UserEvent extends PanacheEntityBase {
     @NotNull
     public String description;
 
+    @Null
+    public String eventType;
+
     @NotNull
     public LocalDateTime startDateTime;
 
     @Null
     public LocalDateTime endDateTime;
 
+    @Null
     public LocalDate getDay() {
+        if (startDateTime == null) {
+            return null;
+        }
         return startDateTime.toLocalDate();
     }
 
