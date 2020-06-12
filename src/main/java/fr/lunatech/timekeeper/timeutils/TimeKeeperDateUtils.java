@@ -14,7 +14,6 @@ import java.util.Locale;
  * @author created by N.Martignole, Lunatech, on 2020-06-10.
  */
 public class TimeKeeperDateUtils {
-    private static Logger logger = LoggerFactory.getLogger(TimeKeeperDateUtils.class);
     /**
      * Returns the first Monday as a LocalDate from a weekNumber
      *
@@ -24,9 +23,8 @@ public class TimeKeeperDateUtils {
     public static LocalDate getFirstDayOfWeekFromWeekNumber(final Integer year, final Integer weekNumber) {
         if(year < 1000 ) throw new IllegalStateException("year should be a 4 digits value");
         if(weekNumber<1 || weekNumber>53) throw new IllegalStateException("weeknumber must be an Int value in range 1 to 53");
-        return LocalDate.now()
+        return LocalDate.of(year,1,1)
                 .with(IsoFields.WEEK_OF_WEEK_BASED_YEAR, weekNumber)
-                .with(ChronoField.YEAR, year)
                 .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
     }
 

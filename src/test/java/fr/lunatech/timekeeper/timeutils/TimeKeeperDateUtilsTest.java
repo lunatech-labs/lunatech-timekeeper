@@ -19,7 +19,6 @@ public class TimeKeeperDateUtilsTest {
     @Test
     void shouldReturnMondayFromWeekNumberForWeek52() {
         final var expected= LocalDate.of(2020,12,21);
-        // In 2020 there are 53 weeks according to the Iso Week Calendar
         assertEquals(expected, TimeKeeperDateUtils.getFirstDayOfWeekFromWeekNumber(2020, 52));
     }
 

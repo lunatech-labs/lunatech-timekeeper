@@ -14,7 +14,7 @@ import java.util.List;
 public interface PersonalTimesheetsResourceApi {
 
     @GET
-    @Path("/{year}")
+    @Path("/{year}/month")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Retrieve the current Month for you",
             description = "Retrieve the current mont, with details about TimeSheets and Events")
