@@ -43,6 +43,27 @@ public class TimeKeeperDateUtilsTest {
     }
 
     @Test
+    void shouldNotAcceptInvalidWeekNumber() {
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            TimeKeeperDateUtils.getFirstDayOfWeekFromWeekNumber(2019, 65);
+        });
+    }
+
+    @Test
+    void shouldNotAcceptWeekNumberSetToZero() {
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            TimeKeeperDateUtils.getFirstDayOfWeekFromWeekNumber(2019, 0);
+        });
+    }
+
+    @Test
+    void shouldNotAcceptNegativeWeekNumber() {
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            TimeKeeperDateUtils.getFirstDayOfWeekFromWeekNumber(2019, -1);
+        });
+    }
+
+    @Test
     void shouldNotAcceptYearBefore1970() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             TimeKeeperDateUtils.getFirstDayOfWeekFromWeekNumber(1950, 9);
