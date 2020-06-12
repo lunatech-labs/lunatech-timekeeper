@@ -107,7 +107,7 @@ public class ProjectService {
         logger.debug("Modify project for for id={} with userId={}, {}", id, userId, ctx);
         findById(id, ctx).ifPresent(project -> {
             if (!ctx.canJoin(project)) {
-                throw new ForbiddenException("The user can't join this project with id : " + id);
+                throw new ForbiddenException("The user with id : " + userId + " can't join this project with id : " + id);
             }
         });
         return Optional.empty();

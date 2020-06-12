@@ -67,7 +67,7 @@ public class ProjectResource implements ProjectResourceApi {
     public Response joinPublicProject(Long id, Long userId) {
         final var ctx = authentication.context();
         projectService.joinProject(id, userId, ctx)
-                .orElseThrow(() -> new NotFoundException(String.format("Project not found for id=%d", id)));
+                .orElseThrow(() -> new NotFoundException(String.format("Project or user not found for project id=%d and project id=%d", id, userId)));
         return Response.noContent().build();
     }
 
