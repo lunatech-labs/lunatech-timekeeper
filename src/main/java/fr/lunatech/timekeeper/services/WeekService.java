@@ -32,13 +32,6 @@ public class WeekService {
      * @return the WeekResponse with details for this user.
      */
     public WeekResponse getWeek(AuthenticationContext ctx, Integer year, Integer weekNumber) {
-        if (year < 1000) {
-            throw new IllegalEntityStateException("Invalid year value, value must be a 4 digits positive value");
-        }
-        if (weekNumber < 1 || weekNumber > 53) {
-            throw new IllegalEntityStateException("Invalid weekNumber, value must be in range [1-53]");
-        }
-
         Long userId = ctx.getUserId();
         Optional<User> maybeUser = userService.findById(userId, ctx);
         if (maybeUser.isEmpty()) {

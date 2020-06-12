@@ -21,7 +21,7 @@ public class TimeKeeperDateUtils {
      * @return the Monday of this week number in the year
      */
     public static LocalDate getFirstDayOfWeekFromWeekNumber(final Integer year, final Integer weekNumber) {
-        if(year < 1000 ) throw new IllegalStateException("year should be a 4 digits value");
+        if(year < 1970 ) throw new IllegalStateException("year should be a 4 digits value");
         if(weekNumber<1 || weekNumber>53) throw new IllegalStateException("weeknumber must be an Int value in range 1 to 53");
         return LocalDate.of(year,1,1)
                 .with(IsoFields.WEEK_OF_WEEK_BASED_YEAR, weekNumber)
