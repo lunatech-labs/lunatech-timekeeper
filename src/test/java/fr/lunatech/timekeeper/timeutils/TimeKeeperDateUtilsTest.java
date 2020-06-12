@@ -43,6 +43,13 @@ public class TimeKeeperDateUtilsTest {
     }
 
     @Test
+    void shouldNotAcceptYearBefore1970() {
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            TimeKeeperDateUtils.getFirstDayOfWeekFromWeekNumber(1950, 9);
+        });
+    }
+
+    @Test
     void shouldAdjustToTheMonday(){
         LocalDate inputDate = LocalDate.of(2020,6,11);
         LocalDate expectedDate = LocalDate.of(2020, 6, 8);
