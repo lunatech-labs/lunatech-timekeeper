@@ -1,0 +1,32 @@
+@import '../../timekeeper-theme.less';
+
+.tk_TimeSheetList {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  > div {
+    display: flex;
+    align-items: center;
+    &:first-child{
+      width: 25%;
+      span{
+        margin-right: 10px;
+      }
+      p{
+        font-weight: 500;
+        margin-bottom: 0;
+        border-right: 1px solid rgba(216, 216, 216, 0.1);
+        padding-right: 10px;
+        margin-right: 10px;
+      }
+    }
+    &:nth-child(2) {
+      width: 75%;
+      p{
+        margin-bottom: 0;
+        width: 25%;
+      }
+    }
+  }
+}
+
