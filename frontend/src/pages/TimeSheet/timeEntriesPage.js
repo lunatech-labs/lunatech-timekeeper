@@ -14,8 +14,8 @@ const TimeEntriesPage = () => {
   const today = () => firstDayOfCurrentWeek.clone();
   const [currentFirstDay, setCurrentFirstDay] = useState(today);
   const [currentWeekNumber, setCurrentWeekNumber] = useState(() => {
-      const tmpDate = firstDayOfCurrentWeek.clone();
-      return tmpDate.year() + '?weekNumber=' + tmpDate.isoWeek();
+    const tmpDate = firstDayOfCurrentWeek.clone();
+    return tmpDate.year() + '?weekNumber=' + tmpDate.isoWeek();
   });
   const [visibleEntryModal, setVisibleEntryModal] = useState(false);
   const [taskMoment, setTaskMoment] = useState(moment().utc());
@@ -73,7 +73,7 @@ const TimeEntriesPage = () => {
       >
         <TimeEntryForm currentDay={taskMoment} form={form} onSuccess={() => {
           closeModal();
-          dataFromServer.run()
+          dataFromServer.run();
         }} onCancel={closeModal}/>
       </Modal>
       <UserTimeSheetList timeSheets={data}/>

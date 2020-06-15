@@ -10,6 +10,7 @@ import TagMember from '../Tag/TagMember';
 import TagProjectClient from '../Tag/TagProjectClient';
 import ShowTimeSheet from '../TimeSheet/ShowTimeSheet';
 import Tooltip from 'antd/lib/tooltip';
+import NoDataMessage from '../NoDataMessage/NoDataMessage';
 
 const {Title} = Typography;
 
@@ -19,7 +20,9 @@ const ShowProject = ({project}) => {
   const [selectedMember, setSelectedMember] = useState();
   const Members = () => {
     if (!project.users || project.users.length === 0) {
-      return 'No user added yet';
+      return (
+        <NoDataMessage message='There is no member on the project…'/>
+      );
     } else {
       const users = project.users.sort((u1, u2) => {
         const res = u2.manager - u1.manager;
@@ -46,7 +49,6 @@ const ShowProject = ({project}) => {
     }
   };
 
-
   const ModalTimeSheet = () => {
     return (
       <Modal
@@ -71,11 +73,11 @@ const ShowProject = ({project}) => {
             <TitleSection title="Information"/>
             <Row gutter={32}>
               <Col span={12}>
-                <p className="tk_ProjectAtt"><DesktopOutlined/> Client : <TagProjectClient client={project.client}/></p>
-                <p className="tk_ProjectAtt"><UserOutlined/> Members : {project.users ? project.users.length : 0}</p>
+                <p className="tk_ProjectAtt"><DesktopOutlined/> Client: <TagProjectClient client={project.client}/></p>
+                <p className="tk_ProjectAtt"><UserOutlined/> Members: {project.users ? project.users.length : 0}</p>
               </Col>
               <Col span={12}>
-                <p className="tk_ProjectAtt"><DollarOutlined/> Billable : {project.billable ? 'Yes' : 'No'}</p>
+                <p className="tk_ProjectAtt"><DollarOutlined/> Billable: {project.billable ? 'Yes' : 'No'}</p>
                 <p className="tk_ProjectAtt"><LockOutlined/> Project type
                   : {project.publicAccess ? 'Public' : 'Private'}</p>
               </Col>
