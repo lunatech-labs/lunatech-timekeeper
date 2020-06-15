@@ -3,6 +3,8 @@ package fr.lunatech.timekeeper.resources;
 import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
 import fr.lunatech.timekeeper.services.requests.ClientRequest;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
+import fr.lunatech.timekeeper.services.requests.TimeEntryPerHourRequest;
+import fr.lunatech.timekeeper.services.requests.TimeSheetRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import fr.lunatech.timekeeper.services.responses.UserResponse;
@@ -19,6 +21,7 @@ import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +29,9 @@ import java.util.List;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.PersonalTimeSheetsDef;
+import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TimeSheetDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
+import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.hamcrest.CoreMatchers.is;
@@ -63,9 +68,9 @@ public class PersonalTimesheetsResourceTest {
         List<ProjectRequest.ProjectUserRequest> newUsers = List.of(jimmyProjectRequest);
         final var project = create(new ProjectRequest("Disney Content API", true, "Project for the backend system", client.getId(), true, newUsers), adminToken);
 
-        WeekResponse response = new WeekResponse(LocalDate.of(2020,5,25), Collections.emptyList(),Collections.emptyList(),Collections.emptyList());
+        WeekResponse response = new WeekResponse(LocalDate.of(2020, 5, 25), Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
 
-        getValidation(PersonalTimeSheetsDef.uriWithMultiInt(2020,22), adminToken, OK).body(is(timeKeeperTestUtils.toJson(response)));
+        getValidation(PersonalTimeSheetsDef.uriWithMultiInt(2020, 22), adminToken, OK).body(is(timeKeeperTestUtils.toJson(response)));
     }
 
     @Test
@@ -97,12 +102,79 @@ public class PersonalTimesheetsResourceTest {
                 , project.isPublicAccess());
 
 
-        final var timesheet = new TimeSheetResponse(1L, projectResponse, jimmy, TimeUnit.HOURLY, true,null,null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
+        final var timesheet = new TimeSheetResponse(1L, projectResponse, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null);
         final List<PublicHoliday> holidays = new ArrayList<>();
-        holidays.add(new PublicHoliday(LocalDate.of(2020,5,21), "Jour de l'Ascension","Ascension Day","FR"));
-        WeekResponse response = new WeekResponse(LocalDate.of(2020,5,18), Collections.emptyList(), List.of(timesheet), holidays);
+        holidays.add(new PublicHoliday(LocalDate.of(2020, 5, 21), "Jour de l'Ascension", "Ascension Day", "FR"));
+        WeekResponse response = new WeekResponse(LocalDate.of(2020, 5, 18), Collections.emptyList(), List.of(timesheet), holidays);
 
-        getValidation(PersonalTimeSheetsDef.uriWithMultiInt(2020,21), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(response)));
+        getValidation(PersonalTimeSheetsDef.uriWithMultiInt(2020, 21), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(response)));
     }
+
+
+    @Test
+    void shouldCalculateDaysLeftWhenUserWorkedOnProject() {
+        //GIVEN : A project where jimmy is a member
+        final String adminToken = getAdminAccessToken();
+        final String jimmyToken = getUserAccessToken();
+
+        UserResponse jimmy = create(jimmyToken);
+
+        final var client = create(new ClientRequest("Disney", "The Disneyland company"), adminToken);
+        ProjectRequest.ProjectUserRequest jimmyProjectRequest = new ProjectRequest.ProjectUserRequest(jimmy.getId(), false);
+
+        List<ProjectRequest.ProjectUserRequest> newUsers = List.of(jimmyProjectRequest);
+        final var project = create(new ProjectRequest("Disney Content API", true, "Project for the backend system", client.getId(), true, newUsers), adminToken);
+        final var projectResponse = new ProjectResponse(project.getId()
+                , project.getName()
+                , project.isBillable()
+                , project.getDescription()
+                , new ProjectResponse.ProjectClientResponse(client.getId(), client.getName())
+                , List.of(new ProjectResponse.ProjectUserResponse(jimmy.getId()
+                        , false
+                        , jimmy.getName()
+                        , jimmy.getPicture()
+                )
+        )
+                , project.isPublicAccess());
+
+        //WHEN: the timeSheet have a maxDuration of 10 days and jimmy add 2 entry of 1 day
+        TimeSheetRequest updatedTimeSheet = new TimeSheetRequest(
+                TimeUnit.HOURLY,
+                true,
+                null,
+                10,
+                TimeUnit.DAY
+        );
+        String commentDay = "I worked on Disney content API for 8h";
+        LocalDateTime startDay1 = LocalDateTime.of(2020, 6, 18, 10, 0);
+        LocalDateTime endDay1 = LocalDateTime.of(2020, 6, 18, 18, 0);
+        LocalDateTime startDay2 = LocalDateTime.of(2020, 6, 19, 8, 0);
+        LocalDateTime endDay2 = LocalDateTime.of(2020, 6, 19, 16, 0);
+        TimeEntryPerHourRequest jimmyEntryDay1 = new TimeEntryPerHourRequest(
+                commentDay,
+                true,
+                startDay1,
+                endDay1
+        );
+        TimeEntryPerHourRequest jimmyEntryDay2 = new TimeEntryPerHourRequest(
+                commentDay,
+                true,
+                startDay2,
+                endDay2
+        );
+        update(updatedTimeSheet, TimeSheetDef.uriWithid(1L), jimmyToken);
+        create(1L, jimmyEntryDay1, jimmyToken);
+        create(1L, jimmyEntryDay2, jimmyToken);
+
+        TimeSheetResponse.TimeEntryResponse jimmyEntryDay1Response = new TimeSheetResponse.TimeEntryResponse(1L, commentDay, startDay1, endDay1);
+        TimeSheetResponse.TimeEntryResponse jimmyEntryDay2Response = new TimeSheetResponse.TimeEntryResponse(2L, commentDay, startDay2, endDay2);
+
+        final var timesheet = new TimeSheetResponse(1L, projectResponse, jimmy, TimeUnit.HOURLY, true, null, 10, TimeUnit.DAY.toString(), List.of(jimmyEntryDay1Response, jimmyEntryDay2Response), 8L);
+        WeekResponse response = new WeekResponse(LocalDate.of(2020, 6, 15), Collections.emptyList(), List.of(timesheet), new ArrayList<>());
+
+        //THEN: the days left should be 8
+        getValidation(PersonalTimeSheetsDef.uriWithMultiInt(2020, 25), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(response)));
+    }
+
 
 }
