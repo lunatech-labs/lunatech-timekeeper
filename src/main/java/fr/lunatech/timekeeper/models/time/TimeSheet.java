@@ -40,6 +40,7 @@ public class TimeSheet extends PanacheEntityBase {
     @Null
     public Integer maxDuration; // eg 21
 
+    @Enumerated(EnumType.STRING)
     @Null
     public TimeUnit durationUnit; // DAYS
 
