@@ -30,9 +30,9 @@ const TimeEntriesPage = () => {
     return (
       <React.Fragment>
         <Alert title='Server error'
-          message='Failed to load the list of TimeSheets for this user'
-          type='error'
-          description='check that the authenticated User has role [user] on Quarkus'
+               message='Failed to load the list of TimeSheets for this user'
+               type='error'
+               description='check that the authenticated User has role [user] on Quarkus'
         />
       </React.Fragment>
     );
@@ -92,14 +92,10 @@ const TimeEntriesPage = () => {
         dateCellRender={(data) => {
           return (
             <div>
-              {data.map(entry => {
-                if (entry) {
-                  return (
-                    <TimeEntry entry={entry}/>
-                  );
-                } else {
-                  return null;
-                }
+              {data.filter(data => !!data).map(entry => {
+                return (
+                  <TimeEntry key={entry.id} entry={entry}/>
+                );
               })}
             </div>
           );
