@@ -50,14 +50,13 @@ const WeekCalendar = (props) => {
   const [showButton, setShowButton] = useState(-1);
   const [weekSelected, setWeekSelected] = useState(0);
   const [weekRanges] = useState(weekRangeOfDate(props.firstDay));
+  const {onPanelChange} = props;
   useEffect(() => {
     const weekRange = weekRangeOfDateMap.get(weekSelected);
-    if (weekRange && props.onPanelChange) {
+    if (weekRange && onPanelChange) {
       const {id, start, end} = weekRange;
-      props.onPanelChange(id, start, end);
+      onPanelChange(id, start, end);
     }
-    // Im not interested of the changes of props.onPanelChange
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [weekSelected]);
 
   const weekRangeOfDateToMap = () => {
