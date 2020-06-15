@@ -57,7 +57,7 @@ const WeekCalendar = (props) => {
       const {id, start, end} = weekRange;
       onPanelChange(id, start, end);
     }
-  }, [weekSelected]);
+  }, [weekSelected, onPanelChange]);
 
   const weekRangeOfDateToMap = () => {
     const map = new Map();
