@@ -97,9 +97,9 @@ public class PersonalTimesheetsResourceTest {
                 , project.isPublicAccess());
 
 
-        final var timesheet = new TimeSheetResponse(1L, projectResponse, jimmy, TimeUnit.HOURLY, true,null,null, "HOURLY", Collections.emptyList());
+        final var timesheet = new TimeSheetResponse(1L, projectResponse, jimmy, TimeUnit.HOURLY, true,null,null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
         final List<PublicHoliday> holidays = new ArrayList<>();
-        holidays.add(new PublicHoliday(LocalDate.of(2020,05,21), "Jour de l'Ascension","Ascension Day","FR"));
+        holidays.add(new PublicHoliday(LocalDate.of(2020,5,21), "Jour de l'Ascension","Ascension Day","FR"));
         WeekResponse response = new WeekResponse(LocalDate.of(2020,5,18), Collections.emptyList(), List.of(timesheet), holidays);
 
         getValidation(PersonalTimeSheetsDef.uriWithMultiInt(2020,21), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(response)));
