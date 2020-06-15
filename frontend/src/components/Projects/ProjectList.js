@@ -18,10 +18,14 @@ import EyeFilled from '@ant-design/icons/lib/icons/EyeFilled';
 import TitleSection from '../Title/TitleSection';
 import DownOutlined from '@ant-design/icons/lib/icons/DownOutlined';
 import PropTypes from 'prop-types';
+import {useKeycloak} from "@react-keycloak/web";
 
 const {Panel} = Collapse;
 
+
 const ProjectList = () => {
+  const [keycloak] = useKeycloak();
+  const isAdmin = keycloak.hasRealmRole("admin");
 
   const [filterText, setFilterText] = useState('All');
 
@@ -135,9 +139,9 @@ const ProjectList = () => {
     return (
       <React.Fragment>
         <Alert title='Server error'
-          message='Failed to load the list of projects'
-          type='error'
-          description='Unable to fetch the list of Projects from the server'
+               message='Failed to load the list of projects'
+               type='error'
+               description='Unable to fetch the list of Projects from the server'
         />
       </React.Fragment>
     );
@@ -173,12 +177,15 @@ const ProjectList = () => {
             </Tooltip>,
             <Tooltip title="Edit" key="edit">
               <Button type="link" size="small" ghost shape="circle" icon={<EditFilled/>}
-                href={`/projects/${item.id}/edit`}/>
+                      href={`/projects/${item.id}/edit`}/>
             </Tooltip>
           ]}
-          actions={[ item.users.length === 0 ? <Panel id="tk_ProjectNoCollapse" header={<Space size="small"><UserOutlined/>{item.users.length}{item.users.length <= 1 ? 'member' : 'members'}</Space>}/> :
+          actions={[item.users.length === 0 ? <Panel id="tk_ProjectNoCollapse" header={<Space
+              size="small"><UserOutlined/>{item.users.length}{item.users.length <= 1 ? 'member' : 'members'}</Space>}/> :
             <Collapse bordered={false} expandIconPosition={'right'} key="projects">
-              <Panel header={<Space size="small"><UserOutlined/>{item.users.length}{item.users.length <= 1 ? 'member' : 'members'}</Space>} key="members">
+              <Panel header={<Space
+                size="small"><UserOutlined/>{item.users.length}{item.users.length <= 1 ? 'member' : 'members'}</Space>}
+                     key="members">
                 <List
                   className={'tk_Project_MemberList'}
                   dataSource={item.users.sort(((a, b) => memberComparator(a, b)))}
@@ -208,10 +215,10 @@ const ProjectList = () => {
       <div className="tk_SubHeader">
         <p>{projectsFiltered.length} project(s)
           | {Array.from(new Set(projectsFiltered.filter(project => !!project.client).map((project) => project.client.id))).length} client(s)</p>
-        <div className="tk_SubHeader_RightPart">
+        {isAdmin && <div className="tk_SubHeader_RightPart">
           <div className="tk_SubHeader_Filters">{filterComponent}</div>
           <div className="tk_SubHeader_Filters">{groupByComponent}</div>
-        </div>
+        </div>}
       </div>
 
       {groupBy === 'All' ?
