@@ -7,6 +7,7 @@ import './NewProjectForm.less';
 import PropTypes from 'prop-types';
 import TitleSection from '../Title/TitleSection';
 import '../../components/Button/BtnGeneral.less';
+import NoDataMessage from '../NoDataMessage/NoDataMessage';
 
 
 const {TextArea} = Input;
@@ -188,7 +189,7 @@ const NewProjectForm = () => {
                         </Select>
                       </Form.Item>
                       <p className="tk_LabelForm">Added members :</p>
-                      {fields.length === 0 ? 'There is no members on the project' :
+                      {fields.length === 0 ? <NoDataMessage message='There is no members on the project'/> :
                         fields.map((field, index) => {
                           const id = [index, 'id'];
                           const manager = [index, 'manager'];
