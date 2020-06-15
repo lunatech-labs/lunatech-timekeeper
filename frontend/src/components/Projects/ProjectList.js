@@ -175,6 +175,7 @@ const ProjectList = () => {
             <Tooltip title="View" key="view">
               <Button type="link" size="small" ghost shape="circle" icon={<EyeFilled/>} href={`/projects/${item.id}`}/>
             </Tooltip>,
+            isAdmin &&
             <Tooltip title="Edit" key="edit">
               <Button type="link" size="small" ghost shape="circle" icon={<EditFilled/>}
                 href={`/projects/${item.id}/edit`}/>
