@@ -57,7 +57,7 @@ const computeWeekRanges = (selectedDay) => {
     weekNumber: selectedDay.isoWeek(),
     weekRange: weekRanges,
     weekRangeMap: weekRangeOfDateToMap(weekRanges)
-  }
+  };
 };
 const WeekCalendar = (props) => {
   const [showButton, setShowButton] = useState(-1);
@@ -72,7 +72,7 @@ const WeekCalendar = (props) => {
       const {id, start, end} = weekRange;
       onPanelChange(id, start, end);
       if (weekRanges.weekNumber !== id) {
-        setWeekRanges(computeWeekRanges(start))
+        setWeekRanges(computeWeekRanges(start));
       }
     }
   }, [weekSelected, onPanelChange, weekRanges]);
@@ -103,9 +103,9 @@ const WeekCalendar = (props) => {
     return (
       <div>
         <Button icon={<LeftOutlined/>} disabled={disableLeft} shape='circle'
-                onClick={() => setWeekSelected(weekSelected - 1)}/>
+          onClick={() => setWeekSelected(weekSelected - 1)}/>
         <Button icon={<RightOutlined/>} disabled={disableRight} shape='circle'
-                onClick={() => setWeekSelected(weekSelected + 1)}/>
+          onClick={() => setWeekSelected(weekSelected + 1)}/>
         <p>{renderWeekYear(start, end)}</p>
       </div>
     );
@@ -116,7 +116,7 @@ const WeekCalendar = (props) => {
       {weekRanges.weekRange.map(({id, start, end}) => {
         return (
           <Select.Option className={`${start.isSame(moment(), 'week') ? 'tk_CurrentWeekSelect' : ''}`}
-                         key={`date-range-${id}`} value={id} disabled={id === weekSelected}>
+            key={`date-range-${id}`} value={id} disabled={id === weekSelected}>
             {renderWeekRange(start, end)}
           </Select.Option>
         );
