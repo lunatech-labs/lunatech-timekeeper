@@ -20,10 +20,11 @@ const TimeEntriesPage = () => {
   const [form] = Form.useForm();
 
   const dataFromServer = useTimeKeeperAPI('/api/my/' + currentWeekNumber);
+  const {run} = dataFromServer;
   useEffect(
     () => {
-      dataFromServer.run();
-    }, [currentWeekNumber]);
+      run();
+    }, [currentWeekNumber, run]);
 
   if (dataFromServer.error) {
     return (
@@ -83,10 +84,7 @@ const TimeEntriesPage = () => {
         firstDay={datas.firstDayOfWeek}
         disabledWeekEnd={true}
         hiddenButtons={false}
-        onPanelChange={(id, start) => {
-          // setCurrentFirstDay(start); // TODO voir si c'est encore utile
-          setCurrentWeekNumber(start.year() + '?weekNumber=' + start.isoWeek()); // TODO sinon c'est mieux avec le numero de semaine
-        }}
+        onPanelChange={(id, start) => setCurrentWeekNumber(start.year() + '?weekNumber=' + start.isoWeek())}
         onClickAddTask={(e, m) => {
           setTaskMoment(m);
           openModal();
