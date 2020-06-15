@@ -65,14 +65,14 @@ const EditTimeSheetForm = ({timesheet}) => {
 
   return (
     <React.Fragment>
-      <Form id="tk_Form" layout="vertical" initialValues={initialValues(timesheet)}
-        onFinish={timeKeeperAPIPut.run} form={form}>
+      <Form id="tk_Form" layout="vertical" initialValues={initialValues(timesheet)} onFinish={timeKeeperAPIPut.run} form={form}>
+        <p className="tk_SectionTitle">Edit timesheet</p>
 
-        <Form.Item name="timeUnit" label="Time unit" rules={[{required: true}]}>
+        <Form.Item name="timeUnit" label="Time unit:" rules={[{required: true}]}>
           <Radio.Group>
-            <Radio.Button value="DAY">Day</Radio.Button>
-            <Radio.Button value="HALFDAY">Half-day</Radio.Button>
-            <Radio.Button value="HOURLY">Hours</Radio.Button>
+            <Radio value="DAY">Day</Radio>
+            <Radio value="HALFDAY">Half-day</Radio>
+            <Radio value="HOURLY">Hours</Radio>
           </Radio.Group>
         </Form.Item>
 

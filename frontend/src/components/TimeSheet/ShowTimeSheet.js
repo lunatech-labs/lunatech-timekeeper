@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Alert, Col, Divider, Row} from 'antd';
 import TagProjectClient from '../Tag/TagProjectClient';
 import './ShowTimeSheet.less';
+import '../Modal/ModalGeneral.less';
 import {DollarOutlined, ClockCircleOutlined, CalendarOutlined, FieldTimeOutlined} from '@ant-design/icons';
 import ProjectMemberTag from '../Projects/ProjectMemberTag';
 import {useTimeKeeperAPI} from '../../utils/services';
@@ -20,7 +21,7 @@ const ShowTimeSheet = ({project, member}) => {
       <div className="tk_ModalGen">
         <div className="tk_ModalTop">
           <div className="tk_ModalTopHead">
-            <h1>Individual time sheet</h1>
+            <h1>Individual timesheet</h1>
             <a onClick={() => {setSelectedTimeSheet(timeSheet);}}>Edit</a>
           </div>
           <div className="tk_ModalTopBody">
@@ -64,7 +65,8 @@ const ShowTimeSheet = ({project, member}) => {
       defaultIsBillable: PropTypes.bool.isRequired,
       expirationDate: PropTypes.string,
       maxDuration: PropTypes.number,
-      durationUnit: PropTypes.string
+      durationUnit: PropTypes.string,
+      timeUnit: PropTypes.string,
     })
   };
 
@@ -95,7 +97,7 @@ ShowTimeSheet.propTypes = {
   project: PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
-    client: PropTypes.object
+    client: PropTypes.object,
   }),
   member: PropTypes.object
 };
