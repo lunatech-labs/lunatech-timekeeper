@@ -7,12 +7,12 @@ import PropTypes from 'prop-types';
 import {DesktopOutlined, PieChartOutlined, UserOutlined} from '@ant-design/icons';
 import FolderOpenOutlined from '@ant-design/icons/lib/icons/FolderOpenOutlined';
 import ClockCircleOutlined from '@ant-design/icons/lib/icons/ClockCircleOutlined';
-import {useKeycloak} from '@react-keycloak/web';
+import {useKeycloak} from "@react-keycloak/web";
 
 const MenuSidebar = (props) => {
   const [keycloak] = useKeycloak();
 
-  const isAdmin = keycloak.hasRealmRole('admin');
+  const isAdmin = keycloak.hasRealmRole("admin");
   const {location} = props;
   const splitPathname = location.pathname.split('/').filter(i => i);
   const selectedKeys = splitPathname.length === 0 ? [] : ['/' + splitPathname[0]];
@@ -51,7 +51,7 @@ const MenuSidebar = (props) => {
       </Menu.Item>
     </Menu>
   );
-};
+}
 
 MenuSidebar.propTypes = {
   location: PropTypes.object.isRequired
