@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Space from 'antd/lib/space';
-import {Avatar, Collapse, List} from 'antd';
+import {Avatar, Collapse, List, Divider} from 'antd';
 import FolderFilled from '@ant-design/icons/lib/icons/FolderFilled';
 import logo from '../../img/logo_timekeeper_homepage.png';
 import TagProjectClient from '../Tag/TagProjectClient';
@@ -9,7 +9,6 @@ import {CalendarOutlined, ClockCircleOutlined} from '@ant-design/icons';
 import moment from 'moment';
 import HistoryOutlined from '@ant-design/icons/lib/icons/HistoryOutlined';
 import './UserTimeSheetList.less';
-
 
 const {Panel} = Collapse;
 const format = (s) => moment(s, 'YYYY-MM-DD').format('YYYY/MM/DD');
@@ -41,6 +40,7 @@ const UserTimeSheetList = ({timeSheets}) => {
                     <div>
                       <Avatar src={logo} shape={'square'} size="large"/>
                       <p>{timeSheet.project.name}</p>
+                      <Divider type="vertical" />
                       <TagProjectClient client={timeSheet.project.client}/>
                     </div>
                     <div>
