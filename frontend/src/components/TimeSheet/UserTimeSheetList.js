@@ -19,9 +19,16 @@ const formatEmpty = (stringTocheck) => {
 };
 
 const defineClassName = (elementToCheck) => {
-  if (elementToCheck)
-    return '';
-  return 'ant-card-meta-description';
+  if (!elementToCheck)
+    return 'tk_UnlimitedField';
+};
+
+const defineClassNameDayLeft = (daysLeft) => {
+  if (!daysLeft)
+    return 'tk_UnlimitedField';
+  else if (daysLeft<9)
+    return 'tk_WarnDayLeft';
+  return '';
 };
 
 
@@ -47,7 +54,7 @@ const UserTimeSheetList = ({timeSheets}) => {
                       <p className={defineClassName(timeSheet.timeUnit)}><ClockCircleOutlined/> TimeUnit: {timeSheet.timeUnit}</p>
                       <p className={defineClassName(timeSheet.maxDuration)}><CalendarOutlined/> Number of days: {formatEmpty(timeSheet.maxDuration)}</p>
                       <p className={defineClassName(timeSheet.expirationDate)}><CalendarOutlined/> End date: {timeSheet.expirationDate ? format(timeSheet.expirationDate) : 'Unlimited'}</p>
-                      <p className={defineClassName(timeSheet.leftOver)}><HistoryOutlined/>Days left : {formatEmpty(timeSheet.leftOver)}</p>
+                      <p className={defineClassNameDayLeft(timeSheet.leftOver)}><HistoryOutlined/>Days left : {formatEmpty(timeSheet.leftOver)}</p>
                     </div>
                   </List.Item>
                 );
