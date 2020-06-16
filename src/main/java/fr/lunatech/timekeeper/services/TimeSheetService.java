@@ -65,7 +65,7 @@ public class TimeSheetService {
                 .findFirst();
     }
 
-    // for the MVP we don't filter, some kind of "active" flag will be added once business rules are defined
+    // for the MVP we don't filter, some kind of "active" flag will be added once business rules are defined (see TK-389)
     <R extends Collection<TimeSheetResponse>> R streamAllActive(
             AuthenticationContext ctx,
             Function<TimeSheet, TimeSheetResponse> bind,
