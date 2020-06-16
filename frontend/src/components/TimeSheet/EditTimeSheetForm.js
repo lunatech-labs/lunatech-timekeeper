@@ -7,11 +7,11 @@ import '../../components/Button/BtnGeneral.less';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 
-const EditTimeSheetForm = ({timesheet}) => {
+const EditTimeSheetForm = ({timeSheet}) => {
 
   const [timeSheetUpdated, setTimeSheetUpdated] = useState(false);
 
-  const timeKeeperAPIPut = useTimeKeeperAPIPut('/api/time-sheets/' + timesheet.id, (form => form), setTimeSheetUpdated);
+  const timeKeeperAPIPut = useTimeKeeperAPIPut('/api/time-sheets/' + timeSheet.id, (form => form), setTimeSheetUpdated);
 
   useEffect(() => {
     if (!timeSheetUpdated) {
@@ -22,21 +22,10 @@ const EditTimeSheetForm = ({timesheet}) => {
 
   const [form] = Form.useForm();
 
-  EditTimeSheetForm.propTypes = {
-    timeSheet: PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      timeUnit: PropTypes.string,
-      defaultIsBillable: PropTypes.bool.isRequired,
-      expirationDate: PropTypes.string,
-      maxDuration: PropTypes.number,
-      durationUnit: PropTypes.string
-    })
-  };
-
   if (timeSheetUpdated) {
     return (
       <React.Fragment>
-        <Redirect to={{pathname: '/projects/' + timesheet.project.id, state: {modal: true}}}/>
+        <Redirect to={{pathname: '/projects/' + timeSheet.project.id, state: {modal: true}}}/>
       </React.Fragment>
     );
   }
@@ -52,21 +41,21 @@ const EditTimeSheetForm = ({timesheet}) => {
     );
   }
 
-  const initialValues = (timesheet) => {
+  const initialValues = (timeSheet) => {
     return {
-      'timeUnit': timesheet.timeUnit,
-      'defaultIsBillable': timesheet.defaultIsBillable,
-      'expirationDate': timesheet.expirationDate ? moment(timesheet.expirationDate, 'YYYY-MM-DD').utc(true) : null,
-      'maxDuration': timesheet.maxDuration,
-      'durationUnit': timesheet.durationUnit
+      'timeUnit': timeSheet.timeUnit,
+      'defaultIsBillable': timeSheet.defaultIsBillable,
+      'expirationDate': timeSheet.expirationDate ? moment(timeSheet.expirationDate, 'YYYY-MM-DD').utc(true) : null,
+      'maxDuration': timeSheet.maxDuration,
+      'durationUnit': timeSheet.durationUnit
     };
   };
 
 
   return (
     <React.Fragment>
-      <Form id="tk_Form" layout="vertical" initialValues={initialValues(timesheet)} onFinish={timeKeeperAPIPut.run} form={form}>
-        <p className="tk_SectionTitle">Edit timesheet</p>
+      <Form id="tk_Form" layout="vertical" initialValues={initialValues(timeSheet)} onFinish={timeKeeperAPIPut.run} form={form}>
+        <p className="tk_SectionTitle">Edit timeSheet</p>
 
         <Form.Item name="timeUnit" label="Time unit:" rules={[{required: true}]}>
           <Radio.Group>
@@ -108,6 +97,20 @@ const EditTimeSheetForm = ({timesheet}) => {
       </Form>
     </React.Fragment>
   );
+};
+
+EditTimeSheetForm.propTypes = {
+  timeSheet: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    timeUnit: PropTypes.string,
+    defaultIsBillable: PropTypes.bool.isRequired,
+    expirationDate: PropTypes.string,
+    maxDuration: PropTypes.number,
+    durationUnit: PropTypes.string,
+    project: PropTypes.shape({
+      id: PropTypes.number.isRequired
+    })
+  })
 };
 
 export default EditTimeSheetForm;

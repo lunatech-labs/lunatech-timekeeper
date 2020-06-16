@@ -102,7 +102,7 @@ public class ProjectService {
         }
     }
 
-    // TODO : NotImplementedYet
+    // TODO : NotImplementedYet, Will be implemented by the ticket TK-363
     public Optional<Long> joinProject(Long id, Long userId, AuthenticationContext ctx) {
         logger.debug("Modify project for for id={} with userId={}, {}", id, userId, ctx);
         findById(id, ctx).ifPresent(project -> {

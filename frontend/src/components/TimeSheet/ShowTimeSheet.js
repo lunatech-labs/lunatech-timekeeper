@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Alert, Col, Divider, Row} from 'antd';
+import {Alert, Button, Col, Divider, Row} from 'antd';
 import TagProjectClient from '../Tag/TagProjectClient';
 import './ShowTimeSheet.less';
 import '../Modal/ModalGeneral.less';
@@ -23,7 +23,7 @@ const ShowTimeSheet = ({project, member}) => {
         <div className="tk_ModalTop">
           <div className="tk_ModalTopHead">
             <h1>Individual timesheet</h1>
-            <a onClick={() => {setSelectedTimeSheet(timeSheet);}}>Edit</a>
+            <Button type="link" onClick={() => {setSelectedTimeSheet(timeSheet);}}>Edit</Button>
           </div>
           <div className="tk_ModalTopBody">
             <div className="tk_ModalTopProject">
