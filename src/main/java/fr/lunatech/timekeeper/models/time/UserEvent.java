@@ -46,10 +46,10 @@ public class UserEvent extends PanacheEntityBase {
         return startDateTime.toLocalDate();
     }
 
-    @ManyToOne(cascade = CascadeType.DETACH, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER)
     public User owner;
 
-    @ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.LAZY, optional = true)
+    @ManyToOne(fetch = FetchType.EAGER)
     public EventTemplate eventTemplate;
 
 

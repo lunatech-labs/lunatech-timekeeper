@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 /**
  * An EventTemplate is an event, created manually by an administrator that would concern one
@@ -22,12 +23,13 @@ public class EventTemplate extends PanacheEntityBase {
     public Long id;
 
     @NotNull
+    @Column(nullable = false, length = 100)
     public String name;
 
     @NotNull
     public String description;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = Organization.class)
     public Organization organization;
 
     @NotNull
@@ -36,4 +38,19 @@ public class EventTemplate extends PanacheEntityBase {
     @Null
     public LocalDateTime endDateTime;
 
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "eventTemplate")
+    private Set<UserEvent> associatedEvents;
+
+    @Override
+    public String toString() {
+        return "EventTemplate{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", organization=" + organization +
+                ", startDateTime=" + startDateTime +
+                ", endDateTime=" + endDateTime +
+                ", associatedEvents=" + associatedEvents +
+                '}';
+    }
 }
