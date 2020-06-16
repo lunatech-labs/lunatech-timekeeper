@@ -80,7 +80,7 @@ const TimeEntriesPage = () => {
           dataFromServer.run();
         }} onCancel={closeModal}/>
       </Modal>
-      <UserTimeSheetList timeSheets={data}/>
+      <UserTimeSheetList timeSheets={timeEntries}/>
 
       <WeekCalendar
         firstDay={datas.firstDayOfWeek}
