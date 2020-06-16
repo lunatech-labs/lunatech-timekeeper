@@ -6,15 +6,14 @@ import FolderFilled from '@ant-design/icons/lib/icons/FolderFilled';
 import logo from '../../img/logo_timekeeper_homepage.png';
 import TagProjectClient from '../Tag/TagProjectClient';
 import {CalendarOutlined, ClockCircleOutlined} from '@ant-design/icons';
-import moment from 'moment';
 import HistoryOutlined from '@ant-design/icons/lib/icons/HistoryOutlined';
 import './UserTimeSheetList.less';
 
 const {Panel} = Collapse;
-const format = (s) => moment(s, 'YYYY-MM-DD').format('YYYY/MM/DD');
-const formatEmpty = (stringTocheck) => {
-  if (stringTocheck)
-    return stringTocheck;
+const formatDate = (s) => s.replace('-','/').replace('-','/')
+const formatEmpty = (stringToCheck) => {
+  if (stringToCheck)
+    return stringToCheck;
   return 'Unlimited';
 };
 
@@ -53,7 +52,7 @@ const UserTimeSheetList = ({timeSheets}) => {
                     <div>
                       <p className={defineClassName(timeSheet.timeUnit)}><ClockCircleOutlined/> TimeUnit: {timeSheet.timeUnit}</p>
                       <p className={defineClassName(timeSheet.maxDuration)}><CalendarOutlined/> Number of days: {formatEmpty(timeSheet.maxDuration)}</p>
-                      <p className={defineClassName(timeSheet.expirationDate)}><CalendarOutlined/> End date: {timeSheet.expirationDate ? format(timeSheet.expirationDate) : 'Unlimited'}</p>
+                      <p className={defineClassName(timeSheet.expirationDate)}><CalendarOutlined/> End date: {timeSheet.expirationDate ? formatDate(timeSheet.expirationDate) : 'Unlimited'}</p>
                       <p className={defineClassNameDayLeft(timeSheet.leftOver)}><HistoryOutlined/>Days left : {formatEmpty(timeSheet.leftOver)}</p>
                     </div>
                   </List.Item>
