@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Space from 'antd/lib/space';
-import {Avatar, Collapse, List} from 'antd';
+import {Collapse, List} from 'antd';
 import FolderFilled from '@ant-design/icons/lib/icons/FolderFilled';
 import {CalendarOutlined, ClockCircleOutlined} from '@ant-design/icons';
 import HistoryOutlined from '@ant-design/icons/lib/icons/HistoryOutlined';
