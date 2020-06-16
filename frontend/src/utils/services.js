@@ -26,7 +26,7 @@ function errorHandler(error) {
       const promiseResult = response.json();
 
       promiseResult.then(function (bodyTxt) {
-        if(bodyTxt.message.string != undefined){
+        if(bodyTxt.message.string !== undefined){
           const errorText = 'Message from server: ' + bodyTxt.message.string;
           const {status, url} = response;
           notification.error({

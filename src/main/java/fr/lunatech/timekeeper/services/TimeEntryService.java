@@ -3,6 +3,7 @@ package fr.lunatech.timekeeper.services;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.services.requests.TimeEntryRequest;
+import io.quarkus.security.ForbiddenException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,12 +22,14 @@ public class TimeEntryService {
     @Transactional
     public Long createTimeEntry(Long timeSheetId, TimeEntryRequest request, AuthenticationContext ctx, Enum TimeUnit) {
         logger.debug("Create a new TimeEntry with {}, {}", request, ctx);
-        // TODO check that the user can create the timeEntry for this time entry
-        final TimeEntry timeEntry = request.unbind( timeSheetId, timeSheetService::findById, ctx);
+        final TimeEntry timeEntry = request.unbind(timeSheetId, timeSheetService::findById, ctx);
+        if (!ctx.canCreate(timeEntry)) {
+            throw new ForbiddenException("The user can't add an entry to the time sheet with id : " + timeSheetId);
+        }
         try {
             timeEntry.persistAndFlush();
         } catch (PersistenceException pe) {
-            throw new CreateResourceException(String.format("TimeEntry was not created due to constraint violation"));
+            throw new CreateResourceException("TimeEntry was not created due to constraint violation");
         }
         return timeEntry.id;
     }

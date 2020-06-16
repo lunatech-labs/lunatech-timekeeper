@@ -59,7 +59,10 @@ const MainPage = ({ title, children, actions, entityName, ...rest }) => {
 
 MainPage.propTypes = {
   title: PropTypes.string,
-  children: PropTypes.object.isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node
+  ]).isRequired,
   actions: PropTypes.object,
   entityName: PropTypes.string
 };
