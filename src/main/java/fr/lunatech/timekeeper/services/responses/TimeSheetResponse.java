@@ -130,6 +130,7 @@ public class TimeSheetResponse {
                 ", maxDuration=" + maxDuration +
                 ", durationUnit='" + durationUnit + '\'' +
                 ", entries=" + entries +
+                ", leftOver=" + leftOver +
                 '}';
     }
 }
