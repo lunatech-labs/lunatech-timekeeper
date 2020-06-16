@@ -40,19 +40,7 @@ public class WeekService {
 
         List<TimeSheetResponse> timeSheets = timeSheetService.findAllActivesForUser(ctx);
 
-//        // Fake DATA - Temporary - do not commit or it will break unit tests
-
-//        // Fake DATA - start
-//        var nicolasDaysOff = new UserEvent();
-//        nicolasDaysOff.startDateTime= LocalDate.of(2020,05,22).atStartOfDay();
-//        nicolasDaysOff.endDateTime=LocalDate.of(2020,05,23).atStartOfDay();
-//        nicolasDaysOff.description="Journée de congès";
-//        nicolasDaysOff.eventType="vacations";
-//        nicolasDaysOff.id=1L;
-
         var userEvents = new ArrayList<UserEvent>();
-//        userEvents.add(nicolasDaysOff);
-//        // Fake DATA - END
 
         var desiredDate = TimeKeeperDateUtils.getFirstDayOfWeekFromWeekNumber(year, weekNumber);
         var publicHolidays = CalendarFactory.instanceFor("FR",year).getPublicHolidaysForWeekNumber(weekNumber);

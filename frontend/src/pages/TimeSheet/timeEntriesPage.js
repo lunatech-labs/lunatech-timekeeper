@@ -6,6 +6,7 @@ import {useTimeKeeperAPI} from '../../utils/services';
 import {Alert, Form, Modal} from 'antd';
 import TimeEntryForm from '../../components/TimeEntry/TimeEntryForm';
 import moment from 'moment';
+import UserTimeSheetList from '../../components/TimeSheet/UserTimeSheetList';
 
 
 const TimeEntriesPage = () => {
@@ -79,6 +80,7 @@ const TimeEntriesPage = () => {
           dataFromServer.run();
         }} onCancel={closeModal}/>
       </Modal>
+      <UserTimeSheetList timeSheets={timeEntries}/>
 
       <WeekCalendar
         firstDay={datas.firstDayOfWeek}
