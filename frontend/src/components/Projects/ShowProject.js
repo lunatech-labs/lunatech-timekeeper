@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Avatar, Col, Divider, Modal, Row, Typography} from 'antd';
+import React, {useEffect, useState} from 'react';
+import {Avatar, Button, Col, Divider, message, Modal, Row, Typography} from 'antd';
 import './ShowProject.less';
 import PropTypes from 'prop-types';
 import {DesktopOutlined, DollarOutlined, LockOutlined, SnippetsFilled, UserOutlined,} from '@ant-design/icons';
@@ -11,10 +11,28 @@ import TagProjectClient from '../Tag/TagProjectClient';
 import ShowTimeSheet from '../TimeSheet/ShowTimeSheet';
 import Tooltip from 'antd/lib/tooltip';
 import NoDataMessage from '../NoDataMessage/NoDataMessage';
+import {useTimeKeeperAPI, useTimeKeeperAPIPut} from "../../utils/services";
+import {useKeycloak} from "@react-keycloak/web";
 
 const {Title} = Typography;
 
 const ShowProject = ({project}) => {
+
+  const [projectUpdated, setProjectUpdated] = useState(false);
+
+  const timeKeeperAPIPutJoin = useTimeKeeperAPIPut(`/api/projects/${project.id}/join`, (form => form), setProjectUpdated);
+
+  // const timeKeeperAPIUser = useTimeKeeperAPI('/api/users/me');
+
+  const [keycloak] = useKeycloak();
+  console.log(keycloak.clientId)
+
+  useEffect(() => {
+    if (projectUpdated) {
+      message.success('You successfully joined the project');
+    }
+    return () => setProjectUpdated(false);
+  }, [projectUpdated]);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedMember, setSelectedMember] = useState();
@@ -86,6 +104,7 @@ const ShowProject = ({project}) => {
           </Col>
           <Col span={12}>
             <TitleSection title="Members"/>
+            <Button onClick={() => timeKeeperAPIPutJoin.run()}>Join the project</Button>
             <Members/>
           </Col>
         </Row>

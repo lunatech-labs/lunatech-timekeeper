@@ -1,6 +1,8 @@
 package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.Project;
+import fr.lunatech.timekeeper.models.ProjectUser;
+import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.resources.exceptions.UpdateResourceException;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
@@ -101,16 +103,32 @@ public class ProjectService {
             throw new UpdateResourceException("Cannot update a Project, invalid projectRequest");
         }
     }
-
-    // TODO : NotImplementedYet
-    public Optional<Long> joinProject(Long id, Long userId, AuthenticationContext ctx) {
-        logger.debug("Modify project for for id={} with userId={}, {}", id, userId, ctx);
+    @Transactional
+    public Optional<Long> joinProject(Long id, AuthenticationContext ctx) {
+        logger.debug("Modify project for for id={} with userId={}, {}", id, ctx.getUserId(), ctx);
+        final Optional<Project> maybeProject = findById(id, ctx);
+        final Optional<User> maybeUser = userService.findById(ctx.getUserId(), ctx);
+        if(maybeUser.isEmpty() || maybeProject.isEmpty()) {
+            return Optional.empty();
+        }
         findById(id, ctx).ifPresent(project -> {
             if (!ctx.canJoin(project)) {
-                throw new ForbiddenException("The user with id : " + userId + " can't join this project with id : " + id);
+                throw new ForbiddenException("The user with id : " + ctx.getUserId() + " can't join this project with id : " + id);
             }
         });
-        return Optional.empty();
+        final Project project = maybeProject.get();
+        final User user = maybeUser.get();
+        ProjectUser projectUser = new ProjectUser();
+        projectUser.project = project;
+        projectUser.manager = false;
+        projectUser.user = user;
+        project.users.add(projectUser);
+        try {
+            project.persistAndFlush();
+        } catch (PersistenceException pe) {
+            throw new CreateResourceException("Project was not created due to constraint violation");
+        }
+        return Optional.of(project.id);
     }
 
     Optional<Project> findById(Long id, AuthenticationContext ctx) {
