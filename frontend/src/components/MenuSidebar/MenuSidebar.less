@@ -1,28 +1,23 @@
-@import '../../timekeeper-theme.less';
+@import '../../main.less';
 
 #tk_Menu {
   margin-top: 32px;
   .tk_MenuItem {
     margin: 0;
     height: 60px;
-    display: flex;
-    align-items: center;
+    .mixin_Flexbox_Basis();
     &:hover {
       background: rgba(39, 40, 54, .5);
     }
     a {
-      span:first-child {
-        margin-right: 16px;
-      }
+      span:first-child {margin-right: 16px;}
     }
   }
   .ant-menu-item-selected {
-    background: @black_Tk;
-    border-left: 3px solid @red_Tk;
+    background: @tk_Black;
+    border-left: 3px solid @tk_Red;
     a {
-      span:first-child {
-        color: @red_Tk;
-      }
+      span:first-child {color: @tk_Red;}
     }
   }
 }

@@ -1,11 +1,11 @@
-@import '../../timekeeper-theme.less';
+@import '../../main.less';
 
 .tk_Information {
   margin-bottom: 0;
   padding: 14px 0px;
-  color: @white_Tk;
-  border-top: 1px solid rgba(216, 216, 216, 0.1);
-  border-bottom: 1px solid rgba(216, 216, 216, 0.1);
+  color: @tk_White;
+  border-top: @tk_Border_Base;
+  border-bottom: @tk_Border_Base;
   &:last-child {border-top: none;}
   span:first-child {margin-right: 6px;}
 }
@@ -15,13 +15,13 @@
       .ant-picker-date-panel {
         .ant-picker-header {
           button {
-            color: @lightGray_Tk;
-            &:hover {color: @white_Tk;}
+            color: @tk_LightGray;
+            &:hover {color: @tk_White;}
           }
           .ant-picker-header-view {
             button {
-              color: @white_Tk;
-              &:hover {color: @red_Tk;}
+              color: @tk_White;
+              &:hover {color: @tk_Red;}
             }
 
           }
@@ -30,11 +30,11 @@
           tbody {
             tr {
               td {
-                color: @lightGray_Tk;
+                color: @tk_LightGray;
                 div {
                   &:hover {
-                    background: @red_Tk;
-                    color: @white_Tk;
+                    background: @tk_Red;
+                    color: @tk_White;
                   }
                 }
               }
@@ -44,8 +44,8 @@
       }
       .ant-picker-footer {
         a {
-          color: @white_Tk;
-          &:hover {color: @red_Tk;}
+          color: @tk_White;
+          &:hover {color: @tk_Red;}
         }
       }
     }

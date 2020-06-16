@@ -1,4 +1,4 @@
-@import '../../timekeeper-theme.less';
+@import '../../main.less';
 
 .ant-modal-root {
   .ant-modal-wrap {
@@ -16,7 +16,7 @@
         .ant-modal-close {
           position: absolute;
           margin: 32px 64px 64px 64px;
-          &:hover {color: @white_Tk;}
+          &:hover {color: @tk_White;}
           .ant-modal-close-x {
             font-size: 26px;
             width: initial;
@@ -38,21 +38,19 @@
 .tk_ModalTop {
   padding: 96px 64px 64px 64px;
   .tk_ModalTopHead {
-    display: flex;
-    align-items: center;
+    .mixin_Flexbox_Basis();
     justify-content: space-between;
     margin-bottom: 32px;
     > div {
-      display: flex;
-      align-items: center;
+      .mixin_Flexbox_Basis();
       p {
         text-align: center;
         text-transform: uppercase;
-        border-right: 1px solid rgba(216, 216, 216, 0.1);
+        border-right: @tk_Border_Base;
         margin-right: 10px;
         margin-bottom: 0;
         padding-right: 10px;
-        color: @lightGray_Tk;
+        color: @tk_LightGray;
         line-height: 1;
         span {
           color: white;
@@ -66,7 +64,7 @@
       font-weight: 400;
     }
     button {
-      color: @red_Tk;
+      color: @tk_Red;
       height: initial;
       margin: 0;
       padding: 0;
@@ -78,15 +76,13 @@
   }
   .tk_ModalTopBody {
     .tk_ModalTopProject {
-      display: flex;
-      align-items: center;
+      .mixin_Flexbox_Basis();
       justify-content: space-between;
       padding-bottom: 16px;
       margin-bottom: 16px;
-      border-bottom: 1px solid rgba(216, 216, 216, 0.1);
+      border-bottom: @tk_Border_Base;
       div {
-        display: flex;
-        align-items: center;
+        .mixin_Flexbox_Basis();
         h2 {
           font-size: 18px;
           font-weight: 500;
@@ -107,5 +103,5 @@
 }
 .tk_ModalBottom {
   padding: 64px;
-  border-top: 1px solid rgba(216, 216, 216, 0.1);
+  border-top: @tk_Border_Base;
 }
