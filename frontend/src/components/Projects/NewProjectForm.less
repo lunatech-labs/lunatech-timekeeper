@@ -1,7 +1,7 @@
-@import '../../timekeeper-theme.less';
+@import '../../main.less';
 
 .tk_CardLg {
-  background: @darkGray_Tk;
+  background: @tk_DarkGray;
   border: none;
   border-radius: 6px;
   padding: 32px;
@@ -9,20 +9,18 @@
 }
 #tk_Card_MemberList {
   > div {
-    background: @black_Tk;
+    background: @tk_Black;
     margin-bottom: 5px;
     border-radius: 6px;
     padding: 0 16px;
     p {margin-bottom: 0;}
     .ant-avatar {margin-right: 12px;}
     .ant-form-item-control-input-content {
-      display: flex;
-      align-items: center;
+      .mixin_Flexbox_Basis();
       justify-content: space-between;
       height: 50px;
       > div {
-        display: flex;
-        align-items: center;
+        .mixin_Flexbox_Basis();
         > .ant-row {
           margin-bottom: 0;
         }
@@ -41,8 +39,7 @@
     background: none;
     &:hover {border: 1px solid rgba(145, 145, 160, 0.4);}
     height: 40px;
-    display: flex;
-    align-items: center;
+    .mixin_Flexbox_Basis();
   }
   textarea {
     background: none;
@@ -54,8 +51,8 @@
     padding: 0 11px;
     border: 1px solid rgba(145, 145, 160, 0.4);
     input {border: none;}
-    span {color: @lightGray_Tk;}
-    .ant-picker-clear {background: @darkGray_Tk;}
+    span {color: @tk_LightGray;}
+    .ant-picker-clear {background: @tk_DarkGray;}
   }
 }
 .tk_Crown_Checkbox {
@@ -66,7 +63,7 @@
 }
 .tk_Select {
   .ant-select-selector {border: 1px solid rgba(145, 145, 160, 0.4)!important;}
-  .ant-select-arrow {color: @white_Tk;}
+  .ant-select-arrow {color: @tk_White;}
 }
 .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
   background: none!important;
