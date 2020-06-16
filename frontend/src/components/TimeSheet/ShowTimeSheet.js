@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
-import {Alert, Button, Col, Divider, Row} from 'antd';
-import TagProjectClient from '../Tag/TagProjectClient';
+import {Alert, Button, Col, Row} from 'antd';
 import './ShowTimeSheet.less';
 import '../Modal/ModalGeneral.less';
 import {DollarOutlined, ClockCircleOutlined, CalendarOutlined, FieldTimeOutlined} from '@ant-design/icons';
