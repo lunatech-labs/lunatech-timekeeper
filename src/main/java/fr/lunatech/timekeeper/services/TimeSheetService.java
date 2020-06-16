@@ -55,7 +55,6 @@ public class TimeSheetService {
                 .map(timeSheet -> timeSheet.id);
     }
 
-    // for the MVP we don't filter (neither on expirationDate nor Days left)
     public List<TimeSheetResponse> findAllActivesForUser(AuthenticationContext ctx) {
         return streamAllActive(ctx, TimeSheetResponse::bind, Collectors.toList());
     }
@@ -66,8 +65,7 @@ public class TimeSheetService {
                 .findFirst();
     }
 
-
-     // TODO use a new timeSheet field to return "active" timeSheet only (not MVP)
+    // for the MVP we don't filter, some kind of "active" flag will be added once business rules are defined
     <R extends Collection<TimeSheetResponse>> R streamAllActive(
             AuthenticationContext ctx,
             Function<TimeSheet, TimeSheetResponse> bind,
