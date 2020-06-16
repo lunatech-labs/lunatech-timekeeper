@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 
 const moment = require('moment');
 const TimeEntry = ({entry}) => {
-
   const computeSize = (nbHours) => {
     const minimumSize = 75;
 
@@ -38,13 +37,14 @@ const TimeEntry = ({entry}) => {
 };
 
 TimeEntry.propTypes = {
-  entry: {
-    name: PropTypes.string.isRequired,
+  entry: PropTypes.shape({
+    comment: PropTypes.string.isRequired,
     project: PropTypes.shape({
       name: PropTypes.string.isRequired,
     }).isRequired,
-    dateTime: PropTypes.object.isRequired,
-  }
+    startDateTime: PropTypes.string.isRequired,
+    endDateTime: PropTypes.string.isRequired,
+  })
 };
 
 export default TimeEntry;

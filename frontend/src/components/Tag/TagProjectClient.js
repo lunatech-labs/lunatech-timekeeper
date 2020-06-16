@@ -9,9 +9,9 @@ const TagProjectClient = ({client}) => {
 };
 
 TagProjectClient.propTypes = {
-  client: {
+  client: PropTypes.shape({
     name: PropTypes.string
-  }
+  })
 };
 
 export default TagProjectClient;

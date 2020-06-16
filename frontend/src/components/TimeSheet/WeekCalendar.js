@@ -30,7 +30,7 @@ const renderWeekRange = (start, end) => {
 };
 
 
-const numberOfWeek = 30;  // TODO ??
+const numberOfWeek = 15; // It's the number of weeks where we can navigate
 const weekRangeOfDate = (firstDay) => {
   const startOfCurrentWeek = firstDay || moment().utc().startOf('week');
   return [...Array(numberOfWeek).keys()].map(i => {
@@ -38,7 +38,7 @@ const weekRangeOfDate = (firstDay) => {
     const start = startOfCurrentWeek.clone().add(toAdd, 'week');
     const end = start.clone().endOf('week');
     return {
-      id: toAdd,
+      id: start.isoWeek(),
       start: start,
       end: end
     };
@@ -46,26 +46,37 @@ const weekRangeOfDate = (firstDay) => {
 };
 
 
+const weekRangeOfDateToMap = (weekRanges) => {
+  const map = new Map();
+  weekRanges.forEach((item) => map.set(item.id, item));
+  return map;
+};
+const computeWeekRanges = (selectedDay) => {
+  const weekRanges = weekRangeOfDate(selectedDay);
+  return {
+    weekNumber: selectedDay.isoWeek(),
+    weekRange: weekRanges,
+    weekRangeMap: weekRangeOfDateToMap(weekRanges)
+  };
+};
 const WeekCalendar = (props) => {
   const [showButton, setShowButton] = useState(-1);
-  const [weekSelected, setWeekSelected] = useState(0);
-  const [weekRanges] = useState(weekRangeOfDate(props.firstDay));
-  useEffect(() => {
-    const weekRange = weekRangeOfDateMap.get(weekSelected);
-    if (weekRange && props.onPanelChange) {
-      const {id, start, end} = weekRange;
-      props.onPanelChange(id, start, end);
-    }
-    // Im not interested of the changes of props.onPanelChange
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [weekSelected]);
+  const [weekSelected, setWeekSelected] = useState(props.firstDay.isoWeek());
+  const [weekRanges, setWeekRanges] = useState(computeWeekRanges(props.firstDay));
 
-  const weekRangeOfDateToMap = () => {
-    const map = new Map();
-    weekRanges.forEach((item) => map.set(item.id, item));
-    return map;
-  };
-  const weekRangeOfDateMap = weekRangeOfDateToMap();
+  const {onPanelChange} = props;
+
+  useEffect(() => {
+    const weekRange = weekRanges.weekRangeMap.get(weekSelected);
+    if (weekRange && onPanelChange) {
+      const {id, start, end} = weekRange;
+      onPanelChange(id, start, end);
+      if (weekRanges.weekNumber !== id) {
+        setWeekRanges(computeWeekRanges(start));
+      }
+    }
+  }, [weekSelected, onPanelChange, weekRanges]);
+
 
   const daysToData = () => {
     const daysOfWeek = [...Array(7).keys()].map(i => props.firstDay.clone().add(i, 'day'));
@@ -84,15 +95,17 @@ const WeekCalendar = (props) => {
   const isDisabled = (item) => (item.day && item.day.disabled) || (props.disabledWeekEnd && isWeekEnd(item.date));
 
   const WeekNavigator = () => {
-    const weekRangeIds = weekRanges.map(weekRange => weekRange.id);
-    const weekRange = weekRangeOfDateMap.get(weekSelected);
+    const weekRangeIds = weekRanges.weekRange.map(weekRange => weekRange.id);
+    const weekRange = weekRanges.weekRangeMap.get(weekSelected);
     const {start, end} = weekRange;
     const disableLeft = !weekRangeIds.includes(weekSelected - 1);
     const disableRight = !weekRangeIds.includes(weekSelected + 1);
     return (
       <div>
-        <Button icon={<LeftOutlined/>} disabled={disableLeft} shape='circle' onClick={() => setWeekSelected(weekSelected - 1)}/>
-        <Button icon={<RightOutlined/>} disabled={disableRight} shape='circle' onClick={() => setWeekSelected(weekSelected + 1)}/>
+        <Button icon={<LeftOutlined/>} disabled={disableLeft} shape='circle'
+          onClick={() => setWeekSelected(weekSelected - 1)}/>
+        <Button icon={<RightOutlined/>} disabled={disableRight} shape='circle'
+          onClick={() => setWeekSelected(weekSelected + 1)}/>
         <p>{renderWeekYear(start, end)}</p>
       </div>
     );
@@ -100,9 +113,10 @@ const WeekCalendar = (props) => {
 
   const WeekNavigatorSelect = () =>
     <Select onChange={id => setWeekSelected(id)} defaultValue={0} value={weekSelected}>
-      {weekRanges.map(({id, start, end}) => {
+      {weekRanges.weekRange.map(({id, start, end}) => {
         return (
-          <Select.Option className={`${start.isSame(moment(), 'week') ? 'tk_CurrentWeekSelect' : ''}`} key={`date-range-${id}`} value={id} disabled={id === weekSelected}>
+          <Select.Option className={`${start.isSame(moment(), 'week') ? 'tk_CurrentWeekSelect' : ''}`}
+            key={`date-range-${id}`} value={id} disabled={id === weekSelected}>
             {renderWeekRange(start, end)}
           </Select.Option>
         );
@@ -145,7 +159,7 @@ const WeekCalendar = (props) => {
                 onMouseOver={() => setShowButton(index)}
                 onMouseLeave={() => setShowButton(-1)}>
                 <div className="tk_CardWeekCalendar_Head">
-                  <p className={today(moment(item.date)) ? 'tk_CurrentDay':''}>{item.date.format(dateFormat)}</p>
+                  <p className={today(moment(item.date)) ? 'tk_CurrentDay' : ''}>{item.date.format(dateFormat)}</p>
                   {((props.hiddenButtons && showButton === index) || (!props.hiddenButtons)) &&
                   <Button
                     shape="circle"
