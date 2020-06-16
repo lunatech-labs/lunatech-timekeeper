@@ -39,7 +39,7 @@ public class PersonalTimesheetsResource implements PersonalTimesheetsResourceApi
     @RolesAllowed({"user", "admin"})
     @Override
     public List<WeekResponse> getMonth(Integer year, Integer monthNumber) {
-        logger.warn(String.format("getMonth year=%d monthNumber=%d NOT IMPLEMENTED", year, monthNumber));
+        logger.info(String.format("getMonth year=%d monthNumber=%d NOT IMPLEMENTED", year, monthNumber));
         return Collections.emptyList();
     }
 

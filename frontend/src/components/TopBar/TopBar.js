@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {MenuUnfoldOutlined, MenuFoldOutlined, BellOutlined} from '@ant-design/icons';
 import {Layout, Avatar, Badge} from 'antd';
 import './TopBar.less';
@@ -6,12 +6,14 @@ import PropTypes from 'prop-types';
 import OrganizationPictureFR from '../../img/organization_icon_fr.png';
 import OrganizationPictureNL from '../../img/organization_icon_nl.png';
 import HeaderProfile from './HeaderProfile';
+import {UserContext} from "../../context/UserContext";
 
 const { Header } = Layout;
 
-const TopBar = ({ collapsed, toggle, user }) => {
+const TopBar = ({ collapsed, toggle }) => {
   const [alert, setAlert] = useState(true);
 
+  const {user} = useContext(UserContext);
   const alertChangeState = () => {
     setAlert(!alert);
   };

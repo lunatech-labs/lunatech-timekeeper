@@ -92,7 +92,7 @@ public interface ProjectResourceApi {
     Response updateProject(@PathParam("id") Long id, @RequestBody ProjectRequest request);
 
     @PUT
-    @Path("/{id}/join/{userId}")
+    @Path("/{id}/join")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Join a project",
             description = "Join a public project")
@@ -107,7 +107,7 @@ public interface ProjectResourceApi {
                     description = "Project not found"
             )
     })
-    Response joinPublicProject(@PathParam("id") Long id, @PathParam("userId") Long userId);
+    Response joinPublicProject(@PathParam("id") Long id);
 
     @GET
     @Path("/{idProject}/users/{idUser}")
