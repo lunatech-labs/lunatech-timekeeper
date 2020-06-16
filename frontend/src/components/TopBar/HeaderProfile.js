@@ -1,5 +1,5 @@
 import React from 'react';
-import {Avatar, Menu, Dropdown} from 'antd';
+import {Avatar, Menu, Dropdown, Button} from 'antd';
 import './HeaderProfile.less';
 import {useKeycloak} from '@react-keycloak/web';
 import PropTypes from 'prop-types';
@@ -20,7 +20,7 @@ const HeaderProfile = ({ user }) => {
     <Menu>
       <Menu.Item key="1">
         {!!keycloak.authenticated && (
-          <a onClick={() => keycloak.logout()}>Logout</a>
+          <Button type="link" onClick={() => keycloak.logout()}>Logout</Button>
         )}
       </Menu.Item>
     </Menu>
@@ -29,10 +29,10 @@ const HeaderProfile = ({ user }) => {
   return (
     <div className="tk_Header_Profile">
       <Dropdown overlay={menu}>
-        <a onClick={e => e.preventDefault()}>
+        <Button type="link" onClick={e => e.preventDefault()}>
           <Avatar src={user.picture} />
           <p>{user.name}<br/><span>{displayProfile(user.profiles)}</span></p>
-        </a>
+        </Button>
       </Dropdown>
     </div>
   );
