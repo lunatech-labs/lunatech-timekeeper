@@ -1,8 +1,8 @@
-@import '../../timekeeper-theme.less';
+@import '../../main.less';
 
 .tk_TaskCard {
   margin-bottom: 8px;
-  background: @black_Tk;
+  background: @tk_Black;
   padding: 8px;
   border-left: 2px solid #1890FF;
   border-radius: 2px;
@@ -28,7 +28,7 @@
       }
     }
     p {
-      color: @lightGray_Tk;
+      color: @tk_LightGray;
       font-size: 11px;
       margin-bottom: 0;
     }
@@ -37,8 +37,7 @@
     margin-bottom: 0;
     color: #1890FF;
     font-size: 12px;
-    display: flex;
-    align-items: center;
+    .mixin_Flexbox_Basis();
     justify-content: flex-end;
     span {margin-right: 4px;}
   }

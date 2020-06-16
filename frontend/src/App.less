@@ -1,13 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;500;600;700&display=swap&css');
-
-@import '~antd/lib/style/themes/default.less';
-@import '~antd/dist/antd.less'; // Import Ant Design styles by less entry
-@import 'timekeeper-theme.less';
+@import 'main.less';
 
 body {
   font-family: 'Fira Sans', sans-serif;
 }
-
 .App {text-align: left;}
 .App-header {
   background-color: #f8f9fd;
@@ -36,24 +31,21 @@ div.userProfile p {
   background-color: white;
   padding: 10px
 }
-
 .tk_Footer {
   text-align: center;
   display: none;
 }
-
 .shadow {
   box-shadow: 3px 4px 3px 3px rgba(25, 26, 41, 0.25);
 }
 .ant-input {
-  background-color: @mediumGray_Tk;
-  border: 2px solid @darkGray_Tk;
-  color: @white_Tk;
+  background-color: @tk_MediumGray;
+  border: 2px solid @tk_DarkGray;
+  color: @tk_White;
 }
 .ant-message, .ant-alert-message, .ant-alert-description {
-  color: @mediumGray_Tk !important;
+  color: @tk_MediumGray !important;
 }
-
 .ant-divider {
   background: rgba(216, 216, 216, .2);
 }
