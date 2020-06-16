@@ -55,7 +55,7 @@ public class TimeSheetService {
                 .map(timeSheet -> timeSheet.id);
     }
 
-    // FIXME : It doesn't test if it is active
+    // FIXME : It doesn't test if it is active, the business rules are not defined yet
     public List<TimeSheetResponse> findAllActivesForUser(AuthenticationContext ctx) {
         return streamAll(ctx, TimeSheetResponse::bind, Collectors.toList());
     }

@@ -11,7 +11,6 @@ import moment from 'moment';
 const TimeEntriesPage = () => {
   const firstDayOfCurrentWeek = moment().utc().startOf('week').add(1, 'day');
   const today = () => firstDayOfCurrentWeek.clone();
-  const [currentFirstDay, setCurrentFirstDay] = useState(today);
   const [currentWeekNumber, setCurrentWeekNumber] = useState(() => {
     const tmpDate = firstDayOfCurrentWeek.clone();
     return tmpDate.year() + '?weekNumber=' + tmpDate.isoWeek();
@@ -21,10 +20,11 @@ const TimeEntriesPage = () => {
   const [form] = Form.useForm();
 
   const dataFromServer = useTimeKeeperAPI('/api/my/' + currentWeekNumber);
+  const {run} = dataFromServer;
   useEffect(
     () => {
-      dataFromServer.run();
-    }, [currentWeekNumber]);
+      run();
+    }, [currentWeekNumber, run]);
 
   if (dataFromServer.error) {
     return (
@@ -45,8 +45,8 @@ const TimeEntriesPage = () => {
       return rv;
     }, {});
   };
-  const data = dataFromServer.loading ? [] : dataFromServer.data.sheets;
-  const datas = Object.entries(groupBy(data.flatMap(({entries, project}) => entries.map(x => ({
+  const timeEntries = dataFromServer.loading ? [] : dataFromServer.data.sheets;
+  const days = Object.entries(groupBy(timeEntries.flatMap(({entries, project}) => entries.map(x => ({
     ...x,
     project
   }))), entry => moment(entry.startDateTime).format('YYYY-MM-DD'))).map(([key, value]) => {
@@ -56,6 +56,10 @@ const TimeEntriesPage = () => {
       disabled: false
     });
   });
+  const datas = {
+    firstDayOfWeek: dataFromServer.data ? moment.utc(dataFromServer.data.firstDayOfWeek) : today(),
+    days: days
+  };
 
   const openModal = () => setVisibleEntryModal(true);
   const closeModal = () => setVisibleEntryModal(false);
@@ -77,13 +81,10 @@ const TimeEntriesPage = () => {
       </Modal>
 
       <WeekCalendar
-        firstDay={currentFirstDay}
+        firstDay={datas.firstDayOfWeek}
         disabledWeekEnd={true}
         hiddenButtons={false}
-        onPanelChange={(id, start) => {
-          setCurrentFirstDay(start); // TODO voir si c'est encore utile
-          setCurrentWeekNumber(start.year() + '?weekNumber=' + start.isoWeek()); // TODO sinon c'est mieux avec le numero de semaine
-        }}
+        onPanelChange={(id, start) => setCurrentWeekNumber(start.year() + '?weekNumber=' + start.isoWeek())}
         onClickAddTask={(e, m) => {
           setTaskMoment(m);
           openModal();
@@ -91,19 +92,15 @@ const TimeEntriesPage = () => {
         dateCellRender={(data) => {
           return (
             <div>
-              {data.map(entry => {
-                if (entry) {
-                  return (
-                    <TimeEntry entry={entry}/>
-                  );
-                } else {
-                  return null;
-                }
+              {data.filter(data => !!data).map(entry => {
+                return (
+                  <TimeEntry key={entry.id} entry={entry}/>
+                );
               })}
             </div>
           );
         }}
-        days={datas}
+        days={datas.days}
       />
     </MainPage>
   );

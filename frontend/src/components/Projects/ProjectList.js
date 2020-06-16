@@ -93,9 +93,9 @@ const ProjectList = () => {
     <React.Fragment>
       <p>Group by :</p>
       <Dropdown overlay={groupByMenu}>
-        <a className="ant-dropdown-link">
+        <Button type="link" className="ant-dropdown-link">
           {groupBy} <DownOutlined/>
-        </a>
+        </Button>
       </Dropdown>
     </React.Fragment>
   );
@@ -118,9 +118,9 @@ const ProjectList = () => {
     <React.Fragment>
       <p>Filter by :</p>
       <Dropdown overlay={filterMenu}>
-        <a className="ant-dropdown-link">
+        <Button type="link" className="ant-dropdown-link">
           {filterText} <DownOutlined/>
-        </a>
+        </Button>
       </Dropdown>
     </React.Fragment>
   );
