@@ -50,7 +50,7 @@ const ShowTimeSheet = ({project, member}) => {
         </div>
 
         <div className="tk_ModalBottom">
-          {selectedTimeSheet && <EditTimeSheetForm timesheet={selectedTimeSheet}/>}
+          {selectedTimeSheet && <EditTimeSheetForm timeSheet={selectedTimeSheet}/>}
         </div>
       </div>
     );
