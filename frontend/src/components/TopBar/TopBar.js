@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import OrganizationPictureFR from '../../img/organization_icon_fr.png';
 import OrganizationPictureNL from '../../img/organization_icon_nl.png';
 import HeaderProfile from './HeaderProfile';
-import {UserContext} from "../../context/UserContext";
+import {UserContext} from '../../context/UserContext';
 
 const { Header } = Layout;
 

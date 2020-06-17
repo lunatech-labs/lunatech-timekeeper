@@ -6,7 +6,7 @@ import SidebarLeft from '../../components/SidebarLeft/SidebarLeft';
 import TopBar from '../../components/TopBar/TopBar';
 import PropTypes from 'prop-types';
 import {useTimeKeeperAPI} from '../../utils/services';
-import {UserProvider} from "../../context/UserContext";
+import {UserProvider} from '../../context/UserContext';
 
 
 const {Title} = Typography;
@@ -22,8 +22,8 @@ const MainPage = ({title, children, actions, entityName, ...rest}) => {
     return (
       <React.Fragment>
         <Alert title='Server error'
-               message='Failed to load user from Quarkus backend server'
-               type='error'
+          message='Failed to load user from Quarkus backend server'
+          type='error'
         />
       </React.Fragment>
     );

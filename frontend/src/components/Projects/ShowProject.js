@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Avatar, Button, Col, Divider, message, Modal, Row, Typography} from 'antd';
 import './ShowProject.less';
 import PropTypes from 'prop-types';
@@ -11,28 +11,27 @@ import TagProjectClient from '../Tag/TagProjectClient';
 import ShowTimeSheet from '../TimeSheet/ShowTimeSheet';
 import Tooltip from 'antd/lib/tooltip';
 import NoDataMessage from '../NoDataMessage/NoDataMessage';
-import {useTimeKeeperAPI, useTimeKeeperAPIPut} from "../../utils/services";
+import {useTimeKeeperAPIPut} from '../../utils/services';
+import {UserContext} from '../../context/UserContext';
 import {useKeycloak} from "@react-keycloak/web";
 
 const {Title} = Typography;
 
-const ShowProject = ({project}) => {
+const ShowProject = ({project, onSuccessJoinProject}) => {
 
   const [projectUpdated, setProjectUpdated] = useState(false);
 
   const timeKeeperAPIPutJoin = useTimeKeeperAPIPut(`/api/projects/${project.id}/join`, (form => form), setProjectUpdated);
 
-  // const timeKeeperAPIUser = useTimeKeeperAPI('/api/users/me');
-
-  const [keycloak] = useKeycloak();
-  console.log(keycloak.clientId)
+  const {user} = useContext(UserContext);
 
   useEffect(() => {
     if (projectUpdated) {
       message.success('You successfully joined the project');
+      onSuccessJoinProject && onSuccessJoinProject();
     }
     return () => setProjectUpdated(false);
-  }, [projectUpdated]);
+  }, [projectUpdated, onSuccessJoinProject]);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedMember, setSelectedMember] = useState();
@@ -46,19 +45,19 @@ const ShowProject = ({project}) => {
         const res = u2.manager - u1.manager;
         return res === 0 ? u1.name.localeCompare(u2.name) : res;
       });
-      return users.map(user =>
-        <CardMember key={`project-member-${user.id}`}>
+      return users.map(item =>
+        <CardMember key={`project-member-${item.id}`}>
           <div>
-            <Avatar src={user.picture}/>
-            <p>{user.name}</p>
+            <Avatar src={item.picture}/>
+            <p>{item.name}</p>
           </div>
           <div>
-            <TagMember isManager={user.manager}/>
+            <TagMember isManager={item.manager}/>
             <Divider type='vertical'/>
             <Tooltip title='Time sheet'>
               <SnippetsFilled onClick={() => {
                 setModalVisible(true);
-                setSelectedMember(user);
+                setSelectedMember(item);
               }}/>
             </Tooltip>
           </div>
@@ -81,6 +80,8 @@ const ShowProject = ({project}) => {
     );
   };
 
+  const isMember = !!project.users.find(item => user.id === item.id);
+  const showJoinButton = project.publicAccess && !isMember;
   return (
     <div>
       <ModalTimeSheet/>
@@ -104,7 +105,7 @@ const ShowProject = ({project}) => {
           </Col>
           <Col span={12}>
             <TitleSection title="Members"/>
-            <Button onClick={() => timeKeeperAPIPutJoin.run()}>Join the project</Button>
+            {showJoinButton && <Button onClick={() => timeKeeperAPIPutJoin.run()}>Join the project</Button>}
             <Members/>
           </Col>
         </Row>
@@ -114,7 +115,8 @@ const ShowProject = ({project}) => {
 };
 
 ShowProject.propTypes = {
-  project: PropTypes.object.isRequired
+  project: PropTypes.object.isRequired,
+  onSuccessJoinProject: PropTypes.func
 };
 
 export default ShowProject;
