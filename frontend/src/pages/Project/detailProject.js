@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback} from 'react';
 import MainPage from '../MainPage/MainPage';
 import ShowProject from '../../components/Projects/ShowProject';
-import {useTimeKeeperAPI, useTimeKeeperAPIPut} from '../../utils/services';
-import {Alert, Button, message} from 'antd';
+import {useTimeKeeperAPI} from '../../utils/services';
+import {Alert, Button} from 'antd';
 import {Link, useRouteMatch} from 'react-router-dom';
 import EditOutlined from '@ant-design/icons/lib/icons/EditOutlined';
 import '../../components/Button/BtnGeneral.less';
@@ -17,16 +17,20 @@ const DetailProjectPage = () => {
 
   const projectId = projectIdSlug.params.id;
 
-  const {data, error, loading} = useTimeKeeperAPI('/api/projects/' + projectId);
+  const {data, error, loading, run} = useTimeKeeperAPI('/api/projects/' + projectId);
+
+  const onSuccessCallback = useCallback(() => {
+    run();
+  }, []);
 
   if (error) {
     let errorReason = 'Message: ' + error;
     return (
       <React.Fragment>
         <Alert title='Server error'
-               message='Failed to load projects from Quarkus backend server'
-               type='error'
-               description={errorReason}
+          message='Failed to load projects from Quarkus backend server'
+          type='error'
+          description={errorReason}
         />
       </React.Fragment>
     );
@@ -39,14 +43,13 @@ const DetailProjectPage = () => {
 
   return (
     <MainPage title="Project details" entityName={data.name}
-              actions={[<Link key='editLink' to={`/projects/${data.id}/edit`}>
-                <Button id="tk_Btn"
-                        className="tk_BtnPrimary"
-                        icon={<EditOutlined/>}>Edit
-                  project
-                </Button>
-              </Link>]}>
-      <ShowProject project={data}/>
+      actions={<Link key='editLink' to={`/projects/${data.id}/edit`}>
+        <Button id="tk_Btn"
+          className="tk_BtnPrimary"
+          icon={<EditOutlined/>}>Edit project
+        </Button>
+      </Link>}>
+      <ShowProject project={data} onSuccessJoinProject={onSuccessCallback} />
     </MainPage>
   );
 };
