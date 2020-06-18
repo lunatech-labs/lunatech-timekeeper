@@ -214,12 +214,10 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
       </Space>
     </Form>
   );
-
 };
 
-const TimeEntryForm = ({currentDay, form, onSuccess, onCancel, viewMode}) => {
+const TimeEntryForm = ({entries ,currentDay, form, onSuccess, onCancel, viewMode}) => {
   const timeSheets = useTimeKeeperAPI('/api/my/' + currentDay.year() + '?weekNumber=' + currentDay.isoWeek(), (form => form));
-
   if (timeSheets.loading) {
     return (
       <React.Fragment>
@@ -259,9 +257,8 @@ const TimeEntryForm = ({currentDay, form, onSuccess, onCancel, viewMode}) => {
   const Entries = (props) => {
 
     const entries = props.entries.map (
-      entry => <ShowTimeEntry entry={entry} />
+      entriesForDay => entriesForDay.map(entry => <ShowTimeEntry entry={entry} />)
     )
-
     return (
       <div>
         {entries}
@@ -279,7 +276,7 @@ const TimeEntryForm = ({currentDay, form, onSuccess, onCancel, viewMode}) => {
           </div>
         </div>
         <div className="tk_ModalTopBody">
-          <NoDataMessage message='No task for this day, there is still time to add one.'/>
+          {entries.length === 0 ? <NoDataMessage message='No task for this day, there is still time to add one.'/> : <Entries entries={entries} />}
         </div>
       </div>
 
