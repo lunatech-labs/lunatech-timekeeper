@@ -1,40 +1,48 @@
-import React, {useState} from 'react';
+import React from 'react';
 import PropTypes from "prop-types";
-import {EditOutlined, CopyOutlined, DeleteOutlined}  from "@ant-design/icons/es/icons";
-import './TimeEntry.less';
+import {FieldTimeOutlined, EditOutlined, CopyOutlined, DeleteOutlined}  from "@ant-design/icons/es/icons";
+import './ShowTimeEntry.less';
+import EyeFilled from "@ant-design/icons/lib/icons/EyeFilled";
+import {Button} from "antd";
+import EditFilled from "@ant-design/icons/lib/icons/EditFilled";
+import Tooltip from "antd/lib/tooltip";
 
 const moment = require('moment');
 
-const computeNumberOfHours = (start, end) => {
+const ShowTimeEntry = ({entry}) => {
+
+  const start = moment(entry.startDateTime).utc();
+  const end = moment(entry.endDateTime).utc();
+
   const duration = moment.duration(end.diff(start));
   const date = start.clone();
   date.set({
     hour: duration.asHours()
   });
-  return duration.asHours();
-};
-
-const ShowTimeEntry = ({entry}) => {
-
-  console.log("test", entry);
-
-  const start = moment(entry.startDateTime).utc();
-  const end = moment(entry.endDateTime).utc();
-  const hours = computeNumberOfHours(start, end);
 
   return (
-    <div className="tk_TaskInfo">
-      <p>{entry.comment}</p>
-      <div>
-        <div>
-          <p>{entry.project ? entry.project.name : 'String vide'}</p>
-          <p>{hours}</p>
+    <div className="tk_TaskInfoGen">
+      <div className="tk_TaskInfo">
+        <p className="tk_TaskInfoTop">{entry.comment}</p>
+        <div className="tk_TaskInfoMiddle">
+          <div>
+            <p>{entry.project ? entry.project.name : ''}</p>
+            <p><FieldTimeOutlined />{date.format('hh:mm')}</p>
+          </div>
+          <div>
+            <Tooltip title="Edit" key="edit">
+              <Button type="link" size="small" shape="circle" icon={<EditOutlined />}/>
+            </Tooltip>
+            <Tooltip title="Copy" key="copy">
+              <Button type="link" size="small" shape="circle" icon={<CopyOutlined />}/>
+            </Tooltip>
+            <Tooltip title="Delete" key="delete">
+              <Button type="link" size="small" shape="circle" icon={<DeleteOutlined />}/>
+            </Tooltip>
+          </div>
         </div>
-        <div>
-          <EditOutlined />
-          <CopyOutlined />
-          <DeleteOutlined />
-        </div>
+      </div>
+      <div className="tk_TaskInfoBottom">
       </div>
     </div>
   )

@@ -79,10 +79,10 @@ const TimeEntriesPage = () => {
         width={'37.5%'}
         footer={null}
       >
-        <TimeEntryForm entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment} form={form} viewMode={viewMode} onSuccess={() => {
+        <TimeEntryForm setViewMode={setViewMode} entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment} form={form} viewMode={viewMode} onSuccess={() => {
           closeModal();
           dataFromServer.run();
-        }} onCancel={closeModal}/>
+        }} onCancel={() => setViewMode(true)}/>
       </Modal>
       <UserTimeSheetList timeSheets={timeEntries}/>
 

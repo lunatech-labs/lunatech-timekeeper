@@ -6,6 +6,7 @@ import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
 import '../Modal/ModalGeneral.less';
 import NoDataMessage from '../NoDataMessage/NoDataMessage';
 import ShowTimeEntry from "./ShowTimeEntry";
+import {PlusOutlined} from "@ant-design/icons";
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -124,99 +125,101 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
     onCancel: PropTypes.func,
   };
   return (
-    <Form
-      id="tk_Form"
-      layout="vertical"
-      initialValues={initialValues(date)}
-      form={form}
-      onFinish={timeKeeperAPIPost.run}
-      onValuesChange={onValuesChange}
-    >
-      <TitleSection title='Add task'/>
-      <Form.Item name="date" noStyle={true}>
-      </Form.Item>
+    <div className="tk_ModalBottom">
+      <Form
+        id="tk_Form"
+        layout="vertical"
+        initialValues={initialValues(date)}
+        form={form}
+        onFinish={timeKeeperAPIPost.run}
+        onValuesChange={onValuesChange}
+      >
+        <TitleSection title='Add task'/>
+        <Form.Item name="date" noStyle={true}>
+        </Form.Item>
 
-      <Form.Item label="Description:" name="comment" rules={[{required: true}]}>
-        <TextArea rows={2} placeholder="What did you work on ?"/>
-      </Form.Item>
+        <Form.Item label="Description:" name="comment" rules={[{required: true}]}>
+          <TextArea rows={2} placeholder="What did you work on ?"/>
+        </Form.Item>
 
-      <Form.Item label="Select a project:" name="timeSheetId" rules={[{required: true}]}>
-        <Select>
-          <Option value={null}/>
-          {timeSheets.map(timeSheet => <Option key={`select-timesheet-${timeSheet.id}`}
-            value={timeSheet.id}>{timeSheet.project.name}</Option>)}
-        </Select>
-      </Form.Item>
+        <Form.Item label="Select a project:" name="timeSheetId" rules={[{required: true}]}>
+          <Select>
+            <Option value={null}/>
+            {timeSheets.map(timeSheet => <Option key={`select-timesheet-${timeSheet.id}`}
+              value={timeSheet.id}>{timeSheet.project.name}</Option>)}
+          </Select>
+        </Form.Item>
 
-      <Form.Item label="Billable" name="billable" rules={[{required: true}]}>
-        <Radio.Group>
-          <Radio value={true}>Yes</Radio>
-          <Radio value={false}>No</Radio>
-        </Radio.Group>
-      </Form.Item>
+        <Form.Item label="Billable" name="billable" rules={[{required: true}]}>
+          <Radio.Group>
+            <Radio value={true}>Yes</Radio>
+            <Radio value={false}>No</Radio>
+          </Radio.Group>
+        </Form.Item>
 
-      <Row gutter={32}>
-        <Col className="gutter-row" span={15}>
-          <Form.Item shouldUpdate={(prevValues, currentValues) => prevValues.timeSheetId !== currentValues.timeSheetId}>
-            {() => {
-              const timeUnit = selectedTimeSheet && selectedTimeSheet.timeUnit;
-              const hourDisabled = timeUnit && timeUnit !== 'HOURLY';
-              const halfDayDisabled = timeUnit && timeUnit !== 'HOURLY' && timeUnit !== 'HALFDAY';
-              return (
-                <Form.Item name="timeUnit" label="Logged time:" rules={[{required: true}]}>
-                  <Radio.Group>
-                    <Radio value="DAY">Day</Radio>
-                    <Radio value="HALFDAY" disabled={halfDayDisabled}>Half-day</Radio>
-                    <Radio value="HOURLY" disabled={hourDisabled}>Hours</Radio>
-                  </Radio.Group>
-                </Form.Item>
-              );
-            }}
-          </Form.Item>
-        </Col>
+        <Row gutter={32}>
+          <Col className="gutter-row" span={15}>
+            <Form.Item shouldUpdate={(prevValues, currentValues) => prevValues.timeSheetId !== currentValues.timeSheetId}>
+              {() => {
+                const timeUnit = selectedTimeSheet && selectedTimeSheet.timeUnit;
+                const hourDisabled = timeUnit && timeUnit !== 'HOURLY';
+                const halfDayDisabled = timeUnit && timeUnit !== 'HOURLY' && timeUnit !== 'HALFDAY';
+                return (
+                  <Form.Item name="timeUnit" label="Logged time:" rules={[{required: true}]}>
+                    <Radio.Group>
+                      <Radio value="DAY">Day</Radio>
+                      <Radio value="HALFDAY" disabled={halfDayDisabled}>Half-day</Radio>
+                      <Radio value="HOURLY" disabled={hourDisabled}>Hours</Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                );
+              }}
+            </Form.Item>
+          </Col>
 
-        <Col className="gutter-row" span={9}>
-          {/*Additional Values : depends on the Time Unit*/}
-          <Form.Item shouldUpdate={(prevValues, curValues) => prevValues.timeUnit !== curValues.timeUnit}>
-            {({getFieldValue}) => {
-              switch (getFieldValue('timeUnit')) {
-                case 'DAY':
-                  return null;
-                case 'HALFDAY' :
-                  return (
-                    <Form.Item name="isMorning" noStyle={true}>
-                    </Form.Item>
-                  );
-                case 'HOURLY':
-                  return (
-                    <div>
-                      <Form.Item name="numberHours" label="Number of hours:" rules={[{required: true}]}>
-                        <Input/>
+          <Col className="gutter-row" span={9}>
+            {/*Additional Values : depends on the Time Unit*/}
+            <Form.Item shouldUpdate={(prevValues, curValues) => prevValues.timeUnit !== curValues.timeUnit}>
+              {({getFieldValue}) => {
+                switch (getFieldValue('timeUnit')) {
+                  case 'DAY':
+                    return null;
+                  case 'HALFDAY' :
+                    return (
+                      <Form.Item name="isMorning" noStyle={true}>
                       </Form.Item>
-                      <Form.Item name="startDateTime" noStyle={true}>
-                      </Form.Item>
-                      <Form.Item name="endDateTime" noStyle={true}>
-                      </Form.Item>
-                    </div>
-                  );
-                default:
-                  return null;
-              }
-            }}
-          </Form.Item>
-        </Col>
-      </Row>
+                    );
+                  case 'HOURLY':
+                    return (
+                      <div>
+                        <Form.Item name="numberHours" label="Number of hours:" rules={[{required: true}]}>
+                          <Input/>
+                        </Form.Item>
+                        <Form.Item name="startDateTime" noStyle={true}>
+                        </Form.Item>
+                        <Form.Item name="endDateTime" noStyle={true}>
+                        </Form.Item>
+                      </div>
+                    );
+                  default:
+                    return null;
+                }
+              }}
+            </Form.Item>
+          </Col>
+        </Row>
 
-      <Space className="tk_JcFe" size="middle" align="center">
-        <Button id="tk_Btn" className="tk_BtnSecondary" key="cancelLink"
-          onClick={e => onCancel && onCancel(e)}>Cancel</Button>
-        <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Save task</Button>
-      </Space>
-    </Form>
+        <Space className="tk_JcFe" size="middle" align="center">
+          <Button id="tk_Btn" className="tk_BtnSecondary" key="cancelLink"
+            onClick={e => onCancel && onCancel(e)}>Cancel</Button>
+          <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Save task</Button>
+        </Space>
+      </Form>
+    </div>
   );
 };
 
-const TimeEntryForm = ({entries ,currentDay, form, onSuccess, onCancel, viewMode}) => {
+const TimeEntryForm = ({entries ,currentDay, form, onSuccess, onCancel, viewMode, setViewMode}) => {
   const timeSheets = useTimeKeeperAPI('/api/my/' + currentDay.year() + '?weekNumber=' + currentDay.isoWeek(), (form => form));
   if (timeSheets.loading) {
     return (
@@ -260,7 +263,7 @@ const TimeEntryForm = ({entries ,currentDay, form, onSuccess, onCancel, viewMode
       entriesForDay => entriesForDay.map(entry => <ShowTimeEntry entry={entry} />)
     )
     return (
-      <div>
+      <div className="tk_TaskInfoList">
         {entries}
       </div>
     )
@@ -274,15 +277,13 @@ const TimeEntryForm = ({entries ,currentDay, form, onSuccess, onCancel, viewMode
             <p>{currentDay.format('ddd')}<br /><span>{currentDay.format('DD')}</span></p>
             <h1>Day information</h1>
           </div>
+          {viewMode ? <Button type="link" onClick={(e) => setViewMode && setViewMode(false)}>Add task</Button> : ''}
         </div>
         <div className="tk_ModalTopBody">
           {entries.length === 0 ? <NoDataMessage message='No task for this day, there is still time to add one.'/> : <Entries entries={entries} />}
         </div>
       </div>
-
-      <div className="tk_ModalBottom">
-        {viewMode === false && <AddEntry date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess} onCancel={onCancel}/>}
-      </div>
+      {viewMode === false && <AddEntry date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess} onCancel={onCancel}/>}
     </div>
   );
 };
