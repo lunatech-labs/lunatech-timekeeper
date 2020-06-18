@@ -1,13 +1,13 @@
+@import '../../main.less';
+
 .sider-logo {
     width: 100%;
     height: 64px;
-    border-bottom: 1px solid rgba(216, 216, 216, .1);
-    display: flex;
-    align-items: center;
+    border-bottom: @tk_Border_Base;
+    .mixin_Flexbox_Basis();
     justify-content: center;
     a {
-        display: flex;
-        align-items: center;
+        .mixin_Flexbox_Basis();
         img {width: 30px;}
         h1 {
             font-weight: 700;

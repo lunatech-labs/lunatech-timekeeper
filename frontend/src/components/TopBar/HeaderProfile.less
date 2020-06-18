@@ -1,17 +1,15 @@
-@import '../../timekeeper-theme.less';
+@import '../../main.less';
 
 .tk_Header_Profile {
-  border-left: 1px solid rgba(216, 216, 216, 0.1);
+  border-left: @tk_Border_Base;
   padding: 0 20px;
   height: 64px;
   margin-left: -1px;
-  display: flex;
-  align-items: center;
+  .mixin_Flexbox_Basis();
   button {
     background: none;
     border: none;
-    display: flex;
-    align-items: center;
+    .mixin_Flexbox_Basis();
     &:hover {
       background: none;
       border: none;
@@ -20,11 +18,11 @@
       margin-left: 12px;
       margin-bottom: 0;
       line-height: 16px;
-      color: @white_Tk;
+      color: @tk_White;
       text-align: left;
       span {
         font-size: 10px;
-        color: @lightGray_Tk;
+        color: @tk_LightGray;
       }
     }
   }

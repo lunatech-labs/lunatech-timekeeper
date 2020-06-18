@@ -2,7 +2,6 @@ import React from 'react';
 import Keycloak from 'keycloak-js';
 import { KeycloakProvider } from '@react-keycloak/web';
 import { AppRouter } from './routes';
-
 import './App.less';
 
 const keycloak = new Keycloak({

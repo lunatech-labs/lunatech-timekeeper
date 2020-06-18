@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
-import {Alert, Button, Col, Divider, Row} from 'antd';
-import TagProjectClient from '../Tag/TagProjectClient';
+import {Alert, Button, Col, Row} from 'antd';
 import './ShowTimeSheet.less';
 import '../Modal/ModalGeneral.less';
 import {DollarOutlined, ClockCircleOutlined, CalendarOutlined, FieldTimeOutlined} from '@ant-design/icons';
@@ -8,6 +7,7 @@ import ProjectMemberTag from '../Projects/ProjectMemberTag';
 import {useTimeKeeperAPI} from '../../utils/services';
 import PropTypes from 'prop-types';
 import EditTimeSheetForm from './EditTimeSheetForm';
+import ProjectClientHeader from '../Projects/ProjectClientHeader';
 
 const moment = require('moment');
 const format = (s) => moment(s, 'YYYY-MM-DD').format('YYYY/MM/DD');
@@ -26,11 +26,7 @@ const ShowTimeSheet = ({project, member}) => {
           </div>
           <div className="tk_ModalTopBody">
             <div className="tk_ModalTopProject">
-              <div>
-                <h2>{project.name}</h2>
-                <Divider type='vertical'/>
-                <TagProjectClient client={project.client}/>
-              </div>
+              <ProjectClientHeader project={project}/>
               <p><FieldTimeOutlined/>Days left: (TO DO)</p>
             </div>
             <ProjectMemberTag member={member}/>
@@ -53,7 +49,7 @@ const ShowTimeSheet = ({project, member}) => {
         </div>
 
         <div className="tk_ModalBottom">
-          {selectedTimeSheet && <EditTimeSheetForm timesheet={selectedTimeSheet}/>}
+          {selectedTimeSheet && <EditTimeSheetForm timeSheet={selectedTimeSheet}/>}
         </div>
       </div>
     );

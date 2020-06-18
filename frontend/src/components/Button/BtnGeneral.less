@@ -1,16 +1,15 @@
-@import '../../timekeeper-theme.less';
+@import '../../main.less';
 
 #tk_Btn {
   height: 40px;
   border-radius: 4px;
   border: none;
-  color: @white_Tk;
+  color: @tk_White;
   padding: 0 32px;
-  display: flex;
-  align-items: center;
+  .mixin_Flexbox_Basis();
 }
 #tk_Btn.tk_BtnPrimary {
-  background: @red_Tk;
+  background: @tk_Red;
   &:hover {
     background: #BF191F;
   }
@@ -19,6 +18,6 @@
   background: none;
   &:hover {
     background: rgba(39, 40, 54, .2);
-    color: @lightGray_Tk;
+    color: @tk_LightGray;
   }
 }
