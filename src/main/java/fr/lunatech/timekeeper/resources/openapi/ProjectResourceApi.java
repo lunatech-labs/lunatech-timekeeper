@@ -115,7 +115,7 @@ public interface ProjectResourceApi {
                     description = "The user cannot join the project"
             )
     })
-    Response joinPublicProject(@PathParam("id") Long id);
+    Response joinPublicProject(@PathParam("id") Long projectId);
 
     @GET
     @Path("/{idProject}/users/{idUser}")
