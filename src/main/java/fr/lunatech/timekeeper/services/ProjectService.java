@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.persistence.LockModeType;
 import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
 import javax.transaction.UserTransaction;
