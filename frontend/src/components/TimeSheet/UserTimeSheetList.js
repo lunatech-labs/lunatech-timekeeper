@@ -6,7 +6,7 @@ import FolderFilled from '@ant-design/icons/lib/icons/FolderFilled';
 import {CalendarOutlined, ClockCircleOutlined} from '@ant-design/icons';
 import HistoryOutlined from '@ant-design/icons/lib/icons/HistoryOutlined';
 import './UserTimeSheetList.less';
-import ProjectClientHeader from "../Projects/ProjectClientHeader";
+import ProjectClientHeader from '../Projects/ProjectClientHeader';
 
 const {Panel} = Collapse;
 const formatDate = (s) => s.replace('-', '/').replace('-', '/');
@@ -28,33 +28,34 @@ const defineClassNameDayLeft = (daysLeft) => {
 
 
 const UserTimeSheetList = ({timeSheets}) => {
+  const privateProject = timeSheets.filter(item => !item.project.publicAccess);
   return (
     <div className="tk_CardCollapse">
       <Collapse bordered={false} expandIconPosition={'right'} key="timeSheets">
         <Panel header={<Space size="small"><FolderFilled/>{'Time sheets list'}</Space>} key="1">
           <List
             className={'tk_TimeSheetList'}
-            dataSource={timeSheets}
+            dataSource={privateProject}
             renderItem={timeSheet => {
-              if (!timeSheet.project.publicAccess)
-                return (
-                  <List.Item>
-                    <ProjectClientHeader project={timeSheet.project}/>
-                    <div>
-                      <p>
-                        <ClockCircleOutlined/> TimeUnit: {timeSheet.timeUnit}</p>
-                      <p className={timeSheet.maxDuration ? '':'tk_UnlimitedField'}>
-                        <CalendarOutlined/> Number of days: {formatEmpty(timeSheet.maxDuration)}
-                      </p>
-                      <p className={timeSheet.expirationDate ? '':'tk_UnlimitedField'}>
-                        <CalendarOutlined/> End date: {timeSheet.expirationDate ? formatDate(timeSheet.expirationDate) : 'Unlimited'}
-                      </p>
-                      <p className={defineClassNameDayLeft(timeSheet.leftOver)}>
-                        <HistoryOutlined/>Days left : {formatEmpty(timeSheet.leftOver)}
-                      </p>
-                    </div>
-                  </List.Item>
-                );
+              return (
+                <List.Item>
+                  <ProjectClientHeader project={timeSheet.project}/>
+                  <div>
+                    <p>
+                      <ClockCircleOutlined/> TimeUnit: {timeSheet.timeUnit}</p>
+                    <p className={timeSheet.maxDuration ? '' : 'tk_UnlimitedField'}>
+                      <CalendarOutlined/> Number of days: {formatEmpty(timeSheet.maxDuration)}
+                    </p>
+                    <p className={timeSheet.expirationDate ? '' : 'tk_UnlimitedField'}>
+                      <CalendarOutlined/> End
+                                  date: {timeSheet.expirationDate ? formatDate(timeSheet.expirationDate) : 'Unlimited'}
+                    </p>
+                    <p className={defineClassNameDayLeft(timeSheet.leftOver)}>
+                      <HistoryOutlined/>Days left : {formatEmpty(timeSheet.leftOver)}
+                    </p>
+                  </div>
+                </List.Item>
+              );
             }}/>
         </Panel>
       </Collapse>
