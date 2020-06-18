@@ -45,6 +45,18 @@ final class InternalResourceUtils {
         return RType.NoReturn;
     }
 
+    public static <P> RType updateResource(String uri, String token) {
+        given()
+                .auth().preemptive().oauth2(token)
+                .when()
+                .contentType(APPLICATION_JSON)
+                .put(uri)
+                .then()
+                .statusCode(NO_CONTENT.getStatusCode());
+
+        return RType.NoReturn;
+    }
+
     public static <R, P> R createResource(P request, String uri_root, Option<String> getUri, Class<R> type, String token) {
 
         logger.debug("Create : " + request.getClass() + " resource ");
