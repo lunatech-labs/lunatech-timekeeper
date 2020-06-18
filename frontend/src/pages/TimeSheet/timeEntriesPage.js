@@ -17,6 +17,7 @@ const TimeEntriesPage = () => {
     return tmpDate.year() + '?weekNumber=' + tmpDate.isoWeek();
   });
   const [visibleEntryModal, setVisibleEntryModal] = useState(false);
+  const [viewMode, setViewMode] = useState(false);
   const [taskMoment, setTaskMoment] = useState(moment().utc());
   const [form] = Form.useForm();
 
@@ -62,6 +63,8 @@ const TimeEntriesPage = () => {
     firstDayOfWeek: dataFromServer.data ? moment.utc(dataFromServer.data.firstDayOfWeek) : today(),
     days: days
   };
+  const entriesOfSelectedDay = dataFromServer.data;
+  console.log('Test' ,entriesOfSelectedDay);
 
   const openModal = () => setVisibleEntryModal(true);
   const closeModal = () => setVisibleEntryModal(false);
@@ -76,7 +79,7 @@ const TimeEntriesPage = () => {
         width={'37.5%'}
         footer={null}
       >
-        <TimeEntryForm currentDay={taskMoment} form={form} onSuccess={() => {
+        <TimeEntryForm currentDay={taskMoment} form={form} viewMode={viewMode} onSuccess={() => {
           closeModal();
           dataFromServer.run();
         }} onCancel={closeModal}/>
@@ -90,6 +93,14 @@ const TimeEntriesPage = () => {
         onPanelChange={(id, start) => setCurrentWeekNumber(start.year() + '?weekNumber=' + start.isoWeek())}
         onClickAddTask={(e, m) => {
           setTaskMoment(m);
+          setViewMode(false);
+          console.log(viewMode);
+          openModal();
+        }}
+        onClickCard={(e, m) => {
+          setTaskMoment(m);
+          setViewMode(true);
+          console.log(viewMode);
           openModal();
         }}
         dateCellRender={(data) => {

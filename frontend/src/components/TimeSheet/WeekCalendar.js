@@ -155,17 +155,18 @@ const WeekCalendar = (props) => {
           return (
             <div className="tk_WeekCalendar_Day" key={`day-card-${index}`}>
               <p>{item.date.format(headerDateFormat)}</p>
+              <Button
+                shape="circle"
+                disabled={isDisabled(item)}
+                icon={<PlusOutlined/>}
+                onClick={(e) => props.onClickAddTask && props.onClickAddTask(e, item.date)}/>
               <CardWeekCalendar
+                onClick={(e) => props.onClickCard && props.onClickCard(e, item.date)}
                 onMouseOver={() => setShowButton(index)}
                 onMouseLeave={() => setShowButton(-1)}>
                 <div className="tk_CardWeekCalendar_Head">
                   <p className={today(moment(item.date)) ? 'tk_CurrentDay' : ''}>{item.date.format(dateFormat)}</p>
-                  {((props.hiddenButtons && showButton === index) || (!props.hiddenButtons)) &&
-                  <Button
-                    shape="circle"
-                    disabled={isDisabled(item)}
-                    icon={<PlusOutlined/>}
-                    onClick={(e) => props.onClickAddTask && props.onClickAddTask(e, item.date)}/>}
+                  {((props.hiddenButtons && showButton === index) || (!props.hiddenButtons))}
                 </div>
                 <div className="tk_CardWeekCalendar_Body" disabled={isDisabled(item)}>
                   {renderDay()}
@@ -194,7 +195,8 @@ WeekCalendar.propTypes = {
   ).isRequired,
   hiddenButtons: PropTypes.bool,
   onClickAddTask: PropTypes.func, // (event, moment) => void
-  onPanelChange: PropTypes.func // (id, start, end) => void
+  onPanelChange: PropTypes.func, // (id, start, end) => void
+  onClickCard: PropTypes.func // (event, moment) => void
 };
 
 export default WeekCalendar;
