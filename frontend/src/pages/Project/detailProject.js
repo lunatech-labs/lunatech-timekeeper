@@ -21,7 +21,7 @@ const DetailProjectPage = () => {
 
   const onSuccessCallback = useCallback(() => {
     run();
-  }, []);
+  }, [run]);
 
   if (error) {
     let errorReason = 'Message: ' + error;

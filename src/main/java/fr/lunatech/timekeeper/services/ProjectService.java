@@ -4,7 +4,6 @@ import fr.lunatech.timekeeper.models.Project;
 import fr.lunatech.timekeeper.models.ProjectUser;
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
-import fr.lunatech.timekeeper.resources.exceptions.UpdateResourceException;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -14,17 +13,21 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceException;
-import javax.transaction.SystemException;
 import javax.transaction.Transactional;
 import javax.transaction.UserTransaction;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static javax.transaction.Transactional.*;
+import static javax.transaction.Transactional.TxType.*;
 
 @ApplicationScoped
 public class ProjectService {
@@ -64,58 +67,56 @@ public class ProjectService {
         return project.id;
     }
 
+    // docs : https://quarkus.io/guides/transaction
+    @Transactional(MANDATORY)
+    private void deleteOldMembers(Project project, Predicate<ProjectUser> deleteUserPredicate, AuthenticationContext userContext) {
+        project.users.stream()
+                .filter(deleteUserPredicate)
+                .forEach(PanacheEntityBase::delete);
+    }
+
+    @Transactional(MANDATORY)
+    private void createTimeSheetsForNewUsers(Project project, AuthenticationContext userContext) {
+        // Create the timesheets for the new members
+        project.users
+                .stream()
+                .filter(projectUser -> timeSheetService.userHasNoTimeSheet(project.id, projectUser.user.id))
+                .forEach(projectUser -> timeSheetService.createDefaultTimeSheet(project, projectUser.user, userContext));
+    }
+
+    @Transactional
     public Optional<Long> update(Long id, ProjectRequest request, AuthenticationContext ctx) {
         logger.debug("Modify project for for id={} with {}, {}", id, request, ctx);
-        findById(id, ctx).ifPresent(project -> {
-            if (!ctx.canEdit(project)) {
-                throw new ForbiddenException("The user can't edit this project with id : " + id);
-            }
-        });
-        try {
-            transaction.begin(); // See https://quarkus.io/guides/transaction API Approach
-            final var maybeProject = findById(id, ctx);
-
-            // Delete the old members
-            maybeProject.ifPresent(project -> project.users.stream()
-                    .filter(request::notContains)
-                    .forEach(PanacheEntityBase::delete));
-
-            final var updatedProject = findById(id, ctx)
-                    .stream()
-                    .map(project -> request.unbind(project, clientService::findById, userService::findById, ctx))
-                    // Create the timesheets for the new members
-                    .peek(project -> project.users
-                            .stream()
-                            .filter(projectUser -> timeSheetService.userHasNoTimeSheet(project.id, projectUser.user.id))
-                            .forEach(projectUser -> timeSheetService.createDefaultTimeSheet(project, projectUser.user, ctx)))
-                    .map(project -> project.id)
-                    .findFirst();
-            transaction.commit();
-            return updatedProject;
-        } catch (Throwable e) {
-            // There are many various exceptions, we catch Throwable but this is arguable.
-            logger.warn("Could not update a Project due to an exception {}", e.getMessage());
-            try {
-                transaction.rollback();
-            } catch (SystemException ex) {
-                logger.error("Tried to rollback in ProjectService but failed", ex);
-            }
-            throw new UpdateResourceException("Cannot update a Project, invalid projectRequest");
-        }
-    }
-    @Transactional
-    public Optional<Long> joinProject(Long id, AuthenticationContext ctx) {
-        logger.debug("Modify project for for id={} with userId={}, {}", id, ctx.getUserId(), ctx);
-        final Optional<Project> maybeProject = findById(id, ctx);
-        final Optional<User> maybeUser = userService.findById(ctx.getUserId(), ctx);
-        if(maybeUser.isEmpty() || maybeProject.isEmpty()) {
+        final var maybeProject = findById(id, ctx);
+        if (maybeProject.isEmpty()) {
             return Optional.empty();
         }
-        findById(id, ctx).ifPresent(project -> {
-            if (!ctx.canJoin(project)) {
-                throw new ForbiddenException("The user with id : " + ctx.getUserId() + " can't join this project with id : " + id);
+        final Project project = maybeProject.get();
+        if (!ctx.canEdit(project)) {
+            throw new ForbiddenException("The user can't edit this project with id : " + project.id);
+        }
+
+        // It has to be done before the project is unbind
+        deleteOldMembers(project, request::notContains, ctx);
+
+        final Project updatedProject = request.unbind(maybeProject.get(), clientService::findById, userService::findById, ctx);
+        createTimeSheetsForNewUsers(updatedProject, ctx);
+        return Optional.of(project.id);
+    }
+
+    @Transactional
+    public Optional<Long> joinProject(Long id, AuthenticationContext userContext) {
+        logger.debug("Modify project for for id={} with userId={}, {}", id, userContext.getUserId(), userContext);
+        final Optional<Project> maybeProject = findById(id, userContext);
+        maybeProject.ifPresent(project -> {
+            if(!userContext.canJoin(project)) {
+                throw new ForbiddenException("The user can't join the project with id : " + project.id);
             }
         });
+        final Optional<User> maybeUser = userService.findById(userContext.getUserId(), userContext);
+        if (maybeUser.isEmpty() || maybeProject.isEmpty()) {
+            return Optional.empty();
+        }
         final Project project = maybeProject.get();
         final User user = maybeUser.get();
         ProjectUser projectUser = new ProjectUser();
@@ -123,11 +124,7 @@ public class ProjectService {
         projectUser.manager = false;
         projectUser.user = user;
         project.users.add(projectUser);
-        try {
-            project.persistAndFlush();
-        } catch (PersistenceException pe) {
-            throw new CreateResourceException("Project was not created due to constraint violation");
-        }
+        createTimeSheetsForNewUsers(project, userContext);
         return Optional.of(project.id);
     }
 
