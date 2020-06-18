@@ -36,7 +36,7 @@ public class UserEventResponse {
             response.endDateTime = TimeKeeperDateUtils.formatToString(event.endDateTime);
         }
         if(event.eventType!=null){
-            response.eventType = event.eventType;
+            response.eventType = event.eventType.name();
         }
         if(event.startDateTime != null && event.endDateTime!=null) {
             response.duration = Duration.between(event.startDateTime, event.endDateTime).toString();
