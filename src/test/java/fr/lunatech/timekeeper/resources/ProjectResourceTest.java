@@ -322,7 +322,7 @@ class ProjectResourceTest {
                 , newUsers);
 
         // WHEN THEN
-        putValidation(ProjectDef.uriWithid(project10.getId()), adminToken, updateProjectRequest, BAD_REQUEST);
+        putValidation(ProjectDef.uriWithid(project10.getId()), adminToken, updateProjectRequest, INTERNAL_SERVER_ERROR);
     }
 
     @Test

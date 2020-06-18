@@ -13,7 +13,6 @@ import Tooltip from 'antd/lib/tooltip';
 import NoDataMessage from '../NoDataMessage/NoDataMessage';
 import {useTimeKeeperAPIPut} from '../../utils/services';
 import {UserContext} from '../../context/UserContext';
-import {useKeycloak} from "@react-keycloak/web";
 
 const {Title} = Typography;
 
