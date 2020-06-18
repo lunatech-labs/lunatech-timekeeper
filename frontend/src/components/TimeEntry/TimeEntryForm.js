@@ -5,6 +5,7 @@ import TitleSection from '../Title/TitleSection';
 import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
 import '../Modal/ModalGeneral.less';
 import NoDataMessage from '../NoDataMessage/NoDataMessage';
+import ShowTimeEntry from "./ShowTimeEntry";
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -131,6 +132,7 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
       onFinish={timeKeeperAPIPost.run}
       onValuesChange={onValuesChange}
     >
+      <TitleSection title='Add task'/>
       <Form.Item name="date" noStyle={true}>
       </Form.Item>
 
@@ -215,7 +217,7 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
 
 };
 
-const TimeEntryForm = ({currentDay, form, onSuccess, onCancel}) => {
+const TimeEntryForm = ({currentDay, form, onSuccess, onCancel, viewMode}) => {
   const timeSheets = useTimeKeeperAPI('/api/my/' + currentDay.year() + '?weekNumber=' + currentDay.isoWeek(), (form => form));
 
   if (timeSheets.loading) {
@@ -254,6 +256,19 @@ const TimeEntryForm = ({currentDay, form, onSuccess, onCancel}) => {
     );
   }
 
+  const Entries = (props) => {
+
+    const entries = props.entries.map (
+      entry => <ShowTimeEntry entry={entry} />
+    )
+
+    return (
+      <div>
+        {entries}
+      </div>
+    )
+  }
+
   return (
     <div className="tk_ModalGen">
       <div className="tk_ModalTop">
@@ -269,8 +284,7 @@ const TimeEntryForm = ({currentDay, form, onSuccess, onCancel}) => {
       </div>
 
       <div className="tk_ModalBottom">
-        <TitleSection title='Add task'/>
-        <AddEntry date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess} onCancel={onCancel}/>
+        {viewMode === false && <AddEntry date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess} onCancel={onCancel}/>}
       </div>
     </div>
   );
@@ -280,7 +294,9 @@ TimeEntryForm.propTypes = {
   currentDay: PropTypes.object.isRequired,
   form: PropTypes.object,
   onSuccess: PropTypes.func,
-  onCancel: PropTypes.func
+  onCancel: PropTypes.func,
+  viewMode: PropTypes.bool,
+  entries: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default TimeEntryForm;
