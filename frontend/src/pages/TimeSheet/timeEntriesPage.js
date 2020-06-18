@@ -63,8 +63,8 @@ const TimeEntriesPage = () => {
     firstDayOfWeek: dataFromServer.data ? moment.utc(dataFromServer.data.firstDayOfWeek) : today(),
     days: days
   };
-  const entriesOfSelectedDay = dataFromServer.data;
-  console.log('Test' ,entriesOfSelectedDay);
+
+  const entriesOfSelectedDay = days.filter(day => day.date.format('YYYY-MM-DD') === taskMoment.format('YYYY-MM-DD'));
 
   const openModal = () => setVisibleEntryModal(true);
   const closeModal = () => setVisibleEntryModal(false);
@@ -79,7 +79,7 @@ const TimeEntriesPage = () => {
         width={'37.5%'}
         footer={null}
       >
-        <TimeEntryForm currentDay={taskMoment} form={form} viewMode={viewMode} onSuccess={() => {
+        <TimeEntryForm entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment} form={form} viewMode={viewMode} onSuccess={() => {
           closeModal();
           dataFromServer.run();
         }} onCancel={closeModal}/>
@@ -94,13 +94,11 @@ const TimeEntriesPage = () => {
         onClickAddTask={(e, m) => {
           setTaskMoment(m);
           setViewMode(false);
-          console.log(viewMode);
           openModal();
         }}
         onClickCard={(e, m) => {
           setTaskMoment(m);
           setViewMode(true);
-          console.log(viewMode);
           openModal();
         }}
         dateCellRender={(data) => {
