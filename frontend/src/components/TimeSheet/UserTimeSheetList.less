@@ -1,0 +1,51 @@
+@import '../../main.less';
+
+.tk_CardCollapse {
+  margin-bottom: 32px;
+  .ant-collapse {
+    .ant-collapse-item {
+      border-bottom: none;
+      .ant-collapse-content {
+        .ant-collapse-content-box {
+          padding-top: 0;
+        }
+      }
+    }
+  }
+}
+.tk_TimeSheetList {
+  .ant-list-items {
+    border-top: 1px solid rgba(216, 216, 216, 0.1);
+    .ant-list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: none;
+      border-bottom: none;
+      margin-top: 16px;
+      padding: 0;
+      &:first-child {margin-top: 16px;}
+      > div {
+        display: flex;
+        align-items: center;
+        &:first-child{
+          width: 25%;
+        }
+        &:nth-child(2) {
+          width: 75%;
+          p{
+            margin-bottom: 0;
+            width: 25%;
+            span {margin-right: 6px;}
+          }
+        }
+      }
+    }
+  }
+}
+.tk_UnlimitedField{
+  color: @tk_LightGray;
+}
+.tk_WarnDayLeft{
+  color: @tk_Red;
+}

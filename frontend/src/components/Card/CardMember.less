@@ -1,9 +1,8 @@
-@import '../../timekeeper-theme.less';
+@import '../../main.less';
 
 .tk_CardMember {
-  background: @black_Tk;
-  display: flex;
-  align-items: center;
+  background: @tk_Black;
+  .mixin_Flexbox_Basis();
   justify-content: space-between;
   height: 50px;
   padding: 0 16px;
@@ -12,12 +11,11 @@
   width: 100%;
   &:last-child {margin-bottom: 0;}
   > div {
-    display: flex;
-    align-items: center;
+    .mixin_Flexbox_Basis();
     p {margin: 0 0 0 12px;}
     svg {
-      color: @lightGray_Tk;
-      &:hover {color: @white_Tk;}
+      color: @tk_LightGray;
+      &:hover {color: @tk_White;}
     }
   }
 }

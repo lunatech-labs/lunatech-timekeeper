@@ -37,7 +37,7 @@ public class TimeSheetService {
 
     @Transactional
     Long createDefaultTimeSheet(Project project, User owner, AuthenticationContext ctx) {
-        TimeSheet timeSheet = new TimeSheet(project, owner, TimeUnit.HOURLY, project.getBillable(), null, null, TimeUnit.HOURLY, Collections.emptyList());
+        TimeSheet timeSheet = new TimeSheet(project, owner, TimeUnit.HOURLY, project.getBillable(), null, null, TimeUnit.DAY, Collections.emptyList());
         logger.debug("Create a default timesheet with {}", timeSheet);
         try {
             timeSheet.persistAndFlush();
@@ -55,9 +55,8 @@ public class TimeSheetService {
                 .map(timeSheet -> timeSheet.id);
     }
 
-    // FIXME : It doesn't test if it is active, the business rules are not defined yet
     public List<TimeSheetResponse> findAllActivesForUser(AuthenticationContext ctx) {
-        return streamAll(ctx, TimeSheetResponse::bind, Collectors.toList());
+        return streamAllActive(ctx, TimeSheetResponse::bind, Collectors.toList());
     }
 
     public Optional<TimeSheetResponse> findFirstForProjectForUser(long idProject, long idUser) {
@@ -66,8 +65,8 @@ public class TimeSheetService {
                 .findFirst();
     }
 
-
-    <R extends Collection<TimeSheetResponse>> R streamAll(
+    // for the MVP we don't filter, some kind of "active" flag will be added once business rules are defined (see TK-389)
+    <R extends Collection<TimeSheetResponse>> R streamAllActive(
             AuthenticationContext ctx,
             Function<TimeSheet, TimeSheetResponse> bind,
             Collector<TimeSheetResponse, ?, R> collector

@@ -1,8 +1,7 @@
-@import '../../timekeeper-theme.less';
+@import '../../main.less';
 
 .tk_TopPage {
-  display: flex;
-  align-items: center;
+  .mixin_Flexbox_Basis();
   justify-content: space-between;
 }
 #tk_Card_Sm {
@@ -19,8 +18,8 @@
     .ant-card-head-wrapper {
       align-items: flex-start;
       a {
-        color: @lightGray_Tk;
-        &:hover {color: @white_Tk;}
+        color: @tk_LightGray;
+        &:hover {color: @tk_White;}
       }
       .ant-card-head-title {padding: 0;}
       .ant-card-extra {padding: 0;}
@@ -30,17 +29,15 @@
         justify-content: space-between;
         height: 40px;
         > div {
-          display: flex;
-          align-items: center;
+          .mixin_Flexbox_Basis();
           p {
-            display: flex;
-            align-items: center;
+            .mixin_Flexbox_Basis();
             margin-bottom: 0;
             &:first-child {
               font-size: 18px;
               font-weight: 600;
               line-height: 1;
-              border-right: 1px solid rgba(216, 216, 216, 0.1);
+              border-right: @tk_Border_Base;
               padding-right: 8px;
               margin-right: 8px;
             }
@@ -50,7 +47,7 @@
               font-weight: 400;
               border-radius: 4px;
               padding: 0 5px;
-              background: @lightGray_Tk;
+              background: @tk_LightGray;
             }
           }
         }
@@ -59,7 +56,7 @@
           font-size: 14px;
           font-weight: 400;
           line-height: 1;
-          color: @lightGray_Tk;
+          color: @tk_LightGray;
         }
       }
     }
@@ -75,7 +72,7 @@
     }
   }
   .ant-card-actions {
-    border-top: 1px solid rgba(216, 216, 216, 0.1);
+    border-top: @tk_Border_Base;
     li {
       margin: 0;
       .ant-collapse-item {
@@ -109,22 +106,20 @@
   }
 }
 .tk_SubHeader {
-  border-bottom: 1px solid rgba(216, 216, 216, 0.1);
+  border-bottom: @tk_Border_Base;
   margin-bottom: 32px;
   padding-bottom: 16px;
   > p {
     margin-bottom: 0;
-    color: @lightGray_Tk;
+    color: @tk_LightGray;
   }
 }
 .tk_SubHeader, .tk_SubHeader_RightPart {
-  display: flex;
-  align-items: center;
+  .mixin_Flexbox_Basis();
   justify-content: space-between;
 }
 .tk_SubHeader_Filters {
-  display: flex;
-  align-items: center;
+  .mixin_Flexbox_Basis();
   justify-content: space-between;
   margin-right: 32px;
   &:last-child {
@@ -137,6 +132,6 @@
 }
 #tk_ProjectNoCollapse {
   cursor: default;
-  &:hover {color: @lightGray_Tk;}
+  &:hover {color: @tk_LightGray;}
 }
 .ant-dropdown-menu-item:hover, .ant-dropdown-menu-submenu-title:hover {background-color: rgba(216, 216, 216, 0.1)!important;}

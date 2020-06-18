@@ -1,9 +1,8 @@
-@import '../../timekeeper-theme.less';
+@import '../../main.less';
 
 .tk_TopPage {
   div:last-child {
-    display: flex;
-    align-items: center;
+    .mixin_Flexbox_Basis();
     justify-content: space-between;
   }
 }
@@ -11,7 +10,7 @@
   span {font-weight: 500;}
   a {
     font-weight: 400;
-    &:hover {color: @red_Tk;}
+    &:hover {color: @tk_Red;}
   }
 }
 #tk_h1 {
@@ -33,7 +32,7 @@
     }
     tbody {
       tr {
-        background: @darkGray_Tk;
+        background: @tk_DarkGray;
         td {
           border-bottom: none;
           &:first-child, &:nth-child(5) div {
@@ -49,14 +48,13 @@
           &:last-child {
             padding: 0;
             div {
-              background: @black_Tk;
+              background: @tk_Black;
               padding: 4px 16px;
               margin-bottom: 8px;
               &:first-child {margin-top: 16px;}
               &:last-child {margin-bottom: 16px;}
               height: 40px;
-              display: flex;
-              align-items: center;
+              .mixin_Flexbox_Basis();
             }
           }
         }
@@ -65,20 +63,20 @@
   }
 }
 .ant-pagination-prev button, .ant-pagination-next button {
-  background-color: @mediumGray_Tk !important;
-  color: @lightGray_Tk !important;
+  background-color: @tk_MediumGray !important;
+  color: @tk_LightGray!important;
   border: none !important;
 }
 .ant-pagination-item {
   background-color: transparent !important;
-  color: @lightGray_Tk !important;
+  color: @tk_LightGray !important;
   border: none !important;
 }
 .ant-pagination-item:not(.ant-pagination-item-active) button {
   background-color: transparent !important;
-  color: @lightGray_Tk !important;
+  color: @tk_LightGray !important;
   border: none !important;
 }
 .ant-pagination-disabled button {
-  color: @darkGray_Tk !important;
+  color: @tk_DarkGray !important;
 }

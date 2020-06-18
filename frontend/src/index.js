@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import HttpsRedirect from 'react-https-redirect';
+import './index.less';
 
 const app = (
   <HttpsRedirect>

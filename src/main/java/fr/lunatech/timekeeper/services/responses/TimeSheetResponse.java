@@ -3,6 +3,7 @@ package fr.lunatech.timekeeper.services.responses;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
+import fr.lunatech.timekeeper.timeutils.TimeSheetUtils;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateFormat;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
 
@@ -32,7 +33,9 @@ public class TimeSheetResponse {
 
     public List<TimeEntryResponse> entries;
 
-    public TimeSheetResponse(Long id, ProjectResponse project, UserResponse owner, TimeUnit timeUnit, Boolean defaultIsBillable, LocalDate expirationDate, Integer maxDuration, String durationUnit, List<TimeEntryResponse> entries) {
+    public Long leftOver;
+
+    public TimeSheetResponse(Long id, ProjectResponse project, UserResponse owner, TimeUnit timeUnit, Boolean defaultIsBillable, LocalDate expirationDate, Integer maxDuration, String durationUnit, List<TimeEntryResponse> entries, Long leftOver) {
         this.id = id;
         this.project = project;
         this.ownerId = owner.getId();
@@ -42,6 +45,7 @@ public class TimeSheetResponse {
         this.maxDuration = maxDuration;
         this.durationUnit = durationUnit;
         this.entries = entries;
+        this.leftOver=leftOver;
     }
 
     public static TimeSheetResponse bind(@NotNull TimeSheet sheet) {
@@ -55,7 +59,8 @@ public class TimeSheetResponse {
                 sheet.maxDuration,
                 sheet.durationUnit.name(),
                 sheet.entries.stream().map(TimeSheetResponse.TimeEntryResponse::bind)
-                        .collect(Collectors.toList())
+                        .collect(Collectors.toList()),
+                TimeSheetUtils.computeLeftOver(sheet)
         );
     }
 
@@ -125,6 +130,7 @@ public class TimeSheetResponse {
                 ", maxDuration=" + maxDuration +
                 ", durationUnit='" + durationUnit + '\'' +
                 ", entries=" + entries +
+                ", leftOver=" + leftOver +
                 '}';
     }
 }

@@ -1,28 +1,23 @@
-@import '../../timekeeper-theme.less';
+@import '../../main.less';
 
 .tk_CardWeekCalendar {
-  background: @darkGray_Tk;
+  background: @tk_DarkGray;
   border: none;
   border-radius: 4px;
   min-height: 370px;
   box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2);
   height: 521px;
   position: relative;
-  /*&:hover .tk_CardWeekCalendar_Head button {
-    background: @red_Tk;
-    color: @white_Tk;
-  }*/
   &[disabled] {
     pointer-events: none;
     opacity: 0.5;
     box-shadow: none;
   }
   .tk_CardWeekCalendar_Head {
-    display: flex;
-    align-items: center;
+    .mixin_Flexbox_Basis();
     justify-content: space-between;
     padding: 16px 8px 16px 16px;
-    color: @lightGray_Tk;
+    color: @tk_LightGray;
     font-size: 20px;
     height: 64px;
     border-bottom: 1px solid #2728368c;
@@ -33,14 +28,13 @@
     border-top-right-radius: 4px;
     p {margin-bottom: 0;}
     button {
-      background-color: @black_Tk;
-      color: @lightGray_Tk;
+      background-color: @tk_Black;
+      color: @tk_LightGray;
       border: none;
-      display: flex;
+      .mixin_Flexbox_Basis();
       justify-content: center;
-      align-items: center;
       &:hover {
-        background: @red_Tk;
+        background: @tk_Red;
         color: white;
       }
       &[disabled] {
@@ -50,7 +44,7 @@
       span {font-size: 12px;}
     }
     .tk_CurrentDay {
-      color: @white_Tk;
+      color: @tk_White;
       font-weight: 500;
     }
   }
