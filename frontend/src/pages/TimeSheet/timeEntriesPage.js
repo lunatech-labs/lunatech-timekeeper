@@ -57,6 +57,7 @@ const TimeEntriesPage = () => {
       disabled: false
     });
   });
+
   const datas = {
     firstDayOfWeek: dataFromServer.data ? moment.utc(dataFromServer.data.firstDayOfWeek) : today(),
     days: days
