@@ -7,7 +7,7 @@ import ProjectMemberTag from '../Projects/ProjectMemberTag';
 import {useTimeKeeperAPI} from '../../utils/services';
 import PropTypes from 'prop-types';
 import EditTimeSheetForm from './EditTimeSheetForm';
-import ProjectClientHeader from "../Projects/ProjectClientHeader";
+import ProjectClientHeader from '../Projects/ProjectClientHeader';
 
 const moment = require('moment');
 const format = (s) => moment(s, 'YYYY-MM-DD').format('YYYY/MM/DD');
