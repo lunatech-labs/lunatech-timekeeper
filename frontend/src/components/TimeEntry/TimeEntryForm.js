@@ -5,8 +5,7 @@ import TitleSection from '../Title/TitleSection';
 import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
 import '../Modal/ModalGeneral.less';
 import NoDataMessage from '../NoDataMessage/NoDataMessage';
-import ShowTimeEntry from "./ShowTimeEntry";
-import {PlusOutlined} from "@ant-design/icons";
+import ShowTimeEntry from './ShowTimeEntry';
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -260,14 +259,14 @@ const TimeEntryForm = ({entries ,currentDay, form, onSuccess, onCancel, viewMode
   const Entries = (props) => {
 
     const entries = props.entries.map (
-      entriesForDay => entriesForDay.map(entry => <ShowTimeEntry entry={entry} />)
-    )
+      entriesForDay => entriesForDay.map(entry => <ShowTimeEntry key={entry.id} entry={entry} />)
+    );
     return (
       <div className="tk_TaskInfoList">
         {entries}
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div className="tk_ModalGen">
@@ -277,7 +276,7 @@ const TimeEntryForm = ({entries ,currentDay, form, onSuccess, onCancel, viewMode
             <p>{currentDay.format('ddd')}<br /><span>{currentDay.format('DD')}</span></p>
             <h1>Day information</h1>
           </div>
-          {viewMode ? <Button type="link" onClick={(e) => setViewMode && setViewMode(false)}>Add task</Button> : ''}
+          {viewMode ? <Button type="link" onClick={() => setViewMode && setViewMode(false)}>Add task</Button> : ''}
         </div>
         <div className="tk_ModalTopBody">
           {entries.length === 0 ? <NoDataMessage message='No task for this day, there is still time to add one.'/> : <Entries entries={entries} />}
@@ -294,6 +293,7 @@ TimeEntryForm.propTypes = {
   onSuccess: PropTypes.func,
   onCancel: PropTypes.func,
   viewMode: PropTypes.bool,
+  setViewMode: PropTypes.func,
   entries: PropTypes.arrayOf(PropTypes.object)
 };
 
