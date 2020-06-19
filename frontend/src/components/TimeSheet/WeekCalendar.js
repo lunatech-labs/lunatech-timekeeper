@@ -160,6 +160,8 @@ const WeekCalendar = (props) => {
                 onMouseOver={() => setShowButton(index)}
                 onMouseLeave={() => setShowButton(-1)}>
                 <div className="tk_CardWeekCalendar_Head">
+                  <p className={today(moment(item.date)) ? 'tk_CurrentDay' : ''}>{item.date.format(dateFormat)}</p>
+                  {((props.hiddenButtons && showButton === index) || (!props.hiddenButtons))}
                   <Button
                     shape="circle"
                     disabled={isDisabled(item)}
@@ -168,8 +170,6 @@ const WeekCalendar = (props) => {
                       props.onClickAddTask && props.onClickAddTask(e, item.date);
                       e.stopPropagation();
                     }}/>
-                  <p className={today(moment(item.date)) ? 'tk_CurrentDay' : ''}>{item.date.format(dateFormat)}</p>
-                  {((props.hiddenButtons && showButton === index) || (!props.hiddenButtons))}
                 </div>
                 <div className="tk_CardWeekCalendar_Body" disabled={isDisabled(item)}>
                   {renderDay()}
