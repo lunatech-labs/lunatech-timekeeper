@@ -1,11 +1,9 @@
 import React from 'react';
-import PropTypes from "prop-types";
-import {FieldTimeOutlined, EditOutlined, CopyOutlined, DeleteOutlined}  from "@ant-design/icons/es/icons";
+import PropTypes from 'prop-types';
+import {FieldTimeOutlined, EditOutlined, CopyOutlined, DeleteOutlined}  from '@ant-design/icons/es/icons';
 import './ShowTimeEntry.less';
-import EyeFilled from "@ant-design/icons/lib/icons/EyeFilled";
-import {Button} from "antd";
-import EditFilled from "@ant-design/icons/lib/icons/EditFilled";
-import Tooltip from "antd/lib/tooltip";
+import {Button} from 'antd';
+import Tooltip from 'antd/lib/tooltip';
 
 const moment = require('moment');
 
@@ -45,8 +43,8 @@ const ShowTimeEntry = ({entry}) => {
       <div className="tk_TaskInfoBottom">
       </div>
     </div>
-  )
-}
+  );
+};
 
 ShowTimeEntry.propTypes = {
   entry: PropTypes.shape({

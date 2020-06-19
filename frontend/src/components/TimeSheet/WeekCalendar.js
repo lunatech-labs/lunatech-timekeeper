@@ -155,16 +155,19 @@ const WeekCalendar = (props) => {
           return (
             <div className="tk_WeekCalendar_Day" key={`day-card-${index}`}>
               <p>{item.date.format(headerDateFormat)}</p>
-              <Button
-                shape="circle"
-                disabled={isDisabled(item)}
-                icon={<PlusOutlined/>}
-                onClick={(e) => props.onClickAddTask && props.onClickAddTask(e, item.date)}/>
               <CardWeekCalendar
                 onClick={(e) => props.onClickCard && props.onClickCard(e, item.date)}
                 onMouseOver={() => setShowButton(index)}
                 onMouseLeave={() => setShowButton(-1)}>
                 <div className="tk_CardWeekCalendar_Head">
+                  <Button
+                    shape="circle"
+                    disabled={isDisabled(item)}
+                    icon={<PlusOutlined/>}
+                    onClick={(e) => {
+                      props.onClickAddTask && props.onClickAddTask(e, item.date);
+                      e.stopPropagation();
+                    }}/>
                   <p className={today(moment(item.date)) ? 'tk_CurrentDay' : ''}>{item.date.format(dateFormat)}</p>
                   {((props.hiddenButtons && showButton === index) || (!props.hiddenButtons))}
                 </div>
