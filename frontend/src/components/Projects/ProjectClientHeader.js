@@ -16,7 +16,7 @@ const ProjectClientHeader = ({project}) => {
   );
 };
 
-ProjectClientHeader.prototype = {
+ProjectClientHeader.propTypes = {
   project: PropTypes.shape({
     name: PropTypes.string,
     client: PropTypes.object

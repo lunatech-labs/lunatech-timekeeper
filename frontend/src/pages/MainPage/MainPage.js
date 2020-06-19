@@ -37,7 +37,7 @@ const MainPage = ({title, children, actions, entityName, ...rest}) => {
 
   return (
     <Layout>
-      <UserProvider user={data}>
+      <UserProvider currentUser={data}>
         <SidebarLeft collapsed={collapsed} {...rest} />
         <Layout id="tk_RightContent" className="site-layout">
           <TopBar collapsed={collapsed} toggle={() => toggle(!collapsed)}/>

@@ -22,7 +22,7 @@ const ShowProject = ({project, onSuccessJoinProject}) => {
 
   const timeKeeperAPIPutJoin = useTimeKeeperAPIPut(`/api/projects/${project.id}/join`, (form => form), setProjectUpdated);
 
-  const {user} = useContext(UserContext);
+  const {currentUser} = useContext(UserContext);
 
   useEffect(() => {
     if (projectUpdated) {
@@ -44,19 +44,19 @@ const ShowProject = ({project, onSuccessJoinProject}) => {
         const res = u2.manager - u1.manager;
         return res === 0 ? u1.name.localeCompare(u2.name) : res;
       });
-      return users.map(item =>
-        <CardMember key={`project-member-${item.id}`}>
+      return users.map(user =>
+        <CardMember key={`project-member-${user.id}`}>
           <div>
-            <Avatar src={item.picture}/>
-            <p>{item.name}</p>
+            <Avatar src={user.picture}/>
+            <p>{user.name}</p>
           </div>
           <div>
-            <TagMember isManager={item.manager}/>
+            <TagMember isManager={user.manager}/>
             <Divider type='vertical'/>
             <Tooltip title='Time sheet'>
               <SnippetsFilled onClick={() => {
                 setModalVisible(true);
-                setSelectedMember(item);
+                setSelectedMember(user);
               }}/>
             </Tooltip>
           </div>
@@ -79,7 +79,7 @@ const ShowProject = ({project, onSuccessJoinProject}) => {
     );
   };
 
-  const isMember = !!project.users.find(item => user.id === item.id);
+  const isMember = !!project.users.find(item => currentUser.id === item.id);
   const showJoinButton = project.publicAccess && !isMember;
   return (
     <div>
