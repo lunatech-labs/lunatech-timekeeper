@@ -167,9 +167,10 @@ const WeekCalendar = (props) => {
                     icon={<PlusOutlined/>}
                     onClick={(e) => props.onClickAddTask && props.onClickAddTask(e, item.date)}/>}
                 </div>
-                <div className={props.warnPredicate && props.warnPredicate(item.date, item.day) ?
+                <div className={props.warningCardPredicate && props.warningCardPredicate(item.date, item.day) ?
                     "tk_CardWeekCalendar_Body tk_CardWeekCalendar_Body_With_Warn":
-                    "tk_CardWeekCalendar_Body"}>
+                    "tk_CardWeekCalendar_Body"}
+                     disabled={isDisabled(item)}>
                   {renderDay()}
                 </div>
               </CardWeekCalendar>
@@ -197,7 +198,7 @@ WeekCalendar.propTypes = {
   hiddenButtons: PropTypes.bool,
   onClickAddTask: PropTypes.func, // (event, moment) => void
   onPanelChange: PropTypes.func, // (id, start, end) => void
-  warnPredicate : PropTypes.func // (date, day) => bool
+  warningCardPredicate : PropTypes.func // (date, day) => bool
 };
 
 export default WeekCalendar;
