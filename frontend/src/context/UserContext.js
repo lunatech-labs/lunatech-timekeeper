@@ -3,16 +3,16 @@ import PropTypes from 'prop-types';
 
 export const UserContext = createContext(null);
 
-export const UserProvider = ({user, children}) => {
+export const UserProvider = ({currentUser, children}) => {
   return (
-    <UserContext.Provider value={{user}}>
+    <UserContext.Provider value={{currentUser}}>
       {children}
     </UserContext.Provider>
   );
 };
 
 UserProvider.propTypes = {
-  user: PropTypes.shape({
+  currentUser: PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,

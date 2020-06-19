@@ -13,7 +13,7 @@ const { Header } = Layout;
 const TopBar = ({ collapsed, toggle }) => {
   const [alert, setAlert] = useState(true);
 
-  const {user} = useContext(UserContext);
+  const {currentUser} = useContext(UserContext);
   const alertChangeState = () => {
     setAlert(!alert);
   };
@@ -40,14 +40,14 @@ const TopBar = ({ collapsed, toggle }) => {
       </div>
       <div className="tk_Header_Right">
         <div className="tk_Header_Organization">
-          <Avatar shape="square"  src={displayOrganizationPicture(user.email)} />
+          <Avatar shape="square"  src={displayOrganizationPicture(currentUser.email)} />
         </div>
         <div className="tk_Header_Notif">
           <Badge dot={alert} onClick={alertChangeState}>
             <BellOutlined />
           </Badge>
         </div>
-        <HeaderProfile user={user} />
+        <HeaderProfile user={currentUser} />
       </div>
     </Header>
   );
@@ -55,10 +55,7 @@ const TopBar = ({ collapsed, toggle }) => {
 
 TopBar.propTypes = {
   collapsed: PropTypes.bool.isRequired,
-  toggle: PropTypes.func.isRequired,
-  user: PropTypes.shape({
-    email: PropTypes.string
-  })
+  toggle: PropTypes.func.isRequired
 };
 
 export default TopBar;
