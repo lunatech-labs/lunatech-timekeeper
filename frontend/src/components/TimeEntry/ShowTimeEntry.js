@@ -1,9 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {FieldTimeOutlined, EditOutlined, CopyOutlined, DeleteOutlined}  from '@ant-design/icons/es/icons';
 import './ShowTimeEntry.less';
 import {Button} from 'antd';
 import Tooltip from 'antd/lib/tooltip';
+import FieldTimeOutlined from "@ant-design/icons/es/icons/FieldTimeOutlined";
+import EditOutlined from "@ant-design/icons/es/icons/EditOutlined";
+import CopyOutlined from "@ant-design/icons/es/icons/CopyOutlined";
+import DeleteOutlined from "@ant-design/icons/es/icons/DeleteOutlined";
 
 const moment = require('moment');
 
