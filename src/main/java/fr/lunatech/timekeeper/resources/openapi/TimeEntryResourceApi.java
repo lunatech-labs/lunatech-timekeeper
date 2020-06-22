@@ -12,10 +12,8 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.validation.Valid;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -82,5 +80,59 @@ public interface TimeEntryResourceApi {
             )
     })
     Response createTimeEntryPerHalfDay(@PathParam("timeSheetId") Long timeSheetId, @RequestBody TimeEntryPerHalfDayRequest timeEntryRequest, @Context UriInfo uriInfo);
+
+    @PUT
+    @Path("/half-a-day/{timeEntryId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Update an half day timeentry",
+            description = "Update half day timeentry details.")
+    @Tag(ref = "timeEntries")
+    @APIResponses(value = {
+            @APIResponse(
+                    responseCode = "204",
+                    description = "HalfDay TimeEntry updated"
+            ),
+            @APIResponse(
+                    responseCode = "404",
+                    description = "HalfDay TimeEntry not found"
+            )
+    })
+    Response updateTimeEntryPerHalfDay(@PathParam("timeSheetId") Long timeSheetId, @PathParam("timeEntryId") Long timeEntryId, @Valid TimeEntryPerHalfDayRequest request, UriInfo uriInfo);
+
+    @PUT
+    @Path("/hour/{timeEntryId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Update an hour timeentry",
+            description = "Update hour timeentry details.")
+    @Tag(ref = "timeEntries")
+    @APIResponses(value = {
+            @APIResponse(
+                    responseCode = "204",
+                    description = "Hour TimeEntry updated"
+            ),
+            @APIResponse(
+                    responseCode = "404",
+                    description = "Hour TimeEntry not found"
+            )
+    })
+    Response updateTimeEntryPerHour(@PathParam("timeSheetId") Long timeSheetId, @PathParam("timeEntryId") Long timeEntryId, @Valid TimeEntryPerHourRequest request, UriInfo uriInfo);
+
+    @PUT
+    @Path("/day/{timeEntryId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Update a day timeentry",
+            description = "Update day timeentry details.")
+    @Tag(ref = "timeEntries")
+    @APIResponses(value = {
+            @APIResponse(
+                    responseCode = "204",
+                    description = "Day TimeEntry updated"
+            ),
+            @APIResponse(
+                    responseCode = "404",
+                    description = "Day TimeEntry not found"
+            )
+    })
+    Response updateTimeEntryPerDay(@PathParam("timeSheetId") Long timeSheetId, @PathParam("timeEntryId") Long timeEntryId, @Valid TimeEntryPerDayRequest request, UriInfo uriInfo);
 
 }

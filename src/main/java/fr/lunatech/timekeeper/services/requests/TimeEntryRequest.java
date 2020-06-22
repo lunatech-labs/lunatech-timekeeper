@@ -14,4 +14,11 @@ public interface TimeEntryRequest {
             @NotNull BiFunction<Long, AuthenticationContext, Optional<TimeSheet>> findTimeSheet,
             @NotNull AuthenticationContext ctx
     );
+
+    TimeEntry unbind(
+            @NotNull TimeEntry timeEntry,
+            @NotNull Long timeSheetId,
+            @NotNull BiFunction<Long, AuthenticationContext, Optional<TimeSheet>> findTimeSheet,
+            @NotNull AuthenticationContext ctx
+    );
 }

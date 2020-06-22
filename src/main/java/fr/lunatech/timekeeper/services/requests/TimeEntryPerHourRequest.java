@@ -41,6 +41,15 @@ public final class TimeEntryPerHourRequest implements TimeEntryRequest {
             @NotNull AuthenticationContext ctx
     ) {
         TimeEntry timeEntry = new TimeEntry();
+        return unbind(timeEntry, timeSheetId, findTimeSheet, ctx);
+    }
+
+    @Override
+    public TimeEntry unbind(
+            @NotNull TimeEntry timeEntry,
+            @NotNull Long timeSheetId,
+            @NotNull BiFunction<Long, AuthenticationContext, Optional<TimeSheet>> findTimeSheet,
+            @NotNull AuthenticationContext ctx) {
         timeEntry.comment = getComment();
         timeEntry.startDateTime = this.startDateTime;
         timeEntry.endDateTime = this.endDateTime;
