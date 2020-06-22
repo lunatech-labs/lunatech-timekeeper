@@ -172,7 +172,7 @@ const WeekCalendar = (props) => {
                     }}/> }
                 </div>
                 <div className={props.warningCardPredicate && props.warningCardPredicate(item.date, item.day) ?
-                    "tk_CardWeekCalendar_Body tk_CardWeekCalendar_Body_With_Warn" : "tk_CardWeekCalendar_Body"} disabled={isDisabled(item)}>
+                  'tk_CardWeekCalendar_Body tk_CardWeekCalendar_Body_With_Warn' : 'tk_CardWeekCalendar_Body'} disabled={isDisabled(item)}>
                   {renderDay()}
                 </div>
               </CardWeekCalendar>
