@@ -9,9 +9,11 @@ import Tooltip from 'antd/lib/tooltip';
 import Space from 'antd/lib/space';
 import Tag from 'antd/lib/tag';
 import UserOutlined from '@ant-design/icons/lib/icons/UserOutlined';
+import FolderOpenOutlined from '@ant-design/icons/lib/icons/FolderOpenOutlined';
 import Input from 'antd/lib/input';
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined';
 import Meta from 'antd/lib/card/Meta';
+import CardXs from '../Card/CardXs';
 
 const { Panel } = Collapse;
 
@@ -76,9 +78,9 @@ const ClientList = () => {
               title={
                 <Space size={'middle'}>
                   <Avatar src={logo} shape={'square'} size="large"/>
-                  <div className="tk_Card_Sm_Header">
-                    <p>{item.name}</p>
-                    <p>{item.projects.length} projects</p>
+                  <div className="tk_Card_ClientHeader">
+                    <p className="tk_Card_ClientTitle">{item.name}</p>
+                    <p className="tk_Card_ClientNbProject">{item.projects.length} projects</p>
                   </div>
                 </Space>
               }
@@ -89,12 +91,17 @@ const ClientList = () => {
               ]}
               actions={[ item.projects.length === 0 ? <Panel id="tk_ProjectNoCollapse" header={<Space size="small"><FolderFilled />{'No project'}</Space>} key="1"/> :
                 <Collapse bordered={false} expandIconPosition={'right'} key="projects">
-                  <Panel header={<Space size="small"><FolderFilled />{'List of projects'}</Space>} key="1">
+                  <Panel header={<Space size="small"><FolderOpenOutlined />{'List of projects'}</Space>} key="1">
                     <List
-                      className={'tk_Project_MemberList'}
+                      id={'tk_ClientProjects'}
                       dataSource={item.projects}
                       renderItem={projectItem => (
-                        <List.Item>{projectItem.name} <Tag id="tk_UsersTag" icon={<UserOutlined />}>{projectItem.userCount}</Tag></List.Item>
+                        <List.Item>
+                          <CardXs>
+                            <p>{projectItem.name}</p>
+                            <Tag id="tk_UsersTag" icon={<UserOutlined />}>{projectItem.userCount}</Tag>
+                          </CardXs>
+                        </List.Item>
                       )}
                     />
                   </Panel>
