@@ -29,7 +29,7 @@ const isDayHalfDayOrHour = (numberHours) => {
     }
 }
 
-const initialValues = (defaultDate, entry) => {
+const initialValues = (defaultDate, entry, timeSheetId) => {
     const newEntry = {
         ...entry,
         startDateTime: moment.utc(entry.startDateTime),
@@ -38,7 +38,7 @@ const initialValues = (defaultDate, entry) => {
     const numberOfHours = computeNumberOfHours(newEntry.startDateTime, newEntry.endDateTime);
     return {
         'comment': newEntry.comment,
-        'timeSheetId': newEntry.timeSheetId,
+        'timeSheetId': timeSheetId,
         'date': moment.utc(newEntry.startDateTime, "YYYY-MM-DD"),
         'isMorning': newEntry.isMorning,
         'startDateTime': newEntry.startDateTime,
@@ -97,7 +97,7 @@ const urlEdition = (form, timeEntryId) => {
     return `/api/timeSheet/${timeSheetId}/timeEntry/${prefix}/${timeEntryId}`;
 }
 
-const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry}) => {
+const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, timeSheetId}) => {
     const [entryUpdated, setEntryUpdated] = useState(false);
     const [selectedTimeSheet, setSelectedTimeSheet] = useState();
     const timeKeeperAPIPut = useTimeKeeperAPIPut(urlEdition(form, entry.id), (form => form), setEntryUpdated);
@@ -153,7 +153,7 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry}) => 
         <Form
             id="tk_Form"
             layout="vertical"
-            initialValues={initialValues(date, entry)}
+            initialValues={initialValues(date, entry, timeSheetId)}
             form={form}
             onFinish={timeKeeperAPIPut.run}
             onValuesChange={onValuesChange}
@@ -256,6 +256,7 @@ EditEntryForm.propTypes = {
         isMorning: PropTypes.bool.isRequired,
         startDateTime: PropTypes.object.isRequired,
         endDateTime: PropTypes.object.isRequired,
-    }).isRequired
+    }).isRequired,
+    timeSheetId: PropTypes.number.isRequired
 };
 export default EditEntryForm;

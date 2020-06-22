@@ -79,6 +79,7 @@ const TimeEntriesPage = () => {
   const setViewMode = () => setMode('view');
   const setAddMode = () => setMode('add');
 
+  const timeSheetId = timeEntries.map(timeSheet => timeSheet.id)
 
   return (
     <MainPage title="Time entries">
@@ -94,7 +95,8 @@ const TimeEntriesPage = () => {
           closeModal();
           dataFromServer.run();
           setViewMode();
-        }} onCancel={() => setViewMode()}/>
+        }} onCancel={() => setViewMode()}
+        timeSheetId={timeSheetId.map(id => id)}/>
       </Modal>
       <UserTimeSheetList timeSheets={timeEntries}/>
 

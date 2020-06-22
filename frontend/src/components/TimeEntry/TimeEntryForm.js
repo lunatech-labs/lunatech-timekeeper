@@ -10,7 +10,7 @@ import EditEntryForm from "./EditEntryForm";
 
 const {TextArea} = Input;
 
-const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, setMode}) => {
+const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, setMode, timeSheetId}) => {
 
     const setAddMode = () => setMode('add');
     const setEditMode = () => setMode('edit');
@@ -53,7 +53,6 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
     }
 
     const Entries = (props) => {
-
         const entries = props.entries.map(
             entriesForDay => entriesForDay.map(entry => <ShowTimeEntry key={entry.id} entry={entry} onClickEdit={()=>{
                 setEntry(entry)
@@ -89,7 +88,7 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
                           onCancel={onCancel}/>}
             {mode === 'edit' && entry &&
             <EditEntryForm date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess}
-                          onCancel={onCancel} entry={entry}/>}
+                          onCancel={onCancel} entry={entry} timeSheetId={timeSheetId}/>}
         </div>
     );
 };
@@ -101,7 +100,8 @@ TimeEntryForm.propTypes = {
     onCancel: PropTypes.func,
     mode: PropTypes.string, // can be 'view', 'add' or 'edit'
     setMode: PropTypes.func,
-    entries: PropTypes.arrayOf(PropTypes.object)
+    entries: PropTypes.arrayOf(PropTypes.object),
+    timeSheetId: PropTypes.number.isRequired
 };
 
 export default TimeEntryForm;
