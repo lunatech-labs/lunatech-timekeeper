@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import './ShowTimeEntry.less';
 import {Button} from 'antd';
 import Tooltip from 'antd/lib/tooltip';
-import FieldTimeOutlined from "@ant-design/icons/es/icons/FieldTimeOutlined";
 import EditOutlined from "@ant-design/icons/es/icons/EditOutlined";
 import CopyOutlined from "@ant-design/icons/es/icons/CopyOutlined";
 import DeleteOutlined from "@ant-design/icons/es/icons/DeleteOutlined";
@@ -28,7 +27,7 @@ const ShowTimeEntry = ({entry}) => {
         <div className="tk_TaskInfoMiddle">
           <div>
             <p>{entry.project ? entry.project.name : ''}</p>
-            <p><FieldTimeOutlined />{date.format('hh:mm')}</p>
+            <p>{date.format('hh:mm')}</p>
           </div>
           <div>
             <Tooltip title="Edit" key="edit">
