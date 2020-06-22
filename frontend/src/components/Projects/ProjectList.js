@@ -1,15 +1,11 @@
 import React, {useState} from 'react';
-import {Alert, Avatar, Button, Card, Collapse, Divider, Dropdown, List, Menu, Spin} from 'antd';
+import {Alert, Avatar, Button, Card, Collapse, Divider, Dropdown, List, Menu, Spin, Tooltip, Space} from 'antd';
 import logo from '../../img/logo_timekeeper_homepage.png';
 import {useTimeKeeperAPI} from '../../utils/services';
 import EditFilled from '@ant-design/icons/lib/icons/EditFilled';
 import UserOutlined from '@ant-design/icons/lib/icons/UserOutlined';
 import LockFilled from '@ant-design/icons/lib/icons/LockFilled';
 import UnlockOutlined from '@ant-design/icons/lib/icons/UnlockOutlined';
-
-import Tooltip from 'antd/lib/tooltip';
-
-import Space from 'antd/lib/space';
 import Meta from 'antd/lib/card/Meta';
 
 import './ProjectList.less';
@@ -162,7 +158,7 @@ const ProjectList = () => {
             <Space size={'middle'}>
               <Avatar src={logo} shape={'square'} size="large"/>
               <div className="tk_Card_Sm_Header">
-                <div>
+                <div className="tk_CardProjectTitle">
                   <p>{item.name}</p>
                   <p>{item.client ? item.client.name : 'No client'}</p>
                 </div>
@@ -188,10 +184,12 @@ const ProjectList = () => {
                 size="small"><UserOutlined/>{item.users.length}{item.users.length <= 1 ? 'member' : 'members'}</Space>}
               key="members">
                 <List
-                  className={'tk_Project_MemberList'}
+                  id={'tk_Project_MemberList'}
                   dataSource={item.users.sort(((a, b) => memberComparator(a, b)))}
                   renderItem={member => (
-                    <List.Item><ProjectMemberTag member={member}/></List.Item>
+                    <List.Item>
+                      <ProjectMemberTag member={member}/>
+                    </List.Item>
                   )}
                 />
               </Panel>

@@ -1,7 +1,7 @@
 import React  from 'react';
-import './CardMember.less';
+import './CardXs.less';
 import PropTypes from 'prop-types';
-const CardMember = ( {children} ) => {
+const CardXs = ({children} ) => {
 
   return (
     <div className="tk_CardMember">
@@ -10,11 +10,11 @@ const CardMember = ( {children} ) => {
   );
 };
 
-CardMember.propTypes = {
+CardXs.propTypes = {
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node
   ]).isRequired
 };
 
-export default CardMember;
+export default CardXs;
