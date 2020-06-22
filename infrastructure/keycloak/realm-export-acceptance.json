@@ -975,8 +975,8 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "xbz32-any-secret-we-do-not-use-it",
       "redirectUris": [
-        "https://acceptance.timekeeper.lunatech.fr/swagger-ui/oauth2-redirect.html",
-        "https://acceptance.timekeeper.lunatech.fr/oauth2-redirect.html"
+        "https://acceptance.api.timekeeper.lunatech.fr/swagger-ui/oauth2-redirect.html",
+        "https://acceptance.api.timekeeper.lunatech.fr/oauth2-redirect.html"
       ],
       "webOrigins": [],
       "notBefore": 0,
