@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import {DesktopOutlined, DollarOutlined, LockOutlined, SnippetsFilled, UserOutlined,} from '@ant-design/icons';
 import TitleSection from '../Title/TitleSection';
 import CardLg from '../Card/CardLg';
-import CardMember from '../Card/CardMember';
+import CardXs from '../Card/CardXs';
 import TagMember from '../Tag/TagMember';
 import TagProjectClient from '../Tag/TagProjectClient';
 import ShowTimeSheet from '../TimeSheet/ShowTimeSheet';
@@ -29,7 +29,7 @@ const ShowProject = ({project}) => {
         return res === 0 ? u1.name.localeCompare(u2.name) : res;
       });
       return users.map(user =>
-        <CardMember key={`project-member-${user.id}`}>
+        <CardXs key={`project-member-${user.id}`}>
           <div>
             <Avatar src={user.picture}/>
             <p>{user.name}</p>
@@ -44,7 +44,7 @@ const ShowProject = ({project}) => {
               }}/>
             </Tooltip>
           </div>
-        </CardMember>
+        </CardXs>
       );
     }
   };
