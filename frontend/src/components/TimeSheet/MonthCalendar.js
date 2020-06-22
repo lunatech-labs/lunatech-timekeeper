@@ -61,6 +61,7 @@ const MonthCalendar = (props) => {
           <MonthNavigator value={value} onChange={onChange}/>
         </div>)
       }}
+      onSelect={props.onSelect}
       disabledDate={moment => {
         const day = findData(moment);
         return isDisabled(day, moment)
@@ -73,7 +74,10 @@ const MonthCalendar = (props) => {
               shape="circle"
               disabled={isDisabled(day, moment)}
               icon={<PlusOutlined/>}
-              onClick={(e) => props.onClickAddTask && props.onClickAddTask(e, moment)}/>
+              onClick={(e) => {
+                props.onClickAddTask && props.onClickAddTask(e, moment)
+                e.stopPropagation();
+              }}/>
             {day && day.data && props.dateCellRender(day.data)}
           </div>
         )

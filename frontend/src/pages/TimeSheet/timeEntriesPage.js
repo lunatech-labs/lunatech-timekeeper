@@ -76,6 +76,18 @@ const TimeEntriesPage = () => {
     return moment().subtract('1','days').isAfter(date) && !day;
   };
 
+  const onClickAddTask = (e, m) => {
+    setTaskMoment(m);
+    setViewMode(false);
+    openModal();
+  };
+
+  const onClickCard = (e, m) => {
+    setTaskMoment(m);
+    setViewMode(true);
+    openModal();
+  }
+
   return (
     <MainPage title="Time entries">
       <Modal
@@ -94,10 +106,8 @@ const TimeEntriesPage = () => {
       <UserTimeSheetList timeSheets={timeEntries}/>
 
       <MonthCalendar
-        onClickAddTask={(e, m) => {
-          setTaskMoment(m);
-          openModal();
-        }}
+        onClickAddTask={onClickAddTask}
+        onSelect={moment => onClickCard(null , moment)}
         days={datas.days}
         dateCellRender={(data) => data.filter(data => !!data).map(item =>
           <div>
@@ -111,16 +121,8 @@ const TimeEntriesPage = () => {
         disabledWeekEnd={true}
         hiddenButtons={false}
         onPanelChange={(id, start) => setCurrentWeekNumber(start.year() + '?weekNumber=' + start.isoWeek())}
-        onClickAddTask={(e, m) => {
-          setTaskMoment(m);
-          setViewMode(false);
-          openModal();
-        }}
-        onClickCard={(e, m) => {
-          setTaskMoment(m);
-          setViewMode(true);
-          openModal();
-        }}
+        onClickAddTask={onClickAddTask}
+        onClickCard={onClickCard}
         dateCellRender={(data) => {
           return (
             <div>
