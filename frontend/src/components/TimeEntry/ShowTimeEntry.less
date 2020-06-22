@@ -1,0 +1,49 @@
+@import '../../main.less';
+
+.tk_TaskInfoList {
+  overflow-y: scroll;
+  height: 40vh;
+}
+.tk_TaskInfoGen {
+  &:last-child {
+    .tk_TaskInfoBottom {
+      border-bottom: 0;
+      margin: 0;
+    }
+  }
+  .tk_TaskInfo {
+    border-left: 3px solid #1890FF;
+    padding-left: 8px;
+    .tk_TaskInfoTop {
+      color: @tk_White;
+      margin-bottom: 4px;
+    }
+    .tk_TaskInfoMiddle {
+      .mixin_Flexbox_Basis();
+      justify-content: space-between;
+      div {
+        &:first-child {
+          .mixin_Flexbox_Basis();
+          p {
+            color: #1890FF;
+            margin-bottom: 0;
+            &:first-child {margin-right: 10px;}
+            &:last-child {
+              span {margin-right: 4px;}
+            }
+          }
+        }
+        &:last-child {
+          button {
+            color: @tk_LightGray;
+            &:hover {color: @tk_White;}
+          }
+        }
+      }
+    }
+  }
+  .tk_TaskInfoBottom {
+    border-bottom: @tk_Border_Base;
+    margin: 16px 0;
+  }
+}

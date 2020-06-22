@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Radio, Select} from 'antd';
 import CardWeekCalendar from '../Card/CardWeekCalendar';
-import PropTypes from 'prop-types';
 import {LeftOutlined, PlusOutlined, RightOutlined} from '@ant-design/icons';
+import PropTypes from 'prop-types';
 import './WeekCalendar.less';
 
 const moment = require('moment');
@@ -156,6 +156,7 @@ const WeekCalendar = (props) => {
             <div className="tk_WeekCalendar_Day" key={`day-card-${index}`}>
               <p>{item.date.format(headerDateFormat)}</p>
               <CardWeekCalendar
+                onClick={(e) => props.onClickCard && props.onClickCard(e, item.date)}
                 onMouseOver={() => setShowButton(index)}
                 onMouseLeave={() => setShowButton(-1)}>
                 <div className="tk_CardWeekCalendar_Head">
@@ -165,12 +166,13 @@ const WeekCalendar = (props) => {
                     shape="circle"
                     disabled={isDisabled(item)}
                     icon={<PlusOutlined/>}
-                    onClick={(e) => props.onClickAddTask && props.onClickAddTask(e, item.date)}/>}
+                    onClick={(e) => {
+                      props.onClickAddTask && props.onClickAddTask(e, item.date);
+                      e.stopPropagation();
+                    }}/> }
                 </div>
                 <div className={props.warningCardPredicate && props.warningCardPredicate(item.date, item.day) ?
-                    "tk_CardWeekCalendar_Body tk_CardWeekCalendar_Body_With_Warn":
-                    "tk_CardWeekCalendar_Body"}
-                     disabled={isDisabled(item)}>
+                  'tk_CardWeekCalendar_Body tk_CardWeekCalendar_Body_With_Warn' : 'tk_CardWeekCalendar_Body'} disabled={isDisabled(item)}>
                   {renderDay()}
                 </div>
               </CardWeekCalendar>
@@ -198,6 +200,7 @@ WeekCalendar.propTypes = {
   hiddenButtons: PropTypes.bool,
   onClickAddTask: PropTypes.func, // (event, moment) => void
   onPanelChange: PropTypes.func, // (id, start, end) => void
+  onClickCard: PropTypes.func, // (event, moment) => void
   warningCardPredicate : PropTypes.func // (date, day) => bool
 };
 

@@ -17,6 +17,7 @@ const TimeEntriesPage = () => {
     return tmpDate.year() + '?weekNumber=' + tmpDate.isoWeek();
   });
   const [visibleEntryModal, setVisibleEntryModal] = useState(false);
+  const [viewMode, setViewMode] = useState(false);
   const [taskMoment, setTaskMoment] = useState(moment().utc());
   const [form] = Form.useForm();
 
@@ -63,13 +64,15 @@ const TimeEntriesPage = () => {
     days: days
   };
 
+  const entriesOfSelectedDay = days.filter(day => day.date.format('YYYY-MM-DD') === taskMoment.format('YYYY-MM-DD'));
+
   const openModal = () => setVisibleEntryModal(true);
   const closeModal = () => setVisibleEntryModal(false);
   const resetForm = () => form.resetFields();
 
   // A day without entries in the past should be displayed with "warn" design
   const hasWarnNoEntryInPastDay =(date,day) => {
-    return moment().subtract("1","days").isAfter(date) && !day
+    return moment().subtract('1','days').isAfter(date) && !day;
   };
 
   return (
@@ -82,10 +85,10 @@ const TimeEntriesPage = () => {
         width={'37.5%'}
         footer={null}
       >
-        <TimeEntryForm currentDay={taskMoment} form={form} onSuccess={() => {
+        <TimeEntryForm setViewMode={setViewMode} entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment} form={form} viewMode={viewMode} onSuccess={() => {
           closeModal();
           dataFromServer.run();
-        }} onCancel={closeModal}/>
+        }} onCancel={() => setViewMode(true)}/>
       </Modal>
       <UserTimeSheetList timeSheets={timeEntries}/>
 
@@ -96,6 +99,12 @@ const TimeEntriesPage = () => {
         onPanelChange={(id, start) => setCurrentWeekNumber(start.year() + '?weekNumber=' + start.isoWeek())}
         onClickAddTask={(e, m) => {
           setTaskMoment(m);
+          setViewMode(false);
+          openModal();
+        }}
+        onClickCard={(e, m) => {
+          setTaskMoment(m);
+          setViewMode(true);
           openModal();
         }}
         dateCellRender={(data) => {
