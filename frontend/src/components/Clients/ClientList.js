@@ -13,7 +13,7 @@ import FolderOpenOutlined from '@ant-design/icons/lib/icons/FolderOpenOutlined';
 import Input from 'antd/lib/input';
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined';
 import Meta from 'antd/lib/card/Meta';
-import CardXs from "../Card/CardXs";
+import CardXs from '../Card/CardXs';
 
 const { Panel } = Collapse;
 
