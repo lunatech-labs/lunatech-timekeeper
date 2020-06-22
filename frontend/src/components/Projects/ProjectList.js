@@ -158,11 +158,11 @@ const ProjectList = () => {
             <Space size={'middle'}>
               <Avatar src={logo} shape={'square'} size="large"/>
               <div className="tk_Card_ProjectHeader">
-                <div className="tk_Card_Project_Title">
+                <div className="tk_Card_ProjectTitle">
                   <p>{item.name}</p>
                   <p>{item.client ? item.client.name : 'No client'}</p>
                 </div>
-                <p className="tk_Card_Project_Type">{item.publicAccess ? <UnlockOutlined/> :
+                <p className="tk_Card_ProjectType">{item.publicAccess ? <UnlockOutlined/> :
                   <LockFilled/>}<span>{item.publicAccess ? ' Public' : ' Private project'}</span></p>
               </div>
             </Space>
@@ -184,7 +184,7 @@ const ProjectList = () => {
                 size="small"><UserOutlined/>{item.users.length}{item.users.length <= 1 ? 'member' : 'members'}</Space>}
               key="members">
                 <List
-                  id={'tk_Project_MemberList'}
+                  id={'tk_ProjectMembers'}
                   dataSource={item.users.sort(((a, b) => memberComparator(a, b)))}
                   renderItem={member => (
                     <List.Item>
