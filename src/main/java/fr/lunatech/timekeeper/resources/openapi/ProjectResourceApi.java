@@ -87,12 +87,16 @@ public interface ProjectResourceApi {
             @APIResponse(
                     responseCode = "404",
                     description = "Project not found"
+            ),
+            @APIResponse(
+                    responseCode = "403",
+                    description = "Project cannot be updated by the current user"
             )
     })
     Response updateProject(@PathParam("id") Long id, @RequestBody ProjectRequest request);
 
     @PUT
-    @Path("/{id}/join/{userId}")
+    @Path("/{id}/join")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Join a project",
             description = "Join a public project")
@@ -105,9 +109,13 @@ public interface ProjectResourceApi {
             @APIResponse(
                     responseCode = "404",
                     description = "Project not found"
+            ),
+            @APIResponse(
+                    responseCode = "403",
+                    description = "The user cannot join the project"
             )
     })
-    Response joinPublicProject(@PathParam("id") Long id, @PathParam("userId") Long userId);
+    Response joinPublicProject(@PathParam("id") Long projectId);
 
     @GET
     @Path("/{idProject}/users/{idUser}")
