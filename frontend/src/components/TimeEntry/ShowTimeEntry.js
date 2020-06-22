@@ -7,7 +7,7 @@ import {FieldTimeOutlined, DeleteOutlined, CopyOutlined, EditOutlined} from '@an
 
 const moment = require('moment');
 
-const ShowTimeEntry = ({entry}) => {
+const ShowTimeEntry = ({entry, onClickEdit}) => {
 
   const start = moment(entry.startDateTime).utc();
   const end = moment(entry.endDateTime).utc();
@@ -29,7 +29,7 @@ const ShowTimeEntry = ({entry}) => {
           </div>
           <div>
             <Tooltip title="Edit" key="edit">
-              <Button type="link" size="small" shape="circle" icon={<EditOutlined />}/>
+              <Button onClick={onClickEdit} type="link" size="small" shape="circle" icon={<EditOutlined />}/>
             </Tooltip>
             <Tooltip title="Copy" key="copy">
               <Button type="link" size="small" shape="circle" icon={<CopyOutlined />}/>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {Alert, Button, Col, Form, Input, Spin} from 'antd';
 import {useTimeKeeperAPI} from '../../utils/services';
@@ -6,10 +6,15 @@ import '../Modal/ModalGeneral.less';
 import NoDataMessage from '../NoDataMessage/NoDataMessage';
 import ShowTimeEntry from './ShowTimeEntry';
 import AddEntryForm from './AddEntryForm';
+import EditEntryForm from "./EditEntryForm";
 
 const {TextArea} = Input;
 
-const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, viewMode, setViewMode}) => {
+const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, setMode}) => {
+
+    const setAddMode = () => setMode('add');
+    const setEditMode = () => setMode('edit');
+    const [entry, setEntry] = useState();
     const timeSheets = useTimeKeeperAPI('/api/my/' + currentDay.year() + '?weekNumber=' + currentDay.isoWeek(), (form => form));
     if (timeSheets.loading) {
         return (
@@ -50,7 +55,10 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, viewMode
     const Entries = (props) => {
 
         const entries = props.entries.map(
-            entriesForDay => entriesForDay.map(entry => <ShowTimeEntry key={entry.id} entry={entry}/>)
+            entriesForDay => entriesForDay.map(entry => <ShowTimeEntry key={entry.id} entry={entry} onClickEdit={()=>{
+                setEntry(entry)
+                setEditMode()
+            }}/>)
         );
         return (
             <div className="tk_TaskInfoList">
@@ -67,8 +75,8 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, viewMode
                         <p>{currentDay.format('ddd')}<br/><span>{currentDay.format('DD')}</span></p>
                         <h1>Day information</h1>
                     </div>
-                    {viewMode ?
-                        <Button type="link" onClick={() => setViewMode && setViewMode(false)}>Add task</Button> : ''}
+                    {mode === 'view' || mode === 'edit' ?
+                        <Button type="link" onClick={() => setMode && setAddMode()}>Add task</Button> : ''}
                 </div>
                 <div className="tk_ModalTopBody">
                     {entries.length === 0 ?
@@ -76,9 +84,12 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, viewMode
                         <Entries entries={entries}/>}
                 </div>
             </div>
-            {viewMode === false &&
+            {mode === 'add' &&
             <AddEntryForm date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess}
                           onCancel={onCancel}/>}
+            {mode === 'edit' && entry &&
+            <EditEntryForm date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess}
+                          onCancel={onCancel} entry={entry}/>}
         </div>
     );
 };
@@ -88,8 +99,8 @@ TimeEntryForm.propTypes = {
     form: PropTypes.object,
     onSuccess: PropTypes.func,
     onCancel: PropTypes.func,
-    viewMode: PropTypes.bool,
-    setViewMode: PropTypes.func,
+    mode: PropTypes.string, // can be 'view', 'add' or 'edit'
+    setMode: PropTypes.func,
     entries: PropTypes.arrayOf(PropTypes.object)
 };
 
