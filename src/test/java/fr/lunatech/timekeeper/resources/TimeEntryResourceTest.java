@@ -74,7 +74,7 @@ class TimeEntryResourceTest {
         create(2L, today, jimmyToken);
 
         // THEN
-        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "Today, I did this test", date.atStartOfDay().withHour(9).withMinute(0), date.atStartOfDay().withHour(17).withMinute(0));
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L,"Today, I did this test", date.atStartOfDay().withHour(9).withMinute(0), date.atStartOfDay().withHour(17).withMinute(0));
         expectedTimeSheetJimmy.entries = List.of(expectedTimeEntry);
         var expected = timeKeeperTestUtils.toJson(expectedTimeSheetJimmy);
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(expected));
