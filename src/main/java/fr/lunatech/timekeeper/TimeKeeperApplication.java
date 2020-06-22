@@ -55,7 +55,7 @@ import javax.ws.rs.core.Application;
         type = SecuritySchemeType.OAUTH2,
         description = "authentication for OAuth2 access",
         flows = @OAuthFlows(
-                implicit = @OAuthFlow(authorizationUrl = "https://acceptance.api.timekeeper.lunatech.fr/auth/realms/Timekeeper/protocol/openid-connect/auth")
+                implicit = @OAuthFlow(authorizationUrl = "https://acceptance.keycloak.timekeeper.lunatech.fr/auth/realms/Timekeeper/protocol/openid-connect/auth")
         )
 )
 
