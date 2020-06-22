@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
-import {Avatar, Col, Divider, Modal, Row, Typography} from 'antd';
+import React, {useContext, useEffect, useState} from 'react';
+import {Avatar, Button, Col, Divider, message, Modal, Row, Typography} from 'antd';
 import './ShowProject.less';
 import PropTypes from 'prop-types';
-import {DesktopOutlined, DollarOutlined, LockOutlined, SnippetsFilled, UserOutlined,} from '@ant-design/icons';
+import {DesktopOutlined, DollarOutlined, LockOutlined, SnippetsFilled, UserOutlined} from '@ant-design/icons';
 import TitleSection from '../Title/TitleSection';
 import CardLg from '../Card/CardLg';
 import CardMember from '../Card/CardMember';
@@ -11,10 +11,26 @@ import TagProjectClient from '../Tag/TagProjectClient';
 import ShowTimeSheet from '../TimeSheet/ShowTimeSheet';
 import Tooltip from 'antd/lib/tooltip';
 import NoDataMessage from '../NoDataMessage/NoDataMessage';
+import {useTimeKeeperAPIPut} from '../../utils/services';
+import {UserContext} from '../../context/UserContext';
 
 const {Title} = Typography;
 
-const ShowProject = ({project}) => {
+const ShowProject = ({project, onSuccessJoinProject}) => {
+
+  const [projectUpdated, setProjectUpdated] = useState(false);
+
+  const timeKeeperAPIPutJoin = useTimeKeeperAPIPut(`/api/projects/${project.id}/join`, (form => form), setProjectUpdated);
+
+  const {currentUser} = useContext(UserContext);
+
+  useEffect(() => {
+    if (projectUpdated) {
+      message.success('You successfully joined the project');
+      onSuccessJoinProject && onSuccessJoinProject();
+    }
+    return () => setProjectUpdated(false);
+  }, [projectUpdated, onSuccessJoinProject]);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedMember, setSelectedMember] = useState();
@@ -63,6 +79,8 @@ const ShowProject = ({project}) => {
     );
   };
 
+  const isMember = !!project.users.find(item => currentUser.id === item.id);
+  const showJoinButton = project.publicAccess && !isMember;
   return (
     <div>
       <ModalTimeSheet/>
@@ -86,6 +104,7 @@ const ShowProject = ({project}) => {
           </Col>
           <Col span={12}>
             <TitleSection title="Members"/>
+            {showJoinButton && <Button onClick={() => timeKeeperAPIPutJoin.run()}>Join the project</Button>}
             <Members/>
           </Col>
         </Row>
@@ -95,7 +114,8 @@ const ShowProject = ({project}) => {
 };
 
 ShowProject.propTypes = {
-  project: PropTypes.object.isRequired
+  project: PropTypes.object.isRequired,
+  onSuccessJoinProject: PropTypes.func
 };
 
 export default ShowProject;

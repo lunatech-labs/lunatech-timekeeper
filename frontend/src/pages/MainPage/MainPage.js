@@ -6,14 +6,15 @@ import SidebarLeft from '../../components/SidebarLeft/SidebarLeft';
 import TopBar from '../../components/TopBar/TopBar';
 import PropTypes from 'prop-types';
 import {useTimeKeeperAPI} from '../../utils/services';
+import {UserProvider} from '../../context/UserContext';
 
 
-const { Title } = Typography;
+const {Title} = Typography;
 
-const { Content, Footer } = Layout;
+const {Content, Footer} = Layout;
 
-const MainPage = ({ title, children, actions, entityName, ...rest }) => {
-  const { data, error, loading } = useTimeKeeperAPI('/api/users/me');
+const MainPage = ({title, children, actions, entityName, ...rest}) => {
+  const {data, error, loading} = useTimeKeeperAPI('/api/users/me');
 
   const [collapsed, toggle] = useState(true);
 
@@ -36,23 +37,25 @@ const MainPage = ({ title, children, actions, entityName, ...rest }) => {
 
   return (
     <Layout>
-      <SidebarLeft collapsed={collapsed} {...rest} />
-      <Layout id="tk_RightContent" className="site-layout">
-        <TopBar collapsed={collapsed} toggle={() => toggle(!collapsed)} user={data} />
-        <Content id="tk_MainContent" className="mainContent">
-          <div className="tk_MainContent_Header">
-            <div className="tk_MainContent_HeaderLeft">
-              <Breadcrumbs entityName={entityName} />
-              <Title id="title">{title}</Title>
+      <UserProvider currentUser={data}>
+        <SidebarLeft collapsed={collapsed} {...rest} />
+        <Layout id="tk_RightContent" className="site-layout">
+          <TopBar collapsed={collapsed} toggle={() => toggle(!collapsed)}/>
+          <Content id="tk_MainContent" className="mainContent">
+            <div className="tk_MainContent_Header">
+              <div className="tk_MainContent_HeaderLeft">
+                <Breadcrumbs entityName={entityName}/>
+                <Title id="title">{title}</Title>
+              </div>
+              <div>{actions}</div>
             </div>
-            <div>{actions}</div>
-          </div>
-          <div>
-            {children}
-          </div>
-        </Content>
-        <Footer className="tk_Footer">Time Keeper v0.1 ©2020 Created by Lunatech</Footer>
-      </Layout>
+            <div>
+              {children}
+            </div>
+          </Content>
+          <Footer className="tk_Footer">Time Keeper v0.1 ©2020 Created by Lunatech</Footer>
+        </Layout>
+      </UserProvider>
     </Layout>
   );
 };

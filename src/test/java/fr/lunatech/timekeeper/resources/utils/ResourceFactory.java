@@ -47,4 +47,8 @@ public class ResourceFactory {
     public static <P> void update(P request, String uri, String token) {
         InternalResourceUtils.updateResource(request, uri, token);
     }
+
+    public static <P> void update(String uri, String token) {
+        InternalResourceUtils.updateResource(uri, token);
+    }
 }

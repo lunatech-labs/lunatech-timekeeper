@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {MenuUnfoldOutlined, MenuFoldOutlined, BellOutlined} from '@ant-design/icons';
 import {Layout, Avatar, Badge} from 'antd';
 import './TopBar.less';
@@ -6,12 +6,14 @@ import PropTypes from 'prop-types';
 import OrganizationPictureFR from '../../img/organization_icon_fr.png';
 import OrganizationPictureNL from '../../img/organization_icon_nl.png';
 import HeaderProfile from './HeaderProfile';
+import {UserContext} from '../../context/UserContext';
 
 const { Header } = Layout;
 
-const TopBar = ({ collapsed, toggle, user }) => {
+const TopBar = ({ collapsed, toggle }) => {
   const [alert, setAlert] = useState(true);
 
+  const {currentUser} = useContext(UserContext);
   const alertChangeState = () => {
     setAlert(!alert);
   };
@@ -38,14 +40,14 @@ const TopBar = ({ collapsed, toggle, user }) => {
       </div>
       <div className="tk_Header_Right">
         <div className="tk_Header_Organization">
-          <Avatar shape="square"  src={displayOrganizationPicture(user.email)} />
+          <Avatar shape="square"  src={displayOrganizationPicture(currentUser.email)} />
         </div>
         <div className="tk_Header_Notif">
           <Badge dot={alert} onClick={alertChangeState}>
             <BellOutlined />
           </Badge>
         </div>
-        <HeaderProfile user={user} />
+        <HeaderProfile user={currentUser} />
       </div>
     </Header>
   );
@@ -53,10 +55,7 @@ const TopBar = ({ collapsed, toggle, user }) => {
 
 TopBar.propTypes = {
   collapsed: PropTypes.bool.isRequired,
-  toggle: PropTypes.func.isRequired,
-  user: PropTypes.shape({
-    email: PropTypes.string
-  })
+  toggle: PropTypes.func.isRequired
 };
 
 export default TopBar;

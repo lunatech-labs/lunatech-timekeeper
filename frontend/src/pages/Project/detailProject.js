@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import MainPage from '../MainPage/MainPage';
 import ShowProject from '../../components/Projects/ShowProject';
 import {useTimeKeeperAPI} from '../../utils/services';
@@ -15,10 +15,16 @@ const DetailProjectPage = () => {
     sensitive: true
   });
 
-  const { data, error, loading } = useTimeKeeperAPI('/api/projects/'+projectIdSlug.params.id);
+  const projectId = projectIdSlug.params.id;
+
+  const {data, error, loading, run} = useTimeKeeperAPI('/api/projects/' + projectId);
+
+  const onSuccessCallback = useCallback(() => {
+    run();
+  }, [run]);
 
   if (error) {
-    let errorReason = 'Message: ' + error ;
+    let errorReason = 'Message: ' + error;
     return (
       <React.Fragment>
         <Alert title='Server error'
@@ -36,8 +42,14 @@ const DetailProjectPage = () => {
   }
 
   return (
-    <MainPage title="Project details" entityName={data.name} actions={<Link key='editLink' to={`/projects/${data.id}/edit`}><Button id="tk_Btn" className="tk_BtnPrimary" icon={<EditOutlined />}>Edit project</Button></Link>}>
-      <ShowProject project={data} />
+    <MainPage title="Project details" entityName={data.name}
+      actions={<Link key='editLink' to={`/projects/${data.id}/edit`}>
+        <Button id="tk_Btn"
+          className="tk_BtnPrimary"
+          icon={<EditOutlined/>}>Edit project
+        </Button>
+      </Link>}>
+      <ShowProject project={data} onSuccessJoinProject={onSuccessCallback} />
     </MainPage>
   );
 };
