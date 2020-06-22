@@ -78,9 +78,9 @@ const ClientList = () => {
               title={
                 <Space size={'middle'}>
                   <Avatar src={logo} shape={'square'} size="large"/>
-                  <div className="tk_Card_Sm_Header">
-                    <p className="tk_CardClientTitle">{item.name}</p>
-                    <p>{item.projects.length} projects</p>
+                  <div className="tk_Card_ClientHeader">
+                    <p className="tk_Card_Client_Title">{item.name}</p>
+                    <p className="tk_Card_Client_NbProject">{item.projects.length} projects</p>
                   </div>
                 </Space>
               }

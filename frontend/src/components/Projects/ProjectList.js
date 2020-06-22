@@ -157,12 +157,12 @@ const ProjectList = () => {
           title={
             <Space size={'middle'}>
               <Avatar src={logo} shape={'square'} size="large"/>
-              <div className="tk_Card_Sm_Header">
-                <div className="tk_CardProjectTitle">
+              <div className="tk_Card_ProjectHeader">
+                <div className="tk_Card_Project_Title">
                   <p>{item.name}</p>
                   <p>{item.client ? item.client.name : 'No client'}</p>
                 </div>
-                <p>{item.publicAccess ? <UnlockOutlined/> :
+                <p className="tk_Card_Project_Type">{item.publicAccess ? <UnlockOutlined/> :
                   <LockFilled/>}<span>{item.publicAccess ? ' Public' : ' Private project'}</span></p>
               </div>
             </Space>
