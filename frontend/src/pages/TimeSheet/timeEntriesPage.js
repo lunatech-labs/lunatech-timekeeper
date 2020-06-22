@@ -3,10 +3,11 @@ import MainPage from '../MainPage/MainPage';
 import WeekCalendar from '../../components/TimeSheet/WeekCalendar';
 import TimeEntry from '../../components/TimeEntry/TimeEntry';
 import {useTimeKeeperAPI} from '../../utils/services';
-import {Alert, Form, Modal} from 'antd';
+import {Alert, Badge, Form, Modal} from 'antd';
 import TimeEntryForm from '../../components/TimeEntry/TimeEntryForm';
 import moment from 'moment';
 import UserTimeSheetList from '../../components/TimeSheet/UserTimeSheetList';
+import MonthCalendar from "../../components/TimeSheet/MonthCalendar";
 
 
 const TimeEntriesPage = () => {
@@ -68,7 +69,7 @@ const TimeEntriesPage = () => {
   const resetForm = () => form.resetFields();
 
   // A day without entries in the past should be displayed with "warn" design
-  const hasWarnNoEntryInPastDay =(date,day) => {
+  const hasWarnNoEntryInPastDay = (date,day) => {
     return moment().subtract("1","days").isAfter(date) && !day
   };
 
@@ -88,6 +89,19 @@ const TimeEntriesPage = () => {
         }} onCancel={closeModal}/>
       </Modal>
       <UserTimeSheetList timeSheets={timeEntries}/>
+
+      <MonthCalendar
+        onClickAddTask={(e, m) => {
+          setTaskMoment(m);
+          openModal();
+        }}
+        days={datas.days}
+        dateCellRender={(data) => data.filter(data => !!data).map(item =>
+          <div>
+            <Badge status='success' text={item.project.name}/>
+          </div>)}
+        disabledWeekEnd={true}
+      />
 
       <WeekCalendar
         firstDay={datas.firstDayOfWeek}
