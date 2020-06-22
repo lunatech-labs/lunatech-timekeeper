@@ -148,7 +148,7 @@ const WeekCalendar = (props) => {
             }
           };
 
-          const today = (day) => {
+          const isToday = (day) => {
             return moment().isSame(day, 'day');
           };
 
@@ -160,8 +160,8 @@ const WeekCalendar = (props) => {
                 onMouseOver={() => setShowButton(index)}
                 onMouseLeave={() => setShowButton(-1)}>
                 <div className="tk_CardWeekCalendar_Head">
-                  <p className={today(moment(item.date)) ? 'tk_CurrentDay' : ''}>{item.date.format(dateFormat)}</p>
-                  {((props.hiddenButtons && showButton === index) || (!props.hiddenButtons))}
+                  <p className={isToday(moment(item.date)) ? 'tk_CurrentDay' : ''}>{item.date.format(dateFormat)}</p>
+                  {((props.hiddenButtons && showButton === index) || (!props.hiddenButtons)) &&
                   <Button
                     shape="circle"
                     disabled={isDisabled(item)}
@@ -171,7 +171,10 @@ const WeekCalendar = (props) => {
                       e.stopPropagation();
                     }}/>
                 </div>
-                <div className="tk_CardWeekCalendar_Body" disabled={isDisabled(item)}>
+                <div className={props.warningCardPredicate && props.warningCardPredicate(item.date, item.day) ?
+                    "tk_CardWeekCalendar_Body tk_CardWeekCalendar_Body_With_Warn":
+                    "tk_CardWeekCalendar_Body"}
+                     disabled={isDisabled(item)}>
                   {renderDay()}
                 </div>
               </CardWeekCalendar>
@@ -200,6 +203,7 @@ WeekCalendar.propTypes = {
   onClickAddTask: PropTypes.func, // (event, moment) => void
   onPanelChange: PropTypes.func, // (id, start, end) => void
   onClickCard: PropTypes.func // (event, moment) => void
+  warningCardPredicate : PropTypes.func // (date, day) => bool
 };
 
 export default WeekCalendar;
