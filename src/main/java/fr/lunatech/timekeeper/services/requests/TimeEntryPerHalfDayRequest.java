@@ -42,6 +42,15 @@ public final class TimeEntryPerHalfDayRequest implements TimeEntryRequest{
             @NotNull AuthenticationContext ctx
     ) {
         TimeEntry timeEntry = new TimeEntry();
+        return unbind(timeEntry, timeSheetId, findTimeSheet, ctx);
+    }
+
+    public TimeEntry unbind(
+            @NotNull TimeEntry timeEntry,
+            @NotNull Long timeSheetId,
+            @NotNull BiFunction<Long, AuthenticationContext, Optional<TimeSheet>> findTimeSheet,
+            @NotNull AuthenticationContext ctx
+    ) {
         timeEntry.comment = getComment();
         if(isMorning){
             timeEntry.startDateTime =  this.date.atStartOfDay().plusHours(8);

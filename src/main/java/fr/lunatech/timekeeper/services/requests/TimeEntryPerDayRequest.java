@@ -36,6 +36,15 @@ public final class TimeEntryPerDayRequest implements TimeEntryRequest {
             @NotNull AuthenticationContext ctx
     ) {
         TimeEntry timeEntry = new TimeEntry();
+        return unbind(timeEntry, timeSheetId, findTimeSheet, ctx);
+    }
+
+    public TimeEntry unbind(
+            @NotNull TimeEntry timeEntry,
+            @NotNull Long timeSheetId,
+            @NotNull BiFunction<Long, AuthenticationContext, Optional<TimeSheet>> findTimeSheet,
+            @NotNull AuthenticationContext ctx
+    ) {
         timeEntry.comment = getComment();
         timeEntry.startDateTime = this.date.atStartOfDay().withHour(9).withMinute(0);
         timeEntry.endDateTime = this.date.atStartOfDay().withHour(17).withMinute(0);

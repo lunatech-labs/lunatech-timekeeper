@@ -80,16 +80,21 @@ public class TimeSheetResponse {
         @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_TIME_PATTERN)
         private final LocalDateTime endDateTime;
 
+        @NotNull
+        private final Long timeSheetId;
+
         public TimeEntryResponse(
                 @NotNull Long id,
                 @NotNull String comment,
                 @NotNull LocalDateTime startDateTime,
-                @NotNull LocalDateTime endDateTime
+                @NotNull LocalDateTime endDateTime,
+                @NotNull Long timeSheetId
         ) {
             this.id = id;
             this.comment = comment;
             this.startDateTime = startDateTime;
             this.endDateTime = endDateTime;
+            this.timeSheetId = timeSheetId;
         }
 
         public static TimeSheetResponse.TimeEntryResponse bind(@NotNull TimeEntry timeEntry) {
@@ -97,7 +102,8 @@ public class TimeSheetResponse {
                     timeEntry.id,
                     timeEntry.comment,
                     timeEntry.startDateTime,
-                    timeEntry.endDateTime
+                    timeEntry.endDateTime,
+                    timeEntry.timeSheet.id
             );
         }
 
@@ -115,6 +121,10 @@ public class TimeSheetResponse {
 
         public LocalDateTime getEndDateTime() {
             return endDateTime;
+        }
+
+        public Long getTimeSheetId() {
+            return timeSheetId;
         }
     }
 
