@@ -64,10 +64,10 @@ public class ProjectResource implements ProjectResourceApi {
 
     @RolesAllowed({"user", "admin"})
     @Override
-    public Response joinPublicProject(Long id, Long userId) {
+    public Response joinPublicProject(Long projectId) {
         final var ctx = authentication.context();
-        projectService.joinProject(id, userId, ctx)
-                .orElseThrow(() -> new NotFoundException(String.format("Project or user not found for project id=%d and project id=%d", id, userId)));
+        projectService.joinProject(projectId, ctx)
+                .orElseThrow(() -> new NotFoundException(String.format("Project or user not found for project id=%d and user id=%d", projectId, ctx.getUserId())));
         return Response.noContent().build();
     }
 

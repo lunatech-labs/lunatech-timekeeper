@@ -257,6 +257,28 @@ class ProjectResourceTest {
     }
 
     @Test
+    void shouldJoinAProjectAsAdmin() {
+        //Create the project
+        final String adminToken = getAdminAccessToken();
+        final String userToken = getUserAccessToken();
+        final var sam = create(adminToken);
+        final var projectRequest = new ProjectRequest("Some Project", true, "some description", null, true, Collections.emptyList());
+        final var projectCreated = create(projectRequest, adminToken);
+        update(ProjectDef.uriWithid(projectCreated.getId())+"/join", userToken);
+    }
+
+    @Test
+    void shouldJoinAProjectAsUser() {
+        //Create the project
+        final String adminToken = getAdminAccessToken();
+        final String userToken = getUserAccessToken();
+        create(userToken);
+        final var projectRequest = new ProjectRequest("Some Project", true, "some description", null, true, Collections.emptyList());
+        final var projectCreated = create(projectRequest, adminToken);
+        update(ProjectDef.uriWithid(projectCreated.getId())+"/join", userToken);
+    }
+
+    @Test
     void shouldAddMemberToProject() {
         // GIVEN
         final String adminToken = getAdminAccessToken();
@@ -322,7 +344,7 @@ class ProjectResourceTest {
                 , newUsers);
 
         // WHEN THEN
-        putValidation(ProjectDef.uriWithid(project10.getId()), adminToken, updateProjectRequest, BAD_REQUEST);
+        putValidation(ProjectDef.uriWithid(project10.getId()), adminToken, updateProjectRequest, INTERNAL_SERVER_ERROR);
     }
 
     @Test
@@ -568,4 +590,6 @@ class ProjectResourceTest {
         // THEN
         getValidation(ProjectDef.uriWithid(fullProject.getId(), params), adminToken, OK).body(is(timeKeeperTestUtils.toJson(attemptProjectResponse)));
     }
+
+
 }
