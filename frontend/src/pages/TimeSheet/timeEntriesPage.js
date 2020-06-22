@@ -69,6 +69,12 @@ const TimeEntriesPage = () => {
   const openModal = () => setVisibleEntryModal(true);
   const closeModal = () => setVisibleEntryModal(false);
   const resetForm = () => form.resetFields();
+
+  // A day without entries in the past should be displayed with "warn" design
+  const hasWarnNoEntryInPastDay =(date,day) => {
+    return moment().subtract("1","days").isAfter(date) && !day
+  };
+
   return (
     <MainPage title="Time entries">
       <Modal
@@ -113,6 +119,7 @@ const TimeEntriesPage = () => {
           );
         }}
         days={datas.days}
+        warningCardPredicate={(date, day) => hasWarnNoEntryInPastDay(date,day)}
       />
     </MainPage>
   );
