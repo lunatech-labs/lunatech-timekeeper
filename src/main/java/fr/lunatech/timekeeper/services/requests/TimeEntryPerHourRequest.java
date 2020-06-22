@@ -44,7 +44,6 @@ public final class TimeEntryPerHourRequest implements TimeEntryRequest {
         return unbind(timeEntry, timeSheetId, findTimeSheet, ctx);
     }
 
-    @Override
     public TimeEntry unbind(
             @NotNull TimeEntry timeEntry,
             @NotNull Long timeSheetId,
