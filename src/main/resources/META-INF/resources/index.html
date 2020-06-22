@@ -26,6 +26,14 @@
             background-color: #e9484e;
             color: white;
         }
+        #infoPanel{
+            font-size:11px;
+            font-family: 'DejaVu Sans Mono', monospace;
+            display: inline-block;
+            background-color: #000c17;
+            color: #15dddf;
+            padding: 3px 5px;
+        }
 
         body {
             margin: 0;
@@ -71,17 +79,62 @@
             <li><a href="/health">Health Endpoint</a></li>
             <li><a href="/health/live">Health Endpoint Live</a></li>
             <li><a href="/health/ready">Health Endpoint Ready</a></li>
+            <li><a href="/api/about">Version info</a></li>
         </ul>
+        <p class="lead">Info</p>
+        <p>Feel free to report issues on <a href="https://github.com/lunatech-labs/lunatech-timekeeper/issues" target="new">the Github project page</a>.</p>
+        <p>Git details and instance name: <span id="infoPanel"></span></p>
     </div>
 
     <div class="right-column">
-        <h3>TimeKeeper - Frontend</h3>
+        <p class="lead">TimeKeeper - Frontend</p>
         <p>You need to start the React application on <a href="http://localhost:3000">localhost:3000</a> with <code>npm
             start</code> or <code>yarn start</code></p>
         <p>See frontend/README for more details</p>
-
     </div>
-</div>
 
+
+
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('TimeKeeper started');
+
+    });
+
+    var infoPanel = document.querySelector("#infoPanel");
+
+    var request = new XMLHttpRequest();
+    request.open('GET', '/api/about', true);
+
+    request.onload = function (e) {
+        if (request.readyState === 4) {
+
+            // Check if the get was successful.
+
+            if (request.status === 200) {
+                console.log(request.responseText);
+                var fries = document.createElement("div");
+                fries.innerHTML = request.responseText;
+
+                // After that's done, we can use appendChild to insert it.
+                // This will make our fries appear at the end of the lunch list.
+
+                infoPanel.appendChild(fries);
+            } else {
+                console.error(request.statusText);
+            }
+        }
+    };
+
+    // Catch errors:
+
+    request.onerror = function (e) {
+        console.error(request.statusText);
+    };
+
+    request.send(null);
+
+</script>
 </body>
 </html>
