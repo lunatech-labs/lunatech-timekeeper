@@ -30,10 +30,7 @@ import static javax.transaction.Transactional.TxType.*;
 
 @ApplicationScoped
 public class ProjectService {
-    private static Logger logger = LoggerFactory.getLogger(ProjectService.class);
-
-    @Inject
-    UserTransaction transaction;
+    private static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
 
     @Inject
     ClientService clientService;

@@ -7,16 +7,20 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * An EventTemplate is an event, created manually by an administrator that would concern one
  * to many users. These events are “company events” like conference, hack-breakfast, training,
  * trip, all-staff-meeting...
- * @see https://lunatech.atlassian.net/wiki/spaces/T/pages/1948057763/Domain+model
+ * @see <a href=https://lunatech.atlassian.net/wiki/spaces/T/pages/1948057763/Domain+model>Model Domain documentation</a>
  */
 @Entity
-@Table(name = "event_template")
+@Table(name = "event_template", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "organization_id"})})
 public class EventTemplate extends PanacheEntityBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +34,8 @@ public class EventTemplate extends PanacheEntityBase {
     public String description;
 
     @ManyToOne(targetEntity = Organization.class)
+    @JoinColumn(name = "organization_id", nullable = false)
+    @NotNull
     public Organization organization;
 
     @NotNull
@@ -39,7 +45,8 @@ public class EventTemplate extends PanacheEntityBase {
     public LocalDateTime endDateTime;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "eventTemplate")
-    private Set<UserEvent> associatedEvents;
+    @NotNull
+    public Set<UserEvent> associatedUserEvents;
 
     @Override
     public String toString() {
@@ -50,7 +57,16 @@ public class EventTemplate extends PanacheEntityBase {
                 ", organization=" + organization +
                 ", startDateTime=" + startDateTime +
                 ", endDateTime=" + endDateTime +
-                ", associatedEvents=" + associatedEvents +
+                ", associatedEvents=" + associatedUserEvents +
                 '}';
+    }
+
+    public Optional<UserEvent> getAssociatedUserEvents(Long id) {
+        return ofNullable(associatedUserEvents)
+                .flatMap(userEvents -> userEvents
+                        .stream()
+                        .filter(userEvent -> Objects.equals(userEvent.owner.id,id))
+                        .findFirst()
+                );
     }
 }
