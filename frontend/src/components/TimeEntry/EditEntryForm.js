@@ -94,7 +94,7 @@ const urlEdition = (form, timeEntryId) => {
     };
     const prefix = timeUnitToPrefix(form.getFieldValue('timeUnit'));
     const timeSheetId = form.getFieldValue('timeSheetId');
-    return `/api/timeSheet/${timeSheetId}/timeEntry/${prefix}/${timeEntryId}`;
+    return `/api/timeSheet/${timeSheetId}/timeEntry/${timeEntryId}/${prefix}`;
 }
 
 const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, timeSheetId}) => {
