@@ -3,6 +3,7 @@ import {Button, Calendar, Select} from "antd";
 import PropTypes from "prop-types";
 import {LeftOutlined, PlusOutlined, RightOutlined} from "@ant-design/icons";
 import moment from 'moment';
+import './MonthCalendar.less';
 
 const {Option} = Select;
 
@@ -14,7 +15,9 @@ const SelectYear = ({value, onChange}) => {
     return <Option value={nextDate.format("YYYY-MM-DD")}>{nextDate.format("YYYY")}</Option>
   });
   return (
-    <Select style={{width: 200}} onSelect={value => onChange(moment.utc(value, "YYYY-MM-DD"))}>
+    <Select style={{width: 200}} onSelect={(value) => {
+      onChange(moment.utc(value, "YYYY-MM-DD"))
+    }}>
       {options}
     </Select>
   );
@@ -28,7 +31,9 @@ const SelectMonth = ({value, onChange}) => {
     return <Option value={nextDate.format("YYYY-MM-DD")}>{nextDate.format("MMM")}</Option>
   });
   return (
-    <Select style={{width: 200}} onSelect={value => onChange(moment.utc(value, "YYYY-MM-DD"))}>
+    <Select style={{width: 200}} onSelect={value => {
+      onChange(moment.utc(value, "YYYY-MM-DD"))
+    }}>
       {options}
     </Select>
   );
@@ -68,8 +73,14 @@ const MonthCalendar = (props) => {
       }}
       dateCellRender={moment => {
         const day = findData(moment);
+        console.log("=========");
+        console.log(day);
+        const className = !day || (props.warningCardPredicate && props.warningCardPredicate(day.date, day.data)) ?
+          'tk_CardWeekCalendar_Body tk_CardWeekCalendar_Body_With_Warn' : 'tk_CardWeekCalendar_Body';
+        console.log(className)
+        console.log("=========")
         return (
-          <div>
+          <div className={className}>
             <Button
               shape="circle"
               disabled={isDisabled(day, moment)}

@@ -75,6 +75,7 @@ const TimeEntriesPage = () => {
   const hasWarnNoEntryInPastDay =(date,day) => {
     return moment().subtract('1','days').isAfter(date) && !day;
   };
+  const warningCardPredicate = (date, data) => hasWarnNoEntryInPastDay(date,data);
 
   const onClickAddTask = (e, m) => {
     setTaskMoment(m);
@@ -87,6 +88,7 @@ const TimeEntriesPage = () => {
     setViewMode(true);
     openModal();
   }
+
 
   return (
     <MainPage title="Time entries">
@@ -109,11 +111,12 @@ const TimeEntriesPage = () => {
         onClickAddTask={onClickAddTask}
         onSelect={moment => onClickCard(null , moment)}
         days={datas.days}
-        dateCellRender={(data) => data.filter(data => !!data).map(item =>
+        dateCellRender={(data) => data.filter(data => !!data).map(item => item.project.name).map(item =>
           <div>
-            <Badge status='success' text={item.project.name}/>
+            <Badge status='success' text={item}/>
           </div>)}
         disabledWeekEnd={true}
+        warningCardPredicate={warningCardPredicate}
       />
 
       <WeekCalendar
@@ -135,7 +138,7 @@ const TimeEntriesPage = () => {
           );
         }}
         days={datas.days}
-        warningCardPredicate={(date, day) => hasWarnNoEntryInPastDay(date,day)}
+        warningCardPredicate={warningCardPredicate}
       />
     </MainPage>
   );
