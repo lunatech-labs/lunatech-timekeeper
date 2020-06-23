@@ -9,6 +9,7 @@ import fr.lunatech.timekeeper.services.responses.UserResponse;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
@@ -37,7 +38,7 @@ public class EventResource implements EventResourceApi {
 
     @RolesAllowed({"user", "admin"})
     @Override
-    public Response createEvent(EventTemplateRequest request, UriInfo uriInfo) {
+    public Response createEvent(@Valid EventTemplateRequest request, UriInfo uriInfo) {
         Long eventTemplateId = eventTemplateService.create(request, authentication.context());
         final URI uri = uriInfo.getAbsolutePathBuilder().path(Long.toString(eventTemplateId)).build();
         return Response.created(uri).build();

@@ -4,6 +4,7 @@ import fr.lunatech.timekeeper.models.Organization;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
@@ -26,7 +27,7 @@ public class EventTemplate extends PanacheEntityBase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
-    @NotNull
+    @NotBlank
     @Column(nullable = false, length = 100)
     public String name;
 

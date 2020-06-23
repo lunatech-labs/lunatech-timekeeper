@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
@@ -27,6 +28,7 @@ public class EventTemplateService {
         return streamAll(ctx,EventTemplateResponse::bind, Collectors.toList());
     }
 
+    @Transactional
     public Long create (EventTemplateRequest request, AuthenticationContext ctx){
         logger.debug("Create a new event template with {}, {}", request, ctx);
         EventTemplate eventTemplate = request.unbind(userService::findById, ctx);

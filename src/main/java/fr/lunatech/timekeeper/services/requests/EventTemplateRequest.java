@@ -1,6 +1,9 @@
 package fr.lunatech.timekeeper.services.requests;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.EventTemplate;
 import fr.lunatech.timekeeper.models.time.EventType;
@@ -17,7 +20,7 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-public class EventTemplateRequest {
+public final class EventTemplateRequest {
 
     @NotBlank
     private final String name;
@@ -99,7 +102,8 @@ public class EventTemplateRequest {
         @NotNull
         private final Long userId;
 
-        public UserEventRequest(@NotNull Long userId) {
+        @JsonCreator
+        public UserEventRequest( @NotNull Long userId) {
             this.userId = userId;
         }
 
