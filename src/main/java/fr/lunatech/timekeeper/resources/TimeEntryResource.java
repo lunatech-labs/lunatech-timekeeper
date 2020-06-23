@@ -53,7 +53,7 @@ public class TimeEntryResource implements TimeEntryResourceApi {
 
     @RolesAllowed({"user"})
     @Override
-    public Response updateTimeEntryPerHalfDay(Long timeSheetId, Long timeEntryId, @Valid TimeEntryPerHalfDayRequest request, UriInfo uriInfo) {
+    public Response updateTimeEntryPerHalfDay(@NotNull Long timeSheetId, @NotNull Long timeEntryId, @Valid TimeEntryPerHalfDayRequest request, UriInfo uriInfo) {
         final var ctx = authentication.context();
         timeEntryService.updateTimeEntry(timeSheetId ,timeEntryId, request, ctx)
                 .orElseThrow(NotFoundException::new);
@@ -62,7 +62,7 @@ public class TimeEntryResource implements TimeEntryResourceApi {
 
     @RolesAllowed({"user"})
     @Override
-    public Response updateTimeEntryPerHour(Long timeSheetId, Long timeEntryId, @Valid TimeEntryPerHourRequest request, UriInfo uriInfo) {
+    public Response updateTimeEntryPerHour(@NotNull Long timeSheetId, @NotNull Long timeEntryId, @Valid TimeEntryPerHourRequest request, UriInfo uriInfo) {
         final var ctx = authentication.context();
         timeEntryService.updateTimeEntry(timeSheetId, timeEntryId, request, ctx)
                 .orElseThrow(NotFoundException::new);
@@ -71,7 +71,7 @@ public class TimeEntryResource implements TimeEntryResourceApi {
 
     @RolesAllowed({"user"})
     @Override
-    public Response updateTimeEntryPerDay(Long timeSheetId, Long timeEntryId, @Valid TimeEntryPerDayRequest request, UriInfo uriInfo) {
+    public Response updateTimeEntryPerDay(@NotNull Long timeSheetId, @NotNull Long timeEntryId, @Valid TimeEntryPerDayRequest request, UriInfo uriInfo) {
         final var ctx = authentication.context();
         timeEntryService.updateTimeEntry(timeSheetId, timeEntryId, request, ctx)
                 .orElseThrow(NotFoundException::new);
