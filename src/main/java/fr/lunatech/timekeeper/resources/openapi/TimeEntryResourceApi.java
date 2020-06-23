@@ -82,7 +82,7 @@ public interface TimeEntryResourceApi {
     Response createTimeEntryPerHalfDay(@PathParam("timeSheetId") Long timeSheetId, @RequestBody TimeEntryPerHalfDayRequest timeEntryRequest, @Context UriInfo uriInfo);
 
     @PUT
-    @Path("/half-a-day/{timeEntryId}")
+    @Path("/{timeEntryId}/half-a-day")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Update an half day timeentry",
             description = "Update half day timeentry details.")
@@ -100,7 +100,7 @@ public interface TimeEntryResourceApi {
     Response updateTimeEntryPerHalfDay(@PathParam("timeSheetId") Long timeSheetId, @PathParam("timeEntryId") Long timeEntryId, @Valid TimeEntryPerHalfDayRequest request, UriInfo uriInfo);
 
     @PUT
-    @Path("/hour/{timeEntryId}")
+    @Path("/{timeEntryId}/hour")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Update an hour timeentry",
             description = "Update hour timeentry details.")
@@ -118,7 +118,7 @@ public interface TimeEntryResourceApi {
     Response updateTimeEntryPerHour(@PathParam("timeSheetId") Long timeSheetId, @PathParam("timeEntryId") Long timeEntryId, @Valid TimeEntryPerHourRequest request, UriInfo uriInfo);
 
     @PUT
-    @Path("/day/{timeEntryId}")
+    @Path("/{timeEntryId}/day")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Update a day timeentry",
             description = "Update day timeentry details.")
