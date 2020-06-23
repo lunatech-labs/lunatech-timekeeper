@@ -13,10 +13,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,7 +68,10 @@ public interface ProjectResourceApi {
                     description = "Project not found"
             )
     })
-    ProjectResponse getProject(@PathParam("id") Long id, @QueryParam("optimized") Optional<Boolean> optimized);
+    Response getProject(@PathParam("id") Long id,
+                        @QueryParam("optimized") Optional<Boolean> optimized,
+                        @Context Request request,
+                        @Context UriInfo ui);
 
     @PUT
     @Path("/{id}")

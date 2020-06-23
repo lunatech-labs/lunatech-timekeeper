@@ -1,5 +1,6 @@
 package fr.lunatech.timekeeper.services.responses;
 
+import fr.lunatech.cache.ETagSupport;
 import fr.lunatech.timekeeper.models.Client;
 import fr.lunatech.timekeeper.models.Project;
 import fr.lunatech.timekeeper.models.ProjectUser;
@@ -7,13 +8,15 @@ import fr.lunatech.timekeeper.models.ProjectUser;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+import javax.ws.rs.core.EntityTag;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
 
-public final class ProjectResponse {
+public final class ProjectResponse implements ETagSupport {
 
     @NotNull
     private final Long id;
@@ -75,7 +78,6 @@ public final class ProjectResponse {
     public static ProjectResponse bind(@NotNull Project project) {
         return bind(project, Optional.empty());
     }
-
 
     public Long getId() {
         return id;
@@ -157,6 +159,16 @@ public final class ProjectResponse {
         public String getPicture() {
             return picture;
         }
+
+        @Override
+        public String toString() {
+            return "ProjectUserResponse{" +
+                    "id=" + id +
+                    ", manager=" + manager +
+                    ", name='" + name + '\'' +
+                    ", picture='" + picture + '\'' +
+                    '}';
+        }
     }
 
 
@@ -212,5 +224,25 @@ public final class ProjectResponse {
                 ", users=" + users +
                 ", publicAccess=" + publicAccess +
                 '}';
+    }
+
+    public final EntityTag computeETag(URI uri) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getId());
+        sb.append(getName());
+        sb.append(isBillable());
+        sb.append(getDescription());
+        if (getClient() != null) {
+            sb.append(getClient().stream().sorted().map(c -> c.toString()).collect(Collectors.toList()).toString());
+        }
+        if (getUsers() != null) {
+            sb.append(getUsers().stream().sorted().map(u -> u.toString()).collect(Collectors.toList()).toString());
+        }
+        sb.append(isPublicAccess());
+        String uriTag = "";
+        if (uri != null) {
+            uriTag = "" + uri.toASCIIString().hashCode();
+        }
+        return new EntityTag(String.format("project-%d-%s", sb.toString().hashCode(), uriTag));
     }
 }

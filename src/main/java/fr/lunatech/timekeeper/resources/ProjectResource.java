@@ -7,18 +7,21 @@ import fr.lunatech.timekeeper.services.TimeSheetService;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
+import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 public class ProjectResource implements ProjectResourceApi {
+    private static Logger logger = LoggerFactory.getLogger(ProjectResource.class);
 
     @Inject
     ProjectService projectService;
@@ -47,10 +50,28 @@ public class ProjectResource implements ProjectResourceApi {
 
     @RolesAllowed({"user", "admin"})
     @Override
-    public ProjectResponse getProject(Long id, Optional<Boolean> optimized) {
+    public Response getProject(Long id, Optional<Boolean> optimized,
+                               @Context Request request,
+                               @Context UriInfo ui) {
         final var ctx = authentication.context();
-        return projectService.findResponseById(id, optimized, ctx)
+        ProjectResponse projectResponse = projectService.findResponseById(id, optimized, ctx)
                 .orElseThrow(() -> new NotFoundException(String.format("Project not found for id=%d", id)));
+
+        EntityTag etagValue = projectResponse.computeETag(ui.getRequestUri());
+        Response.ResponseBuilder rb = request.evaluatePreconditions(etagValue);
+        if(rb == null){
+            logger.debug(String.format("Send project with ETag %s",etagValue));
+            return Response
+                    .status(Response.Status.OK)
+                    .header("ETag",etagValue)
+                    .entity(projectResponse)
+                    .type(MediaType.APPLICATION_JSON_TYPE)
+                    .build();
+
+        }else{
+            logger.debug(String.format("Project %s not modified, return 304 Not Modified",etagValue));
+            return Response.status(Response.Status.NOT_MODIFIED).build();
+        }
     }
 
     @RolesAllowed({"user", "admin"})
