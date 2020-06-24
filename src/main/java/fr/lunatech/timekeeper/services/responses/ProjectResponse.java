@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.ws.rs.core.EntityTag;
-import java.net.URI;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -57,7 +57,7 @@ public final class ProjectResponse implements ETagSupport {
         this.publicAccess = publicAccess;
     }
 
-    public static ProjectResponse bind(@NotNull Project project, Optional<Boolean> optimized) {
+    public static ProjectResponse bind(@NotNull Project project) {
         final var users = project.users
                 .stream()
                 .map(ProjectUserResponse::bind)
@@ -70,13 +70,21 @@ public final class ProjectResponse implements ETagSupport {
                 ofNullable(project.client)
                         .map(ProjectClientResponse::bind)
                         .orElse(null),
-                optimized.orElse(false) ? null : users,
+                users,
                 project.publicAccess
         );
     }
 
-    public static ProjectResponse bind(@NotNull Project project) {
-        return bind(project, Optional.empty());
+    public static ProjectResponse copyWithoutUsers(ProjectResponse projectResponse) {
+        if (projectResponse == null)
+            return null;
+        return new ProjectResponse(projectResponse.id,
+                projectResponse.name,
+                projectResponse.billable,
+                projectResponse.description,
+                projectResponse.client,
+                null,
+                projectResponse.publicAccess);
     }
 
     public Long getId() {
@@ -226,23 +234,41 @@ public final class ProjectResponse implements ETagSupport {
                 '}';
     }
 
-    public final EntityTag computeETag(URI uri) {
+    public final EntityTag computeETag() {
         StringBuilder sb = new StringBuilder();
         sb.append(getId());
         sb.append(getName());
         sb.append(isBillable());
         sb.append(getDescription());
         if (getClient() != null) {
-            sb.append(getClient().stream().sorted().map(c -> c.toString()).collect(Collectors.toList()).toString());
+            sb.append(
+                    getClient()
+                            .stream()
+                            .sorted(
+                                    Comparator
+                                            .comparingLong(
+                                                    client -> client.getId()
+                                            )
+                            ).map(
+                            c -> c.toString()
+                    )
+                            .collect(Collectors.toList()).toString()
+            );
         }
         if (getUsers() != null) {
-            sb.append(getUsers().stream().sorted().map(u -> u.toString()).collect(Collectors.toList()).toString());
+            sb.append(
+                    getUsers()
+                            .stream()
+                            .sorted(
+                                    Comparator
+                                            .comparingLong(
+                                                    u -> u.getId()
+                                            )
+                            ).map(u -> u.toString())
+                            .collect(Collectors.toList()).toString());
         }
         sb.append(isPublicAccess());
-        String uriTag = "";
-        if (uri != null) {
-            uriTag = "" + uri.toASCIIString().hashCode();
-        }
-        return new EntityTag(String.format("project-%d-%s", sb.toString().hashCode(), uriTag));
+        String finalEtag = String.format("project-%d", sb.toString().hashCode());
+        return new EntityTag(finalEtag);
     }
 }

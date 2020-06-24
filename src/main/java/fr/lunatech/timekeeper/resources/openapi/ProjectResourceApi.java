@@ -12,6 +12,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
@@ -55,13 +56,13 @@ public interface ProjectResourceApi {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Retrieve a project",
-            description = " if optimized is false or is not precised: Retrieve a project with the details and the list of project users and their respective roles.\n" +
+            description = "if optimized is false or is empty: Retrieve a project with the details and the list of project users and their respective roles.\n" +
                     "else: Retrieve a project without list of users")
     @Tag(ref = "projects")
     @APIResponses(value = {
             @APIResponse(
                     responseCode = "200",
-                    description = "Project retrieved"
+                    description = "Project retrieved, with a ETag value computed from the Project definition."
             ),
             @APIResponse(
                     responseCode = "404",
@@ -70,14 +71,16 @@ public interface ProjectResourceApi {
     })
     Response getProject(@PathParam("id") Long id,
                         @QueryParam("optimized") Optional<Boolean> optimized,
-                        @Context Request request,
-                        @Context UriInfo ui);
+                        @Context Request request);
 
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Update a project",
-            description = "Update a project with the details and the list of project users and their respective roles.")
+            description = "Update a project with the details and the list of project users and their respective roles." +
+                    "If the If-Match HTTP Header is present with a ETag value, the Backend application loads the project, " +
+                    "and check that the Project was not updated by someone else. If something else changed the Project content," +
+                    "then it will fail with a HTTP 412 Precondition failed message.")
     @Tag(ref = "projects")
     @APIResponses(value = {
             @APIResponse(
@@ -91,9 +94,15 @@ public interface ProjectResourceApi {
             @APIResponse(
                     responseCode = "403",
                     description = "Project cannot be updated by the current user"
+            ),
+            @APIResponse(
+                    responseCode = "412",
+                    description = "The Project was updated by another thread. This system relies on the If-Match HTTP Header."
             )
     })
-    Response updateProject(@PathParam("id") Long id, @RequestBody ProjectRequest request);
+    Response updateProject(@PathParam("id") Long id,
+                           @RequestBody ProjectRequest projectRequest,
+                           @Context Request request);
 
     @PUT
     @Path("/{id}/join")

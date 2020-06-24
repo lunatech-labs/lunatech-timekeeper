@@ -50,37 +50,66 @@ public class ProjectResource implements ProjectResourceApi {
 
     @RolesAllowed({"user", "admin"})
     @Override
-    public Response getProject(Long id, Optional<Boolean> optimized,
-                               @Context Request request,
-                               @Context UriInfo ui) {
+    public Response getProject(Long id,
+                               Optional<Boolean> optimized,
+                               @Context Request request) {
         final var ctx = authentication.context();
-        ProjectResponse projectResponse = projectService.findResponseById(id, optimized, ctx)
+        ProjectResponse projectResponse = projectService.findResponseById(id, ctx)
                 .orElseThrow(() -> new NotFoundException(String.format("Project not found for id=%d", id)));
 
-        EntityTag etagValue = projectResponse.computeETag(ui.getRequestUri());
+        EntityTag etagValue = projectResponse.computeETag();
         Response.ResponseBuilder rb = request.evaluatePreconditions(etagValue);
         if(rb == null){
-            logger.debug(String.format("Send project with ETag %s",etagValue));
-            return Response
-                    .status(Response.Status.OK)
-                    .header("ETag",etagValue)
-                    .entity(projectResponse)
-                    .type(MediaType.APPLICATION_JSON_TYPE)
-                    .build();
+            //If rb is null then either it is first time request; or resource is modified
+            //Get the updated representation and return with Etag attached to it
+            logger.debug(String.format("Send project with ETag [%s]",etagValue));
 
+            if(optimized.orElse(false)){
+                ProjectResponse projectResponseWithoutUsers = ProjectResponse.copyWithoutUsers(projectResponse);
+                return Response
+                        .status(Response.Status.OK)
+                        .tag(etagValue)
+                        .entity(projectResponseWithoutUsers)
+                        .type(MediaType.APPLICATION_JSON_TYPE)
+                        .build();
+            }else{
+                return Response
+                        .status(Response.Status.OK)
+                        .tag(etagValue)
+                        .entity(projectResponse)
+                        .type(MediaType.APPLICATION_JSON_TYPE)
+                        .build();
+            }
         }else{
             logger.debug(String.format("Project %s not modified, return 304 Not Modified",etagValue));
-            return Response.status(Response.Status.NOT_MODIFIED).build();
+            return rb.build();
         }
     }
 
     @RolesAllowed({"user", "admin"})
     @Override
-    public Response updateProject(Long id, @Valid ProjectRequest request) {
+    public Response updateProject(Long id,
+                                  @Valid ProjectRequest projectRequest,
+                                  @Context Request request
+    ) {
         final var ctx = authentication.context();
-        projectService.update(id, request, ctx)
+
+        ProjectResponse projectResponse = projectService.findResponseById(id, ctx)
                 .orElseThrow(() -> new NotFoundException(String.format("Project not found for id=%d", id)));
-        return Response.noContent().build();
+
+        EntityTag etagValue = projectResponse.computeETag();
+        Response.ResponseBuilder rb = request.evaluatePreconditions(etagValue);
+        // If the  client send a If-Match with the same Etag OR the client DOES NOT send any If-Match, then just save the entity
+        if (rb == null) {
+            projectService.update(id, projectRequest, ctx)
+                    .orElseThrow(() -> new NotFoundException(String.format("Project not found for id=%d", id)));
+            return Response.noContent().build();
+        } else {
+            // The client send a If-Match with a ETag, which does not match the ETag we computed -> thus we return a 412 HTTP Error
+            return Response
+                    .status(412)
+                    .entity("{\"message\":\"If-Match HTTP Header is missing or the Project was updated. Cannot update this version of the Project.\"}").build();
+        }
     }
 
     @RolesAllowed({"user", "admin"})

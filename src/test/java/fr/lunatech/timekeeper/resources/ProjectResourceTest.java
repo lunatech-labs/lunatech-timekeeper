@@ -26,7 +26,9 @@ import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ProjectD
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TimeSheetPerProjectPerUserDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
-import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.*;
+import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
+import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.putValidation;
+import static io.restassured.RestAssured.given;
 import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.Response.Status.*;
 import static org.hamcrest.CoreMatchers.is;
@@ -264,7 +266,7 @@ class ProjectResourceTest {
         final var sam = create(adminToken);
         final var projectRequest = new ProjectRequest("Some Project", true, "some description", null, true, Collections.emptyList());
         final var projectCreated = create(projectRequest, adminToken);
-        update(ProjectDef.uriWithid(projectCreated.getId())+"/join", userToken);
+        update(ProjectDef.uriWithid(projectCreated.getId()) + "/join", userToken);
     }
 
     @Test
@@ -275,7 +277,7 @@ class ProjectResourceTest {
         create(userToken);
         final var projectRequest = new ProjectRequest("Some Project", true, "some description", null, true, Collections.emptyList());
         final var projectCreated = create(projectRequest, adminToken);
-        update(ProjectDef.uriWithid(projectCreated.getId())+"/join", userToken);
+        update(ProjectDef.uriWithid(projectCreated.getId()) + "/join", userToken);
     }
 
     @Test
@@ -388,8 +390,8 @@ class ProjectResourceTest {
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
 
         // THEN
-        final var expectedTimeSheetSam = new TimeSheetResponse(1L, project, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
+        final var expectedTimeSheetSam = new TimeSheetResponse(1L, project, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null);
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null);
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), sam.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)));
@@ -414,7 +416,7 @@ class ProjectResourceTest {
     }
 
     @Test
-    void shouldretrieveTimeSheetForProjectMembers() {
+    void shouldRetrieveTimeSheetForProjectMembers() {
         // GIVEN : 2 users of 1 project for 1 client
         final String adminToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
@@ -428,12 +430,11 @@ class ProjectResourceTest {
         // WHEN creating the project, timesheets for all members are generated
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
 
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null);
 
         // THEN : I can see the timeSheet by project by member
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
     }
-
 
     @Test
     void shouldCreateTimeSheetForUsersDuringProjectUpdate() {
@@ -473,8 +474,8 @@ class ProjectResourceTest {
         update(updatedProjectWithTwoUsers, ProjectDef.uriWithid(project.getId()), adminToken);
 
         // THEN
-        final var expectedTimeSheetSam = new TimeSheetResponse(1L, expectedProject, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
+        final var expectedTimeSheetSam = new TimeSheetResponse(1L, expectedProject, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null);
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null);
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), sam.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)));
@@ -515,8 +516,8 @@ class ProjectResourceTest {
         update(updatedProjectWithTwoUsers, ProjectDef.uriWithid(project.getId()), adminToken);
         getValidation(ProjectDef.uriWithid(project.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedProject)));
         // THEN
-        final var expectedTimeSheetSam = new TimeSheetResponse(1L, expectedProject, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
+        final var expectedTimeSheetSam = new TimeSheetResponse(1L, expectedProject, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null);
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null);
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), sam.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)));
@@ -564,7 +565,7 @@ class ProjectResourceTest {
         update(updatedProjectWithTwoUsers, ProjectDef.uriWithid(project.getId()), adminToken);
 
         // THEN
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(1L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(1L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null);
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
     }
@@ -591,5 +592,25 @@ class ProjectResourceTest {
         getValidation(ProjectDef.uriWithid(fullProject.getId(), params), adminToken, OK).body(is(timeKeeperTestUtils.toJson(attemptProjectResponse)));
     }
 
+    @Test
+    void shouldReturnETagAndHandleNotModifiedProperly() {
+        final String adminToken = getAdminAccessToken();
+        final String userToken = getUserAccessToken();
+        final var client1 = create(new ClientRequest("Client", "New Description for test related to HTTP 304 Not modified"), adminToken);
+
+        final var projectRequest = new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, Collections.emptyList());
+        final var projectCreated = create(projectRequest, adminToken);
+
+
+        var uri = ProjectDef.uriWithid(projectCreated.getId());
+
+        String computedETag = "project--1297575166";
+
+        given().auth().preemptive().oauth2(userToken)
+                .when().get(uri)
+                .then()
+                .statusCode(200)
+                .header("ETag", is(computedETag));
+    }
 
 }

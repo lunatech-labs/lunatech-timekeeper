@@ -180,7 +180,7 @@ final class InternalResourceUtils {
         return resourceValidation(m, uri, token, Option.none(), Option.none());
     }
 
-    private static <T> ValidatableResponse resourceValidation(VerbDefinition m, String uri, String token, Option<T> body, Option<javax.ws.rs.core.Response.Status> status) {
+    private static <T> ValidatableResponse resourceValidation(VerbDefinition m, final String uri, final String token, Option<T> body, Option<javax.ws.rs.core.Response.Status> status) {
 
         var root = given()
                 .auth().preemptive().oauth2(token)
