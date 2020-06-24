@@ -146,7 +146,7 @@ const ProjectList = () => {
 
   const memberComparator = (m1, m2) => m2.manager - m1.manager;
 
-  const Pagoland = (item, isAdmin) => (
+  const dropdownCardAction = (item, isAdmin) => (
     <Menu>
       <Menu.Item key="view">
         <a href={`/projects/${item.id}`}><EyeFilled/>View</a>
@@ -181,7 +181,7 @@ const ProjectList = () => {
             </Space>
           }
           extra={[
-            <Dropdown overlay={Pagoland(item, isAdmin)}>
+            <Dropdown overlay={dropdownCardAction(item, isAdmin)}>
               <a className="ant-dropdown-link" onClick={e => e.preventDefault()}><EllipsisOutlined /></a>
             </Dropdown>,
           ]}
