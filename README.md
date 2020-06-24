@@ -8,18 +8,15 @@
 
 # Intro
 
-Why another Toggl you might ask… 
+Welcome to the TimeKeeper project page.
+This open-source project, distributed under the Apache 2.0 license, was created by Lunatech. It allows to show you a complete example of a time tracking application.
+We built this software first for Lunatech employees. The tool allows us to track the time spent by project and by customer. We use this tool every month, in order to edit time reports and invoices.
 
-That’s a good question.
+We decided to make the code open-source. We also plan to create a service for companies interested in this project, but who may not be able to install the software.
 
-We know that there is a lot of open-source solution or SaaS solution (à la Toggl). We decided to bootstrap this project with only one objective : we want to learn.
-We want to learn to design a product, to do workshop and brainstorming. We also want to demonstrate what kind of work we’re able to offer to our client. Have a look at the various workshops we did in Chessy. 
-Our main purpose is to build a cool playground where we can learn, experiment and build a great tool. 
-Toggl is a good tool. We’ve been using it since 2016. However there is some requirements that are not and will never be cover by this tool.
+If you wish to contribute or propose corrections, please read our contribution rules. 
 
-Thus, Timekeeper
-
-Enjoy, have fun and contribute ! 
+You can contact Lunatech by email: timekeeper@lunatech.com
 
 # Documentation 
 
