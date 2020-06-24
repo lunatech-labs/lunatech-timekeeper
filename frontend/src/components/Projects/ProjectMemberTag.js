@@ -3,17 +3,17 @@ import './ProjectMemberTag.less';
 import PropTypes from 'prop-types';
 import {Avatar} from 'antd';
 import TagMember from '../Tag/TagMember';
-import CardMember from '../Card/CardMember';
+import CardXs from '../Card/CardXs';
 
 const ProjectMemberTag = ({ member }) => {
   return (
-    <CardMember>
+    <CardXs>
       <div>
         <Avatar src={member.picture}/>
         <p>{member.name}</p>
       </div>
       <TagMember isManager={member.manager} />
-    </CardMember>
+    </CardXs>
   );
 };
 

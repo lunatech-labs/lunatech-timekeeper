@@ -3,12 +3,14 @@ package fr.lunatech.timekeeper;
 
 import org.eclipse.microprofile.openapi.annotations.ExternalDocumentation;
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
-import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn;
 import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType;
 import org.eclipse.microprofile.openapi.annotations.info.Contact;
 import org.eclipse.microprofile.openapi.annotations.info.Info;
 import org.eclipse.microprofile.openapi.annotations.info.License;
-import org.eclipse.microprofile.openapi.annotations.security.*;
+import org.eclipse.microprofile.openapi.annotations.security.OAuthFlow;
+import org.eclipse.microprofile.openapi.annotations.security.OAuthFlows;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
 import org.eclipse.microprofile.openapi.annotations.servers.Server;
 
 import javax.ws.rs.ApplicationPath;
@@ -55,7 +57,7 @@ import javax.ws.rs.core.Application;
         type = SecuritySchemeType.OAUTH2,
         description = "authentication for OAuth2 access",
         flows = @OAuthFlows(
-                implicit = @OAuthFlow(authorizationUrl = "https://acceptance.api.timekeeper.lunatech.fr/auth/realms/Timekeeper/protocol/openid-connect/auth")
+                implicit = @OAuthFlow(authorizationUrl = "https://acceptance.keycloak.timekeeper.lunatech.fr/auth/realms/Timekeeper/protocol/openid-connect/auth")
         )
 )
 

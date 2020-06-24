@@ -23,25 +23,25 @@
       }
       .ant-card-head-title {padding: 0;}
       .ant-card-extra {padding: 0;}
-      .tk_Card_Sm_Header {
+      .tk_Card_ProjectHeader {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         height: 40px;
-        > div {
+        .tk_Card_ProjectTitle {
           .mixin_Flexbox_Basis();
           p {
             .mixin_Flexbox_Basis();
             margin-bottom: 0;
             &:first-child {
-              font-size: 18px;
-              font-weight: 600;
+              font-size: 16px;
+              font-weight: 500;
               line-height: 1;
               border-right: @tk_Border_Base;
               padding-right: 8px;
               margin-right: 8px;
             }
-            &:last-child {
+            &:nth-child(2) {
               height: 20px;
               font-size: 12px;
               font-weight: 400;
@@ -51,7 +51,7 @@
             }
           }
         }
-        > p {
+        .tk_Card_ProjectType {
           margin-bottom: 0;
           font-size: 14px;
           font-weight: 400;
@@ -86,20 +86,31 @@
         .ant-collapse-content {
           .ant-collapse-content-box {
             padding: 0;
-            .tk_Project_MemberList {
-              margin-top: 20px;
-              .ant-list-item {
-                margin-bottom: 5px;
-                border-bottom: none;
-                &:last-child {margin-bottom: 0;}
-                .ant-avatar {
-                  border-radius: 5rem;
-                  width: 32px;
-                  height: 32px;
-                }
-              }
-            }
           }
+        }
+      }
+    }
+  }
+}
+#tk_ProjectMembers {
+  margin-top: 20px;
+  .ant-list-items {
+    .ant-list-item {
+      padding: 0;
+      margin-bottom: 5px;
+      border-bottom: none;
+      &:last-child {margin-bottom: 0;}
+      .tk_Client_ProjectList {
+        background: @tk_Black;
+        padding: 0 8px;
+        height: 40px;
+        border-radius: 4px;
+        &:last-child {margin-bottom: 0;}
+        p {margin-bottom: 0;}
+        .ant-avatar {
+          border-radius: 5rem;
+          width: 32px;
+          height: 32px;
         }
       }
     }
@@ -122,9 +133,7 @@
   .mixin_Flexbox_Basis();
   justify-content: space-between;
   margin-right: 32px;
-  &:last-child {
-    margin-right: 0;
-  }
+  &:last-child {margin-right: 0;}
   p {
     margin-bottom: 0;
     margin-right: 8px;
@@ -135,3 +144,6 @@
   &:hover {color: @tk_LightGray;}
 }
 .ant-dropdown-menu-item:hover, .ant-dropdown-menu-submenu-title:hover {background-color: rgba(216, 216, 216, 0.1)!important;}
+.ant-dropdown-menu-item > a > span {
+  margin-right: 8px;
+}
