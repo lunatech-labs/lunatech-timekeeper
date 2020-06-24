@@ -62,20 +62,20 @@ public class ProjectResource implements ProjectResourceApi {
         if(rb == null){
             //If rb is null then either it is first time request; or resource is modified
             //Get the updated representation and return with Etag attached to it
-            logger.debug(String.format("Send project with ETag [%s]",etagValue));
+            logger.debug(String.format("Send project with ETag [%s]",etagValue.getValue()));
 
             if(optimized.orElse(false)){
                 ProjectResponse projectResponseWithoutUsers = ProjectResponse.copyWithoutUsers(projectResponse);
                 return Response
                         .status(Response.Status.OK)
-                        .tag(etagValue)
+                        .header("ETag", etagValue.getValue()) // Do not use .tag(etagValue), it adds "" around the value
                         .entity(projectResponseWithoutUsers)
                         .type(MediaType.APPLICATION_JSON_TYPE)
                         .build();
             }else{
                 return Response
                         .status(Response.Status.OK)
-                        .tag(etagValue)
+                        .header("ETag", etagValue.getValue())
                         .entity(projectResponse)
                         .type(MediaType.APPLICATION_JSON_TYPE)
                         .build();
