@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
-import {Alert, Avatar, Button, Card, Collapse, Divider, Dropdown, List, Menu, Spin, Tooltip, Space} from 'antd';
+import {Alert, Avatar, Button, Card, Collapse, Divider, Dropdown, List, Menu, Spin, Space} from 'antd';
 import logo from '../../img/logo_timekeeper_homepage.png';
 import {useTimeKeeperAPI} from '../../utils/services';
 import EditFilled from '@ant-design/icons/lib/icons/EditFilled';
 import UserOutlined from '@ant-design/icons/lib/icons/UserOutlined';
 import LockFilled from '@ant-design/icons/lib/icons/LockFilled';
 import UnlockOutlined from '@ant-design/icons/lib/icons/UnlockOutlined';
+import EllipsisOutlined from '@ant-design/icons/lib/icons/EllipsisOutlined';
 import Meta from 'antd/lib/card/Meta';
 
 import './ProjectList.less';
@@ -145,6 +146,18 @@ const ProjectList = () => {
 
   const memberComparator = (m1, m2) => m2.manager - m1.manager;
 
+  const Pagoland = (item, isAdmin) => (
+    <Menu>
+      <Menu.Item key="view">
+        <a href={`/projects/${item.id}`}><EyeFilled/>View</a>
+      </Menu.Item>
+      {isAdmin &&
+      <Menu.Item key="edit">
+        <a href={`/projects/${item.id}/edit`}><EditFilled/>Edit</a>
+      </Menu.Item>}
+    </Menu>
+  );
+
   const DataList = ({data}) => <List
     id="tk_List"
     grid={{gutter: 32, column: 3}}
@@ -168,14 +181,9 @@ const ProjectList = () => {
             </Space>
           }
           extra={[
-            <Tooltip title="View" key="view">
-              <Button type="link" size="small" ghost shape="circle" icon={<EyeFilled/>} href={`/projects/${item.id}`}/>
-            </Tooltip>,
-            isAdmin &&
-            <Tooltip title="Edit" key="edit">
-              <Button type="link" size="small" ghost shape="circle" icon={<EditFilled/>}
-                href={`/projects/${item.id}/edit`}/>
-            </Tooltip>
+            <Dropdown overlay={Pagoland(item, isAdmin)}>
+              <a className="ant-dropdown-link" onClick={e => e.preventDefault()}><EllipsisOutlined /></a>
+            </Dropdown>,
           ]}
           actions={[item.users.length === 0 ? <Panel id="tk_ProjectNoCollapse" header={<Space
             size="small"><UserOutlined/>{item.users.length}{item.users.length <= 1 ? 'member' : 'members'}</Space>}/> :
