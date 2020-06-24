@@ -26,7 +26,7 @@ public class TimeEntryResource implements TimeEntryResourceApi {
     @Override
     public Response createTimeEntry(@NotNull Long timeSheetId, @Valid TimeEntryRequest request, UriInfo uriInfo) {
         final var ctx = authentication.context();
-        final long timeId = timeEntryService.createTimeEntry(timeSheetId, request, ctx, TimeUnit.DAY);
+        final long timeId = timeEntryService.createTimeEntry(timeSheetId, request, ctx);
         final URI uri = uriInfo.getAbsolutePathBuilder().path(Long.toString(timeId)).build();
         return Response.created(uri).build();
     }
