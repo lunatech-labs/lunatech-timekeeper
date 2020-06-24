@@ -3,10 +3,10 @@ package fr.lunatech.timekeeper.services.requests;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.services.AuthenticationContext;
+import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -20,33 +20,38 @@ public class TimeEntryRequest {
     private final LocalDateTime startDateTime;
 
     @NotNull
-    private final Integer duration;
+    private final Integer numberHours;
 
     public TimeEntryRequest(
             @NotBlank String comment,
             @NotNull LocalDateTime startDateTime,
-            @NotNull Integer duration
+            @NotNull Integer numberHours
     ) {
         this.comment = comment;
         this.startDateTime = startDateTime;
-        this.duration = duration;
+        this.numberHours = numberHours;
     }
 
-    TimeEntry unbind(
+    public TimeEntry unbind(
             @NotNull Long timeSheetId,
             @NotNull BiFunction<Long, AuthenticationContext, Optional<TimeSheet>> findTimeSheet,
             @NotNull AuthenticationContext ctx
     ) {
-        return null;
+        TimeEntry timeEntry = new TimeEntry();
+        return unbind(timeEntry, timeSheetId, findTimeSheet, ctx);
     }
 
-    TimeEntry unbind(
+    public TimeEntry unbind(
             @NotNull TimeEntry timeEntry,
             @NotNull Long timeSheetId,
             @NotNull BiFunction<Long, AuthenticationContext, Optional<TimeSheet>> findTimeSheet,
             @NotNull AuthenticationContext ctx
     ) {
-        return null;
+        timeEntry.comment = getComment();
+        timeEntry.startDateTime = getStartDateTime();
+        timeEntry.endDateTime = getStartDateTime().plusHours(getNumberHours());
+        timeEntry.timeSheet = findTimeSheet.apply(timeSheetId, ctx).orElseThrow(() -> new IllegalEntityStateException("TimeSheet not found for id " + timeSheetId));
+        return timeEntry;
     }
 
     public String getComment() {
@@ -57,7 +62,16 @@ public class TimeEntryRequest {
         return startDateTime;
     }
 
-    public Integer getDuration() {
-        return duration;
+    public Integer getNumberHours() {
+        return numberHours;
+    }
+
+    @Override
+    public String toString() {
+        return "TimeEntryRequest{" +
+                "comment='" + comment + '\'' +
+                ", startDateTime=" + startDateTime +
+                ", numberHours=" + numberHours +
+                '}';
     }
 }

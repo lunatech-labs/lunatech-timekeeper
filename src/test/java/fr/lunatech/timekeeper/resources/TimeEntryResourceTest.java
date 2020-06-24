@@ -67,14 +67,14 @@ class TimeEntryResourceTest {
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
-        LocalDate date = LocalDate.of(2020, 1, 1);
-        TimeEntryPerDayRequest today = new TimeEntryPerDayRequest("Today, I did this test", true, date);
+        LocalDateTime startDateTime = LocalDateTime.of(2020, 1, 1, 9, 0);
+        TimeEntryRequest today = new TimeEntryRequest("Today, I did this test", startDateTime, 8);
 
         // WHEN I CREATE a timeSheetEntry for TS 2
         create(2L, today, jimmyToken);
 
         // THEN
-        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "Today, I did this test", date.atStartOfDay().withHour(9).withMinute(0), date.atStartOfDay().withHour(17).withMinute(0));
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L,"Today, I did this test", startDateTime, startDateTime.withHour(17).withMinute(0));
         expectedTimeSheetJimmy.entries = List.of(expectedTimeEntry);
         var expected = timeKeeperTestUtils.toJson(expectedTimeSheetJimmy);
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(expected));
@@ -97,14 +97,14 @@ class TimeEntryResourceTest {
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
-        LocalDate date = LocalDate.of(2020, 1, 1);
-        TimeEntryPerHalfDayRequest morning = new TimeEntryPerHalfDayRequest("This morning, I did this test", LocalDate.of(2020, 1, 1), true);
+        LocalDateTime startDateTime = LocalDateTime.of(2020, 1, 1,9,0);
+        TimeEntryRequest morning = new TimeEntryRequest("This morning, I did this test", LocalDateTime.of(2020, 1, 1,9,0), 4);
 
         // WHEN I CREATE a timeSheetEntry for TS 2
         create(2L, morning, jimmyToken);
 
         // THEN
-        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This morning, I did this test", date.atStartOfDay().withHour(8).withMinute(0), date.atStartOfDay().withHour(12).withMinute(0));
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This morning, I did this test", startDateTime, startDateTime.withHour(13).withMinute(0));
         expectedTimeSheetJimmy.entries = List.of(expectedTimeEntry);
         var expected = timeKeeperTestUtils.toJson(expectedTimeSheetJimmy);
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(expected));
@@ -131,7 +131,7 @@ class TimeEntryResourceTest {
         LocalDateTime end = LocalDateTime.of(2020, 1, 1, 11, 0);
 
 
-        TimeEntryPerHourRequest hour = new TimeEntryPerHourRequest("This hour, I did this test", true, start, end);
+        TimeEntryRequest hour = new TimeEntryRequest("This hour, I did this test", start, 1);
 
         // WHEN I CREATE a timeSheetEntry for TS 2
         create(2L, hour, jimmyToken);
@@ -144,7 +144,7 @@ class TimeEntryResourceTest {
     }
 
     @Test
-    void shouldFailForEndDateTimeBeforeStartDateTime() {
+    void shouldFailForNegativeNumberHours() {
         final String adminToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
         var sam = create(adminToken);
@@ -161,10 +161,8 @@ class TimeEntryResourceTest {
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
         LocalDateTime start = LocalDateTime.of(2020, 1, 1, 11, 0);
-        LocalDateTime end = LocalDateTime.of(2020, 1, 1, 9, 0);
 
-
-        TimeEntryPerHourRequest hour = new TimeEntryPerHourRequest("This hour, I did this test", true, start, end);
+        TimeEntryRequest hour = new TimeEntryRequest("This hour, I did this test",  start, -1);
 
         // WHEN I CREATE a timeSheetEntry for TS 2
         try {
@@ -173,12 +171,10 @@ class TimeEntryResourceTest {
             assertEquals("application/json", httpError.getMimeType());
             assertEquals(400, httpError.getHttpStatus());
         }
-
     }
 
-
     @Test
-    void shouldNotCreateTimeEntryDayForNotOwnerOfTimeSheet() {
+    void shouldNotCreateTimeEntryForNotOwnerOfTimeSheet() {
         final String adminToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
         final String merryToken = getUser2AccessToken();
@@ -196,11 +192,10 @@ class TimeEntryResourceTest {
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
-        LocalDate date = LocalDate.of(2020, 1, 1);
-        TimeEntryPerDayRequest today = new TimeEntryPerDayRequest("Today, I did this test", true, date);
+        LocalDateTime startDateTime = LocalDateTime.of(2020, 1, 1, 9, 0);
+        TimeEntryRequest today = new TimeEntryRequest("Today, I did this test",  startDateTime, 8);
 
         // THEN
-        postValidation(TimeEntryDef.uriWithArgs(2L, "day"), merryToken, today, FORBIDDEN);
+        postValidation(TimeEntryDef.uriWithArgs(2L), merryToken, today, FORBIDDEN);
     }
-
 }
