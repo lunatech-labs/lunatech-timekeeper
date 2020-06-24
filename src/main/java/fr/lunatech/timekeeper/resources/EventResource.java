@@ -10,6 +10,7 @@ import fr.lunatech.timekeeper.services.responses.UserResponse;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.Valid;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
@@ -32,8 +33,7 @@ public class EventResource implements EventResourceApi {
     @RolesAllowed({"user", "admin"})
     @Override
     public List<UserResponse> getEventUsers(Long id) {
-        System.out.println("THIS FEATURE IS NOT IMPL");
-        return null;
+        return eventTemplateService.getAssociatedUsers(id);
     }
 
     @RolesAllowed({"user", "admin"})
@@ -47,7 +47,8 @@ public class EventResource implements EventResourceApi {
     @RolesAllowed({"user", "admin"})
     @Override
     public Response updateEvent(Long id, EventTemplateRequest request) {
-        System.out.println("THIS FEATURE IS NOT IMPL");
-        return null;
+        eventTemplateService.update(id, request,authentication.context())
+                .orElseThrow(() -> new NotFoundException(String.format("Event Template not found for id=%d", id)));
+        return Response.noContent().build();
     }
 }

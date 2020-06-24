@@ -1,6 +1,7 @@
 package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.*;
+import fr.lunatech.timekeeper.models.time.EventTemplate;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 
@@ -70,6 +71,14 @@ public final class AuthenticationContext {
         }
     }
 
+    Boolean canAccess(@NotNull User user) {
+        return canAccess(user.organization);
+    }
+
+    Boolean canAccess(@NotNull EventTemplate eventTemplate) {
+        return canAccess(eventTemplate.organization);
+    }
+
     Boolean canEdit(@NotNull Project project) {
         boolean organizationAccess = Objects.equals(getOrganization().id, project.organization.id);
         if (!organizationAccess) {
@@ -91,10 +100,6 @@ public final class AuthenticationContext {
     Boolean canJoin(@NotNull Project project) {
         boolean organizationAccess = Objects.equals(getOrganization().id, project.organization.id);
         return organizationAccess && project.publicAccess;
-    }
-
-    Boolean canAccess(@NotNull User user) {
-        return Objects.equals(getOrganization().id, user.organization.id);
     }
 
     static AuthenticationContext bind(@NotNull User user) {
