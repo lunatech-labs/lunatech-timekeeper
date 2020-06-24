@@ -181,7 +181,7 @@ const ProjectList = () => {
             </Space>
           }
           extra={[
-            <Dropdown overlay={dropdownCardAction(item, isAdmin)}>
+            <Dropdown key={`ant-dropdown-${item.id}`} overlay={dropdownCardAction(item, isAdmin)}>
               <a className="ant-dropdown-link" onClick={e => e.preventDefault()}><EllipsisOutlined /></a>
             </Dropdown>,
           ]}
