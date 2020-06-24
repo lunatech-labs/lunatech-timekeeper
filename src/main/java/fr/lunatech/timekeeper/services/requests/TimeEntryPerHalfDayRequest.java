@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public final class TimeEntryPerHalfDayRequest implements TimeEntryRequest{
+public final class TimeEntryPerHalfDayRequest {
 
     @NotBlank
     private final String comment;
