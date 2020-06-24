@@ -20,7 +20,7 @@ public class TimeEntryService {
     protected TimeSheetService timeSheetService;
 
     @Transactional
-    public Long createTimeEntry(Long timeSheetId, TimeEntryRequest request, AuthenticationContext ctx, Enum TimeUnit) {
+    public Long createTimeEntry(Long timeSheetId, TimeEntryRequest request, AuthenticationContext ctx) {
         logger.debug("Create a new TimeEntry with {}, {}", request, ctx);
         final TimeEntry timeEntry = request.unbind(timeSheetId, timeSheetService::findById, ctx);
         if (!ctx.canCreate(timeEntry)) {
@@ -33,5 +33,4 @@ public class TimeEntryService {
         }
         return timeEntry.id;
     }
-
 }

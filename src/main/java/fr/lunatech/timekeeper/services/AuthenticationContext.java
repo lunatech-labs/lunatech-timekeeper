@@ -46,6 +46,10 @@ public final class AuthenticationContext {
         return canAccessTimeSheet && (isOwner || isAdmin);
     }
 
+    Boolean canAccess(@NotNull TimeEntry timeEntry) {
+        return canAccess(timeEntry.timeSheet);
+    }
+
     Boolean canAccess(@NotNull Organization organization) {
         return isSuperAdmin() || Objects.equals(getOrganization().id, organization.id);
     }
