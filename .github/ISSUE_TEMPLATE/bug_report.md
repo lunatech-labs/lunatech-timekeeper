@@ -39,4 +39,4 @@ Have you read TimeKeeper's Code of Conduct? By filing an Issue, you are expected
 
 ### Additional Information
 
-<!-- Any additional information,
+<!-- Any additional informatio -->
