@@ -159,6 +159,9 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
             </Form.Item>
           </Col>
 
+          <Form.Item name="startDateTime" noStyle={true}>
+          </Form.Item>
+
           <Col className="gutter-row" span={9}>
             {/*Additional Values : depends on the Time Unit*/}
             <Form.Item shouldUpdate={(prevValues, curValues) => prevValues.timeUnit !== curValues.timeUnit}>
@@ -169,8 +172,6 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
                       <div>
                         <Form.Item name="numberHours" label="Number of hours:" rules={[{required: true}]}>
                           <Input/>
-                        </Form.Item>
-                        <Form.Item name="startDateTime" noStyle={true}>
                         </Form.Item>
                       </div>
                     );
