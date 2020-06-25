@@ -7,7 +7,6 @@ import fr.lunatech.timekeeper.services.TimeSheetService;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
-import org.apache.commons.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class ProjectResource implements ProjectResourceApi {
+
     private static Logger logger = LoggerFactory.getLogger(ProjectResource.class);
 
     @Inject
@@ -51,7 +51,7 @@ public class ProjectResource implements ProjectResourceApi {
     @RolesAllowed({"user", "admin"})
     @Override
     public Response getProject(Long id,
-                               Optional<Boolean> optimized,
+                               Optional<Boolean> withListOfUsers,
                                @Context Request request) {
         final var ctx = authentication.context();
         ProjectResponse projectResponse = projectService.findResponseById(id, ctx)
@@ -59,12 +59,12 @@ public class ProjectResource implements ProjectResourceApi {
 
         EntityTag etagValue = projectResponse.computeETag();
         Response.ResponseBuilder rb = request.evaluatePreconditions(etagValue);
-        if(rb == null){
+        if (rb == OK_THIS_ENTITY_IS_NEW_OR_WAS_MODIFIED) {
             //If rb is null then either it is first time request; or resource is modified
             //Get the updated representation and return with Etag attached to it
-            logger.debug(String.format("Send project with ETag [%s]",etagValue.getValue()));
+            logger.debug(String.format("Send project with ETag [%s]", etagValue.getValue()));
 
-            if(optimized.orElse(false)){
+            if (withListOfUsers.orElse(false)) {
                 ProjectResponse projectResponseWithoutUsers = ProjectResponse.copyWithoutUsers(projectResponse);
                 return Response
                         .status(Response.Status.OK)
@@ -72,7 +72,7 @@ public class ProjectResource implements ProjectResourceApi {
                         .entity(projectResponseWithoutUsers)
                         .type(MediaType.APPLICATION_JSON_TYPE)
                         .build();
-            }else{
+            } else {
                 return Response
                         .status(Response.Status.OK)
                         .header("ETag", etagValue.getValue())
@@ -80,8 +80,8 @@ public class ProjectResource implements ProjectResourceApi {
                         .type(MediaType.APPLICATION_JSON_TYPE)
                         .build();
             }
-        }else{
-            logger.debug(String.format("Project %s not modified, return 304 Not Modified",etagValue));
+        } else {
+            logger.debug(String.format("Project %s not modified, return 304 Not Modified", etagValue));
             return rb.build();
         }
     }
@@ -98,9 +98,9 @@ public class ProjectResource implements ProjectResourceApi {
                 .orElseThrow(() -> new NotFoundException(String.format("Project not found for id=%d", id)));
 
         EntityTag etagValue = projectResponse.computeETag();
-        Response.ResponseBuilder rb = request.evaluatePreconditions(etagValue);
+        final Response.ResponseBuilder rb = request.evaluatePreconditions(etagValue);
         // If the  client send a If-Match with the same Etag OR the client DOES NOT send any If-Match, then just save the entity
-        if (rb == null) {
+        if (rb == OK_TO_UPDATE_THIS_ENTITY) {
             projectService.update(id, projectRequest, ctx)
                     .orElseThrow(() -> new NotFoundException(String.format("Project not found for id=%d", id)));
             return Response.noContent().build();
@@ -128,4 +128,10 @@ public class ProjectResource implements ProjectResourceApi {
         Optional<TimeSheetResponse> maybeResponse = timeSheetService.findFirstForProjectForUser(idProject, idUser);
         return maybeResponse.orElseThrow(() -> new NotFoundException(String.format("No timesheet found for project_id=%d, and user_id=%d", idProject, idUser)));
     }
+
+    // YES it is normal to see a "null" here. The fantastic Request was implemented before Optional<T> was available.
+    // See https://docs.oracle.com/javaee/7/api/javax/ws/rs/core/Request.html#evaluatePreconditions-javax.ws.rs.core.EntityTag-
+    // The method returns "null" as "OK" the precondition is met, you can save the entity.
+    private static final Response.ResponseBuilder OK_TO_UPDATE_THIS_ENTITY = null;
+    private static final Response.ResponseBuilder OK_THIS_ENTITY_IS_NEW_OR_WAS_MODIFIED = null;
 }
