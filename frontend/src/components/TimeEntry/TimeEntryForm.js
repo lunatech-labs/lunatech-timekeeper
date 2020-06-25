@@ -74,10 +74,10 @@ const AddEntry = ({date, form, timeSheets, onSuccess, onCancel}) => {
     }
   }, [entryCreated, onSuccess]);
 
-  const {setFieldsValue} = form;
+  const {resetFields} = form;
   useEffect(() => {
-    setFieldsValue({date: date});
-  }, [date, setFieldsValue]);
+    resetFields();
+  }, [resetFields]);
 
   // Update the values when a field changes
   const onValuesChange = (changedValues, allValues) => {
