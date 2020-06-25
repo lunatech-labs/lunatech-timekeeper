@@ -8,36 +8,46 @@ const {Option} = Select;
 const {TextArea} = Input;
 
 const initialValues = (defaultDate) => {
+  const start = defaultDate.clone();
+  start.set({
+    hour: 9,
+    minute: 0,
+    second: 0
+  });
     return {
         'comment': null,
-        'billable': null,
         'timeSheetId': null,
-        'date': defaultDate
+    'date': defaultDate,
+    'startDateTime': start, //9 am by default
     };
 };
 
 // Add the additional values
 // Use the values of the form or initialize the values
 const additionalValues = (timeUnit, defaultDate, allValues) => {
+  const start = defaultDate.clone();
+  start.set({
+    hour: 9,
+    minute: 0,
+    second: 0
+  });
     switch (timeUnit) {
         case 'DAY': {
-            return {};
+      return {
+        'startDateTime': allValues.startDateTime || start, //9 am by default
+        'numberHours': 8
+      };
         }
         case 'HALFDAY': {
             return {
-                'isMorning': allValues.isMorning || true
+        'startDateTime': allValues.startDateTime || start, //9 am by default
+        'numberHours': 4
             };
         }
         case 'HOURLY' : {
-            const start = defaultDate.clone();
-            start.set({
-                hour: 9,
-                minute: 0,
-                second: 0
-            });
             return {
                 'startDateTime': allValues.startDateTime || start, //9 am by default
-                'endDateTime': allValues.endDateTime || null
+                'numberHours': null
             };
         }
         default: {
@@ -48,21 +58,8 @@ const additionalValues = (timeUnit, defaultDate, allValues) => {
 
 // Compute the url
 const url = (form) => {
-    const timeUnitToPrefix = (timeUnit) => {
-        switch (timeUnit) {
-            case 'DAY':
-                return 'day';
-            case 'HALFDAY':
-                return 'half-a-day';
-            case 'HOURLY':
-                return 'hour';
-            default:
-                return '';
-        }
-    };
-    const prefix = timeUnitToPrefix(form.getFieldValue('timeUnit'));
     const timeSheetId = form.getFieldValue('timeSheetId');
-    return `/api/timeSheet/${timeSheetId}/timeEntry/${prefix}`;
+  return `/api/timeSheet/${timeSheetId}/timeEntry`;
 };
 
 const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel}) => {
@@ -90,26 +87,15 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel}) => {
                 const timeSheet = timeSheets.find(item => item.id === changedValues.timeSheetId);
                 setSelectedTimeSheet(timeSheet);
                 if (timeSheet) {
-                    form.setFieldsValue({
-                        billable: timeSheet.defaultIsBillable,
-                        timeUnit: timeSheet.timeUnit
-                    });
+                    form.setFieldsValue({timeUnit: timeSheet.timeUnit});
                 } else {
-                    form.setFieldsValue({
-                        billable: false,
-                        timeUnit: ''
-                    });
+                    form.setFieldsValue({timeUnit: ''});
                 }
                 form.setFieldsValue(additionalValues(timeSheet.timeUnit, allValues.date, allValues));
                 break;
             }
             case 'timeUnit': {
                 form.setFieldsValue(additionalValues(changedValues.timeUnit, allValues.date, allValues));
-                break;
-            }
-            case 'numberHours' : {
-                const end = allValues.startDateTime.clone().add(changedValues.numberHours, 'hour');
-                form.setFieldsValue({endDateTime: end});
                 break;
             }
             default:
@@ -142,13 +128,6 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel}) => {
                     </Select>
                 </Form.Item>
 
-                <Form.Item label="Billable" name="billable" rules={[{required: true}]}>
-                    <Radio.Group>
-                        <Radio value={true}>Yes</Radio>
-                        <Radio value={false}>No</Radio>
-                    </Radio.Group>
-                </Form.Item>
-
                 <Row gutter={32}>
                     <Col className="gutter-row" span={15}>
                         <Form.Item shouldUpdate={(prevValues, currentValues) => prevValues.timeSheetId !== currentValues.timeSheetId}>
@@ -169,32 +148,28 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel}) => {
                         </Form.Item>
                     </Col>
 
+          <Form.Item name="startDateTime" noStyle={true}>
+          </Form.Item>
+
                     <Col className="gutter-row" span={9}>
                         {/*Additional Values : depends on the Time Unit*/}
                         <Form.Item shouldUpdate={(prevValues, curValues) => prevValues.timeUnit !== curValues.timeUnit}>
                             {({getFieldValue}) => {
                                 switch (getFieldValue('timeUnit')) {
-                                    case 'DAY':
-                                        return null;
-                                    case 'HALFDAY' :
-                                        return (
-                                            <Form.Item name="isMorning" noStyle={true}>
-                                            </Form.Item>
-                                        );
                                     case 'HOURLY':
                                         return (
                                             <div>
                                                 <Form.Item name="numberHours" label="Number of hours:" rules={[{required: true}]}>
                                                     <Input/>
                                                 </Form.Item>
-                                                <Form.Item name="startDateTime" noStyle={true}>
-                                                </Form.Item>
-                                                <Form.Item name="endDateTime" noStyle={true}>
-                                                </Form.Item>
                                             </div>
                                         );
                                     default:
-                                        return null;
+                    return (
+                      <Form.Item name="numberHours" noStyle={true}>
+                        <Input hidden={true}/>
+                      </Form.Item>
+                    );
                                 }
                             }}
                         </Form.Item>

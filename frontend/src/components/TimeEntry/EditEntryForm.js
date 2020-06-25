@@ -3,12 +3,11 @@ import {useTimeKeeperAPIPut} from "../../utils/services";
 import {Button, Col, Form, Input, message, Radio, Row, Select, Space} from "antd";
 import PropTypes from "prop-types";
 import TitleSection from "../Title/TitleSection";
+import moment from "moment";
 
 const {Option} = Select;
 const {TextArea} = Input;
 
-
-const moment = require('moment');
 const computeNumberOfHours = (start, end) => {
     const duration = moment.duration(end.diff(start));
     const date = start.clone();
@@ -18,7 +17,7 @@ const computeNumberOfHours = (start, end) => {
     return duration.asHours();
 }
 
-const isDayHalfDayOrHour = (numberHours) => {
+const computeTimeUnit = (numberHours) => {
     switch (numberHours) {
         case 4:
             return 'HALFDAY';
@@ -40,10 +39,9 @@ const initialValues = (defaultDate, entry, timeSheetId) => {
         'comment': newEntry.comment,
         'timeSheetId': timeSheetId,
         'date': moment.utc(newEntry.startDateTime, "YYYY-MM-DD"),
-        'isMorning': newEntry.isMorning,
         'startDateTime': newEntry.startDateTime,
         'endDateTime': newEntry.endDateTime,
-        'timeUnit' : isDayHalfDayOrHour(numberOfHours),
+        'timeUnit' : computeTimeUnit(numberOfHours),
         'numberHours': numberOfHours
     };
 };
@@ -51,25 +49,29 @@ const initialValues = (defaultDate, entry, timeSheetId) => {
 // Add the additional values
 // Use the values of the form or initialize the values
 const additionalValues = (timeUnit, defaultDate, allValues) => {
-    switch (timeUnit) {
-        case 'DAY': {
-            return {};
-        }
-        case 'HALFDAY': {
-            return {
-                'isMorning': allValues.isMorning || true
-            };
-        }
-        case 'HOURLY' : {
             const start = defaultDate.clone();
             start.set({
                 hour: 9,
                 minute: 0,
                 second: 0
             });
+    switch (timeUnit) {
+        case 'DAY': {
+      return {
+        'startDateTime': allValues.startDateTime || start, //9 am by default
+        'numberHours': 8
+      };
+        }
+        case 'HALFDAY': {
+            return {
+        'startDateTime': allValues.startDateTime || start, //9 am by default
+        'numberHours': 4
+            };
+        }
+        case 'HOURLY' : {
             return {
                 'startDateTime': allValues.startDateTime || start, //9 am by default
-                'endDateTime': allValues.endDateTime || null
+                'numberHours': null
             };
         }
         default: {
@@ -80,24 +82,11 @@ const additionalValues = (timeUnit, defaultDate, allValues) => {
 
 // Compute the url
 const urlEdition = (form, timeEntryId) => {
-    const timeUnitToPrefix = (timeUnit) => {
-        switch (timeUnit) {
-            case 'DAY':
-                return 'day';
-            case 'HALFDAY':
-                return 'half-a-day';
-            case 'HOURLY':
-                return 'hour';
-            default:
-                return '';
-        }
-    };
-    const prefix = timeUnitToPrefix(form.getFieldValue('timeUnit'));
     const timeSheetId = form.getFieldValue('timeSheetId');
-    return `/api/timeSheet/${timeSheetId}/timeEntry/${timeEntryId}/${prefix}`;
+    return `/api/timeSheet/${timeSheetId}/timeEntry/${timeEntryId}`;
 }
 
-const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, timeSheetId}) => {
+const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry}) => {
     const [entryUpdated, setEntryUpdated] = useState(false);
     const [selectedTimeSheet, setSelectedTimeSheet] = useState();
     const timeKeeperAPIPut = useTimeKeeperAPIPut(urlEdition(form, entry.id), (form => form), setEntryUpdated);
@@ -112,7 +101,7 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, time
 
     useEffect(()=>{
         resetFields()
-    }, [resetFields, entry])
+    }, [resetFields, entry.id])
 
     // Update the values when a field changes
     const onValuesChange = (changedValues, allValues) => {
@@ -122,15 +111,9 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, time
                 const timeSheet = timeSheets.find(item => item.id === changedValues.timeSheetId);
                 setSelectedTimeSheet(timeSheet);
                 if (timeSheet) {
-                    form.setFieldsValue({
-                        billable: timeSheet.defaultIsBillable,
-                        timeUnit: timeSheet.timeUnit
-                    });
+                    form.setFieldsValue({timeUnit: timeSheet.timeUnit});
                 } else {
-                    form.setFieldsValue({
-                        billable: false,
-                        timeUnit: ''
-                    });
+                    form.setFieldsValue({timeUnit: ''});
                 }
                 form.setFieldsValue(additionalValues(timeSheet.timeUnit, allValues.date, allValues));
                 break;
@@ -139,21 +122,21 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, time
                 form.setFieldsValue(additionalValues(changedValues.timeUnit, allValues.date, allValues));
                 break;
             }
-            case 'numberHours' : {
-                const end = allValues.startDateTime.clone().add(changedValues.numberHours, 'hour');
-                form.setFieldsValue({endDateTime: end});
-                break;
-            }
             default:
                 break;
         }
     };
 
+    const findTimeSheetId = (entryId, timeSheets) => {
+        return timeSheets.find(timeSheet => !!timeSheet.entries.find(entry => entry.id === entryId)).id
+    }
+
     return (
+        <div className="tk_ModalBottom">
         <Form
             id="tk_Form"
             layout="vertical"
-            initialValues={initialValues(date, entry, timeSheetId)}
+            initialValues={initialValues(date, entry, findTimeSheetId(entry.id, timeSheets))}
             form={form}
             onFinish={timeKeeperAPIPut.run}
             onValuesChange={onValuesChange}
@@ -172,13 +155,6 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, time
                     {timeSheets.map(timeSheet => <Option key={`select-timesheet-${timeSheet.id}`}
                                                          value={timeSheet.id}>{timeSheet.project.name}</Option>)}
                 </Select>
-            </Form.Item>
-
-            <Form.Item label="Billable" name="billable" rules={[{required: true}]}>
-                <Radio.Group>
-                    <Radio value={true}>Yes</Radio>
-                    <Radio value={false}>No</Radio>
-                </Radio.Group>
             </Form.Item>
 
             <Row gutter={32}>
@@ -202,18 +178,14 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, time
                     </Form.Item>
                 </Col>
 
+          <Form.Item name="startDateTime" noStyle={true}>
+          </Form.Item>
+
                 <Col className="gutter-row" span={9}>
                     {/*Additional Values : depends on the Time Unit*/}
                     <Form.Item shouldUpdate={(prevValues, curValues) => prevValues.timeUnit !== curValues.timeUnit}>
                         {({getFieldValue}) => {
                             switch (getFieldValue('timeUnit')) {
-                                case 'DAY':
-                                    return null;
-                                case 'HALFDAY' :
-                                    return (
-                                        <Form.Item name="isMorning" noStyle={true}>
-                                        </Form.Item>
-                                    );
                                 case 'HOURLY':
                                     return (
                                         <div>
@@ -221,14 +193,14 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, time
                                                        rules={[{required: true}]}>
                                                 <Input/>
                                             </Form.Item>
-                                            <Form.Item name="startDateTime" noStyle={true}>
-                                            </Form.Item>
-                                            <Form.Item name="endDateTime" noStyle={true}>
-                                            </Form.Item>
                                         </div>
                                     );
                                 default:
-                                    return null;
+                    return (
+                      <Form.Item name="numberHours" noStyle={true}>
+                        <Input hidden={true}/>
+                      </Form.Item>
+                    );
                             }
                         }}
                     </Form.Item>
@@ -241,6 +213,7 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, time
                 <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Save task</Button>
             </Space>
         </Form>
+        </div>
     );
 };
 EditEntryForm.propTypes = {
