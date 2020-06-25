@@ -74,10 +74,6 @@ public final class AuthenticationContext {
         }
     }
 
-    Boolean canAccess(@NotNull TimeEntry timeEntry) {
-        return Objects.equals(getOrganization().id, timeEntry.timeSheet.project.organization.id);
-    }
-
     Boolean canEdit(@NotNull Project project) {
         boolean organizationAccess = Objects.equals(getOrganization().id, project.organization.id);
         if (!organizationAccess) {

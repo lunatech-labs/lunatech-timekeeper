@@ -10,7 +10,7 @@ import EditEntryForm from "./EditEntryForm";
 
 const {TextArea} = Input;
 
-const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, setMode, timeSheetId}) => {
+const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, setMode}) => {
 
     const setAddMode = () => setMode('add');
     const setEditMode = () => setMode('edit');
@@ -88,7 +88,7 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
                           onCancel={onCancel}/>}
             {mode === 'edit' && entry &&
             <EditEntryForm date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess}
-                          onCancel={onCancel} entry={entry} timeSheetId={timeSheetId}/>}
+                          onCancel={onCancel} entry={entry}/>}
         </div>
     );
 };

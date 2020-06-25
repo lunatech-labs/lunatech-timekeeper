@@ -10,6 +10,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
@@ -29,5 +30,14 @@ public class TimeEntryResource implements TimeEntryResourceApi {
         final long timeId = timeEntryService.createTimeEntry(timeSheetId, request, ctx);
         final URI uri = uriInfo.getAbsolutePathBuilder().path(Long.toString(timeId)).build();
         return Response.created(uri).build();
+    }
+
+    @RolesAllowed({"user"})
+    @Override
+    public Response updateTimeEntry(Long timeSheetId, Long timeEntryId, @Valid TimeEntryRequest request, UriInfo uriInfo) {
+        final var ctx = authentication.context();
+        timeEntryService.updateTimeEntry(timeSheetId, timeEntryId, request, ctx)
+                .orElseThrow(NotFoundException::new);
+        return Response.noContent().build();
     }
 }
