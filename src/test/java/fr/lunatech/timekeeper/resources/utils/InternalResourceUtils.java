@@ -61,7 +61,7 @@ final class InternalResourceUtils {
 
         logger.debug("Create : " + request.getClass() + " resource ");
         logger.debug("Uri    :" + uri_root);
-        logger.debug("Verb   : GET");
+        logger.debug("Verb   : POST");
 
         var reqSpec = given()
                 .auth().preemptive().oauth2(token)
