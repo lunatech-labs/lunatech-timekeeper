@@ -72,13 +72,7 @@ class TimeEntryResourceTest {
         LocalDateTime startDateTime = LocalDateTime.of(2020, 1, 1, 9, 0);
         TimeEntryRequest today = new TimeEntryRequest("Today, I did this test", startDateTime, 8);
 
-        // WHEN I CREATE a timeSheetEntry for TS 2
-        given()
-                .auth().preemptive().oauth2(jimmyToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(today)
-                .post(TimeEntryDef.uriWithArgs(2L));
+        create(2L, today, jimmyToken);
 
         // THEN
         TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L,"Today, I did this test", startDateTime, startDateTime.withHour(17).withMinute(0));
@@ -107,13 +101,7 @@ class TimeEntryResourceTest {
         LocalDateTime startDateTime = LocalDateTime.of(2020, 1, 1,9,0);
         TimeEntryRequest morning = new TimeEntryRequest("This morning, I did this test", LocalDateTime.of(2020, 1, 1,9,0), 4);
 
-        // WHEN I CREATE a timeSheetEntry for TS 2
-        given()
-                .auth().preemptive().oauth2(jimmyToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(morning)
-                .post(TimeEntryDef.uriWithArgs(2L));
+        create(2L, morning, jimmyToken);
 
         // THEN
         TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This morning, I did this test", startDateTime, startDateTime.withHour(13).withMinute(0));
@@ -141,17 +129,9 @@ class TimeEntryResourceTest {
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
         LocalDateTime start = LocalDateTime.of(2020, 1, 1, 10, 0);
         LocalDateTime end = LocalDateTime.of(2020, 1, 1, 11, 0);
-
-
         TimeEntryRequest hour = new TimeEntryRequest("This hour, I did this test", start, 1);
 
-        // WHEN I CREATE a timeSheetEntry for TS 2
-        given()
-                .auth().preemptive().oauth2(jimmyToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(hour)
-                .post(TimeEntryDef.uriWithArgs(2L));
+        create(2L, hour, jimmyToken);
 
         // THEN
         TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This hour, I did this test", start, end);
@@ -182,13 +162,7 @@ class TimeEntryResourceTest {
         TimeEntryRequest hour = new TimeEntryRequest("This hour, I did this test",  start, -1);
 
         try {
-            // WHEN I CREATE a timeSheetEntry for TS 2
-             given()
-                    .auth().preemptive().oauth2(jimmyToken)
-                    .when()
-                    .contentType(APPLICATION_JSON)
-                    .body(hour)
-                    .post(TimeEntryDef.uriWithArgs(2L));
+            create(2L, hour, jimmyToken);
         } catch (HttpTestRuntimeException httpError) {
             assertEquals("application/json", httpError.getMimeType());
             assertEquals(400, httpError.getHttpStatus());
@@ -241,14 +215,7 @@ class TimeEntryResourceTest {
         LocalDateTime startDateTime = LocalDateTime.of(2020, 1, 1, 9, 0);
         TimeEntryRequest today = new TimeEntryRequest("Today, I did this test", startDateTime, 8);
 
-        var reqSpec = given()
-                .auth().preemptive().oauth2(jimmyToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(today)
-                .post(TimeEntryDef.uriWithArgs(2L));
-
-        var location = reqSpec.header("location");
+        var location = create(2L, today, jimmyToken);
 
         TimeEntryRequest updatedToday = new TimeEntryRequest("Today, I updated this entry", startDateTime, 8);
         update(updatedToday, location, jimmyToken);
@@ -280,14 +247,7 @@ class TimeEntryResourceTest {
         LocalDateTime startDateTime = LocalDateTime.of(2020, 1, 1, 9, 0);
         TimeEntryRequest morning = new TimeEntryRequest("This morning, I did this test", LocalDateTime.of(2020, 1, 1,9,0), 4);
 
-        var reqSpec = given()
-                .auth().preemptive().oauth2(jimmyToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(morning)
-                .post(TimeEntryDef.uriWithArgs(2L));
-
-        var location = reqSpec.header("location");
+        var location = create(2L, morning, jimmyToken);
 
         TimeEntryRequest updatedMorning = new TimeEntryRequest("This morning, I updated this entry", startDateTime, 4);
         update(updatedMorning, location, jimmyToken);
@@ -319,14 +279,7 @@ class TimeEntryResourceTest {
         LocalDateTime startDateTime = LocalDateTime.of(2020, 1, 1, 9, 0);
         TimeEntryRequest hour = new TimeEntryRequest("This hour, I did this test", LocalDateTime.of(2020, 1, 1,9,0), 1);
 
-        var reqSpec = given()
-                .auth().preemptive().oauth2(jimmyToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(hour)
-                .post(TimeEntryDef.uriWithArgs(2L));
-
-        var location = reqSpec.header("location");
+        var location = create(2L, hour, jimmyToken);
 
         TimeEntryRequest updatedHour = new TimeEntryRequest("This hour, I updated this entry", startDateTime, 1);
         update(updatedHour, location, jimmyToken);
@@ -358,14 +311,7 @@ class TimeEntryResourceTest {
         LocalDateTime startDateTime = LocalDateTime.of(2020, 1, 1, 9, 0);
         TimeEntryRequest hour = new TimeEntryRequest("This hour, I did this test", LocalDateTime.of(2020, 1, 1,9,0), 1);
 
-        var reqSpec = given()
-                .auth().preemptive().oauth2(jimmyToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(hour)
-                .post(TimeEntryDef.uriWithArgs(2L));
-
-        var location = reqSpec.header("location");
+        var location = create(2L, hour, jimmyToken);
 
         TimeEntryRequest updatedHour = new TimeEntryRequest("This hour, I did this test", startDateTime, 2);
         update(updatedHour, location, jimmyToken);

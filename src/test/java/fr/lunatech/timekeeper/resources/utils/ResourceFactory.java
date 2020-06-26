@@ -1,10 +1,8 @@
 package fr.lunatech.timekeeper.resources.utils;
 
 import fr.lunatech.timekeeper.services.requests.*;
-import fr.lunatech.timekeeper.services.responses.ClientResponse;
-import fr.lunatech.timekeeper.services.responses.OrganizationResponse;
-import fr.lunatech.timekeeper.services.responses.ProjectResponse;
-import fr.lunatech.timekeeper.services.responses.UserResponse;
+import fr.lunatech.timekeeper.services.responses.*;
+import io.restassured.response.Response;
 
 import java.util.Map;
 
@@ -32,8 +30,8 @@ public class ResourceFactory {
         return InternalResourceUtils.createResource(organization, OrganizationDef.uri, OrganizationResponse.class, token);
     }
 
-    public static Void create(Long timeSheetId, TimeEntryRequest timeEntryRequest, String token) {
-        return InternalResourceUtils.createResource(timeEntryRequest, TimeEntryDef.uriWithArgs(timeSheetId), Void.class, token);
+    public static String create(Long timeSheetId, TimeEntryRequest timeEntryRequest, String token) {
+        return InternalResourceUtils.createResource(timeEntryRequest, TimeEntryDef.uriWithArgs(timeSheetId), token);
     }
 
     public static <P> void update(P request, String uri, String token) {

@@ -155,21 +155,8 @@ public class PersonalTimesheetsResourceTest {
         TimeEntryRequest jimmyEntry2 = new TimeEntryRequest(commentDay, startDay2, 8);
         update(updatedTimeSheet, TimeSheetDef.uriWithid(1L), jimmyToken);
 
-        // WHEN I CREATE a timeSheetEntry for TS 1
-        given()
-                .auth().preemptive().oauth2(jimmyToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(jimmyEntry1)
-                .post(TimeEntryDef.uriWithArgs(1L));
-
-        // WHEN I CREATE a timeSheetEntry for TS 1
-        given()
-                .auth().preemptive().oauth2(jimmyToken)
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(jimmyEntry2)
-                .post(TimeEntryDef.uriWithArgs(1L));
+        create(1L, jimmyEntry1, jimmyToken);
+        create(1L, jimmyEntry2, jimmyToken);
 
         TimeSheetResponse.TimeEntryResponse jimmyEntryDay1Response = new TimeSheetResponse.TimeEntryResponse(1L, commentDay, startDay1, endDay1);
         TimeSheetResponse.TimeEntryResponse jimmyEntryDay2Response = new TimeSheetResponse.TimeEntryResponse(2L, commentDay, startDay2, endDay2);
