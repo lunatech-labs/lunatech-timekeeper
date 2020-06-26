@@ -3,12 +3,12 @@ import MainPage from '../MainPage/MainPage';
 import WeekCalendar from '../../components/TimeSheet/WeekCalendar';
 import TimeEntry from '../../components/TimeEntry/TimeEntry';
 import {useTimeKeeperAPI} from '../../utils/services';
-import {Alert, Badge, Form, Modal, Radio} from 'antd';
+import {Alert, Badge, Form, Modal} from 'antd';
 import TimeEntryForm from '../../components/TimeEntry/TimeEntryForm';
 import moment from 'moment';
 import UserTimeSheetList from '../../components/TimeSheet/UserTimeSheetList';
-import MonthCalendar from "../../components/TimeSheet/MonthCalendar";
-import CalendarSelectionMode from "../../components/TimeSheet/CalendarSelectionMode";
+import MonthCalendar from '../../components/TimeSheet/MonthCalendar';
+import CalendarSelectionMode from '../../components/TimeSheet/CalendarSelectionMode';
 
 const TimeEntriesPage = () => {
   const [calendarMode, setCalendarMode] = useState('week');
@@ -141,13 +141,13 @@ const TimeEntriesPage = () => {
           <MonthCalendar
             onClickAddTask={onClickAddTask}
             days={datas.days}
-            dateCellRender={(data) => removeDuplicatesElementAndSort(
-              data.filter(data => !!data).map(item => item.project.name)
-            )
-              .map(item =>
-              <div>
-                <Badge status='success' text={item}/>
-              </div>)}
+            dateCellRender={(data, date) => {
+              const projectsName = data.filter(data => !!data).map(item => item.project.name);
+              return removeDuplicatesElementAndSort(projectsName).map(item =>
+                <div key={`badge-entry-project-${item}-${date.format('YYYY-MM-DD')}`}>
+                  <Badge status='success' text={item}/>
+                </div>);
+            }}
             disabledWeekEnd={true}
             warningCardPredicate={warningCardPredicate}
           />
