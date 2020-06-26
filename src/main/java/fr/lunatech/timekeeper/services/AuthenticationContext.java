@@ -38,6 +38,10 @@ public final class AuthenticationContext {
         return canAccessTimeSheet && (isOwner || isAdmin() || isSuperAdmin());
     }
 
+    Boolean canAccess(@NotNull TimeEntry timeEntry) {
+        return canAccess(timeEntry.timeSheet.project.organization);
+    }
+
     Boolean canAccess(@NotNull Organization organization) {
         return isSuperAdmin() || Objects.equals(getOrganization().id, organization.id);
     }

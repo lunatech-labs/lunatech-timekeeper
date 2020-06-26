@@ -33,16 +33,8 @@ public class ResourceFactory {
         return InternalResourceUtils.createResource(organization, OrganizationDef.uri, OrganizationResponse.class, token);
     }
 
-    public static Void create(Long timeSheetId, TimeEntryPerDayRequest timeEntryRequest, String token) {
-        return InternalResourceUtils.createResource(timeEntryRequest, TimeEntryDef.uriWithArgs(timeSheetId, "day"), Void.class, token);
-    }
-
-    public static Void create(Long timeSheetId, TimeEntryPerHalfDayRequest timeEntryRequest, String token) {
-        return InternalResourceUtils.createResource(timeEntryRequest, TimeEntryDef.uriWithArgs(timeSheetId, "half-a-day"), Void.class, token);
-    }
-
-    public static Void create(Long timeSheetId, TimeEntryPerHourRequest timeEntryRequest, String token) {
-        return InternalResourceUtils.createResource(timeEntryRequest, TimeEntryDef.uriWithArgs(timeSheetId, "hour"), Void.class, token);
+    public static Void create(Long timeSheetId, TimeEntryRequest timeEntryRequest, String token) {
+        return InternalResourceUtils.createResource(timeEntryRequest, TimeEntryDef.uriWithArgs(timeSheetId), Void.class, token);
     }
 
     public static <P> void update(P request, String uri, String token) {
