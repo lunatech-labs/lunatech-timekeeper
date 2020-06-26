@@ -74,8 +74,6 @@ const TimeEntriesPage = () => {
 
   // A day without entries in the past should be displayed with "warn" design
   const hasWarnNoEntryInPastDay =(date,day) => {
-    console.log(date.format("YYYY-MM-DD"))
-    console.log(moment().subtract('1','days').isAfter(date))
     return moment().subtract('1','days').isAfter(date) && !day;
   };
 
