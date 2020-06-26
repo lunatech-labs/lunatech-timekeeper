@@ -46,26 +46,18 @@ const initialValues = (defaultDate, entry, timeSheetId) => {
     };
 };
 
-// Add the additional values
-// Use the values of the form or initialize the values
-const additionalValues = (timeUnit, defaultDate, allValues) => {
-            const start = defaultDate.clone();
-            start.set({
-                hour: 9,
-                minute: 0,
-                second: 0
-            });
+const returnTimeUnit = (timeUnit, allValues, start) => {
     switch (timeUnit) {
         case 'DAY': {
-      return {
-        'startDateTime': allValues.startDateTime || start, //9 am by default
-        'numberHours': 8
-      };
+            return {
+                'startDateTime': allValues.startDateTime || start, //9 am by default
+                'numberHours': 8
+            };
         }
         case 'HALFDAY': {
             return {
-        'startDateTime': allValues.startDateTime || start, //9 am by default
-        'numberHours': 4
+                'startDateTime': allValues.startDateTime || start, //9 am by default
+                'numberHours': 4
             };
         }
         case 'HOURLY' : {
@@ -78,6 +70,18 @@ const additionalValues = (timeUnit, defaultDate, allValues) => {
             return {};
         }
     }
+}
+
+// Add the additional values
+// Use the values of the form or initialize the values
+const additionalValues = (timeUnit, defaultDate, allValues) => {
+    const start = defaultDate.clone();
+    start.set({
+        hour: 9,
+        minute: 0,
+        second: 0
+    });
+    returnTimeUnit(timeUnit, allValues, start);
 };
 
 // Compute the url
@@ -110,11 +114,7 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry}) => 
             case 'timeSheetId' : {
                 const timeSheet = timeSheets.find(item => item.id === changedValues.timeSheetId);
                 setSelectedTimeSheet(timeSheet);
-                if (timeSheet) {
-                    form.setFieldsValue({timeUnit: timeSheet.timeUnit});
-                } else {
-                    form.setFieldsValue({timeUnit: ''});
-                }
+                timeSheet ? form.setFieldsValue({timeUnit: timeSheet.timeUnit}) : form.setFieldsValue({timeUnit: ''});
                 form.setFieldsValue(additionalValues(timeSheet.timeUnit, allValues.date, allValues));
                 break;
             }
