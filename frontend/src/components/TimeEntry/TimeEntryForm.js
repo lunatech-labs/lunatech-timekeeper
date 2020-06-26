@@ -255,7 +255,7 @@ const TimeEntryForm = ({entries ,currentDay, form, onSuccess, onCancel, viewMode
             <p>{currentDay.format('ddd')}<br /><span>{currentDay.format('DD')}</span></p>
             <h1>Day information</h1>
           </div>
-          {viewMode ? <Button type="link" onClick={() => setViewMode && setViewMode(false)}>Add task</Button> : ''}
+          {viewMode ? <Button className="tk_Link" type="link" onClick={() => setViewMode && setViewMode(false)}>Add task</Button> : ''}
         </div>
         <div className="tk_ModalTopBody">
           {entries.length === 0 ? <NoDataMessage message='No task for this day, there is still time to add one.'/> : <Entries entries={entries} />}
