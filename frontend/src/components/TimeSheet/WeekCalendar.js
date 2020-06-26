@@ -123,19 +123,12 @@ const WeekCalendar = (props) => {
       })}
     </Select>;
 
-  const SelectionMode = () =>
-    <Radio.Group defaultValue="Week">
-      <Radio.Button value="Week">Week</Radio.Button>
-      <Radio.Button value="Month">Month</Radio.Button>
-    </Radio.Group>;
-
   return (
     <div id="tk_WeekCalendar">
       <div id="tk_WeekCalendar_Head">
         <WeekNavigator/>
         <div>
           <WeekNavigatorSelect/>
-          <SelectionMode/>
         </div>
       </div>
 

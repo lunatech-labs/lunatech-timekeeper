@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Button, Calendar, Select} from "antd";
 import PropTypes from "prop-types";
 import {LeftOutlined, PlusOutlined, RightOutlined} from "@ant-design/icons";
@@ -57,6 +57,7 @@ const isWeekEnd = (date) => date.isoWeekday() === 6 || date.isoWeekday() === 7;
 const MonthCalendar = (props) => {
   const isDisabled = (item, date) => (item && item.day && item.day.disabled) || (props.disabledWeekEnd && isWeekEnd(date));
   const findData = (date) => props.days.find(day => day.date.isSame(moment(date).utc(), 'day'));
+
   return (
     <Calendar
       headerRender={({value, type, onChange}) => {
@@ -66,19 +67,14 @@ const MonthCalendar = (props) => {
           <MonthNavigator value={value} onChange={onChange}/>
         </div>)
       }}
-      onSelect={props.onSelect}
       disabledDate={moment => {
         const day = findData(moment);
         return isDisabled(day, moment)
       }}
       dateCellRender={moment => {
         const day = findData(moment);
-        console.log("=========");
-        console.log(day);
         const className = !day || (props.warningCardPredicate && props.warningCardPredicate(day.date, day.data)) ?
           'tk_CardWeekCalendar_Body tk_CardWeekCalendar_Body_With_Warn' : 'tk_CardWeekCalendar_Body';
-        console.log(className)
-        console.log("=========")
         return (
           <div className={className}>
             <Button

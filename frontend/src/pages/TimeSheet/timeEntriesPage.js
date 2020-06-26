@@ -3,14 +3,15 @@ import MainPage from '../MainPage/MainPage';
 import WeekCalendar from '../../components/TimeSheet/WeekCalendar';
 import TimeEntry from '../../components/TimeEntry/TimeEntry';
 import {useTimeKeeperAPI} from '../../utils/services';
-import {Alert, Badge, Form, Modal} from 'antd';
+import {Alert, Badge, Form, Modal, Radio} from 'antd';
 import TimeEntryForm from '../../components/TimeEntry/TimeEntryForm';
 import moment from 'moment';
 import UserTimeSheetList from '../../components/TimeSheet/UserTimeSheetList';
 import MonthCalendar from "../../components/TimeSheet/MonthCalendar";
-
+import CalendarSelectionMode from "../../components/TimeSheet/CalendarSelectionMode";
 
 const TimeEntriesPage = () => {
+  const [calendarMode, setCalendarMode] = useState('week');
   const firstDayOfCurrentWeek = moment().utc().startOf('week').add(1, 'day');
   const today = () => firstDayOfCurrentWeek.clone();
   const [currentWeekNumber, setCurrentWeekNumber] = useState(() => {
@@ -87,11 +88,17 @@ const TimeEntriesPage = () => {
     setTaskMoment(m);
     setViewMode(true);
     openModal();
-  }
+  };
 
+  const removeDuplicatesElementAndSort = (array) => {
+    const set = new Set(array);
+    const arraySorted = [...set].sort((a, b) => a.localeCompare(b));
+    return arraySorted;
+  };
 
   return (
     <MainPage title="Time entries">
+
       <Modal
         visible={visibleEntryModal}
         onCancel={closeModal}
@@ -107,39 +114,46 @@ const TimeEntriesPage = () => {
       </Modal>
       <UserTimeSheetList timeSheets={timeEntries}/>
 
-      <MonthCalendar
-        onClickAddTask={onClickAddTask}
-        onSelect={moment => onClickCard(null , moment)}
-        days={datas.days}
-        dateCellRender={(data) => data.filter(data => !!data).map(item => item.project.name).map(item =>
-          <div>
-            <Badge status='success' text={item}/>
-          </div>)}
-        disabledWeekEnd={true}
-        warningCardPredicate={warningCardPredicate}
-      />
+      <CalendarSelectionMode onChange={e => setCalendarMode(e.target.value)}/>
+      {
+        calendarMode === 'week' ?
+          <WeekCalendar
+            firstDay={datas.firstDayOfWeek}
+            disabledWeekEnd={true}
+            hiddenButtons={false}
+            onPanelChange={(id, start) => setCurrentWeekNumber(start.year() + '?weekNumber=' + start.isoWeek())}
+            onClickAddTask={onClickAddTask}
+            onClickCard={onClickCard}
+            dateCellRender={(data) => {
+              return (
+                <div>
+                  {data.filter(data => !!data).map(entry => {
+                    return (
+                      <TimeEntry key={entry.id} entry={entry}/>
+                    );
+                  })}
+                </div>
+              );
+            }}
+            days={datas.days}
+            warningCardPredicate={warningCardPredicate}
+          /> :
+          <MonthCalendar
+            onClickAddTask={onClickAddTask}
+            days={datas.days}
+            dateCellRender={(data) => removeDuplicatesElementAndSort(
+              data.filter(data => !!data).map(item => item.project.name)
+            )
+              .map(item =>
+              <div>
+                <Badge status='success' text={item}/>
+              </div>)}
+            disabledWeekEnd={true}
+            warningCardPredicate={warningCardPredicate}
+          />
+      }
 
-      <WeekCalendar
-        firstDay={datas.firstDayOfWeek}
-        disabledWeekEnd={true}
-        hiddenButtons={false}
-        onPanelChange={(id, start) => setCurrentWeekNumber(start.year() + '?weekNumber=' + start.isoWeek())}
-        onClickAddTask={onClickAddTask}
-        onClickCard={onClickCard}
-        dateCellRender={(data) => {
-          return (
-            <div>
-              {data.filter(data => !!data).map(entry => {
-                return (
-                  <TimeEntry key={entry.id} entry={entry}/>
-                );
-              })}
-            </div>
-          );
-        }}
-        days={datas.days}
-        warningCardPredicate={warningCardPredicate}
-      />
+
     </MainPage>
   );
 };
