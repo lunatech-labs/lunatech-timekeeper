@@ -60,10 +60,10 @@ class EventResourceTest {
         create(adminToken);
         create(getUserAccessToken());
         //WHEN: an eventTemplate is created with the 1 attendee
-        EventTemplateRequest newEventTemplate = generateTestEventRequest(1L,2L);
+        EventTemplateRequest newEventTemplate = generateTestEventRequest(1L);
         create(newEventTemplate,adminToken);
         //THEN: userEvent of attendees are created
-        EventTemplateResponse expectedResponse = generateExpectedEventTemplateResponse(1L,Map.of(1L,2L,2L,1L));
+        EventTemplateResponse expectedResponse = generateExpectedEventTemplateResponse(1L,Map.of(1L,1L));
         EventTemplateResponse actual = Arrays.asList(getValidation(EventDef.uri, adminToken, Response.Status.OK).extract().as(EventTemplateResponse[].class)).get(0);
         actual.getAttendees().sort(Comparator.comparingLong(EventTemplateResponse.UserEventResponse::getId));
         assertThat(timeKeeperTestUtils.toJson(actual), is(timeKeeperTestUtils.toJson(expectedResponse)));
