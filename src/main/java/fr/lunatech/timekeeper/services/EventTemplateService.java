@@ -40,7 +40,7 @@ public class EventTemplateService {
         return streamAll(ctx,EventTemplateResponse::bind, Collectors.toList());
     }
 
-    public List<UserResponse> getAssociatedUsers(Long eventId){
+    public List<UserResponse> getAttendees(Long eventId){
         Stream<UserEvent> stream = UserEvent.stream("eventtemplate_id=?1", eventId);
         return stream.map(userEvent -> userEvent.owner)
                 .map(UserResponse::bind)
@@ -66,7 +66,7 @@ public class EventTemplateService {
             return Optional.empty();
         }
         // delete all userEvent associated to the previous state of this event template
-        deleteAssociatedUserEvent(maybeEvent.get());
+        deleteAttendees(maybeEvent.get());
 
         // actually update the event. by side effect every userEvent associated will be created
         EventTemplate eventTemplateUpdated = request.unbind(maybeEvent.get(),userService::findById, ctx);
@@ -95,8 +95,8 @@ public class EventTemplateService {
 
     // docs : https://quarkus.io/guides/transaction
     @Transactional(MANDATORY)
-    private void deleteAssociatedUserEvent(EventTemplate event) {
-        event.associatedUserEvents
+    private void deleteAttendees(EventTemplate event) {
+        event.attendees
                 .forEach(PanacheEntityBase::delete);
     }
 }

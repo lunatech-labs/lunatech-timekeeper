@@ -47,7 +47,7 @@ public class EventTemplate extends PanacheEntityBase {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "eventTemplate")
     @NotNull
-    public Set<UserEvent> associatedUserEvents;
+    public Set<UserEvent> attendees;
 
     @Override
     public String toString() {
@@ -58,12 +58,12 @@ public class EventTemplate extends PanacheEntityBase {
                 ", organization=" + organization +
                 ", startDateTime=" + startDateTime +
                 ", endDateTime=" + endDateTime +
-                ", associatedEvents=" + associatedUserEvents +
+                ", attendees=" + attendees +
                 '}';
     }
 
-    public Optional<UserEvent> getAssociatedUserEvents(Long id) {
-        return ofNullable(associatedUserEvents)
+    public Optional<UserEvent> getAttendees(Long id) {
+        return ofNullable(attendees)
                 .flatMap(userEvents -> userEvents
                         .stream()
                         .filter(userEvent -> Objects.equals(userEvent.owner.id,id))

@@ -39,7 +39,7 @@ public class EventResource implements EventResourceApi {
     @RolesAllowed({"user", "admin"})
     @Override
     public List<UserResponse> getEventUsers(Long id) {
-        return eventTemplateService.getAssociatedUsers(id);
+        return eventTemplateService.getAttendees(id);
     }
 
     @RolesAllowed({"user", "admin"})

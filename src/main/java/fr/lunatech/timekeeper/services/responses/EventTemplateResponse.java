@@ -31,7 +31,7 @@ public class EventTemplateResponse {
     private final LocalDateTime endDateTime;
 
     @Null
-    private final List<UserEventResponse> associatedUserEvents;
+    private final List<UserEventResponse> attendees;
 
 
     public EventTemplateResponse(
@@ -40,19 +40,19 @@ public class EventTemplateResponse {
             @NotNull String description,
             @NotNull LocalDateTime startDateTime,
             @Null LocalDateTime endDateTime,
-            @Null List<UserEventResponse> associatedUserEvents
+            @Null List<UserEventResponse> attendees
     ) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
-        this.associatedUserEvents = associatedUserEvents;
+        this.attendees = attendees;
     }
 
 
     public static EventTemplateResponse bind(@NotNull EventTemplate eventTemplate) {
-        List<UserEventResponse> associatedUserEvents = eventTemplate.associatedUserEvents
+        List<UserEventResponse> attendees = eventTemplate.attendees
                 .stream()
                 .map(UserEventResponse::bind)
                 .collect(Collectors.toList());
@@ -62,7 +62,7 @@ public class EventTemplateResponse {
                 eventTemplate.description,
                 eventTemplate.startDateTime,
                 eventTemplate.endDateTime,
-                associatedUserEvents
+                attendees
         );
     }
 
@@ -76,10 +76,8 @@ public class EventTemplateResponse {
 
     public LocalDateTime getEndDateTime() { return endDateTime; }
 
-    public List<UserEventResponse> getAssociatedUserEvents() { return associatedUserEvents; }
+    public List<UserEventResponse> getAttendees() { return attendees; }
 
-
-    // TODO add  userID of User as 'ownerID' + test it
     public static final class UserEventResponse {
 
         @NotNull
@@ -101,19 +99,24 @@ public class EventTemplateResponse {
         @NotNull
         private final LocalDateTime endDateTime;
 
+        @NotNull
+        private final Long userId;
+
         public UserEventResponse(
                 @NotNull Long id,
                 @NotNull String name,
                 @NotNull String description,
                 @NotNull EventType eventType,
                 @NotNull LocalDateTime startDateTime,
-                @NotNull LocalDateTime endDateTime) {
+                @NotNull LocalDateTime endDateTime,
+                @NotNull Long userId) {
             this.id = id;
             this.name = name;
             this.description = description;
             this.eventType = eventType;
             this.startDateTime = startDateTime;
             this.endDateTime = endDateTime;
+            this.userId = userId;
         }
 
         public static UserEventResponse bind(@NotNull UserEvent userEvent) {
@@ -123,7 +126,8 @@ public class EventTemplateResponse {
                     userEvent.description,
                     userEvent.eventType,
                     userEvent.startDateTime,
-                    userEvent.endDateTime
+                    userEvent.endDateTime,
+                    userEvent.owner.id
             );
         }
 
@@ -140,6 +144,8 @@ public class EventTemplateResponse {
 
         public LocalDateTime getEndDateTime() { return endDateTime; }
 
+        public Long getUserId() { return userId; }
+
         @Override
         public String toString() {
             return "UserEventResponse{" +
@@ -147,6 +153,7 @@ public class EventTemplateResponse {
                     ", name='" + name + '\'' +
                     ", description='" + description + '\'' +
                     ", eventType=" + eventType +
+                    ", userId=" + userId +
                     '}';
         }
     }
@@ -159,7 +166,7 @@ public class EventTemplateResponse {
                 ", description='" + description + '\'' +
                 ", startDateTime=" + startDateTime +
                 ", endDateTime=" + endDateTime +
-                ", associatedUserEvents=" + associatedUserEvents +
+                ", attendees=" + attendees +
                 '}';
     }
 

@@ -30,11 +30,11 @@ public enum ResourceDefinition {
         this.typeDef = typeDef;
     }
 
-    public String uriWithid(Long id) {
-        return uriWithid(id, Collections.emptyMap());
+    public String uriPlusId(Long id) {
+        return uriPlusId(id, Collections.emptyMap());
     }
 
-    public String uriWithid(Long id, Map<String, String> params) {
+    public String uriPlusId(Long id, Map<String, String> params) {
         return String.format("%s/%s", this.uri, id) + paramUrlResolver(params);
     }
 

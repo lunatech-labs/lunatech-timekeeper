@@ -162,7 +162,7 @@ public class PersonalTimesheetsResourceTest {
                 startDay2,
                 endDay2
         );
-        update(updatedTimeSheet, TimeSheetDef.uriWithid(1L), jimmyToken);
+        update(updatedTimeSheet, TimeSheetDef.uriPlusId(1L), jimmyToken);
         create(1L, jimmyEntryDay1, jimmyToken);
         create(1L, jimmyEntryDay2, jimmyToken);
 

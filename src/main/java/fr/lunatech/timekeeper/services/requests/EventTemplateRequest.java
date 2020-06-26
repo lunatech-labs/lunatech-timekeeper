@@ -35,20 +35,20 @@ public final class EventTemplateRequest {
     private final LocalDateTime endDateTime;
 
     @NotNull
-    private final List<UserEventRequest> associatedUserEvents;
+    private final List<UserEventRequest> attendees;
 
     public EventTemplateRequest(
             @NotBlank String name,
             @NotNull String description,
             @NotNull LocalDateTime startDateTime,
             @NotNull LocalDateTime endDateTime,
-            @NotNull List<UserEventRequest> associatedUserEvents
+            @NotNull List<UserEventRequest> attendees
     ) {
         this.name = name;
         this.description = description;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
-        this.associatedUserEvents = associatedUserEvents;
+        this.attendees = attendees;
     }
 
     public EventTemplate unbind(
@@ -61,7 +61,7 @@ public final class EventTemplateRequest {
         eventTemplate.description = getDescription();
         eventTemplate.startDateTime = getStartDateTime();
         eventTemplate.endDateTime = getEndDateTime();
-        eventTemplate.associatedUserEvents = getAssociatedUserEvents()
+        eventTemplate.attendees = getAttendees()
                 .stream()
                 .map(userEventRequest -> userEventRequest.unbind(eventTemplate, findUser, ctx))
                 .collect(Collectors.toSet());
@@ -90,8 +90,8 @@ public final class EventTemplateRequest {
         return endDateTime;
     }
 
-    public List<UserEventRequest> getAssociatedUserEvents() {
-        return associatedUserEvents;
+    public List<UserEventRequest> getAttendees() {
+        return attendees;
     }
 
     /* 👤 UserEventRequest */
@@ -110,7 +110,7 @@ public final class EventTemplateRequest {
                 @NotNull BiFunction<Long, AuthenticationContext, Optional<User>> findUser,
                 @NotNull AuthenticationContext ctx
         ) {
-            final var userEvent = eventTemplate.getAssociatedUserEvents(getUserId()).orElse(new UserEvent());
+            final var userEvent = eventTemplate.getAttendees(getUserId()).orElse(new UserEvent());
             userEvent.name = eventTemplate.name;
             userEvent.description = eventTemplate.description;
             userEvent.eventType = EventType.COMPANY;
