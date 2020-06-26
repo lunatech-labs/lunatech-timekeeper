@@ -24,10 +24,25 @@ import static javax.ws.rs.core.HttpHeaders.LOCATION;
 @Path("/events")
 public interface EventResourceApi {
 
+
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Retrieve an Event",
+            description = "Retrieve the event details with all it's attendees")
+    @Tag(ref = "events")
+    @APIResponses(value = {
+            @APIResponse(
+                    responseCode = "200",
+                    description = "Event retrieved"
+            )
+    })
+    EventTemplateResponse getEventById(@PathParam("id") Long id);
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Retrieve all Event template",
-            description = "Retrieve the list of event template.")
+    @Operation(summary = "Retrieve all Events",
+            description = "Retrieve the list of existing events for you organization")
     @Tag(ref = "events")
     @APIResponses(value = {
             @APIResponse(
@@ -40,8 +55,8 @@ public interface EventResourceApi {
     @GET
     @Path("/{id}/users")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Retrieve all users concerned by a specific event",
-            description = "Retrieve all users details concerned by the event")
+    @Operation(summary = "Retrieve all attendees of an event",
+            description = "Retrieve all attendees details concerned by the event")
     @Tag(ref = "events")
     @APIResponses(value = {
             @APIResponse(
@@ -57,8 +72,8 @@ public interface EventResourceApi {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Create a new event template",
-            description = "Create an event template")
+    @Operation(summary = "Create an event",
+            description = "Create a new event")
     @Tag(ref = "events")
     @APIResponses(value = {
             @APIResponse(
@@ -74,7 +89,7 @@ public interface EventResourceApi {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Update a event template",
+    @Operation(summary = "Update an event",
             description = "Update and event details")
     @Tag(ref = "events")
     @APIResponses(value = {

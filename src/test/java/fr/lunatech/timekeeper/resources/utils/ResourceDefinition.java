@@ -18,7 +18,9 @@ public enum ResourceDefinition {
     TimeSheetPerProjectPerUserDef("/api/projects/%d/users/%d", apply(Void.class, TimeSheetResponse.class)),
     TimeEntryDef("/api/timeSheet/%d/timeEntry/%s", apply(TimeEntryPerDayRequest.class, Void.class)),
     TimeSheetDef("/api/time-sheets", apply(TimeSheetRequest.class, TimeSheetResponse.class)),
-    PersonalTimeSheetsDef("/api/my/%d?weekNumber=%d", apply(Void.class, WeekResponse.class));
+    PersonalTimeSheetsDef("/api/my/%d?weekNumber=%d", apply(Void.class, WeekResponse.class)),
+    EventDef("api/events", apply(EventTemplateRequest.class,EventTemplateResponse.class)),
+    EventUsersDef("api/events/%d/users", apply(Void.class,UserResponse.class));
 
     final public String uri;
     final public TypeDefinition typeDef;

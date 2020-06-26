@@ -24,6 +24,12 @@ public class EventResource implements EventResourceApi {
     @Inject
     AuthenticationContextProvider authentication;
 
+    @Override
+    public EventTemplateResponse getEventById(Long id) {
+        return eventTemplateService.getById(id, authentication.context())
+                .orElseThrow(NotFoundException::new);
+    }
+
     @RolesAllowed({"user", "admin"})
     @Override
     public List<EventTemplateResponse> getAllEvents() {

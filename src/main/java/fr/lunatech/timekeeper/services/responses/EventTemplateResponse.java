@@ -79,6 +79,7 @@ public class EventTemplateResponse {
     public List<UserEventResponse> getAssociatedUserEvents() { return associatedUserEvents; }
 
 
+    // TODO add  userID of User as 'ownerID' + test it
     public static final class UserEventResponse {
 
         @NotNull

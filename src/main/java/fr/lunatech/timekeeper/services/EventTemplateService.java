@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,8 +30,21 @@ public class EventTemplateService {
     @Inject
     UserService userService;
 
+    public Optional<EventTemplateResponse> getById(Long id, AuthenticationContext context) {
+        return EventTemplate.<EventTemplate>findByIdOptional(id)
+                .filter(context::canAccess)
+                .map(EventTemplateResponse::bind);
+    }
+
     public List<EventTemplateResponse> listAllResponses(AuthenticationContext ctx){
         return streamAll(ctx,EventTemplateResponse::bind, Collectors.toList());
+    }
+
+    public List<UserResponse> getAssociatedUsers(Long eventId){
+        Stream<UserEvent> stream = UserEvent.stream("eventtemplate_id=?1", eventId);
+        return stream.map(userEvent -> userEvent.owner)
+                .map(UserResponse::bind)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -44,14 +56,6 @@ public class EventTemplateService {
         eventTemplate.persistAndFlush();
         return eventTemplate.id;
     }
-
-    public List<UserResponse> getAssociatedUsers(Long eventId){
-        Stream<UserEvent> stream = UserEvent.stream("eventtemplate_id=?1", eventId);
-        return stream.map(userEvent -> userEvent.owner)
-                .map(UserResponse::bind)
-                .collect(Collectors.toList());
-    }
-
 
     @Transactional
     public Optional<Long> update(Long id, EventTemplateRequest request, AuthenticationContext ctx){
@@ -65,7 +69,7 @@ public class EventTemplateService {
         deleteAssociatedUserEvent(maybeEvent.get());
 
         // actually update the event. by side effect every userEvent associated will be created
-        EventTemplate eventTemplateUpdated = request.unbind(userService::findById, ctx);
+        EventTemplate eventTemplateUpdated = request.unbind(maybeEvent.get(),userService::findById, ctx);
         eventTemplateUpdated.persistAndFlush();
 
         return Optional.of(eventTemplateUpdated.id);
@@ -74,13 +78,6 @@ public class EventTemplateService {
     private Optional<EventTemplate> findById(Long id, AuthenticationContext ctx) {
         return EventTemplate.<EventTemplate>findByIdOptional(id)
                 .filter(ctx::canAccess);
-    }
-
-    // docs : https://quarkus.io/guides/transaction
-    @Transactional(MANDATORY)
-    private void deleteAssociatedUserEvent(EventTemplate event) {
-        event.associatedUserEvents
-                .forEach(PanacheEntityBase::delete);
     }
 
     <R extends Collection<EventTemplateResponse>> R streamAll(
@@ -94,5 +91,12 @@ public class EventTemplateService {
                     .map(bind)
                     .collect(collector);
         }
+    }
+
+    // docs : https://quarkus.io/guides/transaction
+    @Transactional(MANDATORY)
+    private void deleteAssociatedUserEvent(EventTemplate event) {
+        event.associatedUserEvents
+                .forEach(PanacheEntityBase::delete);
     }
 }

@@ -45,7 +45,7 @@ public class EventTemplate extends PanacheEntityBase {
     @Null
     public LocalDateTime endDateTime;
 
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "eventTemplate")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eventTemplate")
     @NotNull
     public Set<UserEvent> associatedUserEvents;
 
