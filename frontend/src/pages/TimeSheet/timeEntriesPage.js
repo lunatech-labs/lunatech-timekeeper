@@ -74,9 +74,10 @@ const TimeEntriesPage = () => {
 
   // A day without entries in the past should be displayed with "warn" design
   const hasWarnNoEntryInPastDay =(date,day) => {
+    console.log(date.format("YYYY-MM-DD"))
+    console.log(moment().subtract('1','days').isAfter(date))
     return moment().subtract('1','days').isAfter(date) && !day;
   };
-  const warningCardPredicate = (date, data) => hasWarnNoEntryInPastDay(date,data);
 
   const onClickAddTask = (e, m) => {
     setTaskMoment(m);
@@ -135,7 +136,7 @@ const TimeEntriesPage = () => {
               );
             }}
             days={datas.days}
-            warningCardPredicate={warningCardPredicate}
+            warningCardPredicate={hasWarnNoEntryInPastDay}
           /> :
           <MonthCalendar
             onClickAddTask={onClickAddTask}
@@ -148,7 +149,7 @@ const TimeEntriesPage = () => {
                 </div>);
             }}
             disabledWeekEnd={true}
-            warningCardPredicate={warningCardPredicate}
+            warningCardPredicate={hasWarnNoEntryInPastDay}
           />
       }
 
