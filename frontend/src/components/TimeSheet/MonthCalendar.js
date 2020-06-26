@@ -90,7 +90,7 @@ const MonthCalendar = (props) => {
       dateCellRender={moment => {
         const day = findData(moment);
         const className = !day || (props.warningCardPredicate && props.warningCardPredicate(day.date, day.data)) ?
-          'tk_CardWeekCalendar_Body tk_CardWeekCalendar_Body_With_Warn' : 'tk_CardWeekCalendar_Body';
+          'tk_CardWeekCalendar_Body_With_Warn' : '';
         return (
           <div className={className}>
             <Button
