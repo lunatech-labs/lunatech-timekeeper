@@ -81,14 +81,20 @@ const ShowProject = ({project, onSuccessJoinProject}) => {
 
   const isMember = !!project.users.find(item => currentUser.id === item.id);
   const showJoinButton = project.publicAccess && !isMember;
+
   return (
     <div>
       <ModalTimeSheet/>
       <CardLg>
-        <Title level={2}>{project.name}</Title>
+        <div className="tk_CardLg_Top">
+          <Title level={2}>{project.name}</Title>
+          {showJoinButton && <Button className="tk_Link" type="link" onClick={() => timeKeeperAPIPutJoin.run()}>Join the project</Button>}
+        </div>
         <Row gutter={32}>
           <Col span={12}>
-            <TitleSection title="Information"/>
+            <div>
+              <TitleSection title="Information"/>
+            </div>
             <Row gutter={32}>
               <Col span={12}>
                 <p className="tk_ProjectAtt"><DesktopOutlined/> Client: <TagProjectClient client={project.client}/></p>
@@ -104,7 +110,6 @@ const ShowProject = ({project, onSuccessJoinProject}) => {
           </Col>
           <Col span={12}>
             <TitleSection title="Members"/>
-            {showJoinButton && <Button onClick={() => timeKeeperAPIPutJoin.run()}>Join the project</Button>}
             <Members/>
           </Col>
         </Row>
