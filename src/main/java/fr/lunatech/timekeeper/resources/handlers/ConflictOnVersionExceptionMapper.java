@@ -1,7 +1,6 @@
 package fr.lunatech.timekeeper.resources.handlers;
 
 import fr.lunatech.timekeeper.resources.exceptions.ConflictOnVersionException;
-import fr.lunatech.timekeeper.resources.exceptions.UpdateResourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
