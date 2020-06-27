@@ -86,7 +86,7 @@ class UserResourceTest {
         var client1 = create(new ClientRequest("NewClient", "NewDescription"), samToken);
 
         // Create a Project
-        var project10 = create(new ProjectRequest("Some Project", true, "some description", client1.getId(), true, emptyList()), samToken);
+        var project10 = create(new ProjectRequest("Some Project", true, "some description", client1.getId(), true, emptyList(), 1L), samToken);
 
         // Check that jimmy has no project yet
         getValidation(UserDef.uriPlusId(jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(jimmy)));
@@ -101,7 +101,8 @@ class UserResourceTest {
                 , "updated description"
                 , client1.getId()
                 , true
-                , newUsers);
+                , newUsers
+        , 1L);
 
         update(updatedProjectWithTwoUsers, ProjectDef.uriPlusId(project10.getId()), samToken);
 
@@ -141,7 +142,7 @@ class UserResourceTest {
         var client1 = create(new ClientRequest("NewClient", "NewDescription"), samToken);
 
         // Create a Project
-        var project10 = create(new ProjectRequest("Some Project", true, "some description", client1.getId(), true, emptyList()), samToken);
+        var project10 = create(new ProjectRequest("Some Project", true, "some description", client1.getId(), true, emptyList(), 1L), samToken);
 
         // Check that teamLeadUser has no project yet
         getValidation(UserDef.uriPlusId(teamLeadUser.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(teamLeadUser)));
@@ -158,7 +159,8 @@ class UserResourceTest {
                 , "updated description"
                 , client1.getId()
                 , false
-                , newUsers);
+                , newUsers
+        , 1L);
 
         update(updatedProjectWithTwoUsers, ProjectDef.uriPlusId(project10.getId()), samToken);
 
