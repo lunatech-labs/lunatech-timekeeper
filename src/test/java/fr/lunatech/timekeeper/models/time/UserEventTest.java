@@ -61,7 +61,7 @@ public class UserEventTest {
 
         final var client = create(new ClientRequest("NewClient UET", "Un client créé en tant qu'admin"), adminToken);
 
-        final var project = create(new ProjectRequest("Some Project", true, "un projet peut aussi etre créé par un user", client.getId(), true, emptyList()), userAccessToken);
+        final var project = create(new ProjectRequest("Some Project", true, "un projet peut aussi etre créé par un user", client.getId(), true, emptyList(), 1L), userAccessToken);
 
         getValidation(ProjectDef.uriWithid(project.getId()), userAccessToken, OK).body(is(timeKeeperTestUtils.toJson(project)));
 
@@ -110,7 +110,7 @@ public class UserEventTest {
         final String userAccessToken = getUserAccessToken();
 
         final var client = create(new ClientRequest("NewClient UET2", "Un client"), adminToken);
-        final var project = create(new ProjectRequest("Some Project 2", true, "un projet de test", client.getId(), true, emptyList()), userAccessToken);
+        final var project = create(new ProjectRequest("Some Project 2", true, "un projet de test", client.getId(), true, emptyList(), 1L), userAccessToken);
 
         getValidation(ProjectDef.uriWithid(project.getId()), userAccessToken, OK).body(is(timeKeeperTestUtils.toJson(project)));
 

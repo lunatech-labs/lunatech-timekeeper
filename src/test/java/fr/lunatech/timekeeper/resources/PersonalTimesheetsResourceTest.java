@@ -66,7 +66,7 @@ public class PersonalTimesheetsResourceTest {
         ProjectRequest.ProjectUserRequest jimmyProjectRequest = new ProjectRequest.ProjectUserRequest(jimmy.getId(), false);
 
         List<ProjectRequest.ProjectUserRequest> newUsers = List.of(jimmyProjectRequest);
-        final var project = create(new ProjectRequest("Disney Content API", true, "Project for the backend system", client.getId(), true, newUsers), adminToken);
+        final var project = create(new ProjectRequest("Disney Content API", true, "Project for the backend system", client.getId(), true, newUsers, 1L), adminToken);
 
         WeekResponse response = new WeekResponse(LocalDate.of(2020, 5, 25), Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
 
@@ -84,7 +84,7 @@ public class PersonalTimesheetsResourceTest {
         ProjectRequest.ProjectUserRequest jimmyProjectRequest = new ProjectRequest.ProjectUserRequest(jimmy.getId(), false);
 
         List<ProjectRequest.ProjectUserRequest> newUsers = List.of(jimmyProjectRequest);
-        final var project = create(new ProjectRequest("Disney Content API", true, "Project for the backend system", client.getId(), true, newUsers), adminToken);
+        final var project = create(new ProjectRequest("Disney Content API", true, "Project for the backend system", client.getId(), true, newUsers, 1L), adminToken);
 
         final List<ProjectResponse.ProjectUserResponse> expectedProjectUsers = List.of(
                 new ProjectResponse.ProjectUserResponse(jimmy.getId()
@@ -99,7 +99,9 @@ public class PersonalTimesheetsResourceTest {
                 , project.getDescription()
                 , new ProjectResponse.ProjectClientResponse(client.getId(), client.getName())
                 , expectedProjectUsers
-                , project.isPublicAccess());
+                , project.isPublicAccess()
+                , 1L
+        );
 
 
         final var timesheet = new TimeSheetResponse(1L, projectResponse, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null);
@@ -122,7 +124,7 @@ public class PersonalTimesheetsResourceTest {
         ProjectRequest.ProjectUserRequest jimmyProjectRequest = new ProjectRequest.ProjectUserRequest(jimmy.getId(), false);
 
         List<ProjectRequest.ProjectUserRequest> newUsers = List.of(jimmyProjectRequest);
-        final var project = create(new ProjectRequest("Disney Content API", true, "Project for the backend system", client.getId(), true, newUsers), adminToken);
+        final var project = create(new ProjectRequest("Disney Content API", true, "Project for the backend system", client.getId(), true, newUsers, 1L), adminToken);
         final var projectResponse = new ProjectResponse(project.getId()
                 , project.getName()
                 , project.isBillable()
@@ -134,7 +136,9 @@ public class PersonalTimesheetsResourceTest {
                         , jimmy.getPicture()
                 )
         )
-                , project.isPublicAccess());
+                , project.isPublicAccess()
+                , 1L
+        );
 
         //WHEN: the timeSheet have a maxDuration of 10 days and jimmy add 2 entry of 1 day
         TimeSheetRequest updatedTimeSheet = new TimeSheetRequest(
