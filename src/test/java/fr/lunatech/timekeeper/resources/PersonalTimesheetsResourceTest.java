@@ -1,11 +1,9 @@
 package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
-import fr.lunatech.timekeeper.services.requests.ClientRequest;
-import fr.lunatech.timekeeper.services.requests.ProjectRequest;
-import fr.lunatech.timekeeper.services.requests.TimeEntryRequest;
-import fr.lunatech.timekeeper.services.requests.TimeSheetRequest;
+import fr.lunatech.timekeeper.services.requests.*;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
+import fr.lunatech.timekeeper.services.requests.TimeEntryRequest;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import fr.lunatech.timekeeper.services.responses.UserResponse;
 import fr.lunatech.timekeeper.services.responses.WeekResponse;
@@ -151,7 +149,7 @@ public class PersonalTimesheetsResourceTest {
         LocalDateTime endDay2 = LocalDateTime.of(2020, 6, 19, 16, 0);
         TimeEntryRequest jimmyEntry1 = new TimeEntryRequest(commentDay, startDay1, 8);
         TimeEntryRequest jimmyEntry2 = new TimeEntryRequest(commentDay, startDay2, 8);
-        update(updatedTimeSheet, TimeSheetDef.uriWithid(1L), jimmyToken);
+        update(updatedTimeSheet, TimeSheetDef.uriPlusId(1L), jimmyToken);
         create(1L, jimmyEntry1, jimmyToken);
         create(1L, jimmyEntry2, jimmyToken);
 

@@ -6,8 +6,6 @@ import fr.lunatech.timekeeper.resources.KeycloakTestResource;
 import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
 import fr.lunatech.timekeeper.services.requests.ClientRequest;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
-import io.quarkus.hibernate.orm.panache.Panache;
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -54,7 +52,7 @@ public class UserEventTest {
     }
 
     @Test
-    public void shouldNotDeleteUserEventIfAssociatedUserIsDeleted() throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+    public void shouldNotDeleteUserEventIfAttendeesIsDeleted() throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
 
         final String adminToken = getAdminAccessToken();
         final String userAccessToken = getUserAccessToken();
@@ -63,7 +61,7 @@ public class UserEventTest {
 
         final var project = create(new ProjectRequest("Some Project", true, "un projet peut aussi etre créé par un user", client.getId(), true, emptyList()), userAccessToken);
 
-        getValidation(ProjectDef.uriWithid(project.getId()), userAccessToken, OK).body(is(timeKeeperTestUtils.toJson(project)));
+        getValidation(ProjectDef.uriPlusId(project.getId()), userAccessToken, OK).body(is(timeKeeperTestUtils.toJson(project)));
 
         // We use Panache directly to manipulate and test the DB
         Organization organisation = Organization.findAll().firstResult();
@@ -112,7 +110,7 @@ public class UserEventTest {
         final var client = create(new ClientRequest("NewClient UET2", "Un client"), adminToken);
         final var project = create(new ProjectRequest("Some Project 2", true, "un projet de test", client.getId(), true, emptyList()), userAccessToken);
 
-        getValidation(ProjectDef.uriWithid(project.getId()), userAccessToken, OK).body(is(timeKeeperTestUtils.toJson(project)));
+        getValidation(ProjectDef.uriPlusId(project.getId()), userAccessToken, OK).body(is(timeKeeperTestUtils.toJson(project)));
 
         // We use Panache directly to manipulate and test the DB
         Organization organisation = Organization.findAll().firstResult();

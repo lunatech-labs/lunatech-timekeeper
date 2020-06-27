@@ -50,7 +50,7 @@ public class OrganizationResourceTest {
         final String clarkToken = getSuperAdminAccessToken();
 
         final var organization = create(new OrganizationRequest("New Organization", "organization.org"), clarkToken);
-        getValidation(OrganizationDef.uriWithid(organization.getId()), clarkToken, OK).body(is(timeKeeperTestUtils.toJson(organization)));
+        getValidation(OrganizationDef.uriPlusId(organization.getId()), clarkToken, OK).body(is(timeKeeperTestUtils.toJson(organization)));
     }
 
     @Test
@@ -69,7 +69,7 @@ public class OrganizationResourceTest {
 
         final Long NO_EXISTING_ORGANIZATION_ID = 243L;
 
-        getValidation(OrganizationDef.uriWithid(NO_EXISTING_ORGANIZATION_ID), clarkToken, NOT_FOUND);
+        getValidation(OrganizationDef.uriPlusId(NO_EXISTING_ORGANIZATION_ID), clarkToken, NOT_FOUND);
     }
 
     @Test
@@ -104,7 +104,7 @@ public class OrganizationResourceTest {
         final String clarkToken = getSuperAdminAccessToken();
 
         final var organization = create(new OrganizationRequest("MyOrga", "organization.org"), clarkToken);
-        update(new OrganizationRequest("MyOrga2", "organization.org"), OrganizationDef.uriWithid(organization.getId()), clarkToken);
+        update(new OrganizationRequest("MyOrga2", "organization.org"), OrganizationDef.uriPlusId(organization.getId()), clarkToken);
 
         final OrganizationResponse expectedOrganization = new OrganizationResponse(
                 organization.getId(),
@@ -114,7 +114,7 @@ public class OrganizationResourceTest {
                 emptyList()
         );
 
-        getValidation(OrganizationDef.uriWithid(organization.getId()), clarkToken, OK).body(is(timeKeeperTestUtils.toJson(expectedOrganization)));
+        getValidation(OrganizationDef.uriPlusId(organization.getId()), clarkToken, OK).body(is(timeKeeperTestUtils.toJson(expectedOrganization)));
     }
 
     @Test
@@ -126,6 +126,6 @@ public class OrganizationResourceTest {
         final var organization = create(new OrganizationRequest("New Organization", "organization.org"), clarkToken);
 
         final OrganizationRequest organization2 = new OrganizationRequest("New Organization 2", "organization.org");
-        putValidation(OrganizationDef.uriWithid(organization.getId()), jimmyToken, organization2, FORBIDDEN);
+        putValidation(OrganizationDef.uriPlusId(organization.getId()), jimmyToken, organization2, FORBIDDEN);
     }
 }
