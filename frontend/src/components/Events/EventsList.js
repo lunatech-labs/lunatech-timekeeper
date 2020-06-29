@@ -66,7 +66,6 @@ const EventsList = () => {
                         <Panel header={<Space
                                 size="small"><UserOutlined/>{item.attendees.length}{" people"}</Space>}
                                key="members">
-                            {console.log(item.attendees)}
                             <List
                                 id={'tk_ProjectMembers'}
                                 dataSource={item.attendees}
