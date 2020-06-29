@@ -1,6 +1,8 @@
 @import '../../main.less';
 
 #tk_WeekCalendar_Head {
+  position: relative;
+  padding-right: 172px;
   .mixin_Flexbox_Basis();
   justify-content: space-between;
   border-bottom: @tk_Border_Base;
@@ -44,7 +46,6 @@
     position: relative;
     .ant-select {
       width: 140px;
-      margin-right: 32px;
       color: @tk_LightGray;
       .ant-select-selector {
         background: none;

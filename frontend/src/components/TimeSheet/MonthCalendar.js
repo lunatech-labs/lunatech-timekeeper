@@ -54,12 +54,9 @@ SelectMonth.propTypes = {
 const MonthNavigator = ({value, onChange}) => {
   return (
     <div>
-      <Button icon={<LeftOutlined/>}
-        onClick={() => onChange(value.clone().subtract(1, 'month'))}/>
-      {value.format('MMM YYYY')}
-
-      <Button icon={<RightOutlined/>}
-        onClick={() => onChange(value.clone().add(1, 'month'))}/>
+      <Button icon={<LeftOutlined/>} onClick={() => onChange(value.clone().subtract(1, 'month'))}/>
+      <Button icon={<RightOutlined/>} onClick={() => onChange(value.clone().add(1, 'month'))}/>
+      <p>{value.format('MMM YYYY')}</p>
     </div>
   );
 };
@@ -75,37 +72,42 @@ const MonthCalendar = (props) => {
   const findData = (date) => props.days.find(day => day.date.isSame(moment(date).utc(), 'day'));
 
   return (
-    <Calendar
-      headerRender={({value, onChange}) => {
-        return (<div>
-          <SelectMonth value={value} onChange={onChange}/>
-          <SelectYear value={value} onChange={onChange}/>
-          <MonthNavigator value={value} onChange={onChange}/>
-        </div>);
-      }}
-      disabledDate={moment => {
-        const day = findData(moment);
-        return isDisabled(day, moment);
-      }}
-      dateCellRender={moment => {
-        const day = findData(moment);
-        const className = !day || (props.warningCardPredicate && props.warningCardPredicate(day.date, day.data)) ?
-          'tk_CardWeekCalendar_Body_With_Warn' : '';
-        return (
-          <div className={className}>
-            <Button
-              shape="circle"
-              disabled={isDisabled(day, moment)}
-              icon={<PlusOutlined/>}
-              onClick={(e) => {
-                props.onClickAddTask && props.onClickAddTask(e, moment);
-                e.stopPropagation();
-              }}/>
-            {day && day.data && props.dateCellRender(day.data, day.date, day.disabled)}
-          </div>
-        );
-      }}
-    />
+    <div id="tk_MonthCalendar">
+      <Calendar
+        headerRender={({value, onChange}) => {
+          return (
+            <div id="tk_MonthCalendar_Head">
+              <MonthNavigator value={value} onChange={onChange}/>
+              <div>
+                <SelectMonth value={value} onChange={onChange}/>
+                <SelectYear value={value} onChange={onChange}/>
+              </div>
+          </div>);
+        }}
+        disabledDate={moment => {
+          const day = findData(moment);
+          return isDisabled(day, moment);
+        }}
+        dateCellRender={moment => {
+          const day = findData(moment);
+          const className = !day || (props.warningCardPredicate && props.warningCardPredicate(day.date, day.data)) ?
+            'tk_CardWeekCalendar_Body_With_Warn' : '';
+          return (
+            <div>
+              <Button
+                shape="circle"
+                disabled={isDisabled(day, moment)}
+                icon={<PlusOutlined/>}
+                onClick={(e) => {
+                  props.onClickAddTask && props.onClickAddTask(e, moment);
+                  e.stopPropagation();
+                }}/>
+              {day && day.data && props.dateCellRender(day.data, day.date, day.disabled)}
+            </div>
+          );
+        }}
+      />
+    </div>
   );
 };
 
