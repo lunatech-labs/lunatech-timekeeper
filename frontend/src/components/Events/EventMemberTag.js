@@ -2,9 +2,7 @@ import React from 'react';
 import './EventMemberTag.less';
 import PropTypes from 'prop-types';
 import {Alert, Avatar, Spin} from 'antd';
-import TagMember from '../Tag/TagMember';
 import CardXs from '../Card/CardXs';
-import CardLg from "../Card/CardLg";
 import {useTimeKeeperAPI} from "../../utils/services";
 
 const EventMemberTag = ({ member }) => {
@@ -32,7 +30,7 @@ const EventMemberTag = ({ member }) => {
         );
     }
 
-    const user = usersResponse.data.filter(user => user.id === member.id);
+    const user = usersResponse.data.filter(user => user.id === member.userId);
     return (
         <CardXs>
             <div>
