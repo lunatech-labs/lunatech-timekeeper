@@ -41,8 +41,7 @@ SelectYear.propTypes = {
 const SelectMonth = ({value, onChange}) => {
   const numberOfMonth = 12; // It is like ant.d
   const options = [...Array(numberOfMonth).keys()].map(i => {
-    const toAdd = i - 6;
-    const nextDate = value.clone().add(toAdd, 'month');
+    const nextDate = value.clone().set({'month': i});
     const formatted = nextDate.format('MMM');
     return <Option key={`select-year-${formatted}`} value={formatted}>{formatted}</Option>;
   });
