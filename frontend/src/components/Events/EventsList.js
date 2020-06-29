@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {useTimeKeeperAPI} from "../../utils/services";
 import {Alert, Card, Collapse, List, Space, Spin} from "antd";
 import UserOutlined from "@ant-design/icons/lib/icons/UserOutlined";
@@ -42,33 +42,31 @@ const EventsList = () => {
         renderItem={item => (
             <List.Item key={item.id}>
                 <Card
-                    id="tk_Card_Sm"
+                    id="tk_CardEvent"
                     bordered={false}
                     title={item.name}
-                    className="tk_Card_Event"
                 >
                     <div className="tk_EventCard_Body">
-                        <p className="tk_EventCard_Desc">{item.description}</p>
-                        <div className="tk_EventCard_Bottom">
+                    <p className="tk_CardEvent_Desc">{item.description}</p>
+                    <div className="tk_CardEvent_Bottom">
+                        <div className="tk_CardEvent_Date">
+                            <CalendarOutlined />
+                            <p>{moment(item.startDateTime, 'YYYY-MM-DD-HH:mm:ss.SSS\'Z\'').utc().format('LLL')}<br />{moment(item.endDateTime, 'YYYY-MM-DD-HH:mm:ss.SSS\'Z\'').utc().format('LLL')}</p>
+                        </div>
+                        <div className="tk_CardEvent_People">
                             <div>
-                                <CalendarOutlined />
-                                <p>{moment(item.startDateTime, 'YYYY-MM-DD-HH:mm:ss.SSS\'Z\'').utc().format('LLL')}<br />{moment(item.endDateTime, 'YYYY-MM-DD-HH:mm:ss.SSS\'Z\'').utc().format('LLL')}</p>
+                                <img src="https://opencollective.com/debug/backer/10/avatar.svg" />
+                                <img src="https://opencollective.com/debug/backer/10/avatar.svg" />
+                                <img src="https://opencollective.com/debug/backer/10/avatar.svg" />
                             </div>
-                            <div>
-                                <div>
-                                    <img src="https://opencollective.com/debug/backer/10/avatar.svg" />
-                                    <img src="https://opencollective.com/debug/backer/10/avatar.svg" />
-                                    <img src="https://opencollective.com/debug/backer/10/avatar.svg" />
-                                </div>
-                                <a href="#">32 people</a>
-                            </div>
+                            <a href="#">32 people</a>
                         </div>
                     </div>
-
                     <Collapse bordered={false} expandIconPosition={'right'} key="projects">
                         <Panel header={<Space
                                 size="small"><UserOutlined/>{item.attendees.length}{" people"}</Space>}
                                key="members">
+                            {console.log(item.attendees)}
                             <List
                                 id={'tk_ProjectMembers'}
                                 dataSource={item.attendees}
@@ -80,6 +78,7 @@ const EventsList = () => {
                             />
                         </Panel>
                     </Collapse>
+                    </div>
                 </Card>
             </List.Item>
         )}

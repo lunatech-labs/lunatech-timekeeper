@@ -1,21 +1,45 @@
 @import '../../main.less';
 
-.tk_EventCard_Body {
-  .mixin_Flexbox_Basis();
-  flex-direction: column;
-  background: red;
-
-  .tk_EventCard_Desc {
-    color: @tk_DarkGray;
+#tk_CardEvent {
+  padding: 20px;
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, .2);
+  .ant-card-head {
+    border-bottom: 0;
+    min-height: initial;
+    padding: 0;
+    .ant-card-head-wrapper {
+      align-items: flex-start;
+      a {
+        color: @tk_LightGray;
+        &:hover {color: @tk_White;}
+      }
+      .ant-card-head-title {padding: 0;}
+      .ant-card-extra {padding: 0;}
+    }
   }
-  .tk_EventCard_Bottom {
-    .mixin_Flexbox_Basis();
-    justify-content: space-between;
-    div:first-child {
+  .ant-card-body {
+    margin: 0;
+    padding: 0;
+    .tk_CardEvent_Desc {
+      color: @tk_LightGray;
+      margin: 10px 0;
+    }
+    .tk_CardEvent_Bottom {
+      .mixin_Flexbox_Basis();
+      justify-content: space-between;
+      .tk_CardEvent_Date {
+        display: flex;
+        span {
+          margin-right: 8px;
+          padding-top: 3px;
+        }
+
+      }
+      .tk_CardEvent_People {
+        background: green;
+      }
 
     }
-    div:nth-child(2) {
 
-    }
   }
 }
