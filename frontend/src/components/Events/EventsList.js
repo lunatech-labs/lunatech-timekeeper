@@ -2,8 +2,10 @@ import React, {useState} from 'react';
 import {useTimeKeeperAPI} from "../../utils/services";
 import {Alert, Card, Collapse, List, Space, Spin} from "antd";
 import UserOutlined from "@ant-design/icons/lib/icons/UserOutlined";
+import CalendarOutlined from "@ant-design/icons/lib/icons/CalendarOutlined";
 import EventMemberTag from "./EventMemberTag";
 import PropTypes from "prop-types";
+import './EventsList.less';
 
 const {Panel} = Collapse;
 
@@ -274,10 +276,29 @@ const EventsList = () => {
                     id="tk_Card_Sm"
                     bordered={false}
                     title={item.name}
+                    className="tk_Card_Event"
                 >
-                    <p>{item.description}</p>
-                    <p>{computeStartDate(item.startDateTime)}</p>
-                    <p>{computeEndDate(item.endDateTime)}</p>
+                    <div className="tk_EventCard_Body">
+                        <p className="tk_EventCard_Desc">{item.description}</p>
+                        <div className="tk_EventCard_Bottom">
+                            <div>
+                                <CalendarOutlined />
+                                <p>{computeStartDate(item.startDateTime)}<br />{computeEndDate(item.endDateTime)}</p>
+                            </div>
+                            <div>
+                                <div>
+                                    <img src="https://opencollective.com/debug/backer/10/avatar.svg" />
+                                    <img src="https://opencollective.com/debug/backer/10/avatar.svg" />
+                                    <img src="https://opencollective.com/debug/backer/10/avatar.svg" />
+                                </div>
+                                <a href="#">32 people</a>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
                     <Collapse bordered={false} expandIconPosition={'right'} key="projects">
                         <Panel header={<Space
                                 size="small"><UserOutlined/>{item.attendees.length}{" people"}</Space>}
