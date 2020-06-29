@@ -1,0 +1,21 @@
+@import '../../main.less';
+
+.tk_EventCard_Body {
+  .mixin_Flexbox_Basis();
+  flex-direction: column;
+  background: red;
+
+  .tk_EventCard_Desc {
+    color: @tk_DarkGray;
+  }
+  .tk_EventCard_Bottom {
+    .mixin_Flexbox_Basis();
+    justify-content: space-between;
+    div:first-child {
+
+    }
+    div:nth-child(2) {
+
+    }
+  }
+}
