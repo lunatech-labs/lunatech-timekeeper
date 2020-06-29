@@ -79,8 +79,6 @@ const TimeEntriesPage = () => {
   const setViewMode = () => setMode('view');
   const setAddMode = () => setMode('add');
 
-  const timeSheetIds = timeSheets.map(timeSheet => timeSheet.id)
-
   return (
     <MainPage title="Time entries">
       <Modal
