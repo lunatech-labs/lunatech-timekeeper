@@ -1,5 +1,11 @@
 @import '../../main.less';
 
+.tk_CardLg_Top {
+  margin-bottom: 15px;
+  .mixin_Flexbox_Basis();
+  justify-content: space-between;
+  h2 {margin-bottom: 0!important;}
+}
 .tk_ProjectAtt {
   margin-bottom: 0;
   padding: 14px 0px;
@@ -8,7 +14,15 @@
   &:last-child {border-top: none;}
   span:first-child {margin-right: 6px;}
 }
-.tk_ProjectDesc {
-  margin-top: 32px;
-
+.tk_ProjectDesc {margin-top: 32px;}
+.tk_Link {
+  color: @tk_Red;
+  height: initial;
+  margin: 0;
+  padding: 0!important;
+  span {text-decoration: underline;}
+  &:hover span {
+    text-decoration: none;
+    color: @tk_Red;
+  }
 }

@@ -15,7 +15,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
-import javax.transaction.UserTransaction;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -25,15 +24,11 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static javax.transaction.Transactional.*;
-import static javax.transaction.Transactional.TxType.*;
+import static javax.transaction.Transactional.TxType.MANDATORY;
 
 @ApplicationScoped
 public class ProjectService {
-    private static Logger logger = LoggerFactory.getLogger(ProjectService.class);
-
-    @Inject
-    UserTransaction transaction;
+    private static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
 
     @Inject
     ClientService clientService;

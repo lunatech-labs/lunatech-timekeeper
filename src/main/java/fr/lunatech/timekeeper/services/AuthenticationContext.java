@@ -1,6 +1,7 @@
 package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.*;
+import fr.lunatech.timekeeper.models.time.EventTemplate;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 
@@ -31,30 +32,40 @@ public final class AuthenticationContext {
         this.profiles = profiles;
     }
 
-    Boolean canAccess(@NotNull Client client) {
-        return Objects.equals(getOrganization().id, client.organization.id);
-    }
-
-    Boolean canAccess(@NotNull TimeSheet timeSheet) {
-        return Objects.equals(getOrganization().id, timeSheet.project.organization.id);
-    }
-
     Boolean canCreate(@NotNull TimeEntry timeEntry) {
         Boolean canAccessTimeSheet = canAccess(timeEntry.timeSheet);
         Boolean isOwner = timeEntry.timeSheet.owner.id.equals(userId);
-        Boolean isAdmin = profiles.contains(Profile.Admin);
-        return canAccessTimeSheet && (isOwner || isAdmin);
+        return canAccessTimeSheet && (isOwner || isAdmin() || isSuperAdmin());
+    }
+
+    Boolean canAccess(@NotNull TimeEntry timeEntry) {
+        return canAccess(timeEntry.timeSheet.project.organization);
     }
 
     Boolean canAccess(@NotNull Organization organization) {
         return isSuperAdmin() || Objects.equals(getOrganization().id, organization.id);
     }
 
+    Boolean canAccess(@NotNull Client client) {
+        return canAccess(client.organization);
+    }
+
+    Boolean canAccess(@NotNull TimeSheet timeSheet) {
+        return canAccess(timeSheet.project.organization);
+    }
+
+    Boolean canAccess(@NotNull User user) {
+        return canAccess(user.organization);
+    }
+
+    Boolean canAccess(@NotNull EventTemplate eventTemplate) {
+        return canAccess(eventTemplate.organization);
+    }
+
     Boolean canAccess(@NotNull Project project) {
-        boolean organizationAccess = Objects.equals(getOrganization().id, project.organization.id);
-        if (!organizationAccess) {
+        if (!canAccess(project.organization)) {
             return false;
-        } else if (profiles.contains(Profile.Admin)) {
+        } else if (isAdmin() || isSuperAdmin()) {
             return true;
         } else if (project.publicAccess) {
             return true;
@@ -74,7 +85,7 @@ public final class AuthenticationContext {
         boolean organizationAccess = Objects.equals(getOrganization().id, project.organization.id);
         if (!organizationAccess) {
             return false;
-        } else if (profiles.contains(Profile.Admin)) {
+        } else if (isAdmin() || isSuperAdmin()) {
             return true;
         } else {
             Optional<ProjectUser> currentProjectUser = project.users.stream()
@@ -93,16 +104,16 @@ public final class AuthenticationContext {
         return organizationAccess && project.publicAccess;
     }
 
-    Boolean canAccess(@NotNull User user) {
-        return Objects.equals(getOrganization().id, user.organization.id);
-    }
-
     static AuthenticationContext bind(@NotNull User user) {
         return new AuthenticationContext(user.id, user.organization, user.profiles);
     }
 
-    public Boolean isSuperAdmin() {
+    private Boolean isSuperAdmin() {
         return profiles.contains(Profile.SuperAdmin);
+    }
+
+    private Boolean isAdmin() {
+        return profiles.contains(Profile.Admin);
     }
 
     public Long getUserId() {

@@ -16,9 +16,11 @@ public enum ResourceDefinition {
     UserDef("/api/users", apply(Void.class, UserResponse.class)),
     ProjectDef("/api/projects", apply(ProjectRequest.class, ProjectResponse.class)),
     TimeSheetPerProjectPerUserDef("/api/projects/%d/users/%d", apply(Void.class, TimeSheetResponse.class)),
-    TimeEntryDef("/api/timeSheet/%d/timeEntry/%s", apply(TimeEntryPerDayRequest.class, Void.class)),
+    TimeEntryDef("/api/timeSheet/%d/timeEntry", apply(TimeEntryRequest.class, Void.class)),
     TimeSheetDef("/api/time-sheets", apply(TimeSheetRequest.class, TimeSheetResponse.class)),
-    PersonalTimeSheetsDef("/api/my/%d?weekNumber=%d", apply(Void.class, WeekResponse.class));
+    PersonalTimeSheetsDef("/api/my/%d?weekNumber=%d", apply(Void.class, WeekResponse.class)),
+    EventDef("api/events", apply(EventTemplateRequest.class,EventTemplateResponse.class)),
+    EventUsersDef("api/events/%d/users", apply(Void.class,UserResponse.class));
 
     final public String uri;
     final public TypeDefinition typeDef;
@@ -28,11 +30,11 @@ public enum ResourceDefinition {
         this.typeDef = typeDef;
     }
 
-    public String uriWithid(Long id) {
-        return uriWithid(id, Collections.emptyMap());
+    public String uriPlusId(Long id) {
+        return uriPlusId(id, Collections.emptyMap());
     }
 
-    public String uriWithid(Long id, Map<String, String> params) {
+    public String uriPlusId(Long id, Map<String, String> params) {
         return String.format("%s/%s", this.uri, id) + paramUrlResolver(params);
     }
 

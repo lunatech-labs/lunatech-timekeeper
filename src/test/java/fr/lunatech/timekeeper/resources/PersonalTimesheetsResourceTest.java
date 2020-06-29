@@ -1,11 +1,9 @@
 package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
-import fr.lunatech.timekeeper.services.requests.ClientRequest;
-import fr.lunatech.timekeeper.services.requests.ProjectRequest;
-import fr.lunatech.timekeeper.services.requests.TimeEntryPerHourRequest;
-import fr.lunatech.timekeeper.services.requests.TimeSheetRequest;
+import fr.lunatech.timekeeper.services.requests.*;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
+import fr.lunatech.timekeeper.services.requests.TimeEntryRequest;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import fr.lunatech.timekeeper.services.responses.UserResponse;
 import fr.lunatech.timekeeper.services.responses.WeekResponse;
@@ -110,7 +108,6 @@ public class PersonalTimesheetsResourceTest {
         getValidation(PersonalTimeSheetsDef.uriWithMultiInt(2020, 21), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(response)));
     }
 
-
     @Test
     void shouldCalculateDaysLeftWhenUserWorkedOnProject() {
         //GIVEN : A project where jimmy is a member
@@ -150,21 +147,11 @@ public class PersonalTimesheetsResourceTest {
         LocalDateTime endDay1 = LocalDateTime.of(2020, 6, 18, 18, 0);
         LocalDateTime startDay2 = LocalDateTime.of(2020, 6, 19, 8, 0);
         LocalDateTime endDay2 = LocalDateTime.of(2020, 6, 19, 16, 0);
-        TimeEntryPerHourRequest jimmyEntryDay1 = new TimeEntryPerHourRequest(
-                commentDay,
-                true,
-                startDay1,
-                endDay1
-        );
-        TimeEntryPerHourRequest jimmyEntryDay2 = new TimeEntryPerHourRequest(
-                commentDay,
-                true,
-                startDay2,
-                endDay2
-        );
-        update(updatedTimeSheet, TimeSheetDef.uriWithid(1L), jimmyToken);
-        create(1L, jimmyEntryDay1, jimmyToken);
-        create(1L, jimmyEntryDay2, jimmyToken);
+        TimeEntryRequest jimmyEntry1 = new TimeEntryRequest(commentDay, startDay1, 8);
+        TimeEntryRequest jimmyEntry2 = new TimeEntryRequest(commentDay, startDay2, 8);
+        update(updatedTimeSheet, TimeSheetDef.uriPlusId(1L), jimmyToken);
+        create(1L, jimmyEntry1, jimmyToken);
+        create(1L, jimmyEntry2, jimmyToken);
 
         TimeSheetResponse.TimeEntryResponse jimmyEntryDay1Response = new TimeSheetResponse.TimeEntryResponse(1L, commentDay, startDay1, endDay1);
         TimeSheetResponse.TimeEntryResponse jimmyEntryDay2Response = new TimeSheetResponse.TimeEntryResponse(2L, commentDay, startDay2, endDay2);
@@ -175,6 +162,4 @@ public class PersonalTimesheetsResourceTest {
         //THEN: the days left should be 8
         getValidation(PersonalTimeSheetsDef.uriWithMultiInt(2020, 25), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(response)));
     }
-
-
 }

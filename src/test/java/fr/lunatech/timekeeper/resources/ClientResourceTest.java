@@ -49,7 +49,7 @@ class ClientResourceTest {
         final String samToken = getAdminAccessToken();
 
         final var client = create(new ClientRequest("NewClient", "NewDescription"), samToken);
-        getValidation(ClientDef.uriWithid(client.getId()), samToken, OK).body(is(timeKeeperTestUtils.toJson(client)));
+        getValidation(ClientDef.uriPlusId(client.getId()), samToken, OK).body(is(timeKeeperTestUtils.toJson(client)));
     }
 
     @Test
@@ -64,7 +64,7 @@ class ClientResourceTest {
     void shouldNotFindUnknownClient() {
         final String jimmyToken = getUserAccessToken();
         final Long NO_EXISTING_CLIENT_ID = 243L;
-        getValidation(ClientDef.uriWithid(NO_EXISTING_CLIENT_ID), jimmyToken, NOT_FOUND);
+        getValidation(ClientDef.uriPlusId(NO_EXISTING_CLIENT_ID), jimmyToken, NOT_FOUND);
 
     }
 
@@ -90,11 +90,11 @@ class ClientResourceTest {
         final String samToken = getAdminAccessToken();
 
         final var client = create(new ClientRequest("NewClient", "NewDescription"), samToken);
-        update(new ClientRequest("NewClient", "NewDescription2"), ClientDef.uriWithid(client.getId()), samToken);
+        update(new ClientRequest("NewClient", "NewDescription2"), ClientDef.uriPlusId(client.getId()), samToken);
 
         final var expectedClient = new ClientResponse(client.getId(), "NewClient", "NewDescription2", emptyList());
 
-        getValidation(ClientDef.uriWithid(client.getId()), samToken, OK).body(is(timeKeeperTestUtils.toJson(expectedClient)));
+        getValidation(ClientDef.uriPlusId(client.getId()), samToken, OK).body(is(timeKeeperTestUtils.toJson(expectedClient)));
     }
 
     @Test
@@ -105,7 +105,7 @@ class ClientResourceTest {
         final var client = create(new ClientRequest("Client created by Sam", "a valid new client"), samToken);
         final ClientRequest client2 = new ClientRequest("Client cannot be modified by user", "Client cannot be modified by user");
 
-        putValidation(ClientDef.uriWithid(client.getId()), jimmyToken, client2, FORBIDDEN);
+        putValidation(ClientDef.uriPlusId(client.getId()), jimmyToken, client2, FORBIDDEN);
 
     }
 }

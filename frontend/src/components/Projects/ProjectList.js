@@ -1,15 +1,12 @@
 import React, {useState} from 'react';
-import {Alert, Avatar, Button, Card, Collapse, Divider, Dropdown, List, Menu, Spin} from 'antd';
+import {Alert, Avatar, Button, Card, Collapse, Divider, Dropdown, List, Menu, Spin, Space} from 'antd';
 import logo from '../../img/logo_timekeeper_homepage.png';
 import {useTimeKeeperAPI} from '../../utils/services';
 import EditFilled from '@ant-design/icons/lib/icons/EditFilled';
 import UserOutlined from '@ant-design/icons/lib/icons/UserOutlined';
 import LockFilled from '@ant-design/icons/lib/icons/LockFilled';
 import UnlockOutlined from '@ant-design/icons/lib/icons/UnlockOutlined';
-
-import Tooltip from 'antd/lib/tooltip';
-
-import Space from 'antd/lib/space';
+import EllipsisOutlined from '@ant-design/icons/lib/icons/EllipsisOutlined';
 import Meta from 'antd/lib/card/Meta';
 
 import './ProjectList.less';
@@ -149,6 +146,18 @@ const ProjectList = () => {
 
   const memberComparator = (m1, m2) => m2.manager - m1.manager;
 
+  const dropdownCardAction = (item, isAdmin) => (
+    <Menu>
+      <Menu.Item key="view">
+        <a href={`/projects/${item.id}`}><EyeFilled/>View</a>
+      </Menu.Item>
+      {isAdmin &&
+      <Menu.Item key="edit">
+        <a href={`/projects/${item.id}/edit`}><EditFilled/>Edit</a>
+      </Menu.Item>}
+    </Menu>
+  );
+
   const DataList = ({data}) => <List
     id="tk_List"
     grid={{gutter: 32, column: 3}}
@@ -161,25 +170,20 @@ const ProjectList = () => {
           title={
             <Space size={'middle'}>
               <Avatar src={logo} shape={'square'} size="large"/>
-              <div className="tk_Card_Sm_Header">
-                <div>
+              <div className="tk_Card_ProjectHeader">
+                <div className="tk_Card_ProjectTitle">
                   <p>{item.name}</p>
                   <p>{item.client ? item.client.name : 'No client'}</p>
                 </div>
-                <p>{item.publicAccess ? <UnlockOutlined/> :
+                <p className="tk_Card_ProjectType">{item.publicAccess ? <UnlockOutlined/> :
                   <LockFilled/>}<span>{item.publicAccess ? ' Public' : ' Private project'}</span></p>
               </div>
             </Space>
           }
           extra={[
-            <Tooltip title="View" key="view">
-              <Button type="link" size="small" ghost shape="circle" icon={<EyeFilled/>} href={`/projects/${item.id}`}/>
-            </Tooltip>,
-            isAdmin &&
-            <Tooltip title="Edit" key="edit">
-              <Button type="link" size="small" ghost shape="circle" icon={<EditFilled/>}
-                href={`/projects/${item.id}/edit`}/>
-            </Tooltip>
+            <Dropdown key={`ant-dropdown-${item.id}`} overlay={dropdownCardAction(item, isAdmin)}>
+              <a className="ant-dropdown-link" onClick={e => e.preventDefault()}><EllipsisOutlined /></a>
+            </Dropdown>,
           ]}
           actions={[item.users.length === 0 ? <Panel id="tk_ProjectNoCollapse" header={<Space
             size="small"><UserOutlined/>{item.users.length}{item.users.length <= 1 ? 'member' : 'members'}</Space>}/> :
@@ -188,10 +192,12 @@ const ProjectList = () => {
                 size="small"><UserOutlined/>{item.users.length}{item.users.length <= 1 ? 'member' : 'members'}</Space>}
               key="members">
                 <List
-                  className={'tk_Project_MemberList'}
+                  id={'tk_ProjectMembers'}
                   dataSource={item.users.sort(((a, b) => memberComparator(a, b)))}
                   renderItem={member => (
-                    <List.Item><ProjectMemberTag member={member}/></List.Item>
+                    <List.Item>
+                      <ProjectMemberTag member={member}/>
+                    </List.Item>
                   )}
                 />
               </Panel>

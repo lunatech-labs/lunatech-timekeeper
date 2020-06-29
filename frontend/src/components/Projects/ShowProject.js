@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import {DesktopOutlined, DollarOutlined, LockOutlined, SnippetsFilled, UserOutlined} from '@ant-design/icons';
 import TitleSection from '../Title/TitleSection';
 import CardLg from '../Card/CardLg';
-import CardMember from '../Card/CardMember';
+import CardXs from '../Card/CardXs';
 import TagMember from '../Tag/TagMember';
 import TagProjectClient from '../Tag/TagProjectClient';
 import ShowTimeSheet from '../TimeSheet/ShowTimeSheet';
@@ -45,7 +45,7 @@ const ShowProject = ({project, onSuccessJoinProject}) => {
         return res === 0 ? u1.name.localeCompare(u2.name) : res;
       });
       return users.map(user =>
-        <CardMember key={`project-member-${user.id}`}>
+        <CardXs key={`project-member-${user.id}`}>
           <div>
             <Avatar src={user.picture}/>
             <p>{user.name}</p>
@@ -60,7 +60,7 @@ const ShowProject = ({project, onSuccessJoinProject}) => {
               }}/>
             </Tooltip>
           </div>
-        </CardMember>
+        </CardXs>
       );
     }
   };
@@ -81,14 +81,20 @@ const ShowProject = ({project, onSuccessJoinProject}) => {
 
   const isMember = !!project.users.find(item => currentUser.id === item.id);
   const showJoinButton = project.publicAccess && !isMember;
+
   return (
     <div>
       <ModalTimeSheet/>
       <CardLg>
-        <Title level={2}>{project.name}</Title>
+        <div className="tk_CardLg_Top">
+          <Title level={2}>{project.name}</Title>
+          {showJoinButton && <Button className="tk_Link" type="link" onClick={() => timeKeeperAPIPutJoin.run()}>Join the project</Button>}
+        </div>
         <Row gutter={32}>
           <Col span={12}>
-            <TitleSection title="Information"/>
+            <div>
+              <TitleSection title="Information"/>
+            </div>
             <Row gutter={32}>
               <Col span={12}>
                 <p className="tk_ProjectAtt"><DesktopOutlined/> Client: <TagProjectClient client={project.client}/></p>
@@ -104,7 +110,6 @@ const ShowProject = ({project, onSuccessJoinProject}) => {
           </Col>
           <Col span={12}>
             <TitleSection title="Members"/>
-            {showJoinButton && <Button onClick={() => timeKeeperAPIPutJoin.run()}>Join the project</Button>}
             <Members/>
           </Col>
         </Row>
