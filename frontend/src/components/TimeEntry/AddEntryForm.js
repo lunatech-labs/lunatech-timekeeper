@@ -86,7 +86,8 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel}) => {
             case 'timeSheetId' : {
                 const timeSheet = timeSheets.find(item => item.id === changedValues.timeSheetId);
                 setSelectedTimeSheet(timeSheet);
-                form.setFieldsValue(timeSheet ? {timeUnit: timeSheet.timeUnit} : {timeUnit: ''});
+                const timeUnit = timeSheet ? timeSheet.timeUnit : '';
+                form.setFieldsValue({timeUnit});
                 form.setFieldsValue(additionalValues(timeSheet.timeUnit, allValues.date, allValues));
                 break;
             }
