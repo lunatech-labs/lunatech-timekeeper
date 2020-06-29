@@ -25,6 +25,7 @@ const SelectYear = ({value, onChange}) => {
   return (
     <Select style={{width: 200}}
       defaultValue={value.format('YYYY')}
+      value={value.format('YYYY')}
       onSelect={(year) => {
         onChange(newValue(year));
       }}>
@@ -55,6 +56,7 @@ const SelectMonth = ({value, onChange}) => {
   return (
     <Select style={{width: 200}}
       defaultValue={value.format('MMM')}
+      value={value.format('MMM')}
       onSelect={value => {
         onChange(newValue(value));
       }}>
