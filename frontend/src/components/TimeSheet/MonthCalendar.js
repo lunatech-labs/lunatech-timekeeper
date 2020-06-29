@@ -90,10 +90,10 @@ const MonthCalendar = (props) => {
         }}
         dateCellRender={moment => {
           const day = findData(moment);
-          const className = !day || (props.warningCardPredicate && props.warningCardPredicate(day.date, day.data)) ?
+          const className = props.warningCardPredicate && props.warningCardPredicate(moment, day && day.data) ?
             'tk_CardWeekCalendar_Body_With_Warn' : '';
           return (
-            <div>
+            <div className={className}>
               <Button
                 shape="circle"
                 disabled={isDisabled(day, moment)}

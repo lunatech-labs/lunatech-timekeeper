@@ -76,7 +76,6 @@ const TimeEntriesPage = () => {
   const hasWarnNoEntryInPastDay =(date,day) => {
     return moment().subtract('1','days').isAfter(date) && !day;
   };
-  const warningCardPredicate = (date, data) => hasWarnNoEntryInPastDay(date,data);
 
   const onClickAddTask = (e, m) => {
     setTaskMoment(m);
@@ -135,7 +134,7 @@ const TimeEntriesPage = () => {
               );
             }}
             days={datas.days}
-            warningCardPredicate={warningCardPredicate}
+            warningCardPredicate={hasWarnNoEntryInPastDay}
           /> :
           <MonthCalendar
             onClickAddTask={onClickAddTask}
@@ -148,7 +147,7 @@ const TimeEntriesPage = () => {
                 </div>);
             }}
             disabledWeekEnd={true}
-            warningCardPredicate={warningCardPredicate}
+            warningCardPredicate={hasWarnNoEntryInPastDay}
           />
       }
 
