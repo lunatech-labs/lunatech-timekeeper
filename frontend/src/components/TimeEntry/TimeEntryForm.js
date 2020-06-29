@@ -52,8 +52,8 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
         );
     }
 
-    const Entries = (props) => {
-        const entries = props.entries.map(
+    const Entries = ({entries}) => {
+        const showEntries = entries.map(
             entriesForDay => entriesForDay.map(entry => <ShowTimeEntry key={entry.id} entry={entry} onClickEdit={()=>{
                 setEntry(entry)
                 setEditMode()
@@ -61,7 +61,7 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
         );
         return (
             <div className="tk_TaskInfoList">
-                {entries}
+                {showEntries}
             </div>
         );
     };

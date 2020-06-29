@@ -54,7 +54,8 @@ ShowTimeEntry.propTypes = {
     }).isRequired,
     startDateTime: PropTypes.string.isRequired,
     endDateTime: PropTypes.string.isRequired,
-  })
+  }),
+  onClickEdit: PropTypes.func.isRequired // () => set the mode to 'edit', the mode can be 'view', 'add' or 'edit'
 };
 
 export default ShowTimeEntry;
