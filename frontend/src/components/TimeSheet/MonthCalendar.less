@@ -101,7 +101,11 @@
                       color: @tk_LightGray;
                     }
                     .ant-picker-calendar-date-content {
-                      div {
+                      > div {
+                        display: flex;
+                        flex-direction: column;
+                        height: 100%;
+                        justify-content: flex-end;
                         button {
                           position: absolute;
                           right: 16px;
@@ -122,14 +126,6 @@
                           span {font-size: 12px;}
                         }
                         div {
-                          position: absolute;
-                          bottom: 0;
-                          overflow-y: scroll;
-                          height: 68px;
-                          padding: 0 16px;
-                          margin-bottom: 16px;
-                          width: 100%;
-                          left: 0;
                           span {
                             span:last-child {font-size: 12px;}
                           }
