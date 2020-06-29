@@ -1,11 +1,14 @@
 import React, {useState} from 'react';
 import {useTimeKeeperAPI} from "../../utils/services";
-import {Alert, Card, Collapse, List, Space, Spin} from "antd";
+import {Alert, Avatar, Card, Collapse, List, Space, Spin} from "antd";
 import UserOutlined from "@ant-design/icons/lib/icons/UserOutlined";
 import CalendarOutlined from "@ant-design/icons/lib/icons/CalendarOutlined";
 import EventMemberTag from "./EventMemberTag";
 import PropTypes from "prop-types";
 import './EventsList.less';
+import logo from "../../img/logo_timekeeper_homepage.png";
+import UnlockOutlined from "@ant-design/icons/lib/icons/UnlockOutlined";
+import LockFilled from "@ant-design/icons/lib/icons/LockFilled";
 
 const {Panel} = Collapse;
 
@@ -273,28 +276,31 @@ const EventsList = () => {
         renderItem={item => (
             <List.Item key={item.id}>
                 <Card
-                    id="tk_Card_Sm"
+                    id="tk_CardEvent"
                     bordered={false}
                     title={item.name}
-                    className="tk_Card_Event"
                 >
-                    <div className="tk_EventCard_Body">
-                        <p className="tk_EventCard_Desc">{item.description}</p>
-                        <div className="tk_EventCard_Bottom">
+                    <p className="tk_CardEvent_Desc">{item.description}</p>
+                    <div className="tk_CardEvent_Bottom">
+                        <div className="tk_CardEvent_Date">
+                            <CalendarOutlined />
+                            <p>{computeStartDate(item.startDateTime)}<br />{computeEndDate(item.endDateTime)}</p>
+                        </div>
+                        <div className="tk_CardEvent_People">
                             <div>
-                                <CalendarOutlined />
-                                <p>{computeStartDate(item.startDateTime)}<br />{computeEndDate(item.endDateTime)}</p>
+                                <img src="https://opencollective.com/debug/backer/10/avatar.svg" />
+                                <img src="https://opencollective.com/debug/backer/10/avatar.svg" />
+                                <img src="https://opencollective.com/debug/backer/10/avatar.svg" />
                             </div>
-                            <div>
-                                <div>
-                                    <img src="https://opencollective.com/debug/backer/10/avatar.svg" />
-                                    <img src="https://opencollective.com/debug/backer/10/avatar.svg" />
-                                    <img src="https://opencollective.com/debug/backer/10/avatar.svg" />
-                                </div>
-                                <a href="#">32 people</a>
-                            </div>
+                            <a href="#">32 people</a>
                         </div>
                     </div>
+
+
+
+
+
+
 
 
 
