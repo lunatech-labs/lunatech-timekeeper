@@ -13,12 +13,21 @@ const SelectYear = ({value, onChange}) => {
     const toAdd = i - 10;
     const nextDate = value.clone().add(toAdd, 'years');
     const formatted = nextDate.format('YYYY');
-    return <Option key={`select-year-${formatted}`} value={nextDate.format('YYYY-MM-DD')}>{formatted}</Option>;
+    return <Option key={`select-year-${formatted}`} value={formatted}>{formatted}</Option>;
   });
+  const newValue = (year) => {
+    const numberYear = moment.utc(year, 'YYYY').year();
+    const newMoment = value.clone().set({
+      'year': numberYear
+    });
+    return newMoment;
+  };
   return (
-    <Select style={{width: 200}} onSelect={(value) => {
-      onChange(moment.utc(value, 'YYYY-MM-DD'));
-    }}>
+    <Select style={{width: 200}}
+      defaultValue={value.format('YYYY')}
+      onSelect={(year) => {
+        onChange(newValue(year));
+      }}>
       {options}
     </Select>
   );
@@ -35,12 +44,21 @@ const SelectMonth = ({value, onChange}) => {
     const toAdd = i - 6;
     const nextDate = value.clone().add(toAdd, 'month');
     const formatted = nextDate.format('MMM');
-    return <Option key={`select-year-${formatted}`} value={nextDate.format('YYYY-MM-DD')}>{formatted}</Option>;
+    return <Option key={`select-year-${formatted}`} value={formatted}>{formatted}</Option>;
   });
+  const newValue = (month) => {
+    const numberMonth = moment.utc(month, 'MMM').month();
+    const newMoment = value.clone().set({
+      'month': numberMonth
+    });
+    return newMoment;
+  };
   return (
-    <Select style={{width: 200}} onSelect={value => {
-      onChange(moment.utc(value, 'YYYY-MM-DD'));
-    }}>
+    <Select style={{width: 200}}
+      defaultValue={value.format('MMM')}
+      onSelect={value => {
+        onChange(newValue(value));
+      }}>
       {options}
     </Select>
   );
@@ -77,12 +95,12 @@ const MonthCalendar = (props) => {
         headerRender={({value, onChange}) => {
           return (
             <div id="tk_MonthCalendar_Head">
-              <MonthNavigator value={value} onChange={onChange}/>
+              <MonthNavigator value={value} onChange={onChange} />
               <div>
-                <SelectMonth value={value} onChange={onChange}/>
-                <SelectYear value={value} onChange={onChange}/>
+                <SelectMonth value={value} onChange={onChange} />
+                <SelectYear value={value} onChange={onChange} />
               </div>
-          </div>);
+            </div>);
         }}
         disabledDate={moment => {
           const day = findData(moment);

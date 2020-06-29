@@ -9,7 +9,7 @@ const CalendarSelectionMode = ({onChange}) =>
       <Radio.Button value="week">Week</Radio.Button>
       <Radio.Button value="month">Month</Radio.Button>
     </Radio.Group>
-  </div>
+  </div>;
 
 CalendarSelectionMode.propTypes = {
   onChange: PropTypes.func
