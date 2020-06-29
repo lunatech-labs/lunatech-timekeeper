@@ -52,5 +52,16 @@ public class UserEvent extends PanacheEntityBase {
     @ManyToOne(fetch = FetchType.EAGER)
     public EventTemplate eventTemplate;
 
-
+    @Override
+    public String toString() {
+        return "UserEvent{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", eventType=" + eventType +
+                ", startDateTime=" + startDateTime +
+                ", endDateTime=" + endDateTime +
+                ", owner=" + owner.getFullName() +
+                '}';
+    }
 }

@@ -68,8 +68,8 @@ class TimeSheetResourceTest {
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
 
         // THEN
-        getValidation(TimeSheetDef.uriWithid(1L),adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)));
-        getValidation(TimeSheetDef.uriWithid(2L),adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
+        getValidation(TimeSheetDef.uriPlusId(1L),adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)));
+        getValidation(TimeSheetDef.uriPlusId(2L),adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
 
     }
 
@@ -88,7 +88,7 @@ class TimeSheetResourceTest {
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
         // verify first version
         final var expectedTimeSheetSam = new TimeSheetResponse(timeSheetId, project, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
-        getValidation(TimeSheetDef.uriWithid(timeSheetId), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)));
+        getValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)));
 
         // WHEN : AND the timesheet is updated (adding a end date a maxDuration and changing units)
         LocalDate newEndDate = LocalDate.now().plusMonths(2L);
@@ -99,11 +99,11 @@ class TimeSheetResourceTest {
                 60,
                 TimeUnit.DAY
         );
-        putValidation(TimeSheetDef.uriWithid(timeSheetId),adminToken,timeKeeperTestUtils.toJson(updatedTimeSheet), NO_CONTENT);
+        putValidation(TimeSheetDef.uriPlusId(timeSheetId),adminToken,timeKeeperTestUtils.toJson(updatedTimeSheet), NO_CONTENT);
 
         // THEN get the updated version
         final var expectedUpdatedTimeSheetSam = new TimeSheetResponse(timeSheetId, project, sam, TimeUnit.DAY, true, newEndDate, 60, TimeUnit.DAY.toString(), Collections.emptyList(),60L);
-        getValidation(TimeSheetDef.uriWithid(timeSheetId), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedUpdatedTimeSheetSam)));
+        getValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedUpdatedTimeSheetSam)));
     }
 
 }

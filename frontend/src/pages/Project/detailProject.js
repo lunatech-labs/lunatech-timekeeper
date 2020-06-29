@@ -43,12 +43,9 @@ const DetailProjectPage = () => {
 
   return (
     <MainPage title="Project details" entityName={data.name}
-      actions={<Link key='editLink' to={`/projects/${data.id}/edit`}>
-        <Button id="tk_Btn"
-          className="tk_BtnPrimary"
-          icon={<EditOutlined/>}>Edit project
-        </Button>
-      </Link>}>
+      actions={
+        <Link id="tk_Btn" className="tk_BtnPrimary" to={`/projects/${data.id}/edit`}>Edit project</Link>
+      }>
       <ShowProject project={data} onSuccessJoinProject={onSuccessCallback} />
     </MainPage>
   );
