@@ -118,7 +118,7 @@ const MonthCalendar = (props) => {
                 disabled={isDisabled(day, moment)}
                 icon={<PlusOutlined/>}
                 onClick={(e) => {
-                  props.onClickAddTask && props.onClickAddTask(e, moment);
+                  props.onClickButton && props.onClickButton(e, moment);
                   e.stopPropagation();
                 }}/>
               {day && day.data && props.dateCellRender(day.data, day.date, day.disabled)}
@@ -140,7 +140,7 @@ MonthCalendar.propTypes = {
       data: PropTypes.any
     })
   ).isRequired,
-  onClickAddTask: PropTypes.func, // (event, moment) => void
+  onClickButton: PropTypes.func, // (event, moment) => void
   warningCardPredicate: PropTypes.func // (date, day) => bool
 };
 

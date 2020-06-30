@@ -158,7 +158,7 @@ const WeekCalendar = (props) => {
                     disabled={isDisabled(item)}
                     icon={<PlusOutlined/>}
                     onClick={(e) => {
-                      props.onClickAddTask && props.onClickAddTask(e, item.date);
+                      props.onClickButton && props.onClickButton(e, item.date);
                       e.stopPropagation();
                     }}/> }
                 </div>
@@ -189,7 +189,7 @@ WeekCalendar.propTypes = {
     })
   ).isRequired,
   hiddenButtons: PropTypes.bool,
-  onClickAddTask: PropTypes.func, // (event, moment) => void
+  onClickButton: PropTypes.func, // (event, moment) => void
   onPanelChange: PropTypes.func, // (id, start, end) => void
   onClickCard: PropTypes.func, // (event, moment) => void
   warningCardPredicate : PropTypes.func // (date, day) => bool

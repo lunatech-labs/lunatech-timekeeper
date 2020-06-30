@@ -120,7 +120,7 @@ const TimeEntriesPage = () => {
             disabledWeekEnd={true}
             hiddenButtons={false}
             onPanelChange={(id, start) => setCurrentWeekNumber(start.year() + '?weekNumber=' + start.isoWeek())}
-            onClickAddTask={onClickAddTask}
+            onClickButton={onClickAddTask}
             onClickCard={onClickCard}
             dateCellRender={(data) => {
               return (
@@ -137,7 +137,7 @@ const TimeEntriesPage = () => {
             warningCardPredicate={hasWarnNoEntryInPastDay}
           /> :
           <MonthCalendar
-            onClickAddTask={onClickAddTask}
+            onClickButton={onClickAddTask}
             days={datas.days}
             dateCellRender={(data, date) => {
               const projectsName = data.filter(data => !!data).map(item => item.project.name);
