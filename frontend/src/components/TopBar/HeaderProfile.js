@@ -3,7 +3,7 @@ import {Menu, Dropdown, Button} from 'antd';
 import './HeaderProfile.less';
 import {useKeycloak} from '@react-keycloak/web';
 import PropTypes from 'prop-types';
-import TkUserAvatar from "../Users/TkUserAvatar";
+import TkUserAvatar from '../Users/TkUserAvatar';
 
 const HeaderProfile = ({ user }) => {
 

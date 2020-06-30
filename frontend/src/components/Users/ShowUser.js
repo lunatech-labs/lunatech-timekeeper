@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Descriptions } from 'antd';
 import PropTypes from 'prop-types';
 import './ShowUser.less';
-import TkUserAvatar from "./TkUserAvatar";
+import TkUserAvatar from './TkUserAvatar';
 
 class ShowUser extends Component {
 

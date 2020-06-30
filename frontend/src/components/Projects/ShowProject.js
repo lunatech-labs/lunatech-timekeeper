@@ -13,7 +13,7 @@ import Tooltip from 'antd/lib/tooltip';
 import NoDataMessage from '../NoDataMessage/NoDataMessage';
 import {useTimeKeeperAPIPut} from '../../utils/services';
 import {UserContext} from '../../context/UserContext';
-import TkUserAvatar from "../Users/TkUserAvatar";
+import TkUserAvatar from '../Users/TkUserAvatar';
 
 const {Title} = Typography;
 

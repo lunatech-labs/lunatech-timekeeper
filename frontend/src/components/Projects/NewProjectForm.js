@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import TitleSection from '../Title/TitleSection';
 import '../../components/Button/BtnGeneral.less';
 import NoDataMessage from '../NoDataMessage/NoDataMessage';
-import TkUserAvatar from "../Users/TkUserAvatar";
+import TkUserAvatar from '../Users/TkUserAvatar';
 
 
 const {TextArea} = Input;

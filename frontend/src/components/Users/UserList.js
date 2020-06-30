@@ -4,7 +4,7 @@ import {useTimeKeeperAPI} from '../../utils/services';
 import './UserList.less';
 import Button from 'antd/lib/button';
 import TagMember from '../Tag/TagMember';
-import TkUserAvatar from "./TkUserAvatar";
+import TkUserAvatar from './TkUserAvatar';
 
 const UserList = () => {
   const usersResponse = useTimeKeeperAPI('/api/users');

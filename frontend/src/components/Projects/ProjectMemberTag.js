@@ -3,7 +3,7 @@ import './ProjectMemberTag.less';
 import PropTypes from 'prop-types';
 import TagMember from '../Tag/TagMember';
 import CardXs from '../Card/CardXs';
-import TkUserAvatar from "../Users/TkUserAvatar";
+import TkUserAvatar from '../Users/TkUserAvatar';
 
 const ProjectMemberTag = ({ member }) => {
   return (

@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import './EditProjectForm.less';
 import TitleSection from '../Title/TitleSection';
 import '../../components/Button/BtnGeneral.less';
-import TkUserAvatar from "../Users/TkUserAvatar";
+import TkUserAvatar from '../Users/TkUserAvatar';
 
 
 const {TextArea} = Input;
