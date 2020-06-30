@@ -3,7 +3,6 @@ package fr.lunatech.timekeeper.resources;
 import fr.lunatech.timekeeper.resources.openapi.TimeEntryResourceApi;
 import fr.lunatech.timekeeper.resources.providers.AuthenticationContextProvider;
 import fr.lunatech.timekeeper.services.TimeEntryService;
-import fr.lunatech.timekeeper.timeutils.TimeUnit;
 import fr.lunatech.timekeeper.services.requests.TimeEntryRequest;
 
 import javax.annotation.security.RolesAllowed;

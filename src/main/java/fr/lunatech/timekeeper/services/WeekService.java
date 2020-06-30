@@ -2,7 +2,6 @@ package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.UserEvent;
-import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import fr.lunatech.timekeeper.services.responses.WeekResponse;
 import fr.lunatech.timekeeper.timeutils.CalendarFactory;

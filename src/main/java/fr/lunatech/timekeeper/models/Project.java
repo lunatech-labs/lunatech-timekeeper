@@ -1,6 +1,7 @@
 package fr.lunatech.timekeeper.models;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import io.quarkus.hibernate.orm.panache.runtime.JpaOperations;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -45,6 +46,9 @@ public class Project extends PanacheEntityBase {
     @NotNull
     public List<ProjectUser> users;
 
+    @Version
+    public Long version;
+
     public Optional<ProjectUser> getUser(Long userId) {
         return ofNullable(users)
                 .flatMap(projectUsers -> projectUsers
@@ -56,6 +60,14 @@ public class Project extends PanacheEntityBase {
 
     public Boolean getBillable() {
         return billable;
+    }
+
+
+    /* TMP fix for Quarkus Issue https://github.com/quarkusio/quarkus/issues/7193 */
+    public static void update(Project entity) {
+        final EntityManager em = JpaOperations.getEntityManager();
+        Project updated = em.merge(entity);
+        updated.flush();
     }
 
     @Override
