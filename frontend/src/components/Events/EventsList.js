@@ -1,6 +1,6 @@
 import React from 'react';
 import {useTimeKeeperAPI} from "../../utils/services";
-import {Alert, Avatar, Card, Collapse, List, Space, Spin} from "antd";
+import {Alert, Card, Collapse, List, Space, Spin} from "antd";
 import UserOutlined from "@ant-design/icons/lib/icons/UserOutlined";
 import CalendarOutlined from "@ant-design/icons/lib/icons/CalendarOutlined";
 import EventMemberTag from "./EventMemberTag";
@@ -41,7 +41,7 @@ const EventsList = () => {
         grid={{gutter: 32, column: 3}}
         dataSource={data}
         renderItem={item => (
-            <List.Item key={item.id}>
+            <List.Item key={`event-list-${item.id}`}>
                 <Card
                     id="tk_CardEvent"
                     bordered={false}
@@ -56,7 +56,7 @@ const EventsList = () => {
                         </div>
                         <div className="tk_CardEvent_People">
                             <div>
-                                {<EventMemberPictures membersIds={item.attendees.map(user => user.userId)} />}
+                                <EventMemberPictures key={`event-member-picture-${item.id}`} membersIds={item.attendees.map(user => user.userId)} />
                             </div>
                             <a href="#">32 people</a>
                         </div>

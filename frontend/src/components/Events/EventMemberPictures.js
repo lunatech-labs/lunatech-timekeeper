@@ -33,7 +33,7 @@ const EventMemberPictures = ({membersIds}) => {
 
     const displayAvatar = (users) => {
         return users.map(user => {
-            return <Avatar src={user[0].picture} />
+            return <Avatar key={`avatar-user-${user[0].id}`} src={user[0].picture} />
         })
     }
 
