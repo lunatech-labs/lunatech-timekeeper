@@ -19,7 +19,7 @@ const TimeEntriesPage = () => {
     return tmpDate.year() + '?weekNumber=' + tmpDate.isoWeek();
   });
   const [visibleEntryModal, setVisibleEntryModal] = useState(false);
-  const [viewMode, setViewMode] = useState(false);
+  const [mode, setMode] = useState('view'); //Can be 'view', 'add' or 'edit'
   const [taskMoment, setTaskMoment] = useState(moment().utc());
   const [form] = Form.useForm();
 
@@ -49,8 +49,8 @@ const TimeEntriesPage = () => {
       return rv;
     }, {});
   };
-  const timeEntries = dataFromServer.loading ? [] : dataFromServer.data.sheets;
-  const days = Object.entries(groupBy(timeEntries.flatMap(({entries, project}) => entries.map(x => ({
+  const timeSheets = dataFromServer.loading ? [] : dataFromServer.data.sheets;
+  const days = Object.entries(groupBy(timeSheets.flatMap(({entries, project}) => entries.map(x => ({
     ...x,
     project
   }))), entry => moment(entry.startDateTime).format('YYYY-MM-DD'))).map(([key, value]) => {
@@ -68,9 +68,10 @@ const TimeEntriesPage = () => {
 
   const entriesOfSelectedDay = days.filter(day => day.date.format('YYYY-MM-DD') === taskMoment.format('YYYY-MM-DD'));
 
+  const resetForm = () => form.resetFields();
   const openModal = () => setVisibleEntryModal(true);
   const closeModal = () => setVisibleEntryModal(false);
-  const resetForm = () => form.resetFields();
+
 
   // A day without entries in the past should be displayed with "warn" design
   const hasWarnNoEntryInPastDay =(date,day) => {
@@ -79,13 +80,13 @@ const TimeEntriesPage = () => {
 
   const onClickAddTask = (e, m) => {
     setTaskMoment(m);
-    setViewMode(false);
+    setAddMode();
     openModal();
   };
 
   const onClickCard = (e, m) => {
     setTaskMoment(m);
-    setViewMode(true);
+    setViewMode();
     openModal();
   };
 
@@ -94,6 +95,9 @@ const TimeEntriesPage = () => {
     const arraySorted = [...set].sort((a, b) => a.localeCompare(b));
     return arraySorted;
   };
+
+  const setViewMode = () => setMode('view');
+  const setAddMode = () => setMode('add');
 
   return (
     <MainPage title="Time entries">
@@ -105,12 +109,14 @@ const TimeEntriesPage = () => {
         width={'37.5%'}
         footer={null}
       >
-        <TimeEntryForm setViewMode={setViewMode} entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment} form={form} viewMode={viewMode} onSuccess={() => {
+        <TimeEntryForm setMode={setMode} entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment} form={form} mode={mode} onSuccess={() => {
           closeModal();
           dataFromServer.run();
-        }} onCancel={() => setViewMode(true)}/>
+          setViewMode();
+        }} onCancel={() => setViewMode()}
+        />
       </Modal>
-      <UserTimeSheetList timeSheets={timeEntries}/>
+      <UserTimeSheetList timeSheets={timeSheets}/>
 
       <CalendarSelectionMode onChange={e => setCalendarMode(e.target.value)}/>
       {

@@ -33,8 +33,8 @@ public class ResourceFactory {
         return InternalResourceUtils.createResource(organization, OrganizationDef.uri, OrganizationResponse.class, token);
     }
 
-    public static Void create(Long timeSheetId, TimeEntryRequest timeEntryRequest, String token) {
-        return InternalResourceUtils.createResource(timeEntryRequest, TimeEntryDef.uriWithArgs(timeSheetId), Void.class, token);
+    public static String create(Long timeSheetId, TimeEntryRequest timeEntryRequest, String token) {
+        return InternalResourceUtils.createResource(timeEntryRequest, TimeEntryDef.uriWithArgs(timeSheetId), token);
     }
 
     public static <P> void update(P request, String uri, String token) {

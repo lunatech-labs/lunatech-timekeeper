@@ -58,12 +58,21 @@ final class InternalResourceUtils {
     }
 
     public static <R, P> R createResource(P request, String uri_root, Option<String> getUri, Class<R> type, String token) {
+        var location = createResource(request, uri_root, token);
+        final String id = Iterables.getLast(Arrays.stream(location.split(SLASH)).collect(Collectors.toList()));
+        return given()
+                .auth().preemptive().oauth2(token)
+                .when()
+                .header(ACCEPT, APPLICATION_JSON)
+                .get(getUri.getOrElse(uri_root) + SLASH + id).body().as(type);
+    }
 
+    public static <P> String createResource(P request, String uri_root, String token) {
         logger.debug("Create : " + request.getClass() + " resource ");
         logger.debug("Uri    :" + uri_root);
-        logger.debug("Verb   : GET");
+        logger.debug("Verb   : POST");
 
-        var reqSpec = given()
+        Response reqSpec = given()
                 .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
@@ -77,20 +86,8 @@ final class InternalResourceUtils {
 
         if (location == null || status > 201) {
             throw new HttpTestRuntimeException(status, reqSpec.getBody().print(), reqSpec.getContentType());
-        } else {
-            final String id = Iterables.getLast(Arrays.stream(reqSpec.header(LOCATION).split(SLASH)).collect(Collectors.toList()));
-            return given()
-                    .auth().preemptive().oauth2(token)
-                    .when()
-                    .header(ACCEPT, APPLICATION_JSON)
-                    .get(getUri.getOrElse(uri_root) + SLASH + id).body().as(type);
         }
-    }
-
-    public static <P> RType createResource(P request, String uri_root, String token) {
-        logger.debug("Create : " + request.getClass() + " resource [Without return value]");
-        createResource(request, uri_root, Object.class, token);
-        return RType.NoReturn;
+        return location;
     }
 
     static <R> R readResource(Long id, String uri_root, Class<R> type, String token) {
