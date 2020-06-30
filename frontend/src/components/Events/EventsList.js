@@ -59,11 +59,25 @@ const EventsList = () => {
             <Menu.Item key="edit">
               <a href={'#'}><EditFilled/>Edit</a>
             </Menu.Item>}
-            <Menu.Item key="copy">
-                <a href={'#'}><CopyOutlined />Copy</a>
-            </Menu.Item>
+      <Menu.Item key="copy">
+        <a href={'#'}><CopyOutlined />Copy</a>
+      </Menu.Item>
     </Menu>
   );
+
+  const displayMembersButton = (item) => {
+    if(item.attendees.length === 0){
+      return (
+        <Button className="tk_Link" type="link">{item.attendees.length}{' people'}</Button>
+      );
+    } else {
+      return(
+        <Dropdown overlay={menu(item)} key="members">
+          <Button className="tk_Link" type="link" onClick={e => e.preventDefault()}>{item.attendees.length}{' people'}</Button>
+        </Dropdown>
+      );
+    }
+  };
 
   const DataList = ({data}) => <List
     id="tk_List"
@@ -92,9 +106,7 @@ const EventsList = () => {
                 <div>
                   <EventMemberPictures key={`event-member-picture-${item.id}`} membersIds={item.attendees.map(user => user.userId)} />
                 </div>
-                <Dropdown overlay={menu(item)} key="members">
-                  <Button className="tk_Link" type="link" onClick={e => e.preventDefault()}>{item.attendees.length}{' people'}</Button>
-                </Dropdown>
+                {displayMembersButton(item)}
               </div>
             </div>
           </div>
