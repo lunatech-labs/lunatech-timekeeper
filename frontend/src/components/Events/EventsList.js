@@ -77,8 +77,8 @@ const EventsList = () => {
   };
 
   const formatDateEvent = (date) => {
-      return moment(date, 'YYYY-MM-DD-HH:mm:ss.SSS\'Z\'').utc().format('LLL');
-  }
+    return moment(date, 'YYYY-MM-DD-HH:mm:ss.SSS\'Z\'').utc().format('LLL');
+  };
 
   const DataList = ({data}) => <List
     id="tk_List"
