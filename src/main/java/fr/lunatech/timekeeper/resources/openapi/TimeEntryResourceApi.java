@@ -39,4 +39,22 @@ public interface TimeEntryResourceApi {
             )
     })
     Response createTimeEntry(@PathParam("timeSheetId") Long timeSheetId, @RequestBody TimeEntryRequest timeEntryRequest, @Context UriInfo uriInfo);
+
+    @PUT
+    @Path("/{timeEntryid}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Update a timeentry",
+            description = "Update timeentry details.")
+    @Tag(ref = "timeEntries")
+    @APIResponses(value = {
+            @APIResponse(
+                    responseCode = "204",
+                    description = "TimeEntry updated"
+            ),
+            @APIResponse(
+                    responseCode = "404",
+                    description = "TimeEntry not found"
+            )
+    })
+    Response updateTimeEntry(@PathParam("timeSheetId") Long timeSheetId, @PathParam("timeEntryid") Long timeEntryId, @Valid @RequestBody TimeEntryRequest request, @Context UriInfo uriInfo);
 }
