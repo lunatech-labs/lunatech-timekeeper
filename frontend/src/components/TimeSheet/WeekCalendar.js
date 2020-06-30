@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Radio, Select} from 'antd';
+import {Button, Select} from 'antd';
 import CardWeekCalendar from '../Card/CardWeekCalendar';
 import {LeftOutlined, PlusOutlined, RightOutlined} from '@ant-design/icons';
 import PropTypes from 'prop-types';
@@ -102,10 +102,8 @@ const WeekCalendar = (props) => {
     const disableRight = !weekRangeIds.includes(weekSelected + 1);
     return (
       <div>
-        <Button icon={<LeftOutlined/>} disabled={disableLeft} shape='circle'
-          onClick={() => setWeekSelected(weekSelected - 1)}/>
-        <Button icon={<RightOutlined/>} disabled={disableRight} shape='circle'
-          onClick={() => setWeekSelected(weekSelected + 1)}/>
+        <Button icon={<LeftOutlined/>} disabled={disableLeft} onClick={() => setWeekSelected(weekSelected - 1)}/>
+        <Button icon={<RightOutlined/>} disabled={disableRight} onClick={() => setWeekSelected(weekSelected + 1)}/>
         <p>{renderWeekYear(start, end)}</p>
       </div>
     );
@@ -123,19 +121,12 @@ const WeekCalendar = (props) => {
       })}
     </Select>;
 
-  const SelectionMode = () =>
-    <Radio.Group defaultValue="Week">
-      <Radio.Button value="Week">Week</Radio.Button>
-      <Radio.Button value="Month">Month</Radio.Button>
-    </Radio.Group>;
-
   return (
     <div id="tk_WeekCalendar">
       <div id="tk_WeekCalendar_Head">
         <WeekNavigator/>
         <div>
           <WeekNavigatorSelect/>
-          <SelectionMode/>
         </div>
       </div>
 
@@ -167,7 +158,7 @@ const WeekCalendar = (props) => {
                     disabled={isDisabled(item)}
                     icon={<PlusOutlined/>}
                     onClick={(e) => {
-                      props.onClickAddTask && props.onClickAddTask(e, item.date);
+                      props.onClickButton && props.onClickButton(e, item.date);
                       e.stopPropagation();
                     }}/> }
                 </div>
@@ -198,7 +189,7 @@ WeekCalendar.propTypes = {
     })
   ).isRequired,
   hiddenButtons: PropTypes.bool,
-  onClickAddTask: PropTypes.func, // (event, moment) => void
+  onClickButton: PropTypes.func, // (event, moment) => void
   onPanelChange: PropTypes.func, // (id, start, end) => void
   onClickCard: PropTypes.func, // (event, moment) => void
   warningCardPredicate : PropTypes.func // (date, day) => bool
