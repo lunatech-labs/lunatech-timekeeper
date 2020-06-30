@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, Avatar, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin, Row, Col} from 'antd';
+import {Alert, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin, Row, Col} from 'antd';
 import {useTimeKeeperAPI, useTimeKeeperAPIPut} from '../../utils/services';
 import {Link, Redirect, useRouteMatch} from 'react-router-dom';
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined';
@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import './EditProjectForm.less';
 import TitleSection from '../Title/TitleSection';
 import '../../components/Button/BtnGeneral.less';
+import TkUserAvatar from "../Users/TkUserAvatar";
 
 
 const {TextArea} = Input;
@@ -77,7 +78,8 @@ const EditProjectForm = () => {
       value: PropTypes.string
     };
     const UserPicture = ({value}) => {
-      return (<Avatar src={usersResponse.data.find(u => u.id === value).picture}/>);
+      const currentUser = usersResponse.data.find(u => u.id === value);
+      return (<TkUserAvatar picture={currentUser.picture} name={currentUser.name}/>);
     };
     UserPicture.propTypes = {
       value: PropTypes.string

@@ -1,8 +1,9 @@
 import React from 'react';
-import {Avatar, Menu, Dropdown, Button} from 'antd';
+import {Menu, Dropdown, Button} from 'antd';
 import './HeaderProfile.less';
 import {useKeycloak} from '@react-keycloak/web';
 import PropTypes from 'prop-types';
+import TkUserAvatar from "../Users/TkUserAvatar";
 
 const HeaderProfile = ({ user }) => {
 
@@ -30,7 +31,7 @@ const HeaderProfile = ({ user }) => {
     <div className="tk_Header_Profile">
       <Dropdown overlay={menu}>
         <Button type="link" onClick={e => e.preventDefault()}>
-          <Avatar src={user.picture} />
+          <TkUserAvatar picture={user.picture} name={user.name}/>
           <p>{user.name}<br/><span>{displayProfile(user.profiles)}</span></p>
         </Button>
       </Dropdown>

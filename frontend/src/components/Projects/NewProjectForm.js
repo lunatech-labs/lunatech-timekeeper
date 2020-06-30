@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {Link, Redirect} from 'react-router-dom';
 import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
-import {Alert, Avatar, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin, Row, Col, Tooltip} from 'antd';
+import {Alert, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin, Row, Col, Tooltip} from 'antd';
 import {DeleteFilled} from '@ant-design/icons';
 import './NewProjectForm.less';
 import PropTypes from 'prop-types';
 import TitleSection from '../Title/TitleSection';
 import '../../components/Button/BtnGeneral.less';
 import NoDataMessage from '../NoDataMessage/NoDataMessage';
+import TkUserAvatar from "../Users/TkUserAvatar";
 
 
 const {TextArea} = Input;
@@ -75,7 +76,8 @@ const NewProjectForm = () => {
       value: PropTypes.string
     };
     const UserPicture = ({value}) => {
-      return (<Avatar src={usersResponse.data.find(u => u.id === value).picture}/>);
+      const currentUser = usersResponse.data.find(u => u.id === value);
+      return (<TkUserAvatar picture={currentUser.picture} name={currentUser.name}/>);
     };
     UserPicture.propTypes = {
       value: PropTypes.string
