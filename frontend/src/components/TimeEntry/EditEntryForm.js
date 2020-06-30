@@ -46,7 +46,7 @@ const initialValues = (defaultDate, entry, timeSheetId) => {
   };
 };
 
-const returnTimeUnit = (timeUnit, allValues, start) => {
+const updatedValues = (timeUnit, allValues, start) => {
   switch (timeUnit) {
     case 'DAY': {
       return {
@@ -81,7 +81,7 @@ const additionalValues = (timeUnit, defaultDate, allValues) => {
     minute: 0,
     second: 0
   });
-  returnTimeUnit(timeUnit, allValues, start);
+  return updatedValues(timeUnit, allValues, start);
 };
 
 // Compute the url
