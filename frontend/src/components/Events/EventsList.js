@@ -1,14 +1,20 @@
 import React from 'react';
 import {useTimeKeeperAPI} from '../../utils/services';
-import {Alert, Card, List, Spin, Dropdown, Button} from 'antd';
+import {Alert, Card, List, Spin, Dropdown, Button, Menu} from 'antd';
 import CalendarOutlined from '@ant-design/icons/lib/icons/CalendarOutlined';
 import EventMemberTag from './EventMemberTag';
 import PropTypes from 'prop-types';
 import './EventsList.less';
 import moment from 'moment';
 import EventMemberPictures from './EventMemberPictures';
+import EllipsisOutlined from '@ant-design/icons/lib/icons/EllipsisOutlined';
+import CopyOutlined from '@ant-design/icons/lib/icons/CopyOutlined';
+import {useKeycloak} from '@react-keycloak/web';
+import EditFilled from '@ant-design/icons/lib/icons/EditFilled';
 
 const EventsList = () => {
+  const [keycloak] = useKeycloak();
+  const isAdmin = keycloak.hasRealmRole('admin');
   const eventsResponse = useTimeKeeperAPI('/api/events');
 
   if (eventsResponse.loading) {
@@ -47,6 +53,18 @@ const EventsList = () => {
     );
   };
 
+  const dropdownCardAction = (item, isAdmin) => (
+    <Menu>
+      {isAdmin &&
+            <Menu.Item key="edit">
+              <a href={'#'}><EditFilled/>Edit</a>
+            </Menu.Item>}
+            <Menu.Item key="copy">
+                <a href={'#'}><CopyOutlined />Copy</a>
+            </Menu.Item>
+    </Menu>
+  );
+
   const DataList = ({data}) => <List
     id="tk_List"
     grid={{gutter: 32, column: 3}}
@@ -57,6 +75,11 @@ const EventsList = () => {
           id="tk_CardEvent"
           bordered={false}
           title={item.name}
+          extra={[
+            <Dropdown key={`ant-dropdown-${item.id}`} overlay={dropdownCardAction(item, isAdmin)}>
+              <a className="ant-dropdown-link" onClick={e => e.preventDefault()}><EllipsisOutlined /></a>
+            </Dropdown>,
+          ]}
         >
           <div className="tk_EventCard_Body">
             <p className="tk_CardEvent_Desc">{item.description}</p>
