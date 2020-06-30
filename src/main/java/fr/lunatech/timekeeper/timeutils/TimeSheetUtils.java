@@ -1,11 +1,8 @@
 package fr.lunatech.timekeeper.timeutils;
 
 import fr.lunatech.timekeeper.models.time.TimeSheet;
-import org.junit.platform.commons.util.CollectionUtils;
-import org.keycloak.common.util.CollectionUtil;
 
 import java.time.Duration;
-import java.util.Collections;
 
 public class TimeSheetUtils {
 
