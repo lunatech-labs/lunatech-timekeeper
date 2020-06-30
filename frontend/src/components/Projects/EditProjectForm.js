@@ -65,6 +65,11 @@ const EditProjectForm = () => {
   }
 
   if (clientsResponse.data && projectsResponse.data && usersResponse.data && projectResponse.data) {
+    const clientsSorted = () => clientsResponse.data.sort((a,b)=>{
+      if(a.name.toLowerCase() < b.name.toLowerCase()){return -1;}
+      if(a.name.toLowerCase() > b.name.toLowerCase()){return 1;}
+      return 0;
+    });
     const initialValues = {
       ...projectResponse.data,
       clientId: (projectResponse.data.client && projectResponse.data.client.id) || null
@@ -136,7 +141,7 @@ const EditProjectForm = () => {
                   placeholder="Select a client"
                 >
                   <Option key={'option-client-empty'} value={null}><i>None</i></Option>
-                  {clientsResponse.data.map(client => <Option key={`option-client-${client.id}`} value={client.id}>{client.name}</Option>)}
+                  {clientsSorted().map(client => <Option key={`option-client-${client.id}`} value={client.id}>{client.name}</Option>)}
                 </Select>
               </Form.Item>
               <Row gutter={16}>
