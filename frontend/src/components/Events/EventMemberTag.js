@@ -2,7 +2,6 @@ import React from 'react';
 import './EventMemberTag.less';
 import PropTypes from 'prop-types';
 import {Alert, Avatar, Spin} from 'antd';
-import CardXs from '../Card/CardXs';
 import {useTimeKeeperAPI} from '../../utils/services';
 
 const EventMemberTag = ({ member }) => {
@@ -32,7 +31,7 @@ const EventMemberTag = ({ member }) => {
 
   const user = usersResponse.data.filter(user => user.id === member.userId);
   return (
-    <div className="tk_">
+    <div className="tk_EventMember_Display">
       <Avatar src={user[0].picture}/>
       <p>{user[0].name}</p>
     </div>
@@ -42,7 +41,8 @@ const EventMemberTag = ({ member }) => {
 EventMemberTag.propTypes = {
   member: PropTypes.shape({
     name: PropTypes.string.isRequired,
-    picture: PropTypes.string
+    picture: PropTypes.string,
+    userId: PropTypes.number.isRequired
   })
 };
 
