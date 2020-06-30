@@ -1,12 +1,13 @@
 import React from 'react';
 import {useTimeKeeperAPI} from "../../utils/services";
-import {Alert, Card, Collapse, List, Space, Spin} from "antd";
+import {Alert, Avatar, Card, Collapse, List, Space, Spin} from "antd";
 import UserOutlined from "@ant-design/icons/lib/icons/UserOutlined";
 import CalendarOutlined from "@ant-design/icons/lib/icons/CalendarOutlined";
 import EventMemberTag from "./EventMemberTag";
 import PropTypes from "prop-types";
 import './EventsList.less';
 import moment from "moment";
+import EventMemberPictures from "./EventMemberPictures";
 
 const {Panel} = Collapse;
 
@@ -55,9 +56,7 @@ const EventsList = () => {
                         </div>
                         <div className="tk_CardEvent_People">
                             <div>
-                                <img src="https://opencollective.com/debug/backer/10/avatar.svg" />
-                                <img src="https://opencollective.com/debug/backer/10/avatar.svg" />
-                                <img src="https://opencollective.com/debug/backer/10/avatar.svg" />
+                                {<EventMemberPictures membersIds={item.attendees.map(user => user.userId)} />}
                             </div>
                             <a href="#">32 people</a>
                         </div>
