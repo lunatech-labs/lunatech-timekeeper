@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import {Alert, Avatar, Spin} from 'antd';
 import {useTimeKeeperAPI} from '../../utils/services';
 
-const EventMemberPictures = ({membersIds}) => {
+const EventMembersPictures = ({membersIds}) => {
   const usersResponse = useTimeKeeperAPI('/api/users');
 
   if (usersResponse.loading) {
@@ -41,8 +41,8 @@ const EventMemberPictures = ({membersIds}) => {
     displayAvatar(users)
   );
 };
-EventMemberPictures.propTypes = {
+EventMembersPictures.propTypes = {
   membersIds: PropTypes.arrayOf(PropTypes.number).isRequired
 };
 
-export default EventMemberPictures;
+export default EventMembersPictures;

@@ -6,7 +6,7 @@ import EventMemberTag from './EventMemberTag';
 import PropTypes from 'prop-types';
 import './EventsList.less';
 import moment from 'moment';
-import EventMemberPictures from './EventMemberPictures';
+import EventMembersPictures from './EventMembersPictures';
 import EllipsisOutlined from '@ant-design/icons/lib/icons/EllipsisOutlined';
 import CopyOutlined from '@ant-design/icons/lib/icons/CopyOutlined';
 import {useKeycloak} from '@react-keycloak/web';
@@ -67,17 +67,18 @@ const EventsList = () => {
 
   const displayMembersButton = (item) => {
     if(item.attendees.length === 0){
-      return (
-        <Button className="tk_Link" type="link">{item.attendees.length}{' people'}</Button>
-      );
-    } else {
-      return(
-        <Dropdown overlay={menu(item)} key="members">
-          <Button className="tk_Link" type="link" onClick={e => e.preventDefault()}>{item.attendees.length}{' people'}</Button>
-        </Dropdown>
-      );
+      return <Button className="tk_Link" type="link">{item.attendees.length}{' people'}</Button>;
     }
+    return(
+      <Dropdown overlay={menu(item)} key="members">
+        <Button className="tk_Link" type="link" onClick={e => e.preventDefault()}>{item.attendees.length}{' people'}</Button>
+      </Dropdown>
+    );
   };
+
+  const formatDateEvent = (date) => {
+      return moment(date, 'YYYY-MM-DD-HH:mm:ss.SSS\'Z\'').utc().format('LLL');
+  }
 
   const DataList = ({data}) => <List
     id="tk_List"
@@ -100,11 +101,11 @@ const EventsList = () => {
             <div className="tk_CardEvent_Bottom">
               <div className="tk_CardEvent_Date">
                 <CalendarOutlined />
-                <p>{moment(item.startDateTime, 'YYYY-MM-DD-HH:mm:ss.SSS\'Z\'').utc().format('LLL')}<br />{moment(item.endDateTime, 'YYYY-MM-DD-HH:mm:ss.SSS\'Z\'').utc().format('LLL')}</p>
+                <p>{formatDateEvent(item.startDateTime)}<br />{formatDateEvent(item.endDateTime)}</p>
               </div>
               <div className="tk_CardEvent_People">
                 <div>
-                  <EventMemberPictures key={`event-member-picture-${item.id}`} membersIds={item.attendees.map(user => user.userId)} />
+                  <EventMembersPictures key={`event-member-picture-${item.id}`} membersIds={item.attendees.map(user => user.userId)} />
                 </div>
                 {displayMembersButton(item)}
               </div>
