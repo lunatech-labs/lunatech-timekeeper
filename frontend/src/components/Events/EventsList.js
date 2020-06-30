@@ -1,16 +1,12 @@
 import React from 'react';
 import {useTimeKeeperAPI} from '../../utils/services';
-import {Alert, Card, Collapse, List, Space, Spin, Menu, Dropdown, Avatar, Button} from 'antd';
-import UserOutlined from '@ant-design/icons/lib/icons/UserOutlined';
+import {Alert, Card, List, Spin, Dropdown, Button} from 'antd';
 import CalendarOutlined from '@ant-design/icons/lib/icons/CalendarOutlined';
-import DownOutlined from '@ant-design/icons/lib/icons/DownOutlined';
 import EventMemberTag from './EventMemberTag';
 import PropTypes from 'prop-types';
 import './EventsList.less';
 import moment from 'moment';
 import EventMemberPictures from './EventMemberPictures';
-
-const {Panel} = Collapse;
 
 const EventsList = () => {
   const eventsResponse = useTimeKeeperAPI('/api/events');
