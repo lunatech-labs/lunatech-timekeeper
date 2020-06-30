@@ -3,13 +3,15 @@ import MainPage from '../MainPage/MainPage';
 import WeekCalendar from '../../components/TimeSheet/WeekCalendar';
 import TimeEntry from '../../components/TimeEntry/TimeEntry';
 import {useTimeKeeperAPI} from '../../utils/services';
-import {Alert, Form, Modal} from 'antd';
+import {Alert, Badge, Form, Modal} from 'antd';
 import TimeEntryForm from '../../components/TimeEntry/TimeEntryForm';
 import moment from 'moment';
 import UserTimeSheetList from '../../components/TimeSheet/UserTimeSheetList';
-
+import MonthCalendar from '../../components/TimeSheet/MonthCalendar';
+import CalendarSelectionMode from '../../components/TimeSheet/CalendarSelectionMode';
 
 const TimeEntriesPage = () => {
+  const [calendarMode, setCalendarMode] = useState('week');
   const firstDayOfCurrentWeek = moment().utc().startOf('week').add(1, 'day');
   const today = () => firstDayOfCurrentWeek.clone();
   const [currentWeekNumber, setCurrentWeekNumber] = useState(() => {
@@ -76,6 +78,24 @@ const TimeEntriesPage = () => {
     return moment().subtract('1','days').isAfter(date) && !day;
   };
 
+  const onClickAddTask = (e, m) => {
+    setTaskMoment(m);
+    setAddMode();
+    openModal();
+  };
+
+  const onClickCard = (e, m) => {
+    setTaskMoment(m);
+    setViewMode();
+    openModal();
+  };
+
+  const removeDuplicatesElementAndSort = (array) => {
+    const set = new Set(array);
+    const arraySorted = [...set].sort((a, b) => a.localeCompare(b));
+    return arraySorted;
+  };
+
   const setViewMode = () => setMode('view');
   const setAddMode = () => setMode('add');
 
@@ -98,35 +118,46 @@ const TimeEntriesPage = () => {
       </Modal>
       <UserTimeSheetList timeSheets={timeSheets}/>
 
-      <WeekCalendar
-        firstDay={datas.firstDayOfWeek}
-        disabledWeekEnd={true}
-        hiddenButtons={false}
-        onPanelChange={(id, start) => setCurrentWeekNumber(start.year() + '?weekNumber=' + start.isoWeek())}
-        onClickAddTask={(e, m) => {
-          setTaskMoment(m);
-          setAddMode();
-          openModal();
-        }}
-        onClickCard={(e, m) => {
-          setTaskMoment(m);
-          setViewMode();
-          openModal();
-        }}
-        dateCellRender={(data) => {
-          return (
-            <div>
-              {data.filter(data => !!data).map(entry => {
-                return (
-                  <TimeEntry key={entry.id} entry={entry}/>
-                );
-              })}
-            </div>
-          );
-        }}
-        days={datas.days}
-        warningCardPredicate={(date, day) => hasWarnNoEntryInPastDay(date,day)}
-      />
+      <CalendarSelectionMode onChange={e => setCalendarMode(e.target.value)}/>
+      {
+        calendarMode === 'week' ?
+          <WeekCalendar
+            firstDay={datas.firstDayOfWeek}
+            disabledWeekEnd={true}
+            hiddenButtons={false}
+            onPanelChange={(id, start) => setCurrentWeekNumber(start.year() + '?weekNumber=' + start.isoWeek())}
+            onClickButton={onClickAddTask}
+            onClickCard={onClickCard}
+            dateCellRender={(data) => {
+              return (
+                <div>
+                  {data.filter(data => !!data).map(entry => {
+                    return (
+                      <TimeEntry key={entry.id} entry={entry}/>
+                    );
+                  })}
+                </div>
+              );
+            }}
+            days={datas.days}
+            warningCardPredicate={hasWarnNoEntryInPastDay}
+          /> :
+          <MonthCalendar
+            onClickButton={onClickAddTask}
+            days={datas.days}
+            dateCellRender={(data, date) => {
+              const projectsName = data.filter(data => !!data).map(item => item.project.name);
+              return removeDuplicatesElementAndSort(projectsName).map(item =>
+                <div key={`badge-entry-project-${item}-${date.format('YYYY-MM-DD')}`}>
+                  <Badge status='success' text={item}/>
+                </div>);
+            }}
+            disabledWeekEnd={true}
+            warningCardPredicate={hasWarnNoEntryInPastDay}
+          />
+      }
+
+
     </MainPage>
   );
 };
