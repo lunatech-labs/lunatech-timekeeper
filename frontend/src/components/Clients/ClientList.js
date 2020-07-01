@@ -53,6 +53,12 @@ const ClientList = () => {
     );
   }
 
+  const projectSorted = (projectList) => projectList.sort((a,b)=>{
+    if(a.name.toLowerCase() < b.name.toLowerCase()){return -1;}
+    if(a.name.toLowerCase() > b.name.toLowerCase()){return 1;}
+    return 0;
+  });
+
   return (
     <React.Fragment>
       <div className="tk_SubHeader">
@@ -94,7 +100,7 @@ const ClientList = () => {
                   <Panel header={<Space size="small"><FolderOpenOutlined />{'List of projects'}</Space>} key="1">
                     <List
                       id={'tk_ClientProjects'}
-                      dataSource={item.projects}
+                      dataSource={projectSorted(item.projects)}
                       renderItem={projectItem => (
                         <List.Item>
                           <CardXs>
