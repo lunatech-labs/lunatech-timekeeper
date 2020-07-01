@@ -1,0 +1,94 @@
+@import '../../main.less';
+
+#tk_CardEvent {
+  padding: 20px;
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, .2);
+  .ant-card-head {
+    border-bottom: 0;
+    min-height: initial;
+    padding: 0;
+    .ant-card-head-wrapper {
+      align-items: flex-start;
+      a {
+        color: @tk_LightGray;
+        &:hover {color: @tk_White;}
+      }
+      .ant-card-head-title {padding: 0;}
+      .ant-card-extra {padding: 0;}
+    }
+  }
+  .ant-card-body {
+    margin: 0;
+    padding: 0;
+    .tk_CardEvent_Desc {
+      color: @tk_LightGray;
+      margin: 10px 0;
+    }
+    .tk_CardEvent_Bottom {
+      .mixin_Flexbox_Basis();
+      justify-content: space-between;
+      .tk_CardEvent_Date {
+        display: flex;
+        span {
+          margin-right: 8px;
+          padding-top: 3px;
+        }
+        p {margin-bottom: 0;}
+
+      }
+      .tk_CardEvent_People {
+        display: flex;
+        align-items: flex-end;
+        flex-direction: column;
+        > div {
+          .mixin_Flexbox_Basis();
+          justify-content: flex-end;
+          margin-bottom: 5px;
+          span {
+            display: none;
+            height: 20px;
+            width: 20px;
+            &:first-child {
+              display: block;
+              z-index: 3;
+            }
+            &:nth-child(2) {
+              display: block;
+              margin-left: -10px;
+              z-index: 2;
+            }
+            &:nth-child(3) {
+              display: block;
+              margin-left: -10px;
+              z-index: 1;
+            }
+            &:nth-child(4) {
+              display: block;
+              margin-left: -10px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+#tk_EventMembers {
+  width: 190px;
+  padding: 16px;
+  max-height: 248px;
+  .ant-spin-nested-loading {
+    overflow-y: scroll;
+    max-height: 216px;
+    .ant-spin-container {
+      .ant-dropdown-menu-items {
+        padding-left: 0;
+        margin-bottom: 0;
+        .ant-list-item {
+          padding: 4px 0;
+          &:first-child {padding-top: 0;}
+          &:last-child {padding-bottom: 0;}
+        }
+      }
+    }
+  }
+}
