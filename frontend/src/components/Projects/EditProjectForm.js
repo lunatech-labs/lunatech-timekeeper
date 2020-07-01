@@ -74,7 +74,6 @@ const EditProjectForm = () => {
       ...projectResponse.data,
       clientId: (projectResponse.data.client && projectResponse.data.client.id) || null
     };
-    const projectsName = projectsResponse.data.map(project => project.name.toLowerCase().trim());
     const UserName = ({value = {}}) => {
       return (<span>{usersResponse.data.find(u => u.id === value).name}</span>);
     };
@@ -95,6 +94,11 @@ const EditProjectForm = () => {
         onFinish={timeKeeperAPIPut.run}
         form={form}
       >
+        <Form.Item
+          noStyle
+          name="version"
+          rules={[{required: true}]}
+        ></Form.Item>
         <div className="tk_CardLg">
           <Row gutter={16}>
             <Col className="gutter-row" span={12}>
@@ -106,16 +110,7 @@ const EditProjectForm = () => {
                 rules={[
                   {
                     required: true,
-                  },
-                  () => ({
-                    validator(rule, value) {
-                      const name = value.toLowerCase().trim();
-                      if (!projectsName.includes(name) || name === initialValues.name.toLowerCase()) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject('A project already use this name');
-                    },
-                  }),
+                  }
                 ]}
               >
                 <Input
@@ -259,6 +254,7 @@ const EditProjectForm = () => {
             <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Submit</Button>
           </Space>
         </Form.Item>
+
       </Form>
     );
   }
