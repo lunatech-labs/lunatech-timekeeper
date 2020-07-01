@@ -23,7 +23,6 @@ public final class EventTemplateRequest {
     @NotBlank
     private final String name;
 
-    @NotNull
     private final String description;
 
     @NotNull
