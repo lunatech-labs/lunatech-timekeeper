@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, Avatar, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin, Row, Col} from 'antd';
+import {Alert, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin, Row, Col} from 'antd';
 import {useTimeKeeperAPI, useTimeKeeperAPIPut} from '../../utils/services';
 import {Link, Redirect, useRouteMatch} from 'react-router-dom';
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined';
@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import './EditProjectForm.less';
 import TitleSection from '../Title/TitleSection';
 import '../../components/Button/BtnGeneral.less';
+import TkUserAvatar from '../Users/TkUserAvatar';
 
 
 const {TextArea} = Input;
@@ -74,7 +75,6 @@ const EditProjectForm = () => {
       ...projectResponse.data,
       clientId: (projectResponse.data.client && projectResponse.data.client.id) || null
     };
-    const projectsName = projectsResponse.data.map(project => project.name.toLowerCase().trim());
     const UserName = ({value = {}}) => {
       return (<span>{usersResponse.data.find(u => u.id === value).name}</span>);
     };
@@ -82,7 +82,8 @@ const EditProjectForm = () => {
       value: PropTypes.string
     };
     const UserPicture = ({value}) => {
-      return (<Avatar src={usersResponse.data.find(u => u.id === value).picture}/>);
+      const currentUser = usersResponse.data.find(u => u.id === value);
+      return (<TkUserAvatar picture={currentUser.picture} name={currentUser.name}/>);
     };
     UserPicture.propTypes = {
       value: PropTypes.string
@@ -95,6 +96,11 @@ const EditProjectForm = () => {
         onFinish={timeKeeperAPIPut.run}
         form={form}
       >
+        <Form.Item
+          noStyle
+          name="version"
+          rules={[{required: true}]}
+        ></Form.Item>
         <div className="tk_CardLg">
           <Row gutter={16}>
             <Col className="gutter-row" span={12}>
@@ -106,16 +112,7 @@ const EditProjectForm = () => {
                 rules={[
                   {
                     required: true,
-                  },
-                  () => ({
-                    validator(rule, value) {
-                      const name = value.toLowerCase().trim();
-                      if (!projectsName.includes(name) || name === initialValues.name.toLowerCase()) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject('A project already use this name');
-                    },
-                  }),
+                  }
                 ]}
               >
                 <Input
@@ -259,6 +256,7 @@ const EditProjectForm = () => {
             <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Submit</Button>
           </Space>
         </Form.Item>
+
       </Form>
     );
   }

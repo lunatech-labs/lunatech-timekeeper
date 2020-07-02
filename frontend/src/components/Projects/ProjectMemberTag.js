@@ -1,15 +1,15 @@
 import React from 'react';
 import './ProjectMemberTag.less';
 import PropTypes from 'prop-types';
-import {Avatar} from 'antd';
 import TagMember from '../Tag/TagMember';
 import CardXs from '../Card/CardXs';
+import TkUserAvatar from '../Users/TkUserAvatar';
 
 const ProjectMemberTag = ({ member }) => {
   return (
     <CardXs>
       <div>
-        <Avatar src={member.picture}/>
+        <TkUserAvatar picture={member.picture} name={member.name}/>
         <p>{member.name}</p>
       </div>
       <TagMember isManager={member.manager} />

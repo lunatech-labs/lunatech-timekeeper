@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Alert, AutoComplete, Avatar, Button, Card, Collapse, List, Spin} from 'antd';
 import logo from '../../img/logo_timekeeper_homepage.png';
 import './ClientList.less';
-import {useTimeKeeperAPI} from '../../utils/services';
+import {sortListByName, useTimeKeeperAPI} from '../../utils/services';
 import FolderFilled from '@ant-design/icons/lib/icons/FolderFilled';
 import EditFilled from '@ant-design/icons/lib/icons/EditFilled';
 import Tooltip from 'antd/lib/tooltip';
@@ -94,7 +94,7 @@ const ClientList = () => {
                   <Panel header={<Space size="small"><FolderOpenOutlined />{'List of projects'}</Space>} key="1">
                     <List
                       id={'tk_ClientProjects'}
-                      dataSource={item.projects}
+                      dataSource={sortListByName(item.projects)}
                       renderItem={projectItem => (
                         <List.Item>
                           <CardXs>
