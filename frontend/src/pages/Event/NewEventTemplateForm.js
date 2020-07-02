@@ -146,7 +146,7 @@ const NewEventTemplateForm = () => {
                                 ]}
                             >
                                 <RangePicker
-                                    defaultValue={[moment("9:00 AM", "LT")]}
+                                    defaultValue={[moment.utc("9:00 AM", "LT"),moment.utc("9:00 AM", "LT")]}
                                     disabledDate={disabledDate}
                                     disabledTime={disabledRangeTime}
                                     showTime={{
