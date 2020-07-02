@@ -1,6 +1,6 @@
 import React from 'react';
 import {Alert, Spin, Table} from 'antd';
-import {useTimeKeeperAPI} from '../../utils/services';
+import {sortListByName, useTimeKeeperAPI} from '../../utils/services';
 import './UserList.less';
 import Button from 'antd/lib/button';
 import TagMember from '../Tag/TagMember';
@@ -96,7 +96,7 @@ const UserList = () => {
       </div>
 
       <Table id="tk_Table"
-        dataSource={usersResponse.data.map(user => userToUserData(user))}
+        dataSource={sortListByName(usersResponse.data.map(user => userToUserData(user)))}
         columns={columns} pagination={{ position:['bottomCenter'], pageSize:20, hideOnSinglePage:true, itemRender: paginationItemRender }}
       />
     </React.Fragment>
