@@ -1,8 +1,10 @@
 package fr.lunatech.timekeeper.services.responses;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import fr.lunatech.timekeeper.models.time.EventTemplate;
 import fr.lunatech.timekeeper.models.time.EventType;
 import fr.lunatech.timekeeper.models.time.UserEvent;
+import fr.lunatech.timekeeper.timeutils.TimeKeeperDateFormat;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -25,9 +27,11 @@ public class EventTemplateResponse {
     private final String description;
 
     @NotNull
+    @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_TIME_PATTERN)
     private final LocalDateTime startDateTime;
 
     @Null
+    @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_TIME_PATTERN)
     private final LocalDateTime endDateTime;
 
     @Null

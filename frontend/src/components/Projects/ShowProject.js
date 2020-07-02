@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Avatar, Button, Col, Divider, message, Modal, Row, Typography} from 'antd';
+import {Button, Col, Divider, message, Modal, Row, Typography} from 'antd';
 import './ShowProject.less';
 import PropTypes from 'prop-types';
 import {DesktopOutlined, DollarOutlined, LockOutlined, SnippetsFilled, UserOutlined} from '@ant-design/icons';
@@ -13,6 +13,7 @@ import Tooltip from 'antd/lib/tooltip';
 import NoDataMessage from '../NoDataMessage/NoDataMessage';
 import {useTimeKeeperAPIPut} from '../../utils/services';
 import {UserContext} from '../../context/UserContext';
+import TkUserAvatar from '../Users/TkUserAvatar';
 
 const {Title} = Typography;
 
@@ -47,7 +48,7 @@ const ShowProject = ({project, onSuccessJoinProject}) => {
       return users.map(user =>
         <CardXs key={`project-member-${user.id}`}>
           <div>
-            <Avatar src={user.picture}/>
+            <TkUserAvatar picture={user.picture} name={user.name}/>
             <p>{user.name}</p>
           </div>
           <div>
