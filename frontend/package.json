@@ -18,7 +18,7 @@
     "babel-plugin-import": "^1.13.0",
     "customize-cra": "^0.9.1",
     "dayjs": "^1.8.18",
-    "eslint-plugin-react-hooks": "^0.0.0-33c3af284",
+    "eslint-plugin-react-hooks": "^4.0.5",
     "keycloak-js": "latest",
     "less": "^3.11.1",
     "less-loader": "^5.0.0",
