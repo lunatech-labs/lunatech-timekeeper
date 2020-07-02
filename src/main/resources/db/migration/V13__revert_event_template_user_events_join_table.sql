@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS event_template_user_events ;

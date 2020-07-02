@@ -38,6 +38,15 @@ public class UserEvent extends PanacheEntityBase {
     @Null
     public LocalDateTime endDateTime;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "owner_id")
+    @NotNull
+    public User owner;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "eventtemplate_id")
+    public EventTemplate eventTemplate;
+
     @Null
     public LocalDate getDay() {
         if (startDateTime == null) {
@@ -45,12 +54,6 @@ public class UserEvent extends PanacheEntityBase {
         }
         return startDateTime.toLocalDate();
     }
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    public User owner;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    public EventTemplate eventTemplate;
 
     @Override
     public String toString() {

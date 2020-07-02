@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import javax.transaction.*;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Set;
 
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
@@ -72,12 +73,12 @@ public class UserEventTest {
 
         // Let's create a UserEvent directly, just to write something in the DB
         final UserEvent userEvent = new UserEvent();
-        userEvent.id=null;
+        userEvent.id = null;
         userEvent.eventType = EventType.COMPANY;
         userEvent.name = "Hackbreakfast";
         userEvent.description = "A great company event";
-        userEvent.startDateTime = LocalDate.of(2020, 06, 17).atTime(9, 00).truncatedTo(ChronoUnit.HOURS);
-        userEvent.endDateTime = LocalDate.of(2020, 06, 17).atTime(12, 00).truncatedTo(ChronoUnit.HOURS);
+        userEvent.startDateTime = LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS);
+        userEvent.endDateTime = LocalDate.of(2020, 6, 17).atTime(12, 0).truncatedTo(ChronoUnit.HOURS);
         userEvent.owner = user;
         transaction.begin();
         userEvent.persistAndFlush();
@@ -91,19 +92,23 @@ public class UserEventTest {
 
         // Delete the User
         transaction.begin();
-        User.delete("id=?1",1L); // `user` instance is a detached Hibernate obj and cannot be used
+        User.deleteAll(); // `user` instance is a detached Hibernate obj and cannot be used
         transaction.commit();
 
         // Check that the userEvent still exists and can be retrieved from the DB.
         // This is really important : we should not delete userEvent if a user gets deleted for any reason.
-        UserEvent userFromDBAfterDelete = UserEvent.findById(1L);
-        assertNotNull(userFromDBAfterDelete);
-        assertEquals(1L, userFromDB.id);
-        assertEquals("Hackbreakfast", userFromDB.name);
+        transaction.begin();
+        UserEvent userEventFromDBAfterUserDelete = UserEvent.findById(1L);
+        transaction.commit();
+
+        assertNotNull(userEventFromDBAfterUserDelete);
+        assertNull(userEventFromDBAfterUserDelete.owner);
+        assertEquals(1L, userEventFromDBAfterUserDelete.id);
+        assertEquals("Hackbreakfast", userEventFromDBAfterUserDelete.name);
     }
 
     @Test
-    public void shouldDeleteUserEventIfAssociatedEventTemplateIsDeleted() throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+    public void shouldNotDeleteUserEventIfAssociatedEventTemplateIsDeleted() throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
         final String adminToken = getAdminAccessToken();
         final String userAccessToken = getUserAccessToken();
 
@@ -119,33 +124,29 @@ public class UserEventTest {
         User user = User.findById(1L);
         assertNotNull(user);
 
-        // Create an EventTemplate
+        // Create an EventTemplate with the user as attendees
         final EventTemplate hackBreakfastTemplate = new EventTemplate();
-        hackBreakfastTemplate.id=null;
+        hackBreakfastTemplate.id = null;
         hackBreakfastTemplate.organization = organisation;
         hackBreakfastTemplate.name = "Hackbreakfast2";
         hackBreakfastTemplate.description = "A great company event";
-        hackBreakfastTemplate.startDateTime = LocalDate.of(2020, 06, 17).atTime(9, 00).truncatedTo(ChronoUnit.HOURS);
-        hackBreakfastTemplate.endDateTime = LocalDate.of(2020, 06, 17).atTime(12, 00).truncatedTo(ChronoUnit.HOURS);
-
-        transaction.begin();
-        hackBreakfastTemplate.persistAndFlush();
-        transaction.commit();
-
-        // Let's create a UserEvent directly, just to write something in the DB
+        hackBreakfastTemplate.startDateTime = LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS);
+        hackBreakfastTemplate.endDateTime = LocalDate.of(2020, 6, 17).atTime(12, 0).truncatedTo(ChronoUnit.HOURS);
         final UserEvent userEvent = new UserEvent();
         userEvent.id = null;
         userEvent.eventType = EventType.COMPANY;
         userEvent.name = hackBreakfastTemplate.name;
         userEvent.description = "A great company event";
-        userEvent.startDateTime = LocalDate.of(2020, 06, 17).atTime(9, 00).truncatedTo(ChronoUnit.HOURS);
-        userEvent.endDateTime = LocalDate.of(2020, 06, 17).atTime(12, 00).truncatedTo(ChronoUnit.HOURS);
+        userEvent.startDateTime = LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS);
+        userEvent.endDateTime = LocalDate.of(2020, 6, 17).atTime(12, 0).truncatedTo(ChronoUnit.HOURS);
         userEvent.owner = user;
         userEvent.eventTemplate = hackBreakfastTemplate;
+        hackBreakfastTemplate.attendees = Set.of(userEvent);
 
         transaction.begin();
-        userEvent.persistAndFlush();
+        hackBreakfastTemplate.persistAndFlush();
         transaction.commit();
+
 
         // Retrieve the userEvent
         transaction.begin();
@@ -162,7 +163,7 @@ public class UserEventTest {
         EventTemplate.deleteAll();
         transaction.commit();
 
-        // Check that the userEvent is deleted if we delete the EventTemplate (Note : this is arguable...)
+        // Check that the userEvent is not deleted if we delete the EventTemplate (Note : this is arguable...)
         transaction.begin();
         UserEvent userEventFromDBAfterDelete = UserEvent.findById(1L);
         transaction.commit();

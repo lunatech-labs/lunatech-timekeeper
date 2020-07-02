@@ -4,9 +4,7 @@
   background: @tk_DarkGray;
   border: none;
   border-radius: 4px;
-  min-height: 370px;
   box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2);
-  height: 521px;
   position: relative;
   cursor: pointer;
   &[disabled] {
@@ -51,15 +49,13 @@
   }
   .tk_CardWeekCalendar_Body {
     padding: 16px 8px 16px 8px;
-    overflow-x: auto;
-    height: 457px;
+    min-height: 688px;
     &[disabled] {
       pointer-events: none;
       box-shadow: none;
       background: url("../../img/scratched_bg.png");
       background-repeat: repeat;
       background-size: 6%;
-      height: 457px;
       opacity: 0.5;
       background-color: #75768521;
       border-bottom-left-radius: 4px;
@@ -76,6 +72,8 @@
             font-size: 12px;
             display: flex;
             text-transform: capitalize;
+            text-overflow: ellipsis;
+            display: -webkit-box;
           }
         }
       }
