@@ -149,3 +149,7 @@ export const useTimeKeeperAPIPut = (urlAPI, formData, booleanCallback) => {
     }
   });
 };
+
+export const sortListByName = (listToSort) => listToSort.sort((a,b)=>{
+  return a.name.localeCompare(b.name);
+});
