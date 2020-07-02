@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
 import {Alert, Button, Col, Form, Input, message, Row, Space, Spin, DatePicker} from 'antd';
-import './NewEventTemplate.less';
+import './NewEventTemplateForm.less';
 import '../../components/Button/BtnGeneral.less';
 import {Link, Redirect} from "react-router-dom";
 import TitleSection from "../../components/Title/TitleSection";

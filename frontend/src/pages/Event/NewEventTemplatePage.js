@@ -1,7 +1,7 @@
 import React from 'react';
 
 import MainPage from '../MainPage/MainPage';
-import NewEventTemplateForm from "./NewEventTemplateForm";
+import NewEventTemplateForm from "../../components/Events/NewEventTemplateForm";
 
 const NewEventTemplatePage = () => {
     return (
