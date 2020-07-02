@@ -17,7 +17,7 @@ import DetailProjectPage from '../pages/Project/detailProject';
 import EditProjectsPage from '../pages/Project/editProject';
 import TimeEntriesPage from '../pages/TimeSheet/timeEntriesPage';
 import EventsPage from '../pages/Event/eventsPage';
-import NewEventTemplatePage from '../pages/Event/NewEventTemplatePage'
+import NewEventTemplatePage from '../pages/Event/NewEventTemplatePage';
 
 export const AppRouter = () => {
   const [, initialized] = useKeycloak();
