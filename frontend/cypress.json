@@ -1,0 +1,8 @@
+{
+  "env": {
+    "auth_base_url": "http://localhost:8082/auth",
+    "auth_realm": "Timekeeper",
+    "auth_client_id": "timekeeper-swagger"
+  },
+  "baseUrl": "http://localhost:3000"
+}

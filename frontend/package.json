@@ -39,7 +39,8 @@
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "lint": "npx eslint src",
-    "lint-fix": "npx eslint src --fix"
+    "lint-fix": "npx eslint src --fix",
+    "cypress": "node_modules/.bin/cypress open"
   },
   "resolutions": {
     "url-parse": "1.4.3",
@@ -64,6 +65,8 @@
     ]
   },
   "devDependencies": {
+    "cypress": "^4.9.0",
+    "cypress-keycloak-commands": "^1.2.0",
     "eslint": "^6.8.0"
   },
   "engines": {
