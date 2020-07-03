@@ -153,12 +153,15 @@ const NewEventTemplateForm = () => {
                     hideDisabledOptions: true
                   }}
                   format="YYYY-MM-DD h:mm a"
+                  className="tk_RangePicker"
                 />
               </Form.Item>
             </Col>
             <Col className="gutter-row" span={12}>
               <TitleSection title="Users"/>
-              <Form.Item>
+              <Form.Item
+                label="Select users :"
+              >
                 <UserTreeData users={usersResponse.data}/>
               </Form.Item>
             </Col>
