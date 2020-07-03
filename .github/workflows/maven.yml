@@ -20,7 +20,7 @@ jobs:
     - name: Build with Maven in batch mode
       run: ./mvnw -B compile test --file pom.xml
     - name: Sonar quality
-      run: ./mvnw -B verify sonar:sonar -Dsonar.login=$SONAR_TOKEN
+      run: ./mvnw -B verify sonar:sonar -P sonar -Dsonar.login=$SONAR_TOKEN
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}      
