@@ -91,7 +91,7 @@ public class ProjectService {
             throw new ForbiddenException("The user can't edit this project with id : " + project.id);
         }
 
-        if (project.version != request.getVersion()) {
+        if (!project.version.equals(request.getVersion())) {
             throw new ConflictOnVersionException(String.format("Version of this project does not match the current project version (%d) ", project.version));
         }
 
@@ -101,7 +101,7 @@ public class ProjectService {
         final Project updatedProject = request.unbind(maybeProject.get(), clientService::findById, userService::findById, ctx);
 
         // This code is for Quarkus Issue https://github.com/quarkusio/quarkus/issues/7193
-        Project.update(updatedProject);
+        updatedProject.persistAndFlush();
 
         createTimeSheetsForNewUsers(updatedProject, ctx);
         return Optional.of(project.id);
