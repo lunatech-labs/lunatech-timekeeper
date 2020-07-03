@@ -42,6 +42,7 @@ const UserTreeData = ({users}) => {
         columns={columns}
         rowSelection={{...rowSelection}}
         dataSource={dataWithKey}
+        scroll={{ y: 230 }}
         className="tk_UserTreeData"
       />
     </div>
