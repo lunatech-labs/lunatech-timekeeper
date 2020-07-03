@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {Alert, Avatar, Button, Card, Collapse, Divider, Dropdown, List, Menu, Spin, Space} from 'antd';
 import logo from '../../img/logo_timekeeper_homepage.png';
 import {useTimeKeeperAPI} from '../../utils/services';
@@ -16,6 +16,7 @@ import TitleSection from '../Title/TitleSection';
 import DownOutlined from '@ant-design/icons/lib/icons/DownOutlined';
 import PropTypes from 'prop-types';
 import {useKeycloak} from '@react-keycloak/web';
+import {UserContext} from "../../context/UserContext";
 
 const {Panel} = Collapse;
 
@@ -23,6 +24,7 @@ const {Panel} = Collapse;
 const ProjectList = () => {
   const [keycloak] = useKeycloak();
   const isAdmin = keycloak.hasRealmRole('admin');
+  const {currentUser} = useContext(UserContext);
 
   const [filterText, setFilterText] = useState('All');
 
@@ -146,12 +148,17 @@ const ProjectList = () => {
 
   const memberComparator = (m1, m2) => m2.manager - m1.manager;
 
+  const isTeamLead = (project) => {
+      const member = project.users.find(user => currentUser.id === user.id)
+      return member && member.manager
+  }
+
   const dropdownCardAction = (item, isAdmin) => (
     <Menu>
       <Menu.Item key="view">
         <a href={`/projects/${item.id}`}><EyeFilled/>View</a>
       </Menu.Item>
-      {isAdmin &&
+      {(isAdmin  || isTeamLead(item)) &&
       <Menu.Item key="edit">
         <a href={`/projects/${item.id}/edit`}><EditFilled/>Edit</a>
       </Menu.Item>}
