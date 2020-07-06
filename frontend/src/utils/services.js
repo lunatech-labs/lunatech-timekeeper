@@ -96,7 +96,7 @@ export const useTimeKeeperAPI = (urlAPI, ...rest) => {
  * @param formData : form data
  * @param booleanCallback : a function that accepts a boolean, to indicate if it was successful
  */
-export const useTimeKeeperAPIPost = (urlAPI, formData, booleanCallback) => {
+export const useTimeKeeperAPIPost = (urlAPI, formData, booleanCallback, formatData) => {
   const [keycloak, initialized] = useKeycloak();
 
   useEffect(() => {
@@ -110,7 +110,7 @@ export const useTimeKeeperAPIPost = (urlAPI, formData, booleanCallback) => {
     return ({
       url: process.env.REACT_APP_QUARKUS_BACKEND + urlAPI,
       method: 'post',
-      data: formData
+      data: formatData ? formatData(formData) : formData
     });
   }, {
     manual: true,
@@ -149,3 +149,7 @@ export const useTimeKeeperAPIPut = (urlAPI, formData, booleanCallback) => {
     }
   });
 };
+
+export const sortListByName = (listToSort) => listToSort.sort((a,b)=>{
+  return a.name.localeCompare(b.name);
+});

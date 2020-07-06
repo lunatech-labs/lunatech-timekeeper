@@ -12,24 +12,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2.3.1
     - name: Set up JDK 11
       uses: actions/setup-java@v1
       with:
         java-version: 11
     - name: Build with Maven in batch mode
-      run: mvn -B compile test --file pom.xml
-    - name: Slack Notification
-      if: success()
-      uses: rtCamp/action-slack-notify@v2.0.0
+      run: ./mvnw -B compile test --file pom.xml
+    - name: Sonar quality
+      run: ./mvnw -B -P sonar -Dsonar.login=$SONAR_TOKEN --file pom.xml sonar:sonar
       env:
-        SLACK_TITLE: SUCCESS Github Msg
-        SLACK_CHANNEL: fr-timekeeper
-        SLACK_WEBHOOK: ${{ secrets.slack }}
-        SLACK_COLOR: good
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}      
     - name: Build failed Notification
       if: failure()
-      uses: rtCamp/action-slack-notify@v2.0.0
+      uses: rtCamp/action-slack-notify@v2.0.2
       env:
         SLACK_TITLE: ERROR Github Msg
         SLACK_COLOR: '#ee0000'

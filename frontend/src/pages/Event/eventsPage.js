@@ -1,11 +1,20 @@
 import React from 'react';
 import MainPage from '../MainPage/MainPage';
+import EventsList from '../../components/Events/EventsList';
+import {useKeycloak} from '@react-keycloak/web';
+import {Link} from 'react-router-dom';
 
 
 const EventsPage = () => {
+  const [keycloak] = useKeycloak();
+  const isAdmin = keycloak.hasRealmRole('admin');
+  const actions = isAdmin && <Link id="tk_Btn" className="tk_BtnPrimary" key='addLink' to={'/events/new'}>Add event</Link>;
   return (
-    <MainPage title="Events">
-
+    <MainPage
+      title="Events"
+      actions={actions}
+    >
+      <EventsList />
     </MainPage>
   );
 };

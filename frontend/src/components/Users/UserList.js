@@ -1,9 +1,10 @@
 import React from 'react';
-import {Alert, Avatar, Spin, Table} from 'antd';
-import {useTimeKeeperAPI} from '../../utils/services';
+import {Alert, Spin, Table} from 'antd';
+import {sortListByName, useTimeKeeperAPI} from '../../utils/services';
 import './UserList.less';
 import Button from 'antd/lib/button';
 import TagMember from '../Tag/TagMember';
+import TkUserAvatar from './TkUserAvatar';
 
 const UserList = () => {
   const usersResponse = useTimeKeeperAPI('/api/users');
@@ -16,13 +17,11 @@ const UserList = () => {
   };
 
   // local component created to avoid an es-lint error
-  const renderAvatar = (value) => <Avatar src={value} />;
+  const renderAvatar = (user) => <TkUserAvatar name={user.name} picture={user.picture} />;
 
   const columns = [
     {
       title: '',
-      dataIndex: 'picture',
-      key: 'picture',
       width: 60,
       align: 'right',
       render: (value) => renderAvatar(value),
@@ -97,7 +96,7 @@ const UserList = () => {
       </div>
 
       <Table id="tk_Table"
-        dataSource={usersResponse.data.map(user => userToUserData(user))}
+        dataSource={sortListByName(usersResponse.data.map(user => userToUserData(user)))}
         columns={columns} pagination={{ position:['bottomCenter'], pageSize:20, hideOnSinglePage:true, itemRender: paginationItemRender }}
       />
     </React.Fragment>

@@ -3,6 +3,7 @@ package fr.lunatech.timekeeper.services;
 import fr.lunatech.timekeeper.models.Project;
 import fr.lunatech.timekeeper.models.ProjectUser;
 import fr.lunatech.timekeeper.models.User;
+import fr.lunatech.timekeeper.resources.exceptions.ConflictOnVersionException;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
@@ -90,10 +91,18 @@ public class ProjectService {
             throw new ForbiddenException("The user can't edit this project with id : " + project.id);
         }
 
+        if (!project.version.equals(request.getVersion())) {
+            throw new ConflictOnVersionException(String.format("Version of this project does not match the current project version (%d) ", project.version));
+        }
+
         // It has to be done before the project is unbind
         deleteOldMembers(project, request::notContains, ctx);
 
         final Project updatedProject = request.unbind(maybeProject.get(), clientService::findById, userService::findById, ctx);
+
+        // This code is for Quarkus Issue https://github.com/quarkusio/quarkus/issues/7193
+        updatedProject.persistAndFlush();
+
         createTimeSheetsForNewUsers(updatedProject, ctx);
         return Optional.of(project.id);
     }
@@ -103,7 +112,7 @@ public class ProjectService {
         logger.debug("Modify project for for id={} with userId={}, {}", id, userContext.getUserId(), userContext);
         final Optional<Project> maybeProject = findById(id, userContext);
         maybeProject.ifPresent(project -> {
-            if(!userContext.canJoin(project)) {
+            if (!userContext.canJoin(project)) {
                 throw new ForbiddenException("The user can't join the project with id : " + project.id);
             }
         });

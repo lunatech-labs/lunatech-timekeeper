@@ -61,7 +61,7 @@ class TimeSheetResourceTest {
         List<ProjectRequest.ProjectUserRequest> newUsers = List.of(samProjectRequest, jimmyProjectRequest);
 
         // WHEN : the project is created, a time sheet is generated for all user
-        final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
+        final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers, 1L), adminToken);
 
 
         final var expectedTimeSheetSam = new TimeSheetResponse(1L, project, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
@@ -85,7 +85,7 @@ class TimeSheetResourceTest {
         Long timeSheetId = 1L;
 
         // WHEN : the project is created, a time sheet is generated for all user
-        final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers), adminToken);
+        final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers, 1L), adminToken);
         // verify first version
         final var expectedTimeSheetSam = new TimeSheetResponse(timeSheetId, project, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
         getValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)));

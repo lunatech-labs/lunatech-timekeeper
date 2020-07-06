@@ -17,7 +17,7 @@
         <quarkus.platform.artifact-id>quarkus-universe-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
         <quarkus.platform.version>1.3.2.Final</quarkus.platform.version>
-        <surefire-plugin.version>2.22.1</surefire-plugin.version>
+        <surefire-plugin.version>2.22.2</surefire-plugin.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -82,7 +82,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
-            <version>1.12.5</version>
+            <version>1.14.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -94,7 +94,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>1.12.5</version>
+            <version>1.14.3</version>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -162,7 +162,7 @@
             <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
-                <version>6.4.0</version>
+                <version>6.5.0</version>
                 <configuration>
                     <url>jdbc:postgresql://${POSTGRESQL_ADDON_HOST}:${POSTGRESQL_ADDON_PORT}/${POSTGRESQL_ADDON_DB}
                     </url>

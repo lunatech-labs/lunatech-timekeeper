@@ -23,7 +23,6 @@ public final class EventTemplateRequest {
     @NotBlank
     private final String name;
 
-    @NotNull
     private final String description;
 
     @NotNull
@@ -37,6 +36,7 @@ public final class EventTemplateRequest {
     @NotNull
     private final List<UserEventRequest> attendees;
 
+    @JsonCreator
     public EventTemplateRequest(
             @NotBlank String name,
             @NotNull String description,

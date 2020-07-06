@@ -1,14 +1,13 @@
 package fr.lunatech.timekeeper.timeutils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.*;
-import java.util.Locale;
+import java.time.temporal.IsoFields;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
 
 /**
  * @author created by N.Martignole, Lunatech, on 2020-06-10.
