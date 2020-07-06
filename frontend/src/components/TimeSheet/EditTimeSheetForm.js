@@ -90,8 +90,8 @@ const EditTimeSheetForm = ({timeSheet}) => {
 
         <Form.Item>
           <Space className="tk_JcFe" size="middle" align="center">
-            <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={{state: {modal: true}}}>Cancel</Link>
-            <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Submit</Button>
+            <Link id="btnCancelEditTimeSheet" className="tk_Btn tk_BtnSecondary" key="cancelLink" to={{state: {modal: true}}}>Cancel</Link>
+            <Button id="btnSubmitEditTimeSheet" className="tk_Btn tk_BtnPrimary" htmlType="submit">Submit</Button>
           </Space>
         </Form.Item>
       </Form>

@@ -17,7 +17,7 @@
 describe("Test Login and Logout", () => {
     beforeEach(() => {
         cy.kcLogout();
-        cy.kcLogin("alice")
+        cy.kcLogin("alice");
         cy.visit("");
     });
 
@@ -41,7 +41,7 @@ describe("Test Login and Logout", () => {
     it("should redirect to login if not authenticated", () => {
         cy.kcLogout();
         cy.visit("http://localhost:3000/home");
-        
+
         cy.url().should('contains', 'http://localhost:3000/login');
     });
 });

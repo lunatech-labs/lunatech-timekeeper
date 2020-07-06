@@ -14,6 +14,7 @@ import Input from 'antd/lib/input';
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined';
 import Meta from 'antd/lib/card/Meta';
 import CardXs from '../Card/CardXs';
+import Pluralize from '../Pluralize/Pluralize';
 
 const { Panel } = Collapse;
 
@@ -56,11 +57,11 @@ const ClientList = () => {
   return (
     <React.Fragment>
       <div className="tk_SubHeader">
-        <p>{clientsFiltered().length} Clients</p>
+        <p><Pluralize label="client" size={clientsFiltered().length}/></p>
         <div className="tk_SubHeader_RightPart">
           <div className="tk_Search_Input">
             <AutoComplete onSearch={onSearch}>
-              <Input size="large" placeholder="Search in clients" allowClear  prefix={<SearchOutlined />} />
+              <Input data-cy="searchClientBox" size="large" placeholder="Search in clients..." allowClear  prefix={<SearchOutlined />} />
             </AutoComplete>
           </div>
         </div>

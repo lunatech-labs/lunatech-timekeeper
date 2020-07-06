@@ -82,8 +82,8 @@ const ClientForm = () => {
             />
           </Form.Item>
           <Space className="tk_JcFe" size="middle" align="center">
-            <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={'/clients'}>Cancel</Link>
-            <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Submit</Button>
+            <Link id="btnCancelNewClient" className="tk_Btn tk_BtnSecondary" key="cancelLink" to={'/clients'}>Cancel</Link>
+            <Button id="btnSubmitNewClient" className="tk_Btn tk_Btn tk_BtnPrimary" htmlType="submit">Submit</Button>
           </Space>
         </div>
       </Form>
