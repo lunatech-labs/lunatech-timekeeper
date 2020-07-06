@@ -4,7 +4,7 @@ import { useKeycloak } from '@react-keycloak/web';
 import PropTypes from 'prop-types';
 import {message} from 'antd';
 
-export function PrivateRoute({ component: Component, roles, ...rest }) {
+export function PrivateRoute({ component: Component, roles, specialRights, ...rest }) {
   const [keycloak] = useKeycloak();
 
   const roleChecked = (roles) => (roles === undefined || roles.some(role => keycloak.hasRealmRole(role)));
@@ -20,7 +20,7 @@ export function PrivateRoute({ component: Component, roles, ...rest }) {
     );
   }
 
-  if (keycloak.authenticated) {
+  if (keycloak.authenticated){
     message.error('Access forbidden for this page');
     return <Route
       {...rest}
@@ -34,8 +34,7 @@ export function PrivateRoute({ component: Component, roles, ...rest }) {
     />;
   }
 
-  return (
-    <Route
+    {/*<Route
       {...rest}
       render={(props) =>
         <Redirect
@@ -45,13 +44,31 @@ export function PrivateRoute({ component: Component, roles, ...rest }) {
           }}
         />
       }
-    />
+    />*/}
+  return (
+    <ForbiddenRoute {...rest}/>
   );
 
 }
 
+export function ForbiddenRoute({ ...rest }) {
+  message.error('Access forbidden for this page');
+  return <Route
+    {...rest}
+    render={() =>
+      <Redirect
+        to={{
+          pathname: '/',
+        }}
+      />
+    }
+  />;
+}
+
+
 PrivateRoute.propTypes ={
   component: PropTypes.func.isRequired,
   roles: PropTypes.arrayOf(PropTypes.string),
-  location: PropTypes.object
+  location: PropTypes.object,
+  specialRights: PropTypes.func
 };

@@ -148,17 +148,17 @@ const ProjectList = () => {
 
   const memberComparator = (m1, m2) => m2.manager - m1.manager;
 
-  const isTeamLead = (project) => {
+  const isTeamLead = (project, currentUser) => {
       const member = project.users.find(user => currentUser.id === user.id)
       return member && member.manager
-  }
+  };
 
   const dropdownCardAction = (item, isAdmin) => (
     <Menu>
       <Menu.Item key="view">
         <a href={`/projects/${item.id}`}><EyeFilled/>View</a>
       </Menu.Item>
-      {(isAdmin  || isTeamLead(item)) &&
+      {(isAdmin  || isTeamLead(item, currentUser)) &&
       <Menu.Item key="edit">
         <a href={`/projects/${item.id}/edit`}><EditFilled/>Edit</a>
       </Menu.Item>}
