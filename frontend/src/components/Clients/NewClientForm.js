@@ -34,14 +34,12 @@ const ClientForm = () => {
   }
 
   if (timeKeeperAPIPost.error) {
-    const { response } = timeKeeperAPIPost.error;
-    const { status, url } = response;
-    const  errMsg  =  `Server error HTTP Code:${status}  for url: ${url}`;
     return (
       <React.Fragment>
         <Alert
+          id="clientCreationError"
           message="Unable to save the new Client"
-          description={errMsg}
+          description="Make sure that the Client name is unique"
           type="error"
           closable
           style={{marginBottom: 10}}

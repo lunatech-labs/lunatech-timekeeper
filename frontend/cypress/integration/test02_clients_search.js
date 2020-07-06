@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-describe("Test Login and Logout", () => {
+describe("02 Client list and search", () => {
 
     /* Set-up the timekeeper database to a fixed version before the test */
-    before( () => {
+    before(() => {
         cy.exec("node_modules/db-migrate/bin/db-migrate reset").its('stdout').should('contain', '[INFO] Processed migration 20200706125902-cleanup-db')
         cy.exec("node_modules/db-migrate/bin/db-migrate up").its('stdout').should('contain', '[INFO] Processed migration 20200706125902-cleanup-db')
     });
@@ -25,11 +25,12 @@ describe("Test Login and Logout", () => {
     beforeEach(() => {
         cy.kcLogout();
         cy.kcLogin("alice");
-        cy.visit("");
+        /* We reload the home page between each test to ensure that the state is set correctly */
+        cy.visit("http://localhost:3000/home");
+        cy.get('.tk_Header_Profile').should('be.visible');
     });
 
     it("should return an empty list of clients", () => {
-        cy.visit("http://localhost:3000/home");
         cy.get('#linkClients').should('be.visible');
         cy.get('#linkClients').trigger('mouseover').click();
         cy.url().should('include', 'http://localhost:3000/clients');
@@ -41,7 +42,6 @@ describe("Test Login and Logout", () => {
     });
 
     it("should create a new client", () => {
-        cy.visit("http://localhost:3000/home");
         cy.visit("http://localhost:3000/clients");
         cy.url().should('include', 'http://localhost:3000/clients');
         cy.get('#btnAddNewClient').should('be.visible');
@@ -66,7 +66,6 @@ describe("Test Login and Logout", () => {
     });
 
     it("should return an empty list of project for a new client", () => {
-        cy.visit("http://localhost:3000/home");
         cy.visit("http://localhost:3000/clients");
         cy.url().should('include', 'http://localhost:3000/clients');
         cy.get('.tk_SubHeader').should("contain.text", "1 client");
@@ -75,7 +74,6 @@ describe("Test Login and Logout", () => {
     });
 
     it("should not create a client with the same name", () => {
-        cy.visit("http://localhost:3000/home");
         cy.visit("http://localhost:3000/clients");
         cy.url().should('include', 'http://localhost:3000/clients');
         cy.get('#btnAddNewClient').should('be.visible');
@@ -96,22 +94,24 @@ describe("Test Login and Logout", () => {
         cy.get('#btnSubmitNewClient').click();
         cy.url().should('include', 'http://localhost:3000/clients/new');
 
-        cy.get('#tk_MainContent > span.ant-alert-message').should('contain.text', 'Unable to save the new Client');
+        cy.get('.ant-alert').should('contain.text', 'Unable to save the new Client');
+    });
 
+    it("should search and find a client by name", () => {
+        cy.visit("http://localhost:3000/clients");
+        cy.url().should('include', 'http://localhost:3000/clients');
+        cy.get('[data-cy=searchClientBox]').should('be.visible');
+        cy.get('[data-cy=searchClientBox]').clear({force: true});
+        cy.get('[data-cy=searchClientBox]').type('for test', {force: true});
+        cy.get('[class*=tk_Card_ClientTitle]').should('have.text', "Client for testing");
+
+        cy.get('[data-cy=searchClientBox]').clear({force: true});
+        cy.get('[data-cy=searchClientBox]').type('yoyo', {force: true});
+        cy.get('[class*=tk_Card_ClientTitle]').should('not.exist');
+        cy.get('.ant-empty').should('be.visible');
 
     });
 
-    // it("should search and find a client by name", () => {
-    //
-    // });
-    //
-    // it("should edit a client", () => {
-    //
-    // });
-    //
-    // it("should not save another client with the same name", () => {
-    //
-    // });
 });
 
 
