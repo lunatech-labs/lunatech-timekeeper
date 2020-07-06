@@ -21,8 +21,8 @@ public class IllegalEntityStateExceptionMapper implements ExceptionMapper<Illega
         return Response
                 .status(Response.Status.BAD_REQUEST)
                 .type(MediaType.APPLICATION_JSON)
-                .entity(Json.createObjectBuilder()
-                        .add("message", e.getMessage()).build()
+                .entity(Json.createObjectBuilder().add("message", e.getMessage())
+                        .build().toString()
                 )
                 .build();
     }

@@ -25,7 +25,9 @@ public class UpdateResourceExceptionMapper implements ExceptionMapper<UpdateReso
                 .type(MediaType.APPLICATION_JSON)
                 .entity(Json.createObjectBuilder()
                         .add("message", String.format("%s", e.getMessage())) // e.getMessage can be null, but JSON format requires a value.
-                        .build())
+                        .build()
+                        .toString()
+                )
                 .build();
     }
 }

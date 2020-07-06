@@ -23,7 +23,8 @@ public class ResourceNotFoundExceptionMapper implements ExceptionMapper<NotFound
                 .type(MediaType.APPLICATION_JSON)
                 .entity(Json.createObjectBuilder()
                         .add("message", e.getMessage())
-                        .build())
+                        .build().toString()
+                )
                 .build();
     }
 }
