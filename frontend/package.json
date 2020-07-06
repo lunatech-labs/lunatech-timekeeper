@@ -18,6 +18,7 @@
     "babel-plugin-import": "^1.13.0",
     "customize-cra": "^1.0.0",
     "dayjs": "^1.8.18",
+    "db-migrate-pg": "^1.2.2",
     "eslint-plugin-react-hooks": "^4.0.5",
     "keycloak-js": "latest",
     "less": "^3.11.1",
@@ -40,7 +41,8 @@
     "test": "react-app-rewired test",
     "lint": "npx eslint src",
     "lint-fix": "npx eslint src --fix",
-    "cypress": "node_modules/.bin/cypress open"
+    "cypress": "node_modules/.bin/cypress open",
+    "db-migrate": "node_modules/db-migrate/bin/db-migrate"
   },
   "resolutions": {
     "url-parse": "1.4.3",
@@ -67,6 +69,7 @@
   "devDependencies": {
     "cypress": "^4.9.0",
     "cypress-keycloak-commands": "^1.2.0",
+    "db-migrate": "^0.11.11",
     "eslint": "^6.8.0"
   },
   "engines": {
