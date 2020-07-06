@@ -8,12 +8,13 @@ const UserTreeData = ({users}) => {
     {
       dataIndex: 'picture',
       key: 'picture',
-      width: '1%',
+      width: '10%',
       render: pictureUrl => <Avatar src={pictureUrl}/>
     },
     {
       dataIndex: 'name',
       key: 'name',
+      width: '80%',
     }
   ];
 
@@ -42,7 +43,8 @@ const UserTreeData = ({users}) => {
         columns={columns}
         rowSelection={{...rowSelection}}
         dataSource={dataWithKey}
-        scroll={{ y: 230 }}
+        scroll={{ y: 240 }}
+        pagination={false}
         className="tk_UserTreeData"
       />
     </div>
