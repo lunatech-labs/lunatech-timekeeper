@@ -4,12 +4,16 @@ import PropTypes from 'prop-types';
 import './UserTreeData.less';
 
 const UserTreeData = ({users}) => {
+  const renderAvatar = (pictureUrl) => {
+    return <Avatar src={pictureUrl}/>;
+  };
+
   const columns = [
     {
       dataIndex: 'picture',
       key: 'picture',
       width: '10%',
-      render: pictureUrl => <Avatar src={pictureUrl}/>
+      render: pictureUrl => renderAvatar(pictureUrl)
     },
     {
       dataIndex: 'name',
