@@ -11,6 +11,7 @@ import TkUserAvatar from '../Users/TkUserAvatar';
 import {ForbiddenRoute} from "../../routes/utils";
 import {UserContext} from "../../context/UserContext";
 import {useKeycloak} from "@react-keycloak/web";
+import {canEditProject} from "../../utils/rights";
 
 
 const {TextArea} = Input;
@@ -21,7 +22,6 @@ const EditProjectForm = ({...rest}) => {
   const {currentUser} = useContext(UserContext);
 
   const [keycloak] = useKeycloak();
-  const isAdmin = keycloak.hasRealmRole('admin');
   const projectIdSlug = useRouteMatch({
     path: '/projects/:id',
     strict: true,
@@ -72,11 +72,7 @@ const EditProjectForm = ({...rest}) => {
   }
 
   if (clientsResponse.data && projectsResponse.data && usersResponse.data && projectResponse.data) {
-    const isTeamLead = (project, currentUser) => {
-      const member = project.users.find(user => currentUser.id === user.id);
-      return member && member.manager
-    };
-    if(!isAdmin && !isTeamLead(projectResponse.data, currentUser)) {
+    if(!canEditProject(projectResponse.data, currentUser, keycloak)) {
       return (
           <ForbiddenRoute {...rest}/>
       );
