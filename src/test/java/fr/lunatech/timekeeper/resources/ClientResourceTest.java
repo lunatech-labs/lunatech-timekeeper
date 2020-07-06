@@ -1,5 +1,6 @@
 package fr.lunatech.timekeeper.resources;
 
+import fr.lunatech.timekeeper.resources.utils.HttpTestRuntimeException;
 import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
 import fr.lunatech.timekeeper.services.requests.ClientRequest;
 import fr.lunatech.timekeeper.services.responses.ClientResponse;
@@ -24,6 +25,7 @@ import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.*;
 import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.Response.Status.*;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
@@ -65,17 +67,14 @@ class ClientResourceTest {
         final String jimmyToken = getUserAccessToken();
         final Long NO_EXISTING_CLIENT_ID = 243L;
         getValidation(ClientDef.uriPlusId(NO_EXISTING_CLIENT_ID), jimmyToken, NOT_FOUND);
-
     }
 
     @Test
     void shouldFindAllClients() {
         final String samToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
-
         final var client1 = create(new ClientRequest("NewClient", "NewDescription"), samToken);
         final var client2 = create(new ClientRequest("NewClient2", "NewDescription2"), samToken);
-
         getValidation(ClientDef.uri, jimmyToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(client1, client2)));
     }
 
@@ -106,6 +105,18 @@ class ClientResourceTest {
         final ClientRequest client2 = new ClientRequest("Client cannot be modified by user", "Client cannot be modified by user");
 
         putValidation(ClientDef.uriPlusId(client.getId()), jimmyToken, client2, FORBIDDEN);
+    }
 
+    @Test
+    void shouldNotCreateClientWithDuplicateName() {
+        final String samToken = getAdminAccessToken();
+        final var client = create(new ClientRequest("NewClient", "NewDescription"), samToken);
+        getValidation(ClientDef.uriPlusId(client.getId()), samToken, OK).body(is(timeKeeperTestUtils.toJson(client)));
+        try {
+            create(new ClientRequest("NewClient", "NewDescription"), samToken);
+        } catch (HttpTestRuntimeException httpError) {
+            assertEquals("application/json", httpError.getMimeType());
+            assertEquals(400, httpError.getHttpStatus());
+        }
     }
 }
