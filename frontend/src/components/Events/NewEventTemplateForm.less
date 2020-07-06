@@ -1,0 +1,35 @@
+@import '../../main.less';
+
+.tk_RangePicker {
+  width: 100%;
+  &:hover {
+    .ant-picker-clear {
+      background-color: @tk_DarkGray;
+    }
+    border: 1px solid rgba(145, 145, 160, 0.8)!important;
+  }
+  .ant-picker-input {
+    input {
+      border: none !important;
+    }
+  }
+  .ant-picker-clear {
+    &:hover{
+      background-color: @tk_DarkGray;
+    }
+    background-color: @tk_DarkGray;
+  }
+}
+
+.ant-picker-time-panel-column {
+  > li.ant-picker-time-panel-cell-selected {
+    .ant-picker-time-panel-cell-inner {
+      background: @tk_DarkGray !important;
+    }
+  }
+  > li.ant-picker-time-panel-cell {
+    .ant-picker-time-panel-cell-inner:hover {
+      background: @tk_DarkGray !important;
+    }
+  }
+}
