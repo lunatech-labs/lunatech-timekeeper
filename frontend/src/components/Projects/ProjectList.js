@@ -16,8 +16,8 @@ import TitleSection from '../Title/TitleSection';
 import DownOutlined from '@ant-design/icons/lib/icons/DownOutlined';
 import PropTypes from 'prop-types';
 import {useKeycloak} from '@react-keycloak/web';
-import {UserContext} from "../../context/UserContext";
-import {canEditProject, isAdmin} from "../../utils/rights";
+import {UserContext} from '../../context/UserContext';
+import {canEditProject, isAdmin} from '../../utils/rights';
 
 const {Panel} = Collapse;
 

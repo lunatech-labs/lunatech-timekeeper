@@ -1,17 +1,17 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Alert, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin, Row, Col} from 'antd';
 import {useTimeKeeperAPI, useTimeKeeperAPIPut} from '../../utils/services';
-import {Link, Redirect, Switch, useRouteMatch} from 'react-router-dom';
+import {Link, Redirect, useRouteMatch} from 'react-router-dom';
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined';
 import PropTypes from 'prop-types';
 import './EditProjectForm.less';
 import TitleSection from '../Title/TitleSection';
 import '../../components/Button/BtnGeneral.less';
 import TkUserAvatar from '../Users/TkUserAvatar';
-import {ForbiddenRoute} from "../../routes/utils";
-import {UserContext} from "../../context/UserContext";
-import {useKeycloak} from "@react-keycloak/web";
-import {canEditProject} from "../../utils/rights";
+import {ForbiddenRoute} from '../../routes/utils';
+import {UserContext} from '../../context/UserContext';
+import {useKeycloak} from '@react-keycloak/web';
+import {canEditProject} from '../../utils/rights';
 
 
 const {TextArea} = Input;
@@ -74,7 +74,7 @@ const EditProjectForm = ({...rest}) => {
   if (clientsResponse.data && projectsResponse.data && usersResponse.data && projectResponse.data) {
     if(!canEditProject(projectResponse.data, currentUser, keycloak)) {
       return (
-          <ForbiddenRoute {...rest}/>
+        <ForbiddenRoute {...rest}/>
       );
     }
 

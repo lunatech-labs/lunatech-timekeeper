@@ -1,13 +1,12 @@
-import React, {useCallback, useContext} from 'react';
+import React, {useCallback} from 'react';
 import MainPage from '../MainPage/MainPage';
 import ShowProject from '../../components/Projects/ShowProject';
 import {useTimeKeeperAPI} from '../../utils/services';
 import {Alert} from 'antd';
 import {Link, useRouteMatch} from 'react-router-dom';
 import '../../components/Button/BtnGeneral.less';
-import {canEditProject} from "../../utils/rights";
-import {useKeycloak} from "@react-keycloak/web";
-import {UserContext} from "../../context/UserContext";
+import {canEditProject} from '../../utils/rights';
+import {useKeycloak} from '@react-keycloak/web';
 
 const DetailProjectPage = () => {
 

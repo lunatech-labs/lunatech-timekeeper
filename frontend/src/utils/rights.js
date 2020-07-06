@@ -4,7 +4,7 @@ export const canEditProject = (project, currentUser, keycloak) => isTeamLeader(p
 
 export const isTeamLeader = (project, currentUser) => {
   const member = project.users.find(user => currentUser.id === user.id);
-  return member && member.manager
+  return member && member.manager;
 };
 
 export const isAdmin = (keycloak) => {
