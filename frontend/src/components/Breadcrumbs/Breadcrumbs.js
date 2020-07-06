@@ -10,7 +10,8 @@ const breadcrumbNameMap = {
   '/projects': 'Projects',
   '/projects/new': 'New project',
   '/time_entries': 'Time entries',
-  '/events': 'Events'
+  '/events': 'Events',
+  '/events/new': 'New event'
 };
 
 // The dynamic breadcrumb must be used for an exact pathname only.
