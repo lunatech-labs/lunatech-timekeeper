@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Link, Redirect} from 'react-router-dom';
 import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
-import {Alert, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin, Row, Col, Tooltip} from 'antd';
+import {Alert, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin, Row, Col} from 'antd';
 import {DeleteFilled} from '@ant-design/icons';
 import './NewProjectForm.less';
 import PropTypes from 'prop-types';
@@ -229,9 +229,7 @@ const NewProjectForm = () => {
                                     name={manager}
                                     valuePropName="checked"
                                   >
-                                    <Tooltip title="Team leader">
-                                      <Checkbox className="tk_Crown_Checkbox"/>
-                                    </Tooltip>
+                                    <Checkbox className="tk_Crown_Checkbox"/>
                                   </Form.Item>
                                   <DeleteFilled
                                     className="dynamic-delete-button"
