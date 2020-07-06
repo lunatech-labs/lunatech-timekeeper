@@ -227,7 +227,6 @@
                 </plugins>
             </build>
             <properties>
-            <properties>
                 <quarkus.package.type>native</quarkus.package.type>
             </properties>
         </profile>
