@@ -11,7 +11,7 @@
     "@react-keycloak/web": "^2.0.0",
     "@testing-library/jest-dom": "^5.1.1",
     "@testing-library/react": "^10.0.1",
-    "@testing-library/user-event": "^10.0.0",
+    "@testing-library/user-event": "^12.0.11",
     "@umijs/hooks": "^1.9.1",
     "antd": "^4.2.0",
     "axios": "^0.19.2",
