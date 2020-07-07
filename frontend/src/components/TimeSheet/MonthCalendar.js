@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import {LeftOutlined, PlusOutlined, RightOutlined} from '@ant-design/icons';
 import moment from 'moment';
 import './MonthCalendar.less';
+import {isWeekEnd} from '../../utils/momentUtils';
 
 const {Option} = Select;
 
@@ -26,9 +27,7 @@ const SelectYear = ({value, onChange}) => {
     <Select style={{width: 200}}
       defaultValue={value.format('YYYY')}
       value={value.format('YYYY')}
-      onSelect={(year) => {
-        onChange(newValue(year));
-      }}>
+      onSelect={(year) => onChange(newValue(year))}>
       {options}
     </Select>
   );
@@ -85,7 +84,6 @@ MonthNavigator.propTypes = {
 };
 
 
-const isWeekEnd = (date) => date.isoWeekday() === 6 || date.isoWeekday() === 7;
 const MonthCalendar = (props) => {
   const isDisabled = (item, date) => (item && item.day && item.day.disabled) || (props.disabledWeekEnd && isWeekEnd(date));
   const findData = (date) => props.days.find(day => day.date.isSame(moment(date).utc(), 'day'));
