@@ -20,7 +20,7 @@ export function PrivateRoute({ component: Component, roles, ...rest }) {
     );
   }
 
-  if (keycloak.authenticated){
+  if (keycloak.authenticated) {
     message.error('Access forbidden for this page');
     return <Route
       {...rest}
@@ -47,7 +47,7 @@ export function ForbiddenRoute({ ...rest }) {
     render={() =>
       <Redirect
         to={{
-          pathname: '/',
+          pathname: '/login',
         }}
       />
     }
