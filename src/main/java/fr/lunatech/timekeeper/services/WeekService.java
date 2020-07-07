@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class WeekService {
@@ -37,16 +38,21 @@ public class WeekService {
             throw new IllegalStateException("User not found, cannot load current week");
         }
 
-        List<TimeSheetResponse> timeSheets = timeSheetService.findAllActivesForUser(ctx);
-
         var userEvents = new ArrayList<UserEvent>();
+        var publicHolidays = CalendarFactory.instanceFor("FR", year).getPublicHolidaysForWeekNumber(weekNumber);
 
-        var desiredDate = TimeKeeperDateUtils.getFirstDayOfWeekFromWeekNumber(year, weekNumber);
-        var publicHolidays = CalendarFactory.instanceFor("FR",year).getPublicHolidaysForWeekNumber(weekNumber);
+        var startDayOfWeek = TimeKeeperDateUtils.getFirstDayOfWeekFromWeekNumber(year, weekNumber);
+        final List<TimeSheetResponse> timeSheetsResponse = timeSheetService
+                .findAllActivesForUser(ctx)
+                .stream().peek(timeSheetResponse ->
+                        timeSheetResponse.entries = timeSheetResponse.entries
+                            .stream()
+                            .filter(timeEntryResponse -> TimeKeeperDateUtils.getWeekNumberFromDate(timeEntryResponse.getStartDateTime().toLocalDate()).equals(weekNumber))
+                            .collect(Collectors.toList())).collect(Collectors.toList());
 
-        WeekResponse weekResponse = new WeekResponse(TimeKeeperDateUtils.adjustToFirstDayOfWeek(desiredDate)
+        WeekResponse weekResponse = new WeekResponse(TimeKeeperDateUtils.adjustToFirstDayOfWeek(startDayOfWeek)
                 , userEvents
-                , timeSheets
+                , timeSheetsResponse
                 , publicHolidays);
 
         return weekResponse;
