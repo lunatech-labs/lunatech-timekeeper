@@ -4,18 +4,11 @@ import {Button, Col, Form, Input, message, Radio, Row, Select, Space} from 'antd
 import PropTypes from 'prop-types';
 import TitleSection from '../Title/TitleSection';
 import moment from 'moment';
+import {computeNumberOfHours} from '../../utils/momentUtils';
 
 const {Option} = Select;
 const {TextArea} = Input;
 
-const computeNumberOfHours = (start, end) => {
-  const duration = moment.duration(end.diff(start));
-  const date = start.clone();
-  date.set({
-    hour: duration.asHours()
-  });
-  return duration.asHours();
-};
 
 const computeTimeUnit = (numberHours) => {
   switch (numberHours) {

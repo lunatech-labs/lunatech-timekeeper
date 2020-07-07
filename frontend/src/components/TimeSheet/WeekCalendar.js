@@ -4,47 +4,10 @@ import CardWeekCalendar from '../Card/CardWeekCalendar';
 import {LeftOutlined, PlusOutlined, RightOutlined} from '@ant-design/icons';
 import PropTypes from 'prop-types';
 import './WeekCalendar.less';
-
-const moment = require('moment');
-const renderWeekYear = (start, end) => {
-  const panelFormatWithYear = 'DD MMM YYYY';
-  const panelFormat = 'DD MMM';
-  if ((start.isSame(end, 'month') && start.isSame(end, 'year'))) {
-    // same month, same year => 22 - 25 May 2020
-    return `${start.format('DD')} - ${end.format(panelFormatWithYear)}`;
-  } else if ((!start.isSame(end, 'month') && start.isSame(end, 'year'))) {
-    // different months, same year => 22 Jan - 01 Feb 2020
-    return `${start.format(panelFormat)} - ${end.format(panelFormatWithYear)}`;
-  } else {
-    return `${start.format(panelFormatWithYear)} - ${end.format(panelFormatWithYear)}`;
-  }
-};
-
-const renderWeekRange = (start, end) => {
-  const panelFormat = 'DD MMM';
-  if (start.isSame(end, 'month')) {
-    return `${start.format('DD')} - ${end.format(panelFormat)}`;
-  } else {
-    return `${start.format(panelFormat)} - ${end.format(panelFormat)}`;
-  }
-};
-
+import {isToday, isWeekEnd, renderRange, renderRangeWithYear, weekRangeOfDate} from '../../utils/momentUtils';
+import moment from 'moment';
 
 const numberOfWeek = 15; // It's the number of weeks where we can navigate
-const weekRangeOfDate = (firstDay) => {
-  const startOfCurrentWeek = firstDay || moment().utc().startOf('week');
-  return [...Array(numberOfWeek).keys()].map(i => {
-    const toAdd = i - 7;
-    const start = startOfCurrentWeek.clone().add(toAdd, 'week');
-    const end = start.clone().endOf('week');
-    return {
-      id: start.isoWeek(),
-      start: start,
-      end: end
-    };
-  });
-};
-
 
 const weekRangeOfDateToMap = (weekRanges) => {
   const map = new Map();
@@ -52,13 +15,14 @@ const weekRangeOfDateToMap = (weekRanges) => {
   return map;
 };
 const computeWeekRanges = (selectedDay) => {
-  const weekRanges = weekRangeOfDate(selectedDay);
+  const weekRanges = weekRangeOfDate(selectedDay, numberOfWeek);
   return {
     weekNumber: selectedDay.isoWeek(),
     weekRange: weekRanges,
     weekRangeMap: weekRangeOfDateToMap(weekRanges)
   };
 };
+
 const WeekCalendar = (props) => {
   const [showButton, setShowButton] = useState(-1);
   const [weekSelected, setWeekSelected] = useState(props.firstDay.isoWeek());
@@ -91,7 +55,6 @@ const WeekCalendar = (props) => {
   const dateFormat = props.dateFormat || 'Do';
   const headerDateFormat = props.headerDateFormat || 'ddd';
   const dataByDays = daysToData();
-  const isWeekEnd = (date) => date.isoWeekday() === 6 || date.isoWeekday() === 7;
   const isDisabled = (item) => (item.day && item.day.disabled) || (props.disabledWeekEnd && isWeekEnd(item.date));
 
   const WeekNavigator = () => {
@@ -104,7 +67,7 @@ const WeekCalendar = (props) => {
       <div>
         <Button icon={<LeftOutlined/>} disabled={disableLeft} onClick={() => setWeekSelected(weekSelected - 1)}/>
         <Button icon={<RightOutlined/>} disabled={disableRight} onClick={() => setWeekSelected(weekSelected + 1)}/>
-        <p>{renderWeekYear(start, end)}</p>
+        <p>{renderRangeWithYear(start, end)}</p>
       </div>
     );
   };
@@ -115,7 +78,7 @@ const WeekCalendar = (props) => {
         return (
           <Select.Option className={`${start.isSame(moment(), 'week') ? 'tk_CurrentWeekSelect' : ''}`}
             key={`date-range-${id}`} value={id} disabled={id === weekSelected}>
-            {renderWeekRange(start, end)}
+            {renderRange(start, end)}
           </Select.Option>
         );
       })}
@@ -137,10 +100,6 @@ const WeekCalendar = (props) => {
               const {data, date, disabled} = item.day;
               return item && item.day && props.dateCellRender(data, date, disabled);
             }
-          };
-
-          const isToday = (day) => {
-            return moment().isSame(day, 'day');
           };
 
           return (
