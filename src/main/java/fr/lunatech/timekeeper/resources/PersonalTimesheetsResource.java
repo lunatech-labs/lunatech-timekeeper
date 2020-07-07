@@ -2,8 +2,10 @@ package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.resources.openapi.PersonalTimesheetsResourceApi;
 import fr.lunatech.timekeeper.resources.providers.AuthenticationContextProvider;
+import fr.lunatech.timekeeper.services.MonthService;
 import fr.lunatech.timekeeper.services.TimeSheetService;
 import fr.lunatech.timekeeper.services.WeekService;
+import fr.lunatech.timekeeper.services.responses.MonthResponse;
 import fr.lunatech.timekeeper.services.responses.WeekResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,9 @@ public class PersonalTimesheetsResource implements PersonalTimesheetsResourceApi
     WeekService weekService;
 
     @Inject
+    MonthService monthService;
+
+    @Inject
     TimeSheetService timeSheetService;
 
     @Inject
@@ -38,9 +43,10 @@ public class PersonalTimesheetsResource implements PersonalTimesheetsResourceApi
 
     @RolesAllowed({"user", "admin"})
     @Override
-    public List<WeekResponse> getMonth(Integer year, Integer monthNumber) {
+    public MonthResponse getMonth(Integer year, Integer monthNumber) {
         logger.info(String.format("getMonth year=%d monthNumber=%d NOT IMPLEMENTED", year, monthNumber));
-        return Collections.emptyList();
+        final var ctx = authentication.context();
+        return monthService.getMonth(ctx, year, monthNumber);
     }
 
 }
