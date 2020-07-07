@@ -71,4 +71,11 @@ public class CalendarFR2020 implements Calendar {
                 .collect(Collectors.toList());
 
     }
+
+    public List<PublicHoliday> getPublicHolidaysForMonthNumber(final Integer monthNumber) {
+        if (monthNumber < 1 || monthNumber > 12) throw new IllegalStateException("Invalid monthNumber value");
+        return publicHolidays.stream()
+                .filter(p -> p.date.getMonthValue() == monthNumber)
+                .collect(Collectors.toList());
+    }
 }

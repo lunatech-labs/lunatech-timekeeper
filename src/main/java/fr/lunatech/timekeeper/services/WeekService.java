@@ -47,7 +47,7 @@ public class WeekService {
                 .stream().peek(timeSheetResponse ->
                         timeSheetResponse.entries = timeSheetResponse.entries
                             .stream()
-                            .filter(timeEntryResponse -> TimeKeeperDateUtils.getWeekNumberFromDate(timeEntryResponse.getStartDateTime().toLocalDate()).equals(weekNumber))
+                            .filter(timeEntryResponse -> TimeKeeperDateUtils.isSameWeekAndYear(timeEntryResponse.getStartDateTime().toLocalDate(), startDayOfWeek))
                             .collect(Collectors.toList())).collect(Collectors.toList());
 
         WeekResponse weekResponse = new WeekResponse(TimeKeeperDateUtils.adjustToFirstDayOfWeek(startDayOfWeek)

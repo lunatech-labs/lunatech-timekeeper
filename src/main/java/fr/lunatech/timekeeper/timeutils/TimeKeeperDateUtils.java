@@ -1,5 +1,7 @@
 package fr.lunatech.timekeeper.timeutils;
 
+import org.jboss.logging.annotations.Fields;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -51,6 +53,12 @@ public class TimeKeeperDateUtils {
     public static Integer getWeekNumberFromDate(final LocalDate date) {
         TemporalField woy = WeekFields.ISO.weekOfWeekBasedYear();
         return date.get(woy);
+    }
+
+    public static Boolean isSameWeekAndYear(final LocalDate date1, final LocalDate date2) {
+        boolean isSameWeek = getWeekNumberFromDate(date1).equals(getWeekNumberFromDate(date2));
+        boolean isSameYear = date1.getYear() == date2.getYear();
+        return isSameWeek && isSameYear;
     }
 
     /**
