@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Alert, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin, Row, Col} from 'antd';
 import {useTimeKeeperAPI, useTimeKeeperAPIPut} from '../../utils/services';
 import {Link, Redirect, useRouteMatch} from 'react-router-dom';
@@ -8,14 +8,20 @@ import './EditProjectForm.less';
 import TitleSection from '../Title/TitleSection';
 import '../../components/Button/BtnGeneral.less';
 import TkUserAvatar from '../Users/TkUserAvatar';
+import {ForbiddenRoute} from '../../routes/utils';
+import {UserContext} from '../../context/UserContext';
+import {useKeycloak} from '@react-keycloak/web';
+import {canEditProject} from '../../utils/rights';
 
 
 const {TextArea} = Input;
 const {Option} = Select;
-const EditProjectForm = () => {
+const EditProjectForm = ({...rest}) => {
 
   const [projectUpdated, setProjectUpdated] = useState(false);
+  const {currentUser} = useContext(UserContext);
 
+  const [keycloak] = useKeycloak();
   const projectIdSlug = useRouteMatch({
     path: '/projects/:id',
     strict: true,
@@ -66,6 +72,12 @@ const EditProjectForm = () => {
   }
 
   if (clientsResponse.data && projectsResponse.data && usersResponse.data && projectResponse.data) {
+    if(!canEditProject(projectResponse.data, currentUser, keycloak)) {
+      return (
+        <ForbiddenRoute {...rest}/>
+      );
+    }
+
     const clientsSorted = () => clientsResponse.data.sort((a,b)=>{
       if(a.name.toLowerCase() < b.name.toLowerCase()){return -1;}
       if(a.name.toLowerCase() > b.name.toLowerCase()){return 1;}
