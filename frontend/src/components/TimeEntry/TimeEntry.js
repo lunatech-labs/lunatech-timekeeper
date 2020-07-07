@@ -8,7 +8,6 @@ const moment = require('moment');
 const TimeEntry = ({entry}) => {
   const computeSize = (nbHours) => {
     const minimumSize = 75;
-
     return minimumSize + (nbHours - 1) * 50;
   };
 

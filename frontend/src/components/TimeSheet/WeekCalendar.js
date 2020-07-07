@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Select} from 'antd';
+import {Button, Select, Tag} from 'antd';
 import CardWeekCalendar from '../Card/CardWeekCalendar';
-import {LeftOutlined, PlusOutlined, RightOutlined} from '@ant-design/icons';
+import {LeftOutlined, PlusOutlined, RightOutlined, CheckOutlined} from '@ant-design/icons';
 import PropTypes from 'prop-types';
 import './WeekCalendar.less';
 
@@ -92,7 +92,7 @@ const WeekCalendar = (props) => {
   const headerDateFormat = props.headerDateFormat || 'ddd';
   const dataByDays = daysToData();
   const isWeekEnd = (date) => date.isoWeekday() === 6 || date.isoWeekday() === 7;
-  const isDisabled = (item) => (item.day && item.day.disabled) || (props.disabledWeekEnd && isWeekEnd(item.date));
+  const isDisabled = (item, numberOfHoursForDay) => (item.day && item.day.disabled) || (props.disabledWeekEnd && isWeekEnd(item.date) || (numberOfHoursForDay >= 8));
 
   const WeekNavigator = () => {
     const weekRangeIds = weekRanges.weekRange.map(weekRange => weekRange.id);
@@ -143,6 +143,22 @@ const WeekCalendar = (props) => {
             return moment().isSame(day, 'day');
           };
 
+
+          const computeHoursForADay = (entries) => {
+            let numberOfHoursForADay = 0;
+            entries.map( entry => {
+              const start = moment(entry.startDateTime).utc();
+              const end = moment(entry.endDateTime).utc();
+              const duration = moment.duration(end.diff(start));
+              const date = start.clone();
+              date.set({
+                hour: duration.asHours()
+              });
+              numberOfHoursForADay += duration.asHours();
+            });
+            return numberOfHoursForADay;
+          }
+
           return (
             <div className="tk_WeekCalendar_Day" key={`day-card-${index}`}>
               <p>{item.date.format(headerDateFormat)}</p>
@@ -155,7 +171,7 @@ const WeekCalendar = (props) => {
                   {((props.hiddenButtons && showButton === index) || (!props.hiddenButtons)) &&
                   <Button
                     shape="circle"
-                    disabled={isDisabled(item)}
+                    disabled={isDisabled(item, item.day ? computeHoursForADay(item.day.data) : 0)}
                     icon={<PlusOutlined/>}
                     onClick={(e) => {
                       props.onClickButton && props.onClickButton(e, item.date);
@@ -165,6 +181,11 @@ const WeekCalendar = (props) => {
                 <div className={props.warningCardPredicate && props.warningCardPredicate(item.date, item.day) ?
                   'tk_CardWeekCalendar_Body tk_CardWeekCalendar_Body_With_Warn' : 'tk_CardWeekCalendar_Body'} disabled={isDisabled(item)}>
                   {renderDay()}
+                  <div className='tk_CardWeekCalendar_Bottom'>
+                    {
+                      item.day ? computeHoursForADay(item.day.data) < 8 ? '' : <Tag className="tk_Tag_Competed"><CheckOutlined /> Completed</Tag> : ''
+                    }
+                  </div>
                 </div>
               </CardWeekCalendar>
             </div>
