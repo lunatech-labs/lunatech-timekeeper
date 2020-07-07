@@ -33,7 +33,7 @@ export const AppRouter = () => {
         <PrivateRoute exact path="/home"   component={HomePage} />
         <PrivateRoute path="/users"        component={UsersPage} roles={['admin']} />
         <PrivateRoute path="/projects/new" component={NewProjectPage} roles={['admin']} />
-        <PrivateRoute path="/projects/:id/edit" component={EditProjectsPage} roles={['admin','user']} />
+        <PrivateRoute path="/projects/:id/edit" component={EditProjectsPage} />
         <PrivateRoute path="/projects/:id" component={DetailProjectPage} />
         <PrivateRoute path="/projects"     component={ProjectsPage} />
         <PrivateRoute path="/clients/new"  component={NewClientPage} roles={['admin']} />
