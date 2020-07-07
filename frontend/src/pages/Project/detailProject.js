@@ -48,7 +48,7 @@ const DetailProjectPage = () => {
   }
 
   const actions = canEditProject(useTimeKeeperAPIProject.data, useTimeKeeperAPICurrentUser.data, keycloak)
-    && <Link id="tk_Btn" className="tk_BtnPrimary" to={`/projects/${useTimeKeeperAPIProject.data.id}/edit`}>Edit project</Link>;
+    && <Link id="btnEditProject" className="tk_Btn tk_BtnPrimary" to={`/projects/${useTimeKeeperAPIProject.data.id}/edit`}>Edit project</Link>;
   return (
     <MainPage title="Project details" entityName={useTimeKeeperAPIProject.data.name}
       actions={
