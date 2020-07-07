@@ -32,7 +32,7 @@ const LoginPage = withRouter(
               <div id="title_Tk">
                 <Title>Simple time tracking. Powerful reporting.</Title>
                 <p>Turn your team on to productivity.</p>
-                <Button id="tk_Btn" className="tk_BtnPrimary" onClick={login}>Sign up</Button>
+                <Button id="btnLogin" className="tk_Btn tk_BtnPrimary" onClick={login}>Sign up</Button>
               </div>
               <div className="bottom_Tk">
               </div>

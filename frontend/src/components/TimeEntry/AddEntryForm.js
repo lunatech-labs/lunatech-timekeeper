@@ -174,9 +174,9 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel}) => {
         </Row>
 
         <Space className="tk_JcFe" size="middle" align="center">
-          <Button id="tk_Btn" className="tk_BtnSecondary" key="cancelLink"
+          <Button id="btnCancelAddEntry" className="tk_Btn tk_BtnSecondary" key="cancelLink"
             onClick={e => onCancel && onCancel(e)}>Cancel</Button>
-          <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Save task</Button>
+          <Button id="btnSaveEntry" className="tk_Btn tk_BtnPrimary" htmlType="submit">Save task</Button>
         </Space>
       </Form>
     </div>

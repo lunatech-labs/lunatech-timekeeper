@@ -22,8 +22,11 @@ public class ForbiddenExceptionMapper implements ExceptionMapper<ForbiddenExcept
             return Response
                     .status(Response.Status.FORBIDDEN)
                     .type(MediaType.APPLICATION_JSON)
-                    .entity(Json.createObjectBuilder()
-                            .add("message", "Access to this resource is forbidden for your role.").build()
+                    .entity(
+                            Json.createObjectBuilder()
+                                    .add("message", "Access to this resource is forbidden for your role.")
+                                    .build()
+                                    .toString()
                     )
                     .build();
         } else {
@@ -31,8 +34,10 @@ public class ForbiddenExceptionMapper implements ExceptionMapper<ForbiddenExcept
             return Response
                     .status(Response.Status.FORBIDDEN)
                     .type(MediaType.APPLICATION_JSON)
-                    .entity(Json.createObjectBuilder()
-                            .add("message", e.getMessage()).build()
+                    .entity(
+                            Json.createObjectBuilder()
+                                    .add("message", e.getMessage())
+                                    .build().toString()
                     )
                     .build();
         }
