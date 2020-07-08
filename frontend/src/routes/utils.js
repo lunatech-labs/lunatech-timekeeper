@@ -35,23 +35,28 @@ export function PrivateRoute({ component: Component, roles, ...rest }) {
   }
 
   return (
-    <Route
-      {...rest}
-      render={(props) =>
-        <Redirect
-          to={{
-            pathname: '/login',
-            state: { from: props.location },
-          }}
-        />
-      }
-    />
+    <ForbiddenRoute {...rest}/>
   );
 
 }
 
+export function ForbiddenRoute({ ...rest }) {
+  message.error('Access forbidden for this page');
+  return <Route
+    {...rest}
+    render={() =>
+      <Redirect
+        to={{
+          pathname: '/login',
+        }}
+      />
+    }
+  />;
+}
+
+
 PrivateRoute.propTypes ={
   component: PropTypes.func.isRequired,
   roles: PropTypes.arrayOf(PropTypes.string),
-  location: PropTypes.object
+  location: PropTypes.object,
 };
