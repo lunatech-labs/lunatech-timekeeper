@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.*;
+import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -14,6 +15,36 @@ import java.util.function.Predicate;
  * @author created by N.Martignole, Lunatech, on 2020-06-10.
  */
 public class TimeKeeperDateUtils {
+
+    public static boolean isBissextile(final Integer year){
+        if(year % 400 == 0){
+            return true;
+        } else if (year % 100 == 0) {
+            return false;
+        } else if (year % 4 == 0){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static void validateYear(final Integer year){
+        if(year < 1970) throw new IllegalStateException("year should be after 1970 due to TimeStamp limitation");
+    }
+
+    public static void validateMonth(final Integer monthNumber){
+        if(monthNumber<1 || monthNumber>12) throw new IllegalStateException("monthnumber must be an Int value in range 1 to 12");
+    }
+
+    public static void validateWeek(final Integer weekNumber, final Integer year){
+        boolean isBissextile = isBissextile(year);
+        if(isBissextile){
+            if(weekNumber<1 || weekNumber>53) throw new IllegalStateException("weeknumber must be an Int value in range 1 to 53");
+        } else {
+            if(weekNumber<1 || weekNumber>52) throw new IllegalStateException("weeknumber must be an Int value in range 1 to 53");
+        }
+    }
+
     /**
      * Returns the first Monday as a LocalDate from a weekNumber
      *
@@ -21,8 +52,8 @@ public class TimeKeeperDateUtils {
      * @return the Monday of this week number in the year
      */
     public static LocalDate getFirstDayOfWeekFromWeekNumber(final Integer year, final Integer weekNumber) {
-        if(year < 1970 ) throw new IllegalStateException("year should be a 4 digits value");
-        if(weekNumber<1 || weekNumber>53) throw new IllegalStateException("weeknumber must be an Int value in range 1 to 53");
+        validateYear(year);
+        validateWeek(weekNumber, year);
         return LocalDate.of(year,1,1)
                 .with(IsoFields.WEEK_OF_WEEK_BASED_YEAR, weekNumber)
                 .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
@@ -102,6 +133,8 @@ public class TimeKeeperDateUtils {
      * @return a predicate to test if the input date is included in the six weeks of the month
      */
     public static Predicate<LocalDate> isIncludedInSixWeeksFromMonth(final Integer year, final Integer monthNumber) {
+        validateYear(year);
+        validateMonth(monthNumber);
         LocalDate firstDayOfMonth = LocalDate.of(year, monthNumber, 1);
         Integer weekNumber = getWeekNumberFromDate(firstDayOfMonth);
         LocalDate firstDayOfFirstWeek = getFirstDayOfWeekFromWeekNumber(year, weekNumber);
