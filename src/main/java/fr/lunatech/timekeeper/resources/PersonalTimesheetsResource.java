@@ -44,7 +44,7 @@ public class PersonalTimesheetsResource implements PersonalTimesheetsResourceApi
     @RolesAllowed({"user", "admin"})
     @Override
     public MonthResponse getMonth(Integer year, Integer monthNumber) {
-        logger.info(String.format("getMonth year=%d monthNumber=%d NOT IMPLEMENTED", year, monthNumber));
+        logger.debug(String.format("getMonth year=%d monthNumber=%d NOT IMPLEMENTED", year, monthNumber));
         final var ctx = authentication.context();
         return monthService.getMonth(ctx, year, monthNumber);
     }

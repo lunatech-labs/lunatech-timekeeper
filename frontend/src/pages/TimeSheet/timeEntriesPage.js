@@ -9,6 +9,26 @@ import moment from 'moment';
 import UserTimeSheetList from '../../components/TimeSheet/UserTimeSheetList';
 import MonthCalendar from '../../components/TimeSheet/MonthCalendar';
 import CalendarSelectionMode from '../../components/TimeSheet/CalendarSelectionMode';
+import {getIsoMonth} from "../../utils/momentUtils";
+
+//https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-an-array-of-objects/34890276#34890276
+const groupBy = function (xs, key) {
+  return xs.reduce(function (rv, x) {
+    (rv[key(x)] = rv[key(x)] || []).push(x);
+    return rv;
+  }, {});
+};
+
+const computeData = (timeSheets) => Object.entries(groupBy(timeSheets.flatMap(({entries, project}) => entries.map(x => ({
+  ...x,
+  project
+}))), entry => moment(entry.startDateTime).format('YYYY-MM-DD'))).map(([key, value]) => {
+  return ({
+    data: value,
+    date: moment(key),
+    disabled: false
+  });
+});
 
 const TimeEntriesPage = () => {
   const [calendarMode, setCalendarMode] = useState('week');
@@ -18,19 +38,26 @@ const TimeEntriesPage = () => {
     const tmpDate = firstDayOfCurrentWeek.clone();
     return tmpDate.year() + '?weekNumber=' + tmpDate.isoWeek();
   });
+  const [currentMonthNumber, setCurrentMonthNumber] = useState(getIsoMonth(moment.utc()));
   const [visibleEntryModal, setVisibleEntryModal] = useState(false);
   const [mode, setMode] = useState('view'); //Can be 'view', 'add' or 'edit'
   const [taskMoment, setTaskMoment] = useState(moment().utc());
   const [form] = Form.useForm();
 
-  const dataFromServer = useTimeKeeperAPI('/api/my/' + currentWeekNumber);
-  const {run} = dataFromServer;
+  const weekData = useTimeKeeperAPI('/api/my/' + currentWeekNumber);
   useEffect(
     () => {
-      run();
-    }, [currentWeekNumber, run]);
+      weekData.run();
+    }, [currentWeekNumber, weekData.run]);
 
-  if (dataFromServer.error) {
+  const monthData = useTimeKeeperAPI(`/api/my/2020/month?monthNumber=${currentMonthNumber}`);
+
+  useEffect(
+    () => {
+      monthData.run();
+    }, [currentMonthNumber, monthData.run]);
+
+  if (weekData.error) {
     return (
       <React.Fragment>
         <Alert title='Server error'
@@ -42,27 +69,12 @@ const TimeEntriesPage = () => {
     );
   }
 
-  //https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-an-array-of-objects/34890276#34890276
-  const groupBy = function (xs, key) {
-    return xs.reduce(function (rv, x) {
-      (rv[key(x)] = rv[key(x)] || []).push(x);
-      return rv;
-    }, {});
-  };
-  const timeSheets = dataFromServer.loading ? [] : dataFromServer.data.sheets;
-  const days = Object.entries(groupBy(timeSheets.flatMap(({entries, project}) => entries.map(x => ({
-    ...x,
-    project
-  }))), entry => moment(entry.startDateTime).format('YYYY-MM-DD'))).map(([key, value]) => {
-    return ({
-      data: value,
-      date: moment(key),
-      disabled: false
-    });
-  });
+  const timeSheets = calendarMode === 'week' ?
+    (weekData.loading ? [] : weekData.data.sheets) : (monthData.loading ? [] : monthData.data.sheets);
+  const days = computeData(timeSheets);
 
   const datas = {
-    firstDayOfWeek: dataFromServer.data ? moment.utc(dataFromServer.data.firstDayOfWeek) : today(),
+    firstDayOfWeek: weekData.data ? moment.utc(weekData.data.firstDayOfWeek) : today(),
     days: days
   };
 
@@ -111,7 +123,8 @@ const TimeEntriesPage = () => {
       >
         <TimeEntryForm setMode={setMode} entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment} form={form} mode={mode} onSuccess={() => {
           closeModal();
-          dataFromServer.run();
+          weekData.run();
+          monthData.run()
           setViewMode();
         }} onCancel={() => setViewMode()}
         />
@@ -154,6 +167,7 @@ const TimeEntriesPage = () => {
             }}
             disabledWeekEnd={true}
             warningCardPredicate={hasWarnNoEntryInPastDay}
+            onPanelChange={(date) => setCurrentMonthNumber(getIsoMonth(date))}
           />
       }
 
