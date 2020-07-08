@@ -6,6 +6,7 @@ import fr.lunatech.timekeeper.services.responses.MonthResponse;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import fr.lunatech.timekeeper.timeutils.CalendarFactory;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@ApplicationScoped
 public class MonthService {
 
     @Inject
@@ -38,7 +40,7 @@ public class MonthService {
                                 .stream()
                                 .filter(timeEntryResponse -> {
                                     LocalDateTime startDateTime = timeEntryResponse.getStartDateTime();
-                                    return startDateTime.getMonthValue() == year && startDateTime.getMonthValue() == monthNumber;
+                                    return startDateTime.getYear() == year && startDateTime.getMonthValue() == monthNumber;
                                 })
                                 .collect(Collectors.toList())).collect(Collectors.toList());
 
