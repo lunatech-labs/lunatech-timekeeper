@@ -106,6 +106,21 @@ const WeekCalendar = (props) => {
             return moment().isSame(day, 'day');
           };
 
+          const computeHoursForADay = (entries) => {
+            let numberOfHoursForADay = 0;
+            entries.map( entry => {
+              const start = moment(entry.startDateTime).utc();
+              const end = moment(entry.endDateTime).utc();
+              const duration = moment.duration(end.diff(start));
+              const date = start.clone();
+              date.set({
+                hour: duration.asHours()
+              });
+              numberOfHoursForADay += duration.asHours();
+            });
+            return numberOfHoursForADay;
+          }
+
           return (
             <div className="tk_WeekCalendar_Day" key={`day-card-${index}`}>
               <p>{item.date.format(headerDateFormat)}</p>
