@@ -1,0 +1,11 @@
+{
+  "development": {
+    "driver": "pg",
+    "user": "keycloak",
+    "password": "admin",
+    "host": "localhost",
+    "database": "timekeeper",
+    "port": "5435",
+    "schema": "public"
+  }
+}

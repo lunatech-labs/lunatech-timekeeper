@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {Alert, Avatar, Button, Card, Collapse, Divider, Dropdown, List, Menu, Spin, Space} from 'antd';
 import logo from '../../img/logo_timekeeper_homepage.png';
 import {useTimeKeeperAPI} from '../../utils/services';
@@ -16,14 +16,16 @@ import TitleSection from '../Title/TitleSection';
 import DownOutlined from '@ant-design/icons/lib/icons/DownOutlined';
 import PropTypes from 'prop-types';
 import {useKeycloak} from '@react-keycloak/web';
+import {UserContext} from '../../context/UserContext';
+import {canEditProject, isAdmin} from '../../utils/rights';
 
 const {Panel} = Collapse;
 
 
 const ProjectList = () => {
   const [keycloak] = useKeycloak();
-  const isAdmin = keycloak.hasRealmRole('admin');
-
+  const currentUserIsAdmin = isAdmin(keycloak);
+  const {currentUser} = useContext(UserContext);
   const [filterText, setFilterText] = useState('All');
 
   const [groupBy, setGroupBy] = useState('All');
@@ -146,12 +148,12 @@ const ProjectList = () => {
 
   const memberComparator = (m1, m2) => m2.manager - m1.manager;
 
-  const dropdownCardAction = (item, isAdmin) => (
+  const dropdownCardAction = (item) => (
     <Menu>
       <Menu.Item key="view">
         <a href={`/projects/${item.id}`}><EyeFilled/>View</a>
       </Menu.Item>
-      {isAdmin &&
+      {canEditProject(item, currentUser, keycloak) &&
       <Menu.Item key="edit">
         <a href={`/projects/${item.id}/edit`}><EditFilled/>Edit</a>
       </Menu.Item>}
@@ -181,7 +183,7 @@ const ProjectList = () => {
             </Space>
           }
           extra={[
-            <Dropdown key={`ant-dropdown-${item.id}`} overlay={dropdownCardAction(item, isAdmin)}>
+            <Dropdown key={`ant-dropdown-${item.id}`} overlay={dropdownCardAction(item)}>
               <a className="ant-dropdown-link" onClick={e => e.preventDefault()}><EllipsisOutlined /></a>
             </Dropdown>,
           ]}
@@ -222,7 +224,7 @@ const ProjectList = () => {
       <div className="tk_SubHeader">
         <p>{projectsFiltered.length} project(s)
           | {Array.from(new Set(projectsFiltered.filter(project => !!project.client).map((project) => project.client.id))).length} client(s)</p>
-        {isAdmin && <div className="tk_SubHeader_RightPart">
+        {currentUserIsAdmin && <div className="tk_SubHeader_RightPart">
           <div className="tk_SubHeader_Filters">{filterComponent}</div>
           <div className="tk_SubHeader_Filters">{groupByComponent}</div>
         </div>}

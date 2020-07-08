@@ -86,3 +86,33 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 
 https://www.npmjs.com/package/@react-keycloak/web
 https://github.com/panz3r/react-keycloak#readme
+
+
+# Cypress 
+
+Cypress is a very powerful end-to-end test system. 
+We use Cypress for non-regression testing of the user interface. 
+We also use [db-migrate](https://db-migrate.readthedocs.io/en/latest/) to clean-up and reset the local database to a well know configuration before each test.
+
+## How can I launch the tests?
+
+First, check that the latest node packages are installed 
+
+    yarn install
+    
+Then, execute the cypress command :
+
+    yarn cypress
+    
+## How can I write a test?
+
+Check [cypress/integration](./cypress/integration) sub folder
+
+## Resources
+
+[Cypress assertions](https://docs.cypress.io/guides/references/assertions.html)
+[DB-migrate](https://db-migrate.readthedocs.io/en/latest/)
+[How to truncate pgSQL tables with Cascade](https://www.postgresqltutorial.com/postgresql-truncate-table/#:~:text=To%20remove%20all%20data%20from%20a%20table%2C%20you%20use%20the,faster%20than%20the%20DELETE%20statement.)
+
+       
+
