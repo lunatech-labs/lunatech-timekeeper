@@ -89,7 +89,7 @@ const ShowProject = ({project, onSuccessJoinProject}) => {
       <CardLg>
         <div className="tk_CardLg_Top">
           <Title level={2}>{project.name}</Title>
-          {showJoinButton && <Button className="tk_Link" type="link" onClick={() => timeKeeperAPIPutJoin.run()}>Join the project</Button>}
+          {showJoinButton && <Button id="btnJoinProject" type="button" onClick={() => timeKeeperAPIPutJoin.run()}>Join this project</Button>}
         </div>
         <Row gutter={32}>
           <Col span={12}>

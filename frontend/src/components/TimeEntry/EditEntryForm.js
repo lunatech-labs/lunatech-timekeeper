@@ -4,18 +4,11 @@ import {Button, Col, Form, Input, message, Radio, Row, Select, Space} from 'antd
 import PropTypes from 'prop-types';
 import TitleSection from '../Title/TitleSection';
 import moment from 'moment';
+import {computeNumberOfHours} from '../../utils/momentUtils';
 
 const {Option} = Select;
 const {TextArea} = Input;
 
-const computeNumberOfHours = (start, end) => {
-  const duration = moment.duration(end.diff(start));
-  const date = start.clone();
-  date.set({
-    hour: duration.asHours()
-  });
-  return duration.asHours();
-};
 
 const computeTimeUnit = (numberHours) => {
   switch (numberHours) {
@@ -208,9 +201,9 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry}) => 
         </Row>
 
         <Space className="tk_JcFe" size="middle" align="center">
-          <Button id="tk_Btn" className="tk_BtnSecondary" key="cancelLink"
+          <Button id="btnCancelEditEntry" className="tk_Btn tk_BtnSecondary" key="cancelLink"
             onClick={e => onCancel && onCancel(e)}>Cancel</Button>
-          <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Save task</Button>
+          <Button id="btnSaveEditEntry" className="tk_Btn tk_BtnPrimary" htmlType="submit">Save task</Button>
         </Space>
       </Form>
     </div>

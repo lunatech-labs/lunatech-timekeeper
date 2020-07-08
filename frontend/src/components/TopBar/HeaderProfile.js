@@ -21,7 +21,7 @@ const HeaderProfile = ({ user }) => {
     <Menu>
       <Menu.Item key="1">
         {!!keycloak.authenticated && (
-          <Button type="link" onClick={() => keycloak.logout()}>Logout</Button>
+          <Button id="logoutBtn" type="link" onClick={() => keycloak.logout()}>Logout</Button>
         )}
       </Menu.Item>
     </Menu>
@@ -30,7 +30,7 @@ const HeaderProfile = ({ user }) => {
   return (
     <div className="tk_Header_Profile">
       <Dropdown overlay={menu}>
-        <Button type="link" onClick={e => e.preventDefault()}>
+        <Button id="avatarBtn" type="link" onClick={e => e.preventDefault()}>
           <TkUserAvatar picture={user.picture} name={user.name}/>
           <p>{user.name}<br/><span>{displayProfile(user.profiles)}</span></p>
         </Button>
