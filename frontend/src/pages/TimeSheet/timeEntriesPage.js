@@ -9,7 +9,7 @@ import moment from 'moment';
 import UserTimeSheetList from '../../components/TimeSheet/UserTimeSheetList';
 import MonthCalendar from '../../components/TimeSheet/MonthCalendar';
 import CalendarSelectionMode from '../../components/TimeSheet/CalendarSelectionMode';
-import {getIsoMonth} from "../../utils/momentUtils";
+import {getIsoMonth} from '../../utils/momentUtils';
 
 //https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-an-array-of-objects/34890276#34890276
 const groupBy = function (xs, key) {
@@ -124,7 +124,7 @@ const TimeEntriesPage = () => {
         <TimeEntryForm setMode={setMode} entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment} form={form} mode={mode} onSuccess={() => {
           closeModal();
           weekData.run();
-          monthData.run()
+          monthData.run();
           setViewMode();
         }} onCancel={() => setViewMode()}
         />

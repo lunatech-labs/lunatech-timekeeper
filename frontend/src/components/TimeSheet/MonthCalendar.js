@@ -94,7 +94,7 @@ const MonthCalendar = (props) => {
         headerRender={({value, onChange}) => {
           const onChangeCustom = (date) => {
             onChange(date);
-            props.onPanelChange(date)
+            props.onPanelChange(date);
           };
           return (
             <div id="tk_MonthCalendar_Head">
