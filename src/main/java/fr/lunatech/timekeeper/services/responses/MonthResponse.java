@@ -46,10 +46,6 @@ public final class MonthResponse {
         );
     }
 
-    /*public Integer getWeekNumber() {
-        return TimeKeeperDateUtils.getWeekNumberFromDate(firstDayOfWeek);
-    }*/
-
     public List<UserEventResponse> getUserEvents() {
         return Collections.unmodifiableList(userEvents);
     }

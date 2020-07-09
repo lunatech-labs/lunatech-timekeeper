@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -175,19 +173,6 @@ public class TimeKeeperDateUtilsTest {
     }
 
     @Test
-    void shouldBeOrNotBissextileYear(){
-        Integer[] arrayOfBissextilesYears = {2000, 2004, 2008, 2012, 2016, 2020};
-        List<Integer> bissextilesYears = Arrays.asList(arrayOfBissextilesYears);
-        for(int year = 2000; year <= 2020; year++){
-            if(bissextilesYears.contains(year)){
-                assertTrue(TimeKeeperDateUtils.isBissextile(year));
-            } else {
-                assertFalse(TimeKeeperDateUtils.isBissextile(year));
-            }
-        }
-    }
-
-    @Test
     void shouldNotBeTrueForTheDayBeforeTheFirstDayOfFirstWeekOfMonth(){
         LocalDate inputDate = LocalDate.of(2020,1,26);
         assertFalse(TimeKeeperDateUtils.isIncludedInSixWeeksFromMonth(2020, 02).test(inputDate));
@@ -241,21 +226,28 @@ public class TimeKeeperDateUtilsTest {
     }
 
     @Test
-    void shouldThrowExceptionForWeek53OfNonBisextilesYearsValidator(){
+    void shouldBeTrueFor28DecemberAlwaysInLastWeekOfYear(){
+        for(int year = 2000; year < 2030; year++){
+            assertNotEquals(1,TimeKeeperDateUtils.getWeekNumberFromDate(LocalDate.of(year, 12, 28)));
+        }
+    }
+
+    @Test
+    void shouldThrowExceptionForWeek53OfYearsWith52WeeksValidator(){
         Assertions.assertThrows(IllegalStateException.class, () -> {
             TimeKeeperDateUtils.validateWeek(53,2019);
         });
     }
 
     @Test
-    void shouldThrowExceptionForWeek54OfBisextilesYearsValidator(){
+    void shouldThrowExceptionForWeek54Validator(){
         Assertions.assertThrows(IllegalStateException.class, () -> {
             TimeKeeperDateUtils.validateWeek(54,2020);
         });
     }
 
     @Test
-    void shouldThrowExceptionForNegativeWeekNumbeValidator(){
+    void shouldThrowExceptionForNegativeWeekNumberValidator(){
         Assertions.assertThrows(IllegalStateException.class, () -> {
             TimeKeeperDateUtils.validateWeek(-1,2020);
         });

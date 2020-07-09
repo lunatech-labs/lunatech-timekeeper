@@ -3,6 +3,7 @@ package fr.lunatech.timekeeper.timeutils;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -64,8 +65,7 @@ public class CalendarFR2020 implements Calendar {
     }
 
     public List<PublicHoliday> getPublicHolidaysForWeekNumber(final Integer weekNumber) {
-        // In 2020 there are 53 weeks in the IsoWeek calendar.
-        if (weekNumber < 1 || weekNumber > 53) throw new IllegalStateException("Invalid weekNumber value");
+        TimeKeeperDateUtils.validateWeek(weekNumber, 2020);
         return publicHolidays.stream()
                 .filter(p -> TimeKeeperDateUtils.getWeekNumberFromDate(p.date).equals(weekNumber))
                 .collect(Collectors.toList());
@@ -73,9 +73,10 @@ public class CalendarFR2020 implements Calendar {
     }
 
     public List<PublicHoliday> getPublicHolidaysForMonthNumber(final Integer monthNumber) {
-        if (monthNumber < 1 || monthNumber > 12) throw new IllegalStateException("Invalid monthNumber value");
+        TimeKeeperDateUtils.validateMonth(monthNumber);
+        Predicate<LocalDate> isValidDate = TimeKeeperDateUtils.isIncludedInSixWeeksFromMonth(2020, monthNumber);
         return publicHolidays.stream()
-                .filter(p -> p.date.getMonthValue() == monthNumber)
+                .filter(p -> isValidDate.test(p.date))
                 .collect(Collectors.toList());
     }
 }

@@ -34,28 +34,31 @@ const TimeEntriesPage = () => {
   const [calendarMode, setCalendarMode] = useState('week');
   const firstDayOfCurrentWeek = moment().utc().startOf('week').add(1, 'day');
   const today = () => firstDayOfCurrentWeek.clone();
-  const [currentWeekNumber, setCurrentWeekNumber] = useState(() => {
+  const [prefixWeekUrl, setPrefixWeekUrl] = useState(() => {
     const tmpDate = firstDayOfCurrentWeek.clone();
     return tmpDate.year() + '?weekNumber=' + tmpDate.isoWeek();
   });
-  const [currentMonthNumber, setCurrentMonthNumber] = useState(getIsoMonth(moment.utc()));
+  const [prefixMonthUrl, setPrefixMonthUrl] = useState(() => {
+    const tmpDate = firstDayOfCurrentWeek.clone();
+    return `${tmpDate.year()}/month?monthNumber=${getIsoMonth(tmpDate)}`;
+  });
   const [visibleEntryModal, setVisibleEntryModal] = useState(false);
   const [mode, setMode] = useState('view'); //Can be 'view', 'add' or 'edit'
   const [taskMoment, setTaskMoment] = useState(moment().utc());
   const [form] = Form.useForm();
 
-  const weekData = useTimeKeeperAPI('/api/my/' + currentWeekNumber);
+  const weekData = useTimeKeeperAPI('/api/my/' + prefixWeekUrl);
   useEffect(
     () => {
       weekData.run();
-    }, [currentWeekNumber, weekData.run]);
+    }, [prefixWeekUrl, weekData.run]);
 
-  const monthData = useTimeKeeperAPI(`/api/my/2020/month?monthNumber=${currentMonthNumber}`);
+  const monthData = useTimeKeeperAPI(`/api/my/${prefixMonthUrl}`);
 
   useEffect(
     () => {
       monthData.run();
-    }, [currentMonthNumber, monthData.run]);
+    }, [prefixMonthUrl, monthData.run]);
 
   if (weekData.error) {
     return (
@@ -70,7 +73,7 @@ const TimeEntriesPage = () => {
   }
 
   const timeSheets = calendarMode === 'week' ?
-    (weekData.loading ? [] : weekData.data.sheets) : (monthData.loading ? [] : monthData.data.sheets);
+    (weekData.data && !weekData.loading ? weekData.data.sheets : []) : (monthData.data && weekData.loading ? monthData.data.sheets : []);
   const days = computeData(timeSheets);
 
   const datas = {
@@ -138,7 +141,7 @@ const TimeEntriesPage = () => {
             firstDay={datas.firstDayOfWeek}
             disabledWeekEnd={true}
             hiddenButtons={false}
-            onPanelChange={(id, start) => setCurrentWeekNumber(start.year() + '?weekNumber=' + start.isoWeek())}
+            onPanelChange={(id, start) => setPrefixWeekUrl(start.year() + '?weekNumber=' + start.isoWeek())}
             onClickButton={onClickAddTask}
             onClickCard={onClickCard}
             dateCellRender={(data) => {
@@ -167,7 +170,9 @@ const TimeEntriesPage = () => {
             }}
             disabledWeekEnd={true}
             warningCardPredicate={hasWarnNoEntryInPastDay}
-            onPanelChange={(date) => setCurrentMonthNumber(getIsoMonth(date))}
+            onPanelChange={(date) => {
+              setPrefixMonthUrl(`${date.year()}/month?monthNumber=${getIsoMonth(date)}`)
+            }}
           />
       }
 

@@ -16,18 +16,6 @@ import java.util.function.Predicate;
  */
 public class TimeKeeperDateUtils {
 
-    public static boolean isBissextile(final Integer year){
-        if(year % 400 == 0){
-            return true;
-        } else if (year % 100 == 0) {
-            return false;
-        } else if (year % 4 == 0){
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public static void validateYear(final Integer year){
         if(year < 1970) throw new IllegalStateException("year should be after 1970 due to TimeStamp limitation");
     }
@@ -37,12 +25,8 @@ public class TimeKeeperDateUtils {
     }
 
     public static void validateWeek(final Integer weekNumber, final Integer year){
-        boolean isBissextile = isBissextile(year);
-        if(isBissextile){
-            if(weekNumber<1 || weekNumber>53) throw new IllegalStateException("weeknumber must be an Int value in range 1 to 53");
-        } else {
-            if(weekNumber<1 || weekNumber>52) throw new IllegalStateException("weeknumber must be an Int value in range 1 to 53");
-        }
+        Integer lastWeekNumber = getWeekNumberFromDate(LocalDate.of(year, 12, 28));
+        if(weekNumber<1 || weekNumber>lastWeekNumber) throw new IllegalStateException("weeknumber must be an Int value in range 1 to "+ lastWeekNumber);
     }
 
     /**
