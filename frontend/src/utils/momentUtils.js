@@ -61,6 +61,6 @@ export const computeHoursForADay = (entries) => {
     const start = moment(entry.startDateTime).utc();
     const end = moment(entry.endDateTime).utc();
     const duration = moment.duration(end.diff(start));
-    return duration.asHours()
+    return duration.asHours();
   }).reduce(reducer);
 };

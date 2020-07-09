@@ -7,8 +7,7 @@ import NoDataMessage from '../NoDataMessage/NoDataMessage';
 import ShowTimeEntry from './ShowTimeEntry';
 import AddEntryForm from './AddEntryForm';
 import EditEntryForm from './EditEntryForm';
-import {computeHoursForADay, computeNumberOfHours} from '../../utils/momentUtils';
-import moment from 'moment';
+import {computeHoursForADay} from '../../utils/momentUtils';
 
 const {TextArea} = Input;
 
