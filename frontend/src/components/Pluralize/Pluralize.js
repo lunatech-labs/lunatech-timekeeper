@@ -8,7 +8,7 @@ const Pluralize = ({label,size}) => {
       <span className="tk_pluralize">No {label}</span>
     );
   }
-  if(size == 1) {
+  if(size === 1) {
     return (
       <span className="tk_pluralize">1 {label}</span>
     );

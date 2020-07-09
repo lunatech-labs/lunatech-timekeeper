@@ -42,7 +42,7 @@ const WeekCalendar = (props) => {
         history.push('?weekNumber=' + id)
       }
     }
-  }, [weekSelected, onPanelChange, weekRanges]);
+  }, [weekSelected, onPanelChange, weekRanges, history]);
 
 
   const daysToData = () => {
