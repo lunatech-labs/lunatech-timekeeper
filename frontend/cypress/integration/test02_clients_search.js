@@ -18,8 +18,8 @@ describe("02 Client list and search", () => {
 
     /* Set-up the timekeeper database to a fixed version before the test */
     before(() => {
-        cy.exec("node_modules/db-migrate/bin/db-migrate reset").its('stdout').should('contain', '[INFO] Processed migration 20200706125902-cleanup-db')
-        cy.exec("node_modules/db-migrate/bin/db-migrate up").its('stdout').should('contain', '[INFO] Processed migration 20200706125902-cleanup-db')
+        cy.exec("node_modules/db-migrate/bin/db-migrate reset").its('stdout').should('contain', '[INFO]');
+        cy.exec("node_modules/db-migrate/bin/db-migrate up").its('stdout').should('contain', '[INFO]');
     });
 
     beforeEach(() => {

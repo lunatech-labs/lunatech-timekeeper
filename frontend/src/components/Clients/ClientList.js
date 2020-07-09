@@ -87,7 +87,7 @@ const ClientList = () => {
               }
               extra={[
                 <Tooltip title="Edit" key="edit">
-                  <Button data-cy="editProject" type="link" size="small" ghost shape="circle" icon={<EditFilled/>} href={`/clients/${item.id}/edit`}/>
+                  <Button data-cy="editClient" type="link" size="small" ghost shape="circle" icon={<EditFilled/>} href={`/clients/${item.id}/edit`}/>
                 </Tooltip>
               ]}
               actions={[ item.projects.length === 0 ? <Panel id="tk_ProjectNoCollapse" header={<Space size="small"><FolderFilled />{'No project'}</Space>} key="1"/> :
