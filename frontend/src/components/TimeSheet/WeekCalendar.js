@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import { useHistory } from 'react-router-dom'
 import {Button, Select, Tag} from 'antd';
 import CardWeekCalendar from '../Card/CardWeekCalendar';
 import {LeftOutlined, PlusOutlined, RightOutlined, CheckOutlined} from '@ant-design/icons';
@@ -29,6 +30,7 @@ const WeekCalendar = (props) => {
   const [weekRanges, setWeekRanges] = useState(computeWeekRanges(props.firstDay));
 
   const {onPanelChange} = props;
+  const history = useHistory();
 
   useEffect(() => {
     const weekRange = weekRanges.weekRangeMap.get(weekSelected);
@@ -37,9 +39,10 @@ const WeekCalendar = (props) => {
       onPanelChange(id, start, end);
       if (weekRanges.weekNumber !== id) {
         setWeekRanges(computeWeekRanges(start));
+        history.push('?weekNumber=' + id)
       }
     }
-  }, [weekSelected, onPanelChange, weekRanges]);
+  }, [weekSelected, onPanelChange, weekRanges, history]);
 
 
   const daysToData = () => {
@@ -65,8 +68,8 @@ const WeekCalendar = (props) => {
     const disableRight = !weekRangeIds.includes(weekSelected + 1);
     return (
       <div>
-        <Button icon={<LeftOutlined/>} disabled={disableLeft} onClick={() => setWeekSelected(weekSelected - 1)}/>
-        <Button icon={<RightOutlined/>} disabled={disableRight} onClick={() => setWeekSelected(weekSelected + 1)}/>
+        <Button data-cy='btnWeekPrevious' data-cy-week={weekSelected - 1} icon={<LeftOutlined/>} disabled={disableLeft} onClick={() => setWeekSelected(weekSelected - 1)}/>
+        <Button data-cy='btnWeekNext' data-cy-week={weekSelected + 1} icon={<RightOutlined/>} disabled={disableRight} onClick={() => setWeekSelected(weekSelected + 1)}/>
         <p>{renderRangeWithYear(start, end)}</p>
       </div>
     );
