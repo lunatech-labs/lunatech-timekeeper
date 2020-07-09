@@ -233,7 +233,7 @@ class ProjectResourceTest {
     }
 
     @Test
-    void shouldNotAccessPrivateProjectAsSimpleMember() {
+    void shouldAccessPrivateProjectAsSimpleMember() {
         final String adminToken = getAdminAccessToken();
         final String userToken = getUserAccessToken();
         final var client1 = create(new ClientRequest("Client 11", "New Description 1"), adminToken);
@@ -248,7 +248,7 @@ class ProjectResourceTest {
 
         final var projectRequest = new ProjectRequest("Some Project 10", true, "some description", client1.getId(), false, newProjectUsers, 1L);
         final var projectCreated = create(projectRequest, adminToken);
-        getValidation(ProjectDef.uriPlusId(projectCreated.getId()), userToken, NOT_FOUND);
+        getValidation(ProjectDef.uriPlusId(projectCreated.getId()), userToken, OK);
     }
 
     @Test
