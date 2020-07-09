@@ -4,7 +4,7 @@ import CardWeekCalendar from '../Card/CardWeekCalendar';
 import {LeftOutlined, PlusOutlined, RightOutlined, CheckOutlined} from '@ant-design/icons';
 import PropTypes from 'prop-types';
 import './WeekCalendar.less';
-import {isToday, isWeekEnd, renderRange, renderRangeWithYear, weekRangeOfDate} from '../../utils/momentUtils';
+import {isWeekEnd, renderRange, renderRangeWithYear, weekRangeOfDate, computeHoursForADay} from '../../utils/momentUtils';
 import moment from 'moment';
 
 const numberOfWeek = 15; // It's the number of weeks where we can navigate
@@ -55,7 +55,7 @@ const WeekCalendar = (props) => {
   const dateFormat = props.dateFormat || 'Do';
   const headerDateFormat = props.headerDateFormat || 'ddd';
   const dataByDays = daysToData();
-  const isDisabled = (item) => (item.day && item.day.disabled) || (props.disabledWeekEnd && isWeekEnd(item.date));
+  const isDisabled = (item, numberOfHours) => (item.day && item.day.disabled) || (props.disabledWeekEnd && isWeekEnd(item.date)) || numberOfHours >= 8;
 
   const WeekNavigator = () => {
     const weekRangeIds = weekRanges.weekRange.map(weekRange => weekRange.id);
@@ -106,21 +106,6 @@ const WeekCalendar = (props) => {
             return moment().isSame(day, 'day');
           };
 
-          const computeHoursForADay = (entries) => {
-            let numberOfHoursForADay = 0;
-            entries.map( entry => {
-              const start = moment(entry.startDateTime).utc();
-              const end = moment(entry.endDateTime).utc();
-              const duration = moment.duration(end.diff(start));
-              const date = start.clone();
-              date.set({
-                hour: duration.asHours()
-              });
-              numberOfHoursForADay += duration.asHours();
-            });
-            return numberOfHoursForADay;
-          }
-
           return (
             <div className="tk_WeekCalendar_Day" key={`day-card-${index}`}>
               <p>{item.date.format(headerDateFormat)}</p>
@@ -144,9 +129,7 @@ const WeekCalendar = (props) => {
                   'tk_CardWeekCalendar_Body tk_CardWeekCalendar_Body_With_Warn' : 'tk_CardWeekCalendar_Body'} disabled={isDisabled(item)}>
                   {renderDay()}
                   <div className='tk_CardWeekCalendar_Bottom'>
-                    {
-                      item.day ? computeHoursForADay(item.day.data) < 8 ? '' : <Tag className="tk_Tag_Competed"><CheckOutlined /> Completed</Tag> : ''
-                    }
+                    {item.day ? computeHoursForADay(item.day.data) < 8 ? '' : <Tag className="tk_Tag_Competed"><CheckOutlined /> Completed</Tag> : ''}
                   </div>
                 </div>
               </CardWeekCalendar>
