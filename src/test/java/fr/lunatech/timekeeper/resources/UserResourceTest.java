@@ -48,7 +48,7 @@ class UserResourceTest {
     void shouldFindUserWhenAdminProfile() {
         final String samToken = getAdminAccessToken();
         var sam = create(samToken);
-        getValidation(UserDef.uriPlusId(sam.getId()), samToken,OK).body(is(timeKeeperTestUtils.toJson(sam)));
+        getValidation(UserDef.uriPlusId(sam.getId()), samToken).body(is(timeKeeperTestUtils.toJson(sam))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -58,8 +58,8 @@ class UserResourceTest {
         var sam = create(samToken);
         var jimmy = create(jimmyToken);
 
-        getValidation(UserDef.uriPlusId(sam.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(sam)));
-        getValidation(UserDef.uriPlusId(jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(jimmy)));
+        getValidation(UserDef.uriPlusId(sam.getId()), jimmyToken).body(is(timeKeeperTestUtils.toJson(sam))).statusCode(is(OK.getStatusCode()));
+        getValidation(UserDef.uriPlusId(jimmy.getId()), jimmyToken).body(is(timeKeeperTestUtils.toJson(jimmy))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -70,7 +70,7 @@ class UserResourceTest {
         var sam = create(samToken);
         var jimmy = create(jimmyToken);
 
-        getValidation(UserDef.uri, jimmyToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(sam, jimmy)));
+        getValidation(UserDef.uri, jimmyToken).body(is(timeKeeperTestUtils.listOfTasJson(sam, jimmy))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -89,7 +89,7 @@ class UserResourceTest {
         var project10 = create(new ProjectRequest("Some Project", true, "some description", client1.getId(), true, emptyList(), 1L), samToken);
 
         // Check that jimmy has no project yet
-        getValidation(UserDef.uriPlusId(jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(jimmy)));
+        getValidation(UserDef.uriPlusId(jimmy.getId()), jimmyToken).body(is(timeKeeperTestUtils.toJson(jimmy))).statusCode(is(OK.getStatusCode()));
 
         // WHEN
         // Add Jimmy to a project as a simple member
@@ -125,7 +125,7 @@ class UserResourceTest {
 
 
         // THEN
-        getValidation(UserDef.uriPlusId(jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(expectedResult)));
+        getValidation(UserDef.uriPlusId(jimmy.getId()), jimmyToken).body(is(timeKeeperTestUtils.toJson(expectedResult))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -145,7 +145,7 @@ class UserResourceTest {
         var project10 = create(new ProjectRequest("Some Project", true, "some description", client1.getId(), true, emptyList(), 1L), samToken);
 
         // Check that teamLeadUser has no project yet
-        getValidation(UserDef.uriPlusId(teamLeadUser.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(teamLeadUser)));
+        getValidation(UserDef.uriPlusId(teamLeadUser.getId()), jimmyToken).body(is(timeKeeperTestUtils.toJson(teamLeadUser))).statusCode(is(OK.getStatusCode()));
 
         // WHEN
         // Add teamLeadUser to a project as a team lead member
@@ -199,7 +199,7 @@ class UserResourceTest {
         );
 
         // THEN
-        getValidation(UserDef.uriPlusId(teamLeadUser.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(expectedResult)));
-        getValidation(UserDef.uriPlusId(jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(expectedResult2)));
+        getValidation(UserDef.uriPlusId(teamLeadUser.getId()), jimmyToken).body(is(timeKeeperTestUtils.toJson(expectedResult))).statusCode(is(OK.getStatusCode()));
+        getValidation(UserDef.uriPlusId(jimmy.getId()), jimmyToken).body(is(timeKeeperTestUtils.toJson(expectedResult2))).statusCode(is(OK.getStatusCode()));
     }
 }

@@ -57,24 +57,24 @@ public class ProjectResource implements ProjectResourceApi {
     @Override
     public Response updateProject(Long id, @Valid ProjectRequest request) {
         final var ctx = authentication.context();
-        projectService.update(id, request, ctx)
+        return projectService.update(id, request, ctx)
+                .map( it -> Response.noContent().build())
                 .orElseThrow(() -> new NotFoundException(String.format("Project not found for id=%d", id)));
-        return Response.noContent().build();
     }
 
     @RolesAllowed({"user", "admin"})
     @Override
     public Response joinPublicProject(Long projectId) {
         final var ctx = authentication.context();
-        projectService.joinProject(projectId, ctx)
+        return projectService.joinProject(projectId, ctx)
+                .map( it -> Response.noContent().build())
                 .orElseThrow(() -> new NotFoundException(String.format("Project or user not found for project id=%d and user id=%d", projectId, ctx.getUserId())));
-        return Response.noContent().build();
+
     }
 
     @RolesAllowed({"user", "admin"})
     @Override
     public TimeSheetResponse getLastActiveTimeSheetForUser(long idProject, long idUser) {
-        final var ctx = authentication.context();
         Optional<TimeSheetResponse> maybeResponse = timeSheetService.findFirstForProjectForUser(idProject, idUser);
         return maybeResponse.orElseThrow(() -> new NotFoundException(String.format("No timesheet found for project_id=%d, and user_id=%d", idProject, idUser)));
     }

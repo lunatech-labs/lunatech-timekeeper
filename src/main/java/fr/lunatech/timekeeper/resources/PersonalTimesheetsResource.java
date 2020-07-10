@@ -30,7 +30,9 @@ public class PersonalTimesheetsResource implements PersonalTimesheetsResourceApi
     @RolesAllowed({"user", "admin"})
     @Override
     public WeekResponse getWeek(Integer year, Integer weekNumber) {
-        logger.debug(String.format("Get week for year=%d weekNumber=%d", year, weekNumber));
+        if(logger.isDebugEnabled()) {
+            logger.debug(String.format("getWeek year=%d weekNumber=%d", year, weekNumber));
+        }
         final var ctx = authentication.context();
         return weekService.getWeek(ctx, year, weekNumber);
     }
@@ -38,7 +40,9 @@ public class PersonalTimesheetsResource implements PersonalTimesheetsResourceApi
     @RolesAllowed({"user", "admin"})
     @Override
     public MonthResponse getMonth(Integer year, Integer monthNumber) {
-        logger.debug(String.format("getMonth year=%d monthNumber=%d", year, monthNumber));
+        if(logger.isDebugEnabled()) {
+            logger.debug(String.format("getMonth year=%d monthNumber=%d", year, monthNumber));
+        }
         final var ctx = authentication.context();
         return monthService.getMonth(ctx, year, monthNumber);
     }

@@ -51,8 +51,8 @@ public class ClientResource implements ClientResourceApi {
     @Override
     public Response updateClient(Long id, @Valid ClientRequest request) {
         final var ctx = authentication.context();
-        clientService.update(id, request, ctx)
+        return clientService.update(id, request, ctx)
+                .map( it -> Response.noContent().build())
                 .orElseThrow(NotFoundException::new);
-        return Response.noContent().build();
     }
 }

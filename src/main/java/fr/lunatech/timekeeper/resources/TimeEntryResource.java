@@ -35,8 +35,8 @@ public class TimeEntryResource implements TimeEntryResourceApi {
     @Override
     public Response updateTimeEntry(Long timeSheetId, Long timeEntryId, @Valid TimeEntryRequest request, UriInfo uriInfo) {
         final var ctx = authentication.context();
-        timeEntryService.updateTimeEntry(timeSheetId, timeEntryId, request, ctx)
+        return timeEntryService.updateTimeEntry(timeSheetId, timeEntryId, request, ctx)
+                .map(it -> Response.noContent().build())
                 .orElseThrow(NotFoundException::new);
-        return Response.noContent().build();
     }
 }

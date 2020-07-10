@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.stream;
 
 public enum Profile {
-    SuperAdmin ("super_admin"),
-    Admin ("admin"),
-    User ("user"),;
+    SUPER_ADMIN("super_admin"),
+    ADMIN("admin"),
+    USER("user"),;
 
     String tokenValue;
 

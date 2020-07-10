@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @QuarkusTestResource(H2DatabaseTestResource.class)
 @QuarkusTestResource(KeycloakTestResource.class)
 @DisabledIfEnvironmentVariable(named = "ENV", matches = "fast-test-only")
-public class UserEventTest {
+class UserEventTest {
 
     @Inject
     Flyway flyway;
@@ -53,8 +53,7 @@ public class UserEventTest {
     }
 
     @Test
-    public void shouldNotDeleteUserEventIfAttendeesIsDeleted() throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
-
+    void shouldNotDeleteUserEventIfAttendeesIsDeleted() throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
         final String adminToken = getAdminAccessToken();
         final String userAccessToken = getUserAccessToken();
 
@@ -62,7 +61,7 @@ public class UserEventTest {
 
         final var project = create(new ProjectRequest("Some Project", true, "A project can be created by a user also", client.getId(), true, emptyList(), 1L), userAccessToken);
 
-        getValidation(ProjectDef.uriPlusId(project.getId()), userAccessToken, OK).body(is(timeKeeperTestUtils.toJson(project)));
+        getValidation(ProjectDef.uriPlusId(project.getId()), userAccessToken).body(is(timeKeeperTestUtils.toJson(project))).statusCode(is(OK.getStatusCode()));
 
         // We use Panache directly to manipulate and test the DB
         Organization organisation = Organization.findAll().firstResult();
@@ -108,14 +107,14 @@ public class UserEventTest {
     }
 
     @Test
-    public void shouldNotDeleteUserEventIfAssociatedEventTemplateIsDeleted() throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+    void shouldNotDeleteUserEventIfAssociatedEventTemplateIsDeleted() throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
         final String adminToken = getAdminAccessToken();
         final String userAccessToken = getUserAccessToken();
 
         final var client = create(new ClientRequest("NewClient UET2", "One super client for test"), adminToken);
         final var project = create(new ProjectRequest("Some Project 2", true, "Test 1,2,1,2", client.getId(), true, emptyList(), 1L), userAccessToken);
 
-        getValidation(ProjectDef.uriPlusId(project.getId()), userAccessToken, OK).body(is(timeKeeperTestUtils.toJson(project)));
+        getValidation(ProjectDef.uriPlusId(project.getId()), userAccessToken).body(is(timeKeeperTestUtils.toJson(project))).statusCode(is(OK.getStatusCode()));
 
         // We use Panache directly to manipulate and test the DB
         Organization organisation = Organization.findAll().firstResult();
