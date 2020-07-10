@@ -13,6 +13,9 @@ import java.time.temporal.WeekFields;
  * @author created by N.Martignole, Lunatech, on 2020-06-10.
  */
 public class TimeKeeperDateUtils {
+
+    private TimeKeeperDateUtils(){ }
+
     /**
      * Returns the first Monday as a LocalDate from a weekNumber
      *
@@ -39,8 +42,7 @@ public class TimeKeeperDateUtils {
         // But for the time being I set it to FR so the first day of week is a Monday
         // This code will need to be updated later, to adjust user preferences and maybe relies on the AuthenticationContext
         TemporalField fieldISO = WeekFields.ISO.dayOfWeek();
-        LocalDate firstDayOfWeek = inputDate.with(fieldISO, 1);
-        return firstDayOfWeek;
+        return inputDate.with(fieldISO, 1);
     }
 
     /**
