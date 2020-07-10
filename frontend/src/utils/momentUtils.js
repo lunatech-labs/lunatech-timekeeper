@@ -53,14 +53,3 @@ export const isWeekEnd = (date) => date.isoWeekday() === 6 || date.isoWeekday() 
 export const computeNumberOfHours = (start, end) => {
   return moment.duration(end.diff(start)).asHours();
 };
-
-// Returns the number of hours for a day
-export const computeHoursForADay = (entries) => {
-  const reducer = (accumulator, currentValue) => accumulator + currentValue;
-  return entries.map( entry => {
-    const start = moment(entry.startDateTime).utc();
-    const end = moment(entry.endDateTime).utc();
-    const duration = moment.duration(end.diff(start));
-    return duration.asHours();
-  }).reduce(reducer);
-};

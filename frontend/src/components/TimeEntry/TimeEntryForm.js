@@ -7,7 +7,7 @@ import NoDataMessage from '../NoDataMessage/NoDataMessage';
 import ShowTimeEntry from './ShowTimeEntry';
 import AddEntryForm from './AddEntryForm';
 import EditEntryForm from './EditEntryForm';
-import {computeHoursForADay} from '../../utils/momentUtils';
+import moment from 'moment';
 
 const {TextArea} = Input;
 
@@ -67,9 +67,16 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
     );
   };
 
-  const numberOfHours = (entriesArray) => {
+  // Returns the number of hours for a day
+  const amountOfHoursPerDay = (entriesArray) => {
     return entriesArray.map(entries => {
-      return computeHoursForADay(entries);
+      const reducer = (accumulator, currentValue) => accumulator + currentValue;
+      return entries.map( entry => {
+        const start = moment(entry.startDateTime).utc();
+        const end = moment(entry.endDateTime).utc();
+        const duration = moment.duration(end.diff(start));
+        return duration.asHours();
+      }).reduce(reducer);
     });
   };
 
@@ -81,7 +88,7 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
             <p>{currentDay.format('ddd')}<br/><span>{currentDay.format('DD')}</span></p>
             <h1>Day information</h1>
           </div>
-          { (mode === 'view' || mode === 'edit') && numberOfHours(entries) < 8 ?
+          { (mode === 'view' || mode === 'edit') && amountOfHoursPerDay(entries) < 8 ?
             <Button type="link" onClick={() => setMode && setAddMode()}>Add task</Button> : ''}
         </div>
         <div className="tk_ModalTopBody">
