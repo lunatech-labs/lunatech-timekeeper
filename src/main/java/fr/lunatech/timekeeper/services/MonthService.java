@@ -2,20 +2,23 @@ package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.UserEvent;
+import fr.lunatech.timekeeper.services.responses.MonthResponse;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
-import fr.lunatech.timekeeper.services.responses.WeekResponse;
 import fr.lunatech.timekeeper.timeutils.CalendarFactory;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
-public class WeekService {
+public class MonthService {
 
     @Inject
     UserService userService;
@@ -23,40 +26,33 @@ public class WeekService {
     @Inject
     TimeSheetService timeSheetService;
 
-    /**
-     * Loads a specific week for the current authenticated user
-     *
-     * @param ctx        is the context with the user that made this request
-     * @param year       is a 4 digit Integer value for a year
-     * @param weekNumber is an Integer value between 1 and 52
-     * @return the WeekResponse with details for this user.
-     */
-    public WeekResponse getWeek(AuthenticationContext ctx, Integer year, Integer weekNumber) {
+    public MonthResponse getMonth(AuthenticationContext ctx, Integer year, Integer monthNumber) {
         Long userId = ctx.getUserId();
         Optional<User> maybeUser = userService.findById(userId, ctx);
         if (maybeUser.isEmpty()) {
-            throw new IllegalStateException("User not found, cannot load current week");
+            throw new IllegalStateException("User not found, cannot load current month");
         }
 
         var userEvents = new ArrayList<UserEvent>();
-        var publicHolidays = CalendarFactory.instanceFor("FR", year).getPublicHolidaysForWeekNumber(weekNumber);
+        var publicHolidays = CalendarFactory.instanceFor("FR", year).getPublicHolidaysForMonthNumber(monthNumber);
 
-        var startDayOfWeek = TimeKeeperDateUtils.getFirstDayOfWeekFromWeekNumber(year, weekNumber);
+        Predicate<LocalDate> isValidDate = TimeKeeperDateUtils.isIncludedInSixWeeksFromMonth(year, monthNumber);
         final List<TimeSheetResponse> timeSheetsResponse = new ArrayList<>();
         for (TimeSheetResponse timeSheetResponse : timeSheetService
                 .findAllActivesForUser(ctx)) {
             timeSheetResponse.entries = timeSheetResponse.entries
                     .stream()
-                    .filter(timeEntryResponse -> TimeKeeperDateUtils.isSameWeekAndYear(timeEntryResponse.getStartDateTime().toLocalDate(), startDayOfWeek))
+                    .filter(timeEntryResponse -> {
+                        LocalDateTime startDateTime = timeEntryResponse.getStartDateTime();
+                        return isValidDate.test(startDateTime.toLocalDate());
+                    })
                     .collect(Collectors.toList());
             timeSheetsResponse.add(timeSheetResponse);
         }
 
-        return new WeekResponse(TimeKeeperDateUtils.adjustToFirstDayOfWeek(startDayOfWeek)
-                , userEvents
+        return new MonthResponse(userEvents
                 , timeSheetsResponse
                 , publicHolidays);
+
     }
-
-
 }

@@ -10,4 +10,6 @@ public interface Calendar {
 
     List<PublicHoliday> getPublicHolidaysForWeekNumber(final Integer weekNumber);
 
+    List<PublicHoliday> getPublicHolidaysForMonthNumber(final Integer monthNumber);
+
 }
