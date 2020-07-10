@@ -10,6 +10,7 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.flywaydb.core.Flyway;
+import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
@@ -49,7 +50,7 @@ class TimeSheetResourceTest {
     }
 
     @Test
-    void shouldFindTimeSheetById(){
+    void shouldFindTimeSheetById() {
         // GIVEN : a project with 2 member
         final String adminToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
@@ -64,18 +65,16 @@ class TimeSheetResourceTest {
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers, 1L), adminToken);
 
 
-        final var expectedTimeSheetSam = new TimeSheetResponse(1L, project, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
+        final var expectedTimeSheetSam = new TimeSheetResponse(1L, project, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null);
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null);
 
         // THEN
-        getValidation(TimeSheetDef.uriPlusId(1L),adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)));
-        getValidation(TimeSheetDef.uriPlusId(2L),adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
-
+        getValidation(TimeSheetDef.uriPlusId(1L), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam))).statusCode(CoreMatchers.is(OK.getStatusCode()));
+        getValidation(TimeSheetDef.uriPlusId(2L), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(CoreMatchers.is(OK.getStatusCode()));
     }
 
-
     @Test
-    void shouldUpdateTimeSheetById(){
+    void shouldUpdateTimeSheetById() {
         // GIVEN : a project with 2 member
         final String adminToken = getAdminAccessToken();
         var sam = create(adminToken);
@@ -87,8 +86,8 @@ class TimeSheetResourceTest {
         // WHEN : the project is created, a time sheet is generated for all user
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers, 1L), adminToken);
         // verify first version
-        final var expectedTimeSheetSam = new TimeSheetResponse(timeSheetId, project, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
-        getValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)));
+        final var expectedTimeSheetSam = new TimeSheetResponse(timeSheetId, project, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null);
+        getValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam))).statusCode(CoreMatchers.is(OK.getStatusCode()));
 
         // WHEN : AND the timesheet is updated (adding a end date a maxDuration and changing units)
         LocalDate newEndDate = LocalDate.now().plusMonths(2L);
@@ -99,11 +98,11 @@ class TimeSheetResourceTest {
                 60,
                 TimeUnit.DAY
         );
-        putValidation(TimeSheetDef.uriPlusId(timeSheetId),adminToken,timeKeeperTestUtils.toJson(updatedTimeSheet), NO_CONTENT);
+        putValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken, timeKeeperTestUtils.toJson(updatedTimeSheet)).statusCode(NO_CONTENT.getStatusCode());
 
         // THEN get the updated version
-        final var expectedUpdatedTimeSheetSam = new TimeSheetResponse(timeSheetId, project, sam, TimeUnit.DAY, true, newEndDate, 60, TimeUnit.DAY.toString(), Collections.emptyList(),60L);
-        getValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedUpdatedTimeSheetSam)));
+        final var expectedUpdatedTimeSheetSam = new TimeSheetResponse(timeSheetId, project, sam, TimeUnit.DAY, true, newEndDate, 60, TimeUnit.DAY.toString(), Collections.emptyList(), 60L);
+        getValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken).body(is(timeKeeperTestUtils.toJson(expectedUpdatedTimeSheetSam))).statusCode(CoreMatchers.is(OK.getStatusCode()));
     }
 
 }

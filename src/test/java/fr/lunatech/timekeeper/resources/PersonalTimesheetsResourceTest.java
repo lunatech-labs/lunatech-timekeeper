@@ -36,7 +36,7 @@ import static org.hamcrest.CoreMatchers.is;
 @QuarkusTestResource(H2DatabaseTestResource.class)
 @QuarkusTestResource(KeycloakTestResource.class)
 @DisabledIfEnvironmentVariable(named = "ENV", matches = "fast-test-only")
-public class PersonalTimesheetsResourceTest {
+class PersonalTimesheetsResourceTest {
 
     @Inject
     TimeKeeperTestUtils timeKeeperTestUtils;
@@ -66,7 +66,7 @@ public class PersonalTimesheetsResourceTest {
 
         WeekResponse response = new WeekResponse(LocalDate.of(2020, 5, 25), Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
 
-        getValidation(PersonalTimeSheetsWeekDef.uriWithMultiInt(2020, 22), adminToken, OK).body(is(timeKeeperTestUtils.toJson(response)));
+        getValidation(PersonalTimeSheetsWeekDef.uriWithMultiInt(2020, 22), adminToken).body(is(timeKeeperTestUtils.toJson(response)));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class PersonalTimesheetsResourceTest {
         holidays.add(new PublicHoliday(LocalDate.of(2020, 5, 21), "Jour de l'Ascension", "Ascension Day", "FR"));
         WeekResponse response = new WeekResponse(LocalDate.of(2020, 5, 18), Collections.emptyList(), List.of(timesheet), holidays);
 
-        getValidation(PersonalTimeSheetsWeekDef.uriWithMultiInt(2020, 21), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(response)));
+        getValidation(PersonalTimeSheetsWeekDef.uriWithMultiInt(2020, 21), jimmyToken).body(is(timeKeeperTestUtils.toJson(response))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -165,7 +165,7 @@ public class PersonalTimesheetsResourceTest {
         final var timesheet = new TimeSheetResponse(1L, projectResponse, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), timeEntriesExpected, null);
         final MonthResponse response = new MonthResponse(Collections.emptyList(), List.of(timesheet), publicHolidays);
 
-        getValidation(PersonalTimeSheetsMonthDef.uriWithMultiInt(2020, 7), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(response)));
+        getValidation(PersonalTimeSheetsMonthDef.uriWithMultiInt(2020, 7), jimmyToken).body(is(timeKeeperTestUtils.toJson(response))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -208,7 +208,7 @@ public class PersonalTimesheetsResourceTest {
 
         MonthResponse response = new MonthResponse(Collections.emptyList(), List.of(timesheet), holidays);
 
-        getValidation(PersonalTimeSheetsMonthDef.uriWithMultiInt(2020, 5), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(response)));
+        getValidation(PersonalTimeSheetsMonthDef.uriWithMultiInt(2020, 5), jimmyToken).body(is(timeKeeperTestUtils.toJson(response)));
     }
 
     @Test
@@ -265,6 +265,6 @@ public class PersonalTimesheetsResourceTest {
         WeekResponse response = new WeekResponse(LocalDate.of(2020, 6, 15), Collections.emptyList(), List.of(timesheet), new ArrayList<>());
 
         //THEN: the days left should be 8
-        getValidation(PersonalTimeSheetsWeekDef.uriWithMultiInt(2020, 25), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(response)));
+        getValidation(PersonalTimeSheetsWeekDef.uriWithMultiInt(2020, 25), jimmyToken).body(is(timeKeeperTestUtils.toJson(response))).statusCode(is(OK.getStatusCode()));
     }
 }

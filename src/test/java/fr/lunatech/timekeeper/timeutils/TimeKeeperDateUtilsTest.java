@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class TimeKeeperDateUtilsTest {
+class TimeKeeperDateUtilsTest {
 
     @Test
     void shouldReturnMondayFromWeekNumberForFirstWeek() {

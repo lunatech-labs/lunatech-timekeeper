@@ -1,20 +1,21 @@
 package fr.lunatech.timekeeper.timeutils;
 
-import org.jboss.logging.annotations.Fields;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.*;
-import java.util.Locale;
-import java.util.function.Consumer;
+import java.time.temporal.IsoFields;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
 import java.util.function.Predicate;
 
 /**
  * @author created by N.Martignole, Lunatech, on 2020-06-10.
  */
 public class TimeKeeperDateUtils {
+
+    private TimeKeeperDateUtils(){ }
 
     public static void validateYear(final Integer year){
         if(year < 1970) throw new IllegalStateException("year should be after 1970 due to TimeStamp limitation");
@@ -55,8 +56,7 @@ public class TimeKeeperDateUtils {
         // But for the time being I set it to FR so the first day of week is a Monday
         // This code will need to be updated later, to adjust user preferences and maybe relies on the AuthenticationContext
         TemporalField fieldISO = WeekFields.ISO.dayOfWeek();
-        LocalDate firstDayOfWeek = inputDate.with(fieldISO, 1);
-        return firstDayOfWeek;
+        return inputDate.with(fieldISO, 1);
     }
 
     /**

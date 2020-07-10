@@ -28,7 +28,7 @@ import static org.hamcrest.CoreMatchers.is;
 @QuarkusTestResource(H2DatabaseTestResource.class)
 @QuarkusTestResource(KeycloakTestResource.class)
 @DisabledIfEnvironmentVariable(named = "ENV", matches = "fast-test-only")
-public class OrganizationResourceTest {
+class OrganizationResourceTest {
 
     @Inject
     Flyway flyway;
@@ -43,38 +43,29 @@ public class OrganizationResourceTest {
         flyway.migrate();
     }
 
-    //TODO super admin
     @Test
     void shouldCreateOrganizationWhenSuperAdminProfile() {
-
         final String clarkToken = getSuperAdminAccessToken();
-
         final var organization = create(new OrganizationRequest("New Organization", "organization.org"), clarkToken);
-        getValidation(OrganizationDef.uriPlusId(organization.getId()), clarkToken, OK).body(is(timeKeeperTestUtils.toJson(organization)));
+        getValidation(OrganizationDef.uriPlusId(organization.getId()), clarkToken).body(is(timeKeeperTestUtils.toJson(organization))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
     void shouldNotCreateOrganizationWhenAdminProfile() {
-
         final String samToken = getAdminAccessToken();
-
         final OrganizationRequest organization = new OrganizationRequest("New Organization", "organization.org");
-        postValidation(OrganizationDef.uri, samToken, organization, FORBIDDEN);
+        postValidation(OrganizationDef.uri, samToken, organization).statusCode(is(FORBIDDEN.getStatusCode()));
     }
 
     @Test
     void shouldNotFindUnknownOrganization() {
-
         final String clarkToken = getSuperAdminAccessToken();
-
         final Long NO_EXISTING_ORGANIZATION_ID = 243L;
-
-        getValidation(OrganizationDef.uriPlusId(NO_EXISTING_ORGANIZATION_ID), clarkToken, NOT_FOUND);
+        getValidation(OrganizationDef.uriPlusId(NO_EXISTING_ORGANIZATION_ID), clarkToken).statusCode(is(NOT_FOUND.getStatusCode()));
     }
 
     @Test
     void shouldFindAllOrganizations() {
-
         final String clarkToken = getSuperAdminAccessToken();
 
         final var organization = create(new OrganizationRequest("MyOrga", "organization.org"), clarkToken);
@@ -91,16 +82,15 @@ public class OrganizationResourceTest {
                         "clark@lunatech.fr",
                         "clark.png",
                         0,
-                        Lists.newArrayList(Profile.SuperAdmin))
+                        Lists.newArrayList(Profile.SUPER_ADMIN))
                 )
         );
 
-        getValidation(OrganizationDef.uri, clarkToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(lunatechOrganization, organization, organization2)));
+        getValidation(OrganizationDef.uri, clarkToken).body(is(timeKeeperTestUtils.listOfTasJson(lunatechOrganization, organization, organization2))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
     void shouldModifyOrganizationWhenAdminProfile() {
-
         final String clarkToken = getSuperAdminAccessToken();
 
         final var organization = create(new OrganizationRequest("MyOrga", "organization.org"), clarkToken);
@@ -113,19 +103,17 @@ public class OrganizationResourceTest {
                 emptyList(),
                 emptyList()
         );
-
-        getValidation(OrganizationDef.uriPlusId(organization.getId()), clarkToken, OK).body(is(timeKeeperTestUtils.toJson(expectedOrganization)));
+        getValidation(OrganizationDef.uriPlusId(organization.getId()), clarkToken).body(is(timeKeeperTestUtils.toJson(expectedOrganization))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
     void shouldNotModifyOrganizationWhenUserProfile() {
-
         final String clarkToken = getSuperAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
 
         final var organization = create(new OrganizationRequest("New Organization", "organization.org"), clarkToken);
 
         final OrganizationRequest organization2 = new OrganizationRequest("New Organization 2", "organization.org");
-        putValidation(OrganizationDef.uriPlusId(organization.getId()), jimmyToken, organization2, FORBIDDEN);
+        putValidation(OrganizationDef.uriPlusId(organization.getId()), jimmyToken, organization2).statusCode(is(FORBIDDEN.getStatusCode()));
     }
 }

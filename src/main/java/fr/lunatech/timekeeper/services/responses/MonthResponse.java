@@ -3,12 +3,9 @@ package fr.lunatech.timekeeper.services.responses;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.models.time.UserEvent;
 import fr.lunatech.timekeeper.timeutils.PublicHoliday;
-import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 import fr.lunatech.timekeeper.timeutils.Week;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
