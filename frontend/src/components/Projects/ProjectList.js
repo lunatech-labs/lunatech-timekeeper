@@ -16,9 +16,9 @@ import PropTypes from 'prop-types';
 import {useKeycloak} from '@react-keycloak/web';
 import {UserContext} from '../../context/UserContext';
 import {canEditProject, isAdmin} from '../../utils/rights';
-import Pluralize from "../Pluralize/Pluralize";
-import TagProjectClient from "../Tag/TagProjectClient";
-import Tooltip from "antd/lib/tooltip";
+import Pluralize from '../Pluralize/Pluralize';
+import TagProjectClient from '../Tag/TagProjectClient';
+import Tooltip from 'antd/lib/tooltip';
 
 const {Panel} = Collapse;
 
@@ -30,7 +30,7 @@ const ProjectList = () => {
   const [filterText, setFilterText] = useState('All');
 
   const canEditOneProject =  (projectData) =>{
-      return canEditProject(projectData, currentUser, keycloak);
+    return canEditProject(projectData, currentUser, keycloak);
   };
 
   const [groupBy, setGroupBy] = useState('All');
@@ -169,16 +169,16 @@ const ProjectList = () => {
                 <div className="tk_Card_ProjectTitle">
                   <p>{item.name}</p>
                 </div>
-                  <span className="tk_Card_subtitle">{item.client ? <TagProjectClient client={item.client}/> : 'No client'}
-                    {item.publicAccess ? <UnlockOutlined/> :
-                  <LockFilled/>}<span>{item.publicAccess ? ' Public' : ' Private project'}</span></span>
+                <span className="tk_Card_subtitle">{item.client ? <TagProjectClient client={item.client}/> : 'No client'}
+                  {item.publicAccess ? <UnlockOutlined/> :
+                    <LockFilled/>}<span>{item.publicAccess ? ' Public' : ' Private project'}</span></span>
               </div>
             </Space>
           }
           extra={[
-           <span>{canEditOneProject(item)? <Tooltip title="Edit this project" key="edit">
-               <Button data-cy="editProject" type="link" size="small" ghost shape="circle" icon={<EditFilled/>} href={`/projects/${item.id}/edit`}/>
-           </Tooltip> : ""}</span>
+            <span>{canEditOneProject(item)? <Tooltip title="Edit this project" key="edit">
+              <Button data-cy="editProject" type="link" size="small" ghost shape="circle" icon={<EditFilled/>} href={`/projects/${item.id}/edit`}/>
+            </Tooltip> : ''}</span>
 
           ]}
           actions={[item.users.length === 0 ? <Panel id="tk_ProjectNoCollapse" header={<Space
@@ -186,7 +186,7 @@ const ProjectList = () => {
             <Collapse bordered={false} expandIconPosition={'right'} key="projects">
               <Panel header={<Space
                 size="small"><UserOutlined/>{item.users.length}{item.users.length <= 1 ? 'member' : 'members'}</Space>}
-                key="members">
+              key="members">
                 <List
                   id={'tk_ProjectMembers'}
                   dataSource={item.users.sort(((a, b) => memberComparator(a, b)))}
@@ -200,11 +200,11 @@ const ProjectList = () => {
             </Collapse>
           ]}
         >
-        <a href={`/projects/${item.id}`}>
-          <Meta
-            description={item.description}
-          />
-        </a>
+          <a href={`/projects/${item.id}`}>
+            <Meta
+              description={item.description}
+            />
+          </a>
         </Card>
       </List.Item>
     )}
@@ -218,7 +218,7 @@ const ProjectList = () => {
   return (
     <React.Fragment>
       <div className="tk_SubHeader">
-          <p><Pluralize label="project" size={projectsFiltered.length}/>&nbsp;|&nbsp;
+        <p><Pluralize label="project" size={projectsFiltered.length}/>&nbsp;|&nbsp;
           <Pluralize label="client" size= {Array.from(new Set(projectsFiltered.filter(project => !!project.client).map((project) => project.client.id))).length}/></p>
         {currentUserIsAdmin && <div className="tk_SubHeader_RightPart">
           <div className="tk_SubHeader_Filters">{filterComponent}</div>

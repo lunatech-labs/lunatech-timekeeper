@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom';
 import {Button, Select} from 'antd';
 import CardWeekCalendar from '../Card/CardWeekCalendar';
 import {LeftOutlined, PlusOutlined, RightOutlined} from '@ant-design/icons';
@@ -39,7 +39,7 @@ const WeekCalendar = (props) => {
       onPanelChange(id, start, end);
       if (weekRanges.weekNumber !== id) {
         setWeekRanges(computeWeekRanges(start));
-        history.push('?weekNumber=' + id)
+        history.push('?weekNumber=' + id);
       }
     }
   }, [weekSelected, onPanelChange, weekRanges, history]);
