@@ -9,7 +9,6 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.List;
 
 @Path("/my")
 public interface PersonalTimesheetsResourceApi {

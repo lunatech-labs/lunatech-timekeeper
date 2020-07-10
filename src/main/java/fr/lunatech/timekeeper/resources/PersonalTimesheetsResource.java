@@ -3,7 +3,6 @@ package fr.lunatech.timekeeper.resources;
 import fr.lunatech.timekeeper.resources.openapi.PersonalTimesheetsResourceApi;
 import fr.lunatech.timekeeper.resources.providers.AuthenticationContextProvider;
 import fr.lunatech.timekeeper.services.MonthService;
-import fr.lunatech.timekeeper.services.TimeSheetService;
 import fr.lunatech.timekeeper.services.WeekService;
 import fr.lunatech.timekeeper.services.responses.MonthResponse;
 import fr.lunatech.timekeeper.services.responses.WeekResponse;
@@ -12,8 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * A Resource to serve only personal worksheet, timesheet and typical week for a specific user.

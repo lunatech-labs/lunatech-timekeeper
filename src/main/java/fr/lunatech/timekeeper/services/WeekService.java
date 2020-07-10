@@ -42,20 +42,20 @@ public class WeekService {
         var publicHolidays = CalendarFactory.instanceFor("FR", year).getPublicHolidaysForWeekNumber(weekNumber);
 
         var startDayOfWeek = TimeKeeperDateUtils.getFirstDayOfWeekFromWeekNumber(year, weekNumber);
-        final List<TimeSheetResponse> timeSheetsResponse = timeSheetService
-                .findAllActivesForUser(ctx)
-                .stream().peek(timeSheetResponse ->
-                        timeSheetResponse.entries = timeSheetResponse.entries
-                            .stream()
-                            .filter(timeEntryResponse -> TimeKeeperDateUtils.isSameWeekAndYear(timeEntryResponse.getStartDateTime().toLocalDate(), startDayOfWeek))
-                            .collect(Collectors.toList())).collect(Collectors.toList());
+        final List<TimeSheetResponse> timeSheetsResponse = new ArrayList<>();
+        for (TimeSheetResponse timeSheetResponse : timeSheetService
+                .findAllActivesForUser(ctx)) {
+            timeSheetResponse.entries = timeSheetResponse.entries
+                    .stream()
+                    .filter(timeEntryResponse -> TimeKeeperDateUtils.isSameWeekAndYear(timeEntryResponse.getStartDateTime().toLocalDate(), startDayOfWeek))
+                    .collect(Collectors.toList());
+            timeSheetsResponse.add(timeSheetResponse);
+        }
 
-        WeekResponse weekResponse = new WeekResponse(TimeKeeperDateUtils.adjustToFirstDayOfWeek(startDayOfWeek)
+        return new WeekResponse(TimeKeeperDateUtils.adjustToFirstDayOfWeek(startDayOfWeek)
                 , userEvents
                 , timeSheetsResponse
                 , publicHolidays);
-
-        return weekResponse;
     }
 
 

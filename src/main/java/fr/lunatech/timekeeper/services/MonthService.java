@@ -37,17 +37,18 @@ public class MonthService {
         var publicHolidays = CalendarFactory.instanceFor("FR", year).getPublicHolidaysForMonthNumber(monthNumber);
 
         Predicate<LocalDate> isValidDate = TimeKeeperDateUtils.isIncludedInSixWeeksFromMonth(year, monthNumber);
-        final List<TimeSheetResponse> timeSheetsResponse = timeSheetService
-                .findAllActivesForUser(ctx)
-                .stream().peek(timeSheetResponse ->
-                        timeSheetResponse.entries = timeSheetResponse.entries
-                                .stream()
-                                .filter(timeEntryResponse -> {
-                                    LocalDateTime startDateTime = timeEntryResponse.getStartDateTime();
-                                    return isValidDate.test(startDateTime.toLocalDate());
-                                })
-                                .collect(Collectors.toList()))
-                .collect(Collectors.toList());
+        final List<TimeSheetResponse> timeSheetsResponse = new ArrayList<>();
+        for (TimeSheetResponse timeSheetResponse : timeSheetService
+                .findAllActivesForUser(ctx)) {
+            timeSheetResponse.entries = timeSheetResponse.entries
+                    .stream()
+                    .filter(timeEntryResponse -> {
+                        LocalDateTime startDateTime = timeEntryResponse.getStartDateTime();
+                        return isValidDate.test(startDateTime.toLocalDate());
+                    })
+                    .collect(Collectors.toList());
+            timeSheetsResponse.add(timeSheetResponse);
+        }
 
         return new MonthResponse(userEvents
                 , timeSheetsResponse
