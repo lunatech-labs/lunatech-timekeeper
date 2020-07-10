@@ -2,6 +2,7 @@ package fr.lunatech.timekeeper.resources.utils;
 
 import fr.lunatech.timekeeper.services.requests.*;
 import fr.lunatech.timekeeper.services.responses.*;
+import io.restassured.response.ValidatableResponse;
 
 import java.util.Map;
 
@@ -37,11 +38,11 @@ public class ResourceFactory {
         return InternalResourceUtils.createResource(timeEntryRequest, TimeEntryDef.uriWithArgs(timeSheetId), token);
     }
 
-    public static <P> void update(P request, String uri, String token) {
-        InternalResourceUtils.updateResource(request, uri, token);
+    public static <P> ValidatableResponse update(P request, String uri, String token) {
+        return InternalResourceUtils.updateResource(request, uri, token);
     }
 
-    public static <P> void update(String uri, String token) {
-        InternalResourceUtils.updateResource(uri, token);
+    public static <P> ValidatableResponse update(String uri, String token) {
+       return InternalResourceUtils.updateResource(uri, token);
     }
 }

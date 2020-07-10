@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 import static io.restassured.RestAssured.given;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 
 /**
  * InternalResourceUtils provided abstract implementations of resource interaction
@@ -32,29 +31,23 @@ final class InternalResourceUtils {
         return createResource(request, uri_root, Option.none(), type, token);
     }
 
-    public static <P> RType updateResource(P request, String uri, String token) {
-        given()
+    public static <P> ValidatableResponse updateResource(P request, String uri, String token) {
+        return given()
                 .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(request)
                 .put(uri)
-                .then()
-                .statusCode(NO_CONTENT.getStatusCode());
-
-        return RType.NoReturn;
+                .then();
     }
 
-    public static <P> RType updateResource(String uri, String token) {
-        given()
+    public static <P> ValidatableResponse updateResource(String uri, String token) {
+       return given()
                 .auth().preemptive().oauth2(token)
                 .when()
                 .contentType(APPLICATION_JSON)
                 .put(uri)
-                .then()
-                .statusCode(NO_CONTENT.getStatusCode());
-
-        return RType.NoReturn;
+                .then();
     }
 
     public static <R, P> R createResource(P request, String uri_root, Option<String> getUri, Class<R> type, String token) {
@@ -145,11 +138,10 @@ final class InternalResourceUtils {
      * @param m      HttpMethod
      * @param uri    uri
      * @param token  security token
-     * @param status status Code
      * @return
      */
-    static <T> ValidatableResponse resourceValidation(VerbDefinition m, String uri, String token, T body, javax.ws.rs.core.Response.Status status) {
-        return resourceValidation(m, uri, token, Option.some(body), Option.some(status));
+    static <T> ValidatableResponse resourceValidation(VerbDefinition m, String uri, String token, T body) {
+        return resourceValidation(m, uri, token, Option.some(body));
     }
 
     /**
@@ -158,26 +150,14 @@ final class InternalResourceUtils {
      * @param m      HttpMethod
      * @param uri    uri
      * @param token  security token
-     * @param status status Code
      * @return
      */
-    static ValidatableResponse resourceValidation(VerbDefinition m, String uri, String token, javax.ws.rs.core.Response.Status status) {
-        return resourceValidation(m, uri, token, Option.none(), Option.some(status));
-    }
-
-    /**
-     * Delegate to the caller to put the assertion on response
-     *
-     * @param m     HttpMethod
-     * @param uri   Uri
-     * @param token security token
-     * @return ValidatableResponse
-     */
     static ValidatableResponse resourceValidation(VerbDefinition m, String uri, String token) {
-        return resourceValidation(m, uri, token, Option.none(), Option.none());
+        return resourceValidation(m, uri, token, Option.none());
     }
 
-    private static <T> ValidatableResponse resourceValidation(VerbDefinition m, String uri, String token, Option<T> body, Option<javax.ws.rs.core.Response.Status> status) {
+
+    private static <T> ValidatableResponse resourceValidation(VerbDefinition m, String uri, String token, Option<T> body) {
 
         var root = given()
                 .auth().preemptive().oauth2(token)
@@ -187,8 +167,7 @@ final class InternalResourceUtils {
         body.map(b -> root.body(b));
 
         var resp = computeVerb(m, uri, root);
-        var then = resp.then();
-        return status.map(s -> then.statusCode(s.getStatusCode())).getOrElse(then);
+        return resp.then();
     }
 
     private static Response computeVerb(VerbDefinition m, String uri, RequestSpecification root) {

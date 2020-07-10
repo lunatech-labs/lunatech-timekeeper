@@ -9,6 +9,7 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.flywaydb.core.Flyway;
+import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
@@ -26,6 +27,7 @@ import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.EventUse
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -63,7 +65,7 @@ class EventResourceTest {
         create(newEventTemplate,adminToken);
         //THEN: userEvent of attendees are created
         EventTemplateResponse expectedResponse = generateExpectedEventTemplateResponse(1L,Map.of(1L,1L));
-        EventTemplateResponse actual = Arrays.asList(getValidation(EventDef.uri, adminToken, Response.Status.OK).extract().as(EventTemplateResponse[].class)).get(0);
+        EventTemplateResponse actual = Arrays.asList(getValidation(EventDef.uri, adminToken).extract().as(EventTemplateResponse[].class)).get(0);
         actual.getAttendees().sort(Comparator.comparingLong(EventTemplateResponse.UserEventResponse::getId));
         assertThat(timeKeeperTestUtils.toJson(actual), is(timeKeeperTestUtils.toJson(expectedResponse)));
     }
@@ -82,7 +84,7 @@ class EventResourceTest {
         //THEN: get on /events return the 2 event template
         EventTemplateResponse expectedResponse1 = generateExpectedEventTemplateResponse(1L,Map.of(1L,1L));
         EventTemplateResponse expectedResponse2 = generateExpectedEventTemplateResponse(2L,Map.of(2L,2L));
-        getValidation(EventDef.uri, adminToken, Response.Status.OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedResponse1,expectedResponse2)));
+        getValidation(EventDef.uri, adminToken).body(is(timeKeeperTestUtils.listOfTasJson(expectedResponse1,expectedResponse2))).statusCode(CoreMatchers.is(OK.getStatusCode()));
 
     }
 
@@ -97,7 +99,7 @@ class EventResourceTest {
         create(newEventTemplate,adminToken);
         //THEN: the attendees list is returned
         List<UserResponse> sortedUserResponses = Arrays.stream(
-                getValidation(EventUsersDef.uriWithMultiId(1L), adminToken, Response.Status.OK)
+                getValidation(EventUsersDef.uriWithMultiId(1L), adminToken)
                         .extract()
                         .as(UserResponse[].class))
                 .sorted(Comparator.comparingLong(UserResponse::getId))
@@ -140,7 +142,7 @@ class EventResourceTest {
                 updatedEndTime,
                 Collections.singletonList(expectedUserEventResponse)
         );
-        getValidation(EventDef.uri, adminToken, Response.Status.OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedResponse)));
+        getValidation(EventDef.uri, adminToken).body(is(timeKeeperTestUtils.listOfTasJson(expectedResponse))).statusCode(CoreMatchers.is(OK.getStatusCode()));
     }
 
     @Test
@@ -177,7 +179,7 @@ class EventResourceTest {
                 THE_24_TH_JUNE_2020_AT_5_PM,
                 Collections.singletonList(expectedUserEventResponse)
         );
-        getValidation(EventDef.uri, adminToken, Response.Status.OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedResponse)));
+        getValidation(EventDef.uri, adminToken).body(is(timeKeeperTestUtils.listOfTasJson(expectedResponse))).statusCode(CoreMatchers.is(OK.getStatusCode()));
     }
 
 

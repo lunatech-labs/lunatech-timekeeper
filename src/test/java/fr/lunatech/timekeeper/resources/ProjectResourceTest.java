@@ -60,7 +60,7 @@ class ProjectResourceTest {
         final var client = create(new ClientRequest("NewClient1", "NewDescription"), adminToken);
         final var project = create(new ProjectRequest("Some Project1", true, "some description", client.getId(), true, emptyList(), 1L), adminToken);
 
-        getValidation(ProjectDef.uriPlusId(project.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(project)));
+        getValidation(ProjectDef.uriPlusId(project.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(project))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -71,7 +71,7 @@ class ProjectResourceTest {
 
         final var project = create(new ProjectRequest("Some Project 2", true, "un projet peut aussi etre créé par un user", client.getId(), true, emptyList(), 1L), userAccessToken);
 
-        getValidation(ProjectDef.uriPlusId(project.getId()), userAccessToken, OK).body(is(timeKeeperTestUtils.toJson(project)));
+        getValidation(ProjectDef.uriPlusId(project.getId()), userAccessToken).body(is(timeKeeperTestUtils.toJson(project))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -92,13 +92,13 @@ class ProjectResourceTest {
     @Test
     void shouldNotFindUnknownProject() {
         final String userAccessToken = getUserAccessToken();
-        getValidation(ProjectDef.uriPlusId(99999L), userAccessToken, NOT_FOUND);
+        getValidation(ProjectDef.uriPlusId(99999L), userAccessToken).statusCode(is(NOT_FOUND.getStatusCode()));
     }
 
     @Test
     void shouldFindAllProjectsEmpty() {
         final String userToken = getUserAccessToken();
-        getValidation(ProjectDef.uri, userToken, OK).body(is("[]"));
+        getValidation(ProjectDef.uri, userToken).body(is("[]")).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -113,7 +113,7 @@ class ProjectResourceTest {
         final var project11 = create(new ProjectRequest("Some Project 11", false, "other description", client1.getId(), true, emptyList(), 1L), adminToken);
         final var project20 = create(new ProjectRequest("Some Project 20", true, "some description", client2.getId(), true, emptyList(), 1L), adminToken);
 
-        getValidation(ProjectDef.uri, userToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(project10, project11, project20)));
+        getValidation(ProjectDef.uri, userToken).body(is(timeKeeperTestUtils.listOfTasJson(project10, project11, project20))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -137,7 +137,7 @@ class ProjectResourceTest {
         update(updatedProject, ProjectDef.uriPlusId(originalProject.getId()), adminToken);
 
         // THEN
-        getValidation(ProjectDef.uriPlusId(originalProject.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedUpdatedProject)));
+        getValidation(ProjectDef.uriPlusId(originalProject.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedUpdatedProject))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -149,7 +149,7 @@ class ProjectResourceTest {
         final var originalProject = create(new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, emptyList(), 1L), adminToken);
         final var updatedProject = new ProjectRequest("Some Project 10 updated", false, "updated description", client1.getId(), false, emptyList(), 1L);
         // WHEN
-        putValidation(ProjectDef.uriPlusId(originalProject.getId()), userToken, updatedProject, FORBIDDEN);
+        putValidation(ProjectDef.uriPlusId(originalProject.getId()), userToken, updatedProject).statusCode(is(FORBIDDEN.getStatusCode()));
     }
 
     @Test
@@ -171,7 +171,7 @@ class ProjectResourceTest {
         final var projectCreated = create(projectRequest, adminToken);
 
         // WHEN
-        putValidation(ProjectDef.uriPlusId(projectCreated.getId()), userToken, projectRequest, FORBIDDEN);
+        putValidation(ProjectDef.uriPlusId(projectCreated.getId()), userToken, projectRequest).statusCode(is(FORBIDDEN.getStatusCode()));
     }
 
     @Test
@@ -209,8 +209,8 @@ class ProjectResourceTest {
                 , 2L
         );
         // WHEN
-        update(updatedProject, ProjectDef.uriPlusId(projectCreated.getId()), userToken);
-        getValidation(ProjectDef.uriPlusId(projectCreated.getId()), userToken, OK).body(is(timeKeeperTestUtils.toJson(expectedUpdatedProject)));
+        update(updatedProject, ProjectDef.uriPlusId(projectCreated.getId()), userToken).statusCode(is(NO_CONTENT.getStatusCode()));
+        getValidation(ProjectDef.uriPlusId(projectCreated.getId()), userToken).body(is(timeKeeperTestUtils.toJson(expectedUpdatedProject))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -229,7 +229,7 @@ class ProjectResourceTest {
 
         final var projectRequest = new ProjectRequest("Some Project 10", true, "some description", client1.getId(), false, newProjectUsers, 1L);
         final var projectCreated = create(projectRequest, adminToken);
-        getValidation(ProjectDef.uriPlusId(projectCreated.getId()), userToken, OK);
+        getValidation(ProjectDef.uriPlusId(projectCreated.getId()), userToken).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -248,7 +248,7 @@ class ProjectResourceTest {
 
         final var projectRequest = new ProjectRequest("Some Project 10", true, "some description", client1.getId(), false, newProjectUsers, 1L);
         final var projectCreated = create(projectRequest, adminToken);
-        getValidation(ProjectDef.uriPlusId(projectCreated.getId()), userToken, OK);
+        getValidation(ProjectDef.uriPlusId(projectCreated.getId()), userToken).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -259,8 +259,8 @@ class ProjectResourceTest {
 
         final var projectRequest = new ProjectRequest("Some Project 10", true, "some description", client1.getId(), true, Collections.emptyList(), 1L);
         final var projectCreated = create(projectRequest, adminToken);
-        getValidation(ProjectDef.uriPlusId(projectCreated.getId()), userToken, OK);
-        getValidation(ProjectDef.uriPlusId(projectCreated.getId()), adminToken, OK);
+        getValidation(ProjectDef.uriPlusId(projectCreated.getId()), userToken).statusCode(is(OK.getStatusCode()));
+        getValidation(ProjectDef.uriPlusId(projectCreated.getId()), adminToken).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -271,7 +271,7 @@ class ProjectResourceTest {
         final var sam = create(adminToken);
         final var projectRequest = new ProjectRequest("Some Project", true, "some description", null, true, Collections.emptyList(), 1L);
         final var projectCreated = create(projectRequest, adminToken);
-        update(ProjectDef.uriPlusId(projectCreated.getId())+"/join", userToken);
+        update(ProjectDef.uriPlusId(projectCreated.getId())+"/join", userToken).statusCode(is(NO_CONTENT.getStatusCode()));
     }
 
     @Test
@@ -282,7 +282,7 @@ class ProjectResourceTest {
         create(userToken);
         final var projectRequest = new ProjectRequest("Some Project", true, "some description", null, true, Collections.emptyList(), 1L);
         final var projectCreated = create(projectRequest, adminToken);
-        update(ProjectDef.uriPlusId(projectCreated.getId())+"/join", userToken);
+        update(ProjectDef.uriPlusId(projectCreated.getId())+"/join", userToken).statusCode(is(NO_CONTENT.getStatusCode()));
     }
 
     @Test
@@ -327,7 +327,7 @@ class ProjectResourceTest {
         update(updatedProjectWithTwoUsers, ProjectDef.uriPlusId(project10.getId()), adminToken);
 
         // THEN
-        getValidation(ProjectDef.uriPlusId(project10.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedProject)));
+        getValidation(ProjectDef.uriPlusId(project10.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedProject))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -355,7 +355,7 @@ class ProjectResourceTest {
         );
 
         // WHEN THEN
-        putValidation(ProjectDef.uriPlusId(project10.getId()), adminToken, updateProjectRequest, INTERNAL_SERVER_ERROR);
+        putValidation(ProjectDef.uriPlusId(project10.getId()), adminToken, updateProjectRequest).statusCode(is(INTERNAL_SERVER_ERROR.getStatusCode()));
     }
 
     @Test
@@ -379,7 +379,7 @@ class ProjectResourceTest {
                 , 1L);
 
         // WHEN THEN
-        putValidation(ProjectDef.uriPlusId(project10.getId()), adminToken, updateProjectRequest, BAD_REQUEST);
+        putValidation(ProjectDef.uriPlusId(project10.getId()), adminToken, updateProjectRequest).statusCode(is(BAD_REQUEST.getStatusCode()));
     }
 
     @Test
@@ -403,8 +403,8 @@ class ProjectResourceTest {
         final var expectedTimeSheetSam = new TimeSheetResponse(1L, project, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
 
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), sam.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), sam.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -422,7 +422,7 @@ class ProjectResourceTest {
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers, 1L), adminToken);
 
         // THEN return 404 not found for the timesheets
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken, NOT_FOUND);
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken).statusCode(is(NOT_FOUND.getStatusCode()));
     }
 
     @Test
@@ -443,7 +443,7 @@ class ProjectResourceTest {
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
 
         // THEN : I can see the timeSheet by project by member
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
     }
 
 
@@ -490,8 +490,8 @@ class ProjectResourceTest {
         final var expectedTimeSheetSam = new TimeSheetResponse(1L, expectedProject, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
 
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), sam.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), sam.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -530,13 +530,15 @@ class ProjectResourceTest {
         );
 
         update(updatedProjectWithTwoUsers, ProjectDef.uriPlusId(project.getId()), adminToken);
-        getValidation(ProjectDef.uriPlusId(project.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedProject)));
+        getValidation(ProjectDef.uriPlusId(project.getId()), adminToken)
+                .body(is(timeKeeperTestUtils.toJson(expectedProject)))
+                .statusCode(is(OK.getStatusCode()));
         // THEN
         final var expectedTimeSheetSam = new TimeSheetResponse(1L, expectedProject, sam, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
 
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), sam.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), sam.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -586,7 +588,7 @@ class ProjectResourceTest {
         // THEN
         final var expectedTimeSheetJimmy = new TimeSheetResponse(1L, expectedProject, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
 
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken, OK).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -611,7 +613,7 @@ class ProjectResourceTest {
                 , 1L
         );
         // THEN
-        getValidation(ProjectDef.uriPlusId(fullProject.getId(), params), adminToken, OK).body(is(timeKeeperTestUtils.toJson(attemptProjectResponse)));
+        getValidation(ProjectDef.uriPlusId(fullProject.getId(), params), adminToken).body(is(timeKeeperTestUtils.toJson(attemptProjectResponse))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -649,7 +651,7 @@ class ProjectResourceTest {
         update(updatedVersion02, ProjectDef.uriPlusId(originalProject.getId()), adminToken);
 
         // THEN
-        getValidation(ProjectDef.uriPlusId(originalProject.getId()), adminToken, OK).body(is(timeKeeperTestUtils.toJson(expectedUpdatedProject)));
+        getValidation(ProjectDef.uriPlusId(originalProject.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedUpdatedProject))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -721,7 +723,7 @@ class ProjectResourceTest {
 
         update(updatedProjectWithOneUser, ProjectDef.uriPlusId(project10.getId()), adminToken);
 
-        getValidation(ProjectDef.uri, userToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedUpdatedProject)));
+        getValidation(ProjectDef.uri, userToken).body(is(timeKeeperTestUtils.listOfTasJson(expectedUpdatedProject))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
@@ -759,6 +761,6 @@ class ProjectResourceTest {
 
         update(updatedProjectWithOneUser, ProjectDef.uriPlusId(project10.getId()), adminToken);
 
-        getValidation(ProjectDef.uri, userToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedUpdatedProject)));
+        getValidation(ProjectDef.uri, userToken).body(is(timeKeeperTestUtils.listOfTasJson(expectedUpdatedProject))).statusCode(is(OK.getStatusCode()));
     }
 }
