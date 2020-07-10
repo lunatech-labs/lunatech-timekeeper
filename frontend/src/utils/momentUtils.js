@@ -53,3 +53,6 @@ export const isWeekEnd = (date) => date.isoWeekday() === 6 || date.isoWeekday() 
 export const computeNumberOfHours = (start, end) => {
   return moment.duration(end.diff(start)).asHours();
 };
+
+// Moment gives the month number with the index starting from 0
+export const getIsoMonth = (moment) => moment.month() + 1;

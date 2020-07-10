@@ -1,5 +1,7 @@
 package fr.lunatech.timekeeper.timeutils;
 
+import fr.lunatech.timekeeper.services.exceptions.CalendarNotFoundException;
+import fr.lunatech.timekeeper.services.exceptions.CalendarNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +19,7 @@ public class CalendarFactory {
         if(logger.isErrorEnabled()) {
             logger.error(String.format("Calendar not implemented for locale=%s and year=%d", locale, year));
         }
-        throw new IllegalStateException("Calendar not available for this locale and this year");
+        throw new CalendarNotFoundException("Calendar not available for this locale and this year");
     }
 
 }
