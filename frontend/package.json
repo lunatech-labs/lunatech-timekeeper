@@ -22,7 +22,7 @@
     "eslint-plugin-react-hooks": "^4.0.5",
     "keycloak-js": "latest",
     "less": "^3.11.1",
-    "less-loader": "^5.0.0",
+    "less-loader": "^6.2.0",
     "moment": "2.27.0",
     "node-sass": "^4.13.1",
     "prop-types": "latest",
