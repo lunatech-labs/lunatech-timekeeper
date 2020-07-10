@@ -32,62 +32,66 @@ public final class AuthenticationContext {
         this.profiles = profiles;
     }
 
-    Boolean canCreate(@NotNull TimeEntry timeEntry) {
+    protected final boolean canCreate(@NotNull TimeEntry timeEntry) {
         Boolean canAccessTimeSheet = canAccess(timeEntry.timeSheet);
         Boolean isOwner = timeEntry.timeSheet.owner.id.equals(userId);
         return canAccessTimeSheet && (isOwner || isAdmin() || isSuperAdmin());
     }
 
-    Boolean canAccess(@NotNull TimeEntry timeEntry) {
+    protected final boolean canAccess(@NotNull TimeEntry timeEntry) {
         return canAccess(timeEntry.timeSheet.project.organization);
     }
 
-    Boolean canAccess(@NotNull Organization organization) {
+    protected final boolean canAccess(@NotNull Organization organization) {
         return isSuperAdmin() || Objects.equals(getOrganization().id, organization.id);
     }
 
-    Boolean canAccess(@NotNull Client client) {
+    protected final boolean canAccess(@NotNull Client client) {
         return canAccess(client.organization);
     }
 
-    Boolean canAccess(@NotNull TimeSheet timeSheet) {
+    protected final boolean canAccess(@NotNull TimeSheet timeSheet) {
         return canAccess(timeSheet.project.organization);
     }
 
-    Boolean canAccess(@NotNull User user) {
+    protected final boolean canAccess(@NotNull User user) {
         return canAccess(user.organization);
     }
 
-    Boolean canAccess(@NotNull EventTemplate eventTemplate) {
+    protected final boolean canAccess(@NotNull EventTemplate eventTemplate) {
         return canAccess(eventTemplate.organization);
     }
 
-    Boolean canAccess(@NotNull Project project) {
+    protected final boolean canAccess(@NotNull Project project) {
         if (!canAccess(project.organization)) {
             return false;
-        } else if (isAdmin() || isSuperAdmin()) {
+        } else if (isAdmin()) {
+            return true;
+        } else if (isSuperAdmin()) {
             return true;
         } else if (project.publicAccess) {
             return true;
         } else {
-            Optional<ProjectUser> currentProjectUser = project.users.stream()
-                    .filter(projectUser -> projectUser.user.id.equals(userId))
-                    .findFirst();
-            if (currentProjectUser.isEmpty()) {
+            if (project.users == null || project.users.isEmpty()) {
                 return false;
-            } else {
-                return currentProjectUser.get().manager;
             }
+            return project.users.stream()
+                    .filter(projectUser -> projectUser.user.id.equals(userId))
+                    .findFirst()
+                    .isPresent();
         }
     }
 
-    Boolean canEdit(@NotNull Project project) {
+    protected final boolean canEdit(@NotNull Project project) {
         boolean organizationAccess = Objects.equals(getOrganization().id, project.organization.id);
         if (!organizationAccess) {
             return false;
         } else if (isAdmin() || isSuperAdmin()) {
             return true;
         } else {
+            if (project.users == null || project.users.isEmpty()) {
+                return false;
+            }
             Optional<ProjectUser> currentProjectUser = project.users.stream()
                     .filter(projectUser -> projectUser.user.id.equals(userId))
                     .findFirst();

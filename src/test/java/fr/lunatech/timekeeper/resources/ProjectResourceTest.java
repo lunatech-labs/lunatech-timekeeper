@@ -233,7 +233,7 @@ class ProjectResourceTest {
     }
 
     @Test
-    void shouldNotAccessPrivateProjectAsSimpleMember() {
+    void shouldAccessPrivateProjectAsSimpleMember() {
         final String adminToken = getAdminAccessToken();
         final String userToken = getUserAccessToken();
         final var client1 = create(new ClientRequest("Client 11", "New Description 1"), adminToken);
@@ -248,7 +248,7 @@ class ProjectResourceTest {
 
         final var projectRequest = new ProjectRequest("Some Project 10", true, "some description", client1.getId(), false, newProjectUsers, 1L);
         final var projectCreated = create(projectRequest, adminToken);
-        getValidation(ProjectDef.uriPlusId(projectCreated.getId()), userToken, NOT_FOUND);
+        getValidation(ProjectDef.uriPlusId(projectCreated.getId()), userToken, OK);
     }
 
     @Test
@@ -426,7 +426,7 @@ class ProjectResourceTest {
     }
 
     @Test
-    void shouldretrieveTimeSheetForProjectMembers() {
+    void shouldRetrieveTimeSheetForProjectMembers() {
         // GIVEN : 2 users of 1 project for 1 client
         final String adminToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
@@ -613,6 +613,7 @@ class ProjectResourceTest {
         // THEN
         getValidation(ProjectDef.uriPlusId(fullProject.getId(), params), adminToken, OK).body(is(timeKeeperTestUtils.toJson(attemptProjectResponse)));
     }
+
     @Test
     void shouldIncrementTheProjectVersionNumbeWhenUpdated() {
         // GIVEN
@@ -687,5 +688,77 @@ class ProjectResourceTest {
 
     }
 
+    @Test
+    void shouldFindAllPrivateProjectsIfMember() {
+        final String adminToken = getAdminAccessToken();
+        final String userToken = getUserAccessToken();
+        var jimmy = create(userToken);
 
+        final var client1 = create(new ClientRequest("Client 10", "This is a client for test"), adminToken);
+
+        final var project10 = create(new ProjectRequest("Some private project with a user", true, "user is member of this private project", client1.getId(), false, emptyList(), 1L), adminToken);
+        create(new ProjectRequest("Some private project without the user", false, "user is not member of this project", client1.getId(), false, emptyList(), 1L), adminToken);
+
+        final var userRequest1 = new ProjectRequest.ProjectUserRequest(jimmy.getId(), false);
+        final var newUsers = List.of(userRequest1);
+
+        final var updatedProjectWithOneUser = new ProjectRequest("Some private project with a user"
+                , false
+                , "user is now a member if this project"
+                , client1.getId()
+                , false
+                , newUsers
+                , 1L);
+
+        final var expectedUpdatedProject = new ProjectResponse(project10.getId()
+                , updatedProjectWithOneUser.getName()
+                , updatedProjectWithOneUser.isBillable()
+                , updatedProjectWithOneUser.getDescription()
+                , new ProjectResponse.ProjectClientResponse(client1.getId(), client1.getName())
+                , List.of(new ProjectResponse.ProjectUserResponse(jimmy.getId(), false, jimmy.getName(), jimmy.getPicture()))
+                , updatedProjectWithOneUser.isPublicAccess()
+                , 2L);
+
+        update(updatedProjectWithOneUser, ProjectDef.uriPlusId(project10.getId()), adminToken);
+
+        getValidation(ProjectDef.uri, userToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedUpdatedProject)));
+    }
+
+    @Test
+    void shouldFindAllPrivateProjectsIfTeamLeader() {
+        final String adminToken = getAdminAccessToken();
+        final String userToken = getUserAccessToken();
+        var jimmy = create(userToken);
+
+        final var client1 = create(new ClientRequest("Client 10", "This is a client for test"), adminToken);
+
+        final var project10 = create(new ProjectRequest("Some private project with a user", true, "user is member of this private project", client1.getId(), false, emptyList(), 1L), adminToken);
+        create(new ProjectRequest("Some private project without the user", false, "user is not member of this project", client1.getId(), false, emptyList(), 1L), adminToken);
+
+        var isTeamLeader = true;
+
+        final var userRequest1 = new ProjectRequest.ProjectUserRequest(jimmy.getId(), isTeamLeader);
+        final var newUsers = List.of(userRequest1);
+
+        final var updatedProjectWithOneUser = new ProjectRequest("Some private project with a user"
+                , false
+                , "user is now a member if this project"
+                , client1.getId()
+                , false
+                , newUsers
+                , 1L);
+
+        final var expectedUpdatedProject = new ProjectResponse(project10.getId()
+                , updatedProjectWithOneUser.getName()
+                , updatedProjectWithOneUser.isBillable()
+                , updatedProjectWithOneUser.getDescription()
+                , new ProjectResponse.ProjectClientResponse(client1.getId(), client1.getName())
+                , List.of(new ProjectResponse.ProjectUserResponse(jimmy.getId(), isTeamLeader, jimmy.getName(), jimmy.getPicture()))
+                , updatedProjectWithOneUser.isPublicAccess()
+                , 2L);
+
+        update(updatedProjectWithOneUser, ProjectDef.uriPlusId(project10.getId()), adminToken);
+
+        getValidation(ProjectDef.uri, userToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(expectedUpdatedProject)));
+    }
 }
