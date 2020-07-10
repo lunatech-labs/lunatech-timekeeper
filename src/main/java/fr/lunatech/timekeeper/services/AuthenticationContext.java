@@ -113,11 +113,11 @@ public final class AuthenticationContext {
     }
 
     private Boolean isSuperAdmin() {
-        return profiles.contains(Profile.SuperAdmin);
+        return profiles.contains(Profile.SUPER_ADMIN);
     }
 
     private Boolean isAdmin() {
-        return profiles.contains(Profile.Admin);
+        return profiles.contains(Profile.ADMIN);
     }
 
     public Long getUserId() {

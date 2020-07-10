@@ -18,16 +18,16 @@ public class OrganizationInitializer {
     @Inject
     Config config;
 
-    private final static String configPrefix = "timekeeper.organizations.";
+    private final static String CONFIG_PREFIX = "timekeeper.organizations.";
 
     // Example of properties read in config:
     // timekeeper.organizations."lunatech.nl"=Lunatech NL
     // timekeeper.organizations."lunatech.fr"=Lunatech FR
     void startup(@Observes StartupEvent event) {
         config.getPropertyNames().forEach(propertyName -> {
-            if (propertyName.startsWith(configPrefix)) {
+            if (propertyName.startsWith(CONFIG_PREFIX)) {
                 final var organizationName = config.getValue(propertyName, String.class);
-                final var organizationTokenName = propertyName.replace(configPrefix, "").replace("\"", "");
+                final var organizationTokenName = propertyName.replace(CONFIG_PREFIX, "").replace("\"", "");
                 organizationService.createIfTokenNameNotFound(new OrganizationRequest(organizationName, organizationTokenName));
             }
         });

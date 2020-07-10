@@ -82,7 +82,7 @@ class OrganizationResourceTest {
                         "clark@lunatech.fr",
                         "clark.png",
                         0,
-                        Lists.newArrayList(Profile.SuperAdmin))
+                        Lists.newArrayList(Profile.SUPER_ADMIN))
                 )
         );
 

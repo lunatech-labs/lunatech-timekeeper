@@ -48,7 +48,7 @@ class AuthenticationContextTest {
 
         Long userId = 1L;
 
-        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.Admin));
+        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.ADMIN));
         assertTrue(tested.canAccess(project));
     }
 
@@ -65,7 +65,7 @@ class AuthenticationContextTest {
 
         Long userId = 1L;
 
-        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.SuperAdmin));
+        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.SUPER_ADMIN));
         assertTrue(tested.canAccess(project));
     }
 
@@ -82,7 +82,7 @@ class AuthenticationContextTest {
 
         Long userId = 1L;
 
-        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.USER));
         assertTrue(tested.canAccess(project));
     }
 
@@ -100,7 +100,7 @@ class AuthenticationContextTest {
 
         Long userId = 1L;
 
-        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.USER));
         assertFalse(tested.canAccess(project));
     }
 
@@ -118,7 +118,7 @@ class AuthenticationContextTest {
 
         Long userId = 1L;
 
-        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.USER));
         assertFalse(tested.canAccess(project));
     }
 
@@ -135,7 +135,7 @@ class AuthenticationContextTest {
 
         User zeUser = new User();
         zeUser.id = 1L;
-        zeUser.profiles = List.of(Profile.User);
+        zeUser.profiles = List.of(Profile.USER);
         zeUser.organization = organization;
         zeUser.email = "test@lunatech.fr";
         zeUser.picture = null;
@@ -152,7 +152,7 @@ class AuthenticationContextTest {
 
         Long userId = 1L;
 
-        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.USER));
         assertTrue(tested.canAccess(project));
     }
 
@@ -169,7 +169,7 @@ class AuthenticationContextTest {
 
         User zeUser = new User();
         zeUser.id = 1L;
-        zeUser.profiles = List.of(Profile.User);
+        zeUser.profiles = List.of(Profile.USER);
         zeUser.organization = organization;
         zeUser.email = "test@lunatech.fr";
         zeUser.picture = null;
@@ -186,7 +186,7 @@ class AuthenticationContextTest {
 
         Long userId = 1L;
 
-        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.USER));
         assertTrue(tested.canAccess(project));
     }
 
@@ -198,7 +198,7 @@ class AuthenticationContextTest {
 
         User zeUser = new User();
         zeUser.id = 1L;
-        zeUser.profiles = List.of(Profile.User);
+        zeUser.profiles = List.of(Profile.USER);
         zeUser.organization = organization;
         zeUser.email = "test@lunatech.fr";
         zeUser.picture = null;
@@ -220,7 +220,7 @@ class AuthenticationContextTest {
         timeEntry.timeSheet = timeSheet;
         timeEntry.comment = "??";
 
-        AuthenticationContext tested = new AuthenticationContext(zeUser.id, organization, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(zeUser.id, organization, List.of(Profile.USER));
         assertTrue(tested.canAccess(timeEntry));
     }
 
@@ -236,14 +236,14 @@ class AuthenticationContextTest {
 
         User zeUser = new User();
         zeUser.id = 1L;
-        zeUser.profiles = List.of(Profile.User);
+        zeUser.profiles = List.of(Profile.USER);
         zeUser.organization = organization;
         zeUser.email = "test@lunatech.fr";
         zeUser.picture = null;
         zeUser.firstName = "Nic";
         zeUser.lastName = "Marti";
 
-        AuthenticationContext tested = new AuthenticationContext(zeUser.id, organization, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(zeUser.id, organization, List.of(Profile.USER));
         assertTrue(tested.canAccess(organizationOther));
     }
 
@@ -259,14 +259,14 @@ class AuthenticationContextTest {
 
         User zeUser = new User();
         zeUser.id = 1L;
-        zeUser.profiles = List.of(Profile.SuperAdmin);
+        zeUser.profiles = List.of(Profile.SUPER_ADMIN);
         zeUser.organization = organization;
         zeUser.email = "test@lunatech.fr";
         zeUser.picture = null;
         zeUser.firstName = "Nic";
         zeUser.lastName = "Marti";
 
-        AuthenticationContext tested = new AuthenticationContext(zeUser.id, organization, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(zeUser.id, organization, List.of(Profile.USER));
         assertTrue(tested.canAccess(organizationOther));
     }
 
@@ -282,7 +282,7 @@ class AuthenticationContextTest {
 
         User zeUser = new User();
         zeUser.id = 1L;
-        zeUser.profiles = List.of(Profile.User);
+        zeUser.profiles = List.of(Profile.USER);
         zeUser.organization = organization2;
         zeUser.email = "test@lunatech.fr";
         zeUser.picture = null;
@@ -297,7 +297,7 @@ class AuthenticationContextTest {
         TimeSheet timeSheet = new TimeSheet();
         timeSheet.project = project;
 
-        AuthenticationContext tested = new AuthenticationContext(zeUser.id, organization2, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(zeUser.id, organization2, List.of(Profile.USER));
         assertFalse(tested.canAccess(timeSheet));
     }
 
@@ -310,7 +310,7 @@ class AuthenticationContextTest {
 
         User zeUser = new User();
         zeUser.id = 1L;
-        zeUser.profiles = List.of(Profile.User);
+        zeUser.profiles = List.of(Profile.USER);
         zeUser.organization = organization;
         zeUser.email = "test@lunatech.fr";
         zeUser.picture = null;
@@ -325,7 +325,7 @@ class AuthenticationContextTest {
         TimeSheet timeSheet = new TimeSheet();
         timeSheet.project = project;
 
-        AuthenticationContext tested = new AuthenticationContext(zeUser.id, organization, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(zeUser.id, organization, List.of(Profile.USER));
         assertTrue(tested.canAccess(timeSheet));
     }
 
@@ -343,7 +343,7 @@ class AuthenticationContextTest {
         oneClient.id= 123L;
         oneClient.organization=organization;
 
-        AuthenticationContext tested = new AuthenticationContext(-99L, sameOrganization, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(-99L, sameOrganization, List.of(Profile.USER));
         assertTrue(tested.canAccess(oneClient));
     }
 
@@ -361,7 +361,7 @@ class AuthenticationContextTest {
         oneClient.id= 123L;
         oneClient.organization=otherOrganisation;
 
-        AuthenticationContext tested = new AuthenticationContext(-99L, organization, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(-99L, organization, List.of(Profile.USER));
         assertFalse(tested.canAccess(oneClient));
     }
 
@@ -378,9 +378,9 @@ class AuthenticationContextTest {
         User user = new User();
         user.id=-99L;
         user.organization=organization;
-        user.profiles = List.of(Profile.User);
+        user.profiles = List.of(Profile.USER);
 
-        AuthenticationContext tested = new AuthenticationContext(-99L, sameOrganization, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(-99L, sameOrganization, List.of(Profile.USER));
         assertTrue(tested.canAccess(user));
     }
 
@@ -397,9 +397,9 @@ class AuthenticationContextTest {
         User user = new User();
         user.id=-99L;
         user.organization=organization;
-        user.profiles = List.of(Profile.User);
+        user.profiles = List.of(Profile.USER);
 
-        AuthenticationContext tested = new AuthenticationContext(-99L, otherOrg, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(-99L, otherOrg, List.of(Profile.USER));
         assertFalse(tested.canAccess(user));
     }
 
@@ -416,7 +416,7 @@ class AuthenticationContextTest {
         EventTemplate ev = new EventTemplate();
         ev.organization = organization;
 
-        AuthenticationContext tested = new AuthenticationContext(-99L, sameOrganization, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(-99L, sameOrganization, List.of(Profile.USER));
         assertTrue(tested.canAccess(ev));
     }
 
@@ -434,7 +434,7 @@ class AuthenticationContextTest {
         EventTemplate ev = new EventTemplate();
         ev.organization = organization;
 
-        AuthenticationContext tested = new AuthenticationContext(-99L, otherOrg, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(-99L, otherOrg, List.of(Profile.USER));
         assertFalse(tested.canAccess(ev));
     }
 
@@ -473,7 +473,7 @@ class AuthenticationContextTest {
 
         Long userId = 1L;
 
-        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.Admin));
+        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.ADMIN));
         assertTrue(tested.canEdit(project));
     }
 
@@ -490,7 +490,7 @@ class AuthenticationContextTest {
 
         Long userId = 1L;
 
-        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.SuperAdmin));
+        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.SUPER_ADMIN));
         assertTrue(tested.canEdit(project));
     }
 
@@ -507,7 +507,7 @@ class AuthenticationContextTest {
 
         Long userId = 1L;
 
-        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.USER));
         assertFalse(tested.canEdit(project));
     }
 
@@ -519,7 +519,7 @@ class AuthenticationContextTest {
 
         User zeUser = new User();
         zeUser.id = 999L;
-        zeUser.profiles = List.of(Profile.User);
+        zeUser.profiles = List.of(Profile.USER);
         zeUser.organization = organization;
         zeUser.email = "test@lunatech.fr";
         zeUser.picture = null;
@@ -541,7 +541,7 @@ class AuthenticationContextTest {
 
         Long userId = 1L;
 
-        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.USER));
         assertFalse(tested.canEdit(project));
     }
 
@@ -559,7 +559,7 @@ class AuthenticationContextTest {
 
         Long userId = 1L;
 
-        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.USER));
         assertFalse(tested.canEdit(project));
     }
 
@@ -576,7 +576,7 @@ class AuthenticationContextTest {
 
         User zeUser = new User();
         zeUser.id = 1L;
-        zeUser.profiles = List.of(Profile.User);
+        zeUser.profiles = List.of(Profile.USER);
         zeUser.organization = organization;
         zeUser.email = "test@lunatech.fr";
         zeUser.picture = null;
@@ -593,7 +593,7 @@ class AuthenticationContextTest {
 
         Long userId = 1L;
 
-        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.USER));
         assertTrue(tested.canEdit(project));
     }
 
@@ -610,7 +610,7 @@ class AuthenticationContextTest {
 
         User zeUser = new User();
         zeUser.id = 1L;
-        zeUser.profiles = List.of(Profile.User);
+        zeUser.profiles = List.of(Profile.USER);
         zeUser.organization = organization;
         zeUser.email = "test@lunatech.fr";
         zeUser.picture = null;
@@ -627,7 +627,7 @@ class AuthenticationContextTest {
 
         Long userId = 1L;
 
-        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.USER));
         assertFalse(tested.canEdit(project));
     }
 
@@ -644,7 +644,7 @@ class AuthenticationContextTest {
 
         User zeUser = new User();
         zeUser.id = 1L;
-        zeUser.profiles = List.of(Profile.User);
+        zeUser.profiles = List.of(Profile.USER);
         zeUser.organization = organization;
         zeUser.email = "test@lunatech.fr";
         zeUser.picture = null;
@@ -661,7 +661,7 @@ class AuthenticationContextTest {
 
         Long userId = 1L;
 
-        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.User));
+        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.USER));
         assertTrue(tested.canEdit(project));
     }
 
