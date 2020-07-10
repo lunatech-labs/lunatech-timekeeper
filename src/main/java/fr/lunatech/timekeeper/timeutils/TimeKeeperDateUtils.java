@@ -1,14 +1,13 @@
 package fr.lunatech.timekeeper.timeutils;
 
-import org.jboss.logging.annotations.Fields;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.*;
-import java.util.Locale;
-import java.util.function.Consumer;
+import java.time.temporal.IsoFields;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
 import java.util.function.Predicate;
 
 /**

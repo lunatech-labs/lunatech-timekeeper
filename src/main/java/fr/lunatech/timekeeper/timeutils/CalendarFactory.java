@@ -1,7 +1,6 @@
 package fr.lunatech.timekeeper.timeutils;
 
 import fr.lunatech.timekeeper.services.exceptions.CalendarNotFoundException;
-import fr.lunatech.timekeeper.services.exceptions.CalendarNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
