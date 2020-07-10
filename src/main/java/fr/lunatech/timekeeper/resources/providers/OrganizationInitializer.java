@@ -18,7 +18,7 @@ public class OrganizationInitializer {
     @Inject
     Config config;
 
-    private final static String CONFIG_PREFIX = "timekeeper.organizations.";
+    private static final String CONFIG_PREFIX = "timekeeper.organizations.";
 
     // Example of properties read in config:
     // timekeeper.organizations."lunatech.nl"=Lunatech NL

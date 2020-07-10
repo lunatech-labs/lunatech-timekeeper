@@ -40,12 +40,13 @@ public class AuthenticationContextProvider {
             try {
                 return userService.authenticate(authenticationRequest);
             } catch (IllegalEntityStateException e) {
-                logger.error("Cannot get context for a user due to: [{}]", e.getMessage());
                 throw new ForbiddenException(e.getMessage(), e);
             }
 
         } else {
-            logger.error("Unknown identity.getPrincipal: " + identity.getPrincipal());
+            if (logger.isErrorEnabled()) {
+                logger.error(String.format("Unknown identity.getPrincipal: %s", identity.getPrincipal()));
+            }
             throw new UnauthorizedException();
         }
     }
@@ -67,7 +68,10 @@ public class AuthenticationContextProvider {
         try {
             realmAccess = jwtClaims.getClaimValue("realm_access", JsonObject.class);
         } catch (MalformedClaimException e) {
-            logger.warn("Can't retrieve a valid [realm_access] jwt claims: " + jwtCallerPrincipal);
+            if (logger.isErrorEnabled()) {
+                logger.error(String.format("Can't retrieve a valid [realm_access] jwt claims: %s", jwtCallerPrincipal));
+            }
+            throw new UnauthorizedException();
         }
 
         final List<Profile> profiles = Optional.ofNullable(realmAccess)
@@ -84,7 +88,9 @@ public class AuthenticationContextProvider {
                 .orElseGet(Collections::emptyList);
 
         if (profiles.isEmpty()) {
-            logger.error("No profile detected: " + jwtCallerPrincipal);
+            if (logger.isErrorEnabled()) {
+                logger.error(String.format("No profile detected: %s", jwtCallerPrincipal));
+            }
             throw new UnauthorizedException();
         }
         return profiles;
