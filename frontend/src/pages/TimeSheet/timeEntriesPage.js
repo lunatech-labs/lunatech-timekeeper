@@ -60,7 +60,7 @@ const TimeEntriesPage = () => {
       monthData.run();
     }, [prefixMonthUrl, monthData.run]);
 
-  if (weekData.error) {
+  if (weekData.error || monthData.error) {
     return (
       <React.Fragment>
         <Alert title='Server error'
@@ -171,7 +171,7 @@ const TimeEntriesPage = () => {
             disabledWeekEnd={true}
             warningCardPredicate={hasWarnNoEntryInPastDay}
             onPanelChange={(date) => {
-              setPrefixMonthUrl(`${date.year()}/month?monthNumber=${getIsoMonth(date)}`)
+              setPrefixMonthUrl(`${date.year()}/month?monthNumber=${getIsoMonth(date)}`);
             }}
           />
       }
