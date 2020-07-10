@@ -53,8 +53,8 @@ public class EventResource implements EventResourceApi {
     @RolesAllowed({"user", "admin"})
     @Override
     public Response updateEvent(Long id, EventTemplateRequest request) {
-        eventTemplateService.update(id, request,authentication.context())
+        return eventTemplateService.update(id, request, authentication.context())
+                .map(it -> Response.noContent().build())
                 .orElseThrow(() -> new NotFoundException(String.format("Event Template not found for id=%d", id)));
-        return Response.noContent().build();
     }
 }

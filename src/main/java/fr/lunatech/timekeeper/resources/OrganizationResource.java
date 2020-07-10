@@ -51,8 +51,8 @@ public class OrganizationResource implements OrganizationResourceApi {
     @Override
     public Response updateOrganization(Long id, @Valid OrganizationRequest request) {
         final var ctx = authentication.context();
-        organizationService.update(id, request, ctx)
+        return organizationService.update(id, request, ctx)
+                .map(it -> Response.noContent().build())
                 .orElseThrow(NotFoundException::new);
-        return Response.noContent().build();
     }
 }
