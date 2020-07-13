@@ -25,9 +25,10 @@ const UserList = () => {
   const renderAvatar = (user) => <TkUserAvatar name={user.name} picture={user.picture} />;
 
   const usersFiltered = (listOfUsers) => {
-    return listOfUsers.filter(user => user.name.toLowerCase().includes(value.toLowerCase())) &&
-        listOfUsers.filter(user => user.email.toLowerCase().includes(value.toLowerCase())) &&
-        listOfUsers.filter(user => user.projects.filter(project => project.name.toLowerCase().includes(value.toLowerCase())).length > 0)
+    return listOfUsers.filter(user => user.name.toLowerCase().includes(value.toLowerCase()) ||
+        user.email.toLowerCase().includes(value.toLowerCase()) ||
+        user.projects.filter(project => project.name.toLowerCase().includes(value.toLowerCase())).length > 0
+    )
   }
 
   const columns = [
