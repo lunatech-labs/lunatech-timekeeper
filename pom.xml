@@ -125,6 +125,10 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.10</version>
         </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-metrics</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -239,9 +243,9 @@
             </activation>
             <properties>
                 <sonar.projectKey>lunatech-labs_lunatech-timekeeper</sonar.projectKey>
-                <sonar.organization>lunatech-labs</sonar.organization>
                 <sonar.host.url>https://sonarcloud.io</sonar.host.url>
                 <sonar.login>5b6bb78250770e4a7a63ca38c01fe9e68bcc59be</sonar.login>
+                <sonar.organization>lunatech-labs</sonar.organization>
             </properties>
         </profile>
     </profiles>

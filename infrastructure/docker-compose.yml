@@ -35,3 +35,10 @@ services:
       - 1026:1025
       - 8026:8025
 
+  monitoring:
+    image: "prom/prometheus"
+    container_name: "super-visor"
+    ports:
+      - 9090:9090
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml

@@ -6,6 +6,9 @@ import fr.lunatech.timekeeper.services.MonthService;
 import fr.lunatech.timekeeper.services.WeekService;
 import fr.lunatech.timekeeper.services.responses.MonthResponse;
 import fr.lunatech.timekeeper.services.responses.WeekResponse;
+import org.eclipse.microprofile.metrics.MetricUnits;
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +32,8 @@ public class PersonalTimesheetsResource implements PersonalTimesheetsResourceApi
 
     @RolesAllowed({"user", "admin"})
     @Override
+    @Counted(name = "countGetPersonalWeek", description = "Counts how many times the user load his personal week on method 'getWeek'")
+    @Timed(name = "timeGetPersonalWeek", description = "Times how long it takes the user load his personal week on method 'getWeek'", unit = MetricUnits.MILLISECONDS)
     public WeekResponse getWeek(Integer year, Integer weekNumber) {
         if(logger.isDebugEnabled()) {
             logger.debug(String.format("getWeek year=%d weekNumber=%d", year, weekNumber));
@@ -39,6 +44,8 @@ public class PersonalTimesheetsResource implements PersonalTimesheetsResourceApi
 
     @RolesAllowed({"user", "admin"})
     @Override
+    @Counted(name = "countGetPersonalMonth", description = "Counts how many times the user load his personal month on method 'getMonth'")
+    @Timed(name = "timeGetPersonalMonth", description = "Times how long it takes the user load his personal month on method 'getMonth'", unit = MetricUnits.MILLISECONDS)
     public MonthResponse getMonth(Integer year, Integer monthNumber) {
         if(logger.isDebugEnabled()) {
             logger.debug(String.format("getMonth year=%d monthNumber=%d", year, monthNumber));
