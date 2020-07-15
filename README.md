@@ -148,7 +148,9 @@ This command configures pre-commit hook and validation.
 
 Use mvn with profile "sonar"
 
-    ./mvnw -P sonar verify sonar:sonar
+    ./mvnw -P sonar clean verify sonar:sonar
+
+Tests coverage are generated as XML file, as described [on sonarqube-scanner-maven](https://github.com/SonarSource/sonar-scanning-examples/tree/master/sonarqube-scanner-maven/maven-basic) sample project
     
 # Fast tests : how to execute only H2 Test
 
