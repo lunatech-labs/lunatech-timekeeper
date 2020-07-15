@@ -4,14 +4,16 @@ import fr.lunatech.timekeeper.models.*;
 import fr.lunatech.timekeeper.models.time.EventTemplate;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Collections.emptyList;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AuthenticationContextTest {
 
@@ -665,4 +667,238 @@ class AuthenticationContextTest {
         assertTrue(tested.canEdit(project));
     }
 
+
+    @Test
+    void timeEntry_canCreate_should_be_true_if_can_access_timesheet_and_is_owner() {
+        Organization organization = new Organization();
+        organization.id = 100L;
+        organization.name = "lunatech.fr";
+
+        User zeUser = new User();
+        zeUser.id = 1L;
+        zeUser.profiles = List.of(Profile.USER);
+        zeUser.organization = organization;
+        zeUser.email = "test@lunatech.fr";
+        zeUser.picture = null;
+        zeUser.firstName = "Nic";
+        zeUser.lastName = "Marti";
+
+        Project project = new Project();
+        project.id = 99L;
+        project.organization = organization;
+        project.publicAccess = false;
+
+        TimeSheet timeSheet = new TimeSheet();
+        timeSheet.project = project;
+        timeSheet.owner = zeUser; // Same user
+
+        TimeEntry timeEntry = new TimeEntry();
+        timeEntry.id=999L;
+        timeEntry.startDateTime= LocalDateTime.now();
+        timeEntry.endDateTime= LocalDateTime.now();
+        timeEntry.timeSheet = timeSheet;
+        timeEntry.comment = "??";
+
+
+        AuthenticationContext tested = new AuthenticationContext(zeUser.id, organization, List.of(Profile.USER));
+        assertTrue(tested.canCreate(timeEntry));
+    }
+
+    @Test
+    void timeEntry_canCreate_should_be_false_if_can_access_timesheet_and_is_not_owner() {
+        Organization organization = new Organization();
+        organization.id = 100L;
+        organization.name = "lunatech.fr";
+
+        User zeUser = new User();
+        zeUser.id = 1L;
+        zeUser.profiles = List.of(Profile.USER);
+        zeUser.organization = organization;
+        zeUser.email = "test@lunatech.fr";
+        zeUser.picture = null;
+        zeUser.firstName = "Nic";
+        zeUser.lastName = "Marti";
+
+        User anotherUser = new User();
+        anotherUser.id = 222L;
+        anotherUser.profiles = List.of(Profile.USER);
+        anotherUser.organization = organization;
+        anotherUser.email = "test222@lunatech.fr";
+        anotherUser.picture = null;
+        anotherUser.firstName = "Bob";
+        anotherUser.lastName = "Test";
+
+        Project project = new Project();
+        project.id = 99L;
+        project.organization = organization;
+        project.publicAccess = false;
+
+        TimeSheet timeSheet = new TimeSheet();
+        timeSheet.project = project;
+        timeSheet.owner = anotherUser; // Same user
+
+        TimeEntry timeEntry = new TimeEntry();
+        timeEntry.id=999L;
+        timeEntry.startDateTime= LocalDateTime.now();
+        timeEntry.endDateTime= LocalDateTime.now();
+        timeEntry.timeSheet = timeSheet;
+        timeEntry.comment = "??";
+
+        AuthenticationContext tested = new AuthenticationContext(zeUser.id, organization, List.of(Profile.USER));
+        assertFalse(tested.canCreate(timeEntry));
+    }
+
+    @Test
+    void timeEntry_canCreate_should_be_true_if_user_is_admin() {
+        Organization organization = new Organization();
+        organization.id = 100L;
+        organization.name = "lunatech.fr";
+
+        User zeUser = new User();
+        zeUser.id = 1L;
+        zeUser.profiles = List.of(Profile.USER);
+        zeUser.organization = organization;
+        zeUser.email = "test@lunatech.fr";
+        zeUser.picture = null;
+        zeUser.firstName = "Nic";
+        zeUser.lastName = "Marti";
+
+        User anotherUser = new User();
+        anotherUser.id = 222L;
+        anotherUser.profiles = List.of(Profile.USER);
+        anotherUser.organization = organization;
+        anotherUser.email = "test222@lunatech.fr";
+        anotherUser.picture = null;
+        anotherUser.firstName = "Bob";
+        anotherUser.lastName = "Test";
+
+        Project project = new Project();
+        project.id = 99L;
+        project.organization = organization;
+        project.publicAccess = false;
+
+        TimeSheet timeSheet = new TimeSheet();
+        timeSheet.project = project;
+        timeSheet.owner = anotherUser; // Same user
+
+        TimeEntry timeEntry = new TimeEntry();
+        timeEntry.id=999L;
+        timeEntry.startDateTime= LocalDateTime.now();
+        timeEntry.endDateTime= LocalDateTime.now();
+        timeEntry.timeSheet = timeSheet;
+        timeEntry.comment = "??";
+
+        AuthenticationContext tested = new AuthenticationContext(zeUser.id, organization, List.of(Profile.ADMIN));
+        assertTrue(tested.canCreate(timeEntry));
+    }
+
+    @Test
+    void timeEntry_canCreate_should_be_true_if_user_is_super_admin() {
+        Organization organization = new Organization();
+        organization.id = 100L;
+        organization.name = "lunatech.fr";
+
+        User zeUser = new User();
+        zeUser.id = 1L;
+        zeUser.profiles = List.of(Profile.USER);
+        zeUser.organization = organization;
+        zeUser.email = "test@lunatech.fr";
+        zeUser.picture = null;
+        zeUser.firstName = "Nic";
+        zeUser.lastName = "Marti";
+
+        User anotherUser = new User();
+        anotherUser.id = 222L;
+        anotherUser.profiles = List.of(Profile.USER);
+        anotherUser.organization = organization;
+        anotherUser.email = "test222@lunatech.fr";
+        anotherUser.picture = null;
+        anotherUser.firstName = "Bob";
+        anotherUser.lastName = "Test";
+
+        Project project = new Project();
+        project.id = 99L;
+        project.organization = organization;
+        project.publicAccess = false;
+
+        TimeSheet timeSheet = new TimeSheet();
+        timeSheet.project = project;
+        timeSheet.owner = anotherUser; // Same user
+
+        TimeEntry timeEntry = new TimeEntry();
+        timeEntry.id=999L;
+        timeEntry.startDateTime= LocalDateTime.now();
+        timeEntry.endDateTime= LocalDateTime.now();
+        timeEntry.timeSheet = timeSheet;
+        timeEntry.comment = "??";
+
+        AuthenticationContext tested = new AuthenticationContext(zeUser.id, organization, List.of(Profile.SUPER_ADMIN));
+        assertTrue(tested.canCreate(timeEntry));
+    }
+
+
+    @Test
+    void project_canJoin_should_return_true_for_public_project() {
+        Organization organization = new Organization();
+        organization.id = 100L;
+        organization.name = "lunatech.fr";
+
+        Project project = new Project();
+        project.id = 99L;
+        project.organization = organization;
+        project.publicAccess = true;
+
+        Long userId = 1L;
+
+        AuthenticationContext tested = new AuthenticationContext(userId, organization, List.of(Profile.USER));
+        assertTrue(tested.canJoin(project));
+    }
+
+    @Test
+    void project_canJoin_should_return_false_for_different_organization() {
+        Organization organization = new Organization();
+        organization.id = 100L;
+        organization.name = "lunatech.fr";
+
+        Organization organization2 = new Organization();
+        organization.id = 99L;
+        organization.name = "lunatech.nl";
+
+        Project project = new Project();
+        project.id = 99L;
+        project.organization = organization;
+        project.publicAccess = true;
+
+        Long userId = 1L;
+
+        AuthenticationContext tested = new AuthenticationContext(userId, organization2, List.of(Profile.USER));
+        assertFalse(tested.canJoin(project));
+    }
+
+    @Test
+    void shouldReturnAuthenticationContext(){
+        Organization organization = new Organization();
+        organization.id = 100L;
+        organization.name = "lunatech.fr";
+
+        User anotherUser = new User();
+        anotherUser.id = 222L;
+        anotherUser.profiles = List.of(Profile.USER);
+        anotherUser.organization = organization;
+        anotherUser.email = "test222@lunatech.fr";
+        anotherUser.picture = null;
+        anotherUser.firstName = "Bob";
+        anotherUser.lastName = "Test";
+
+        AuthenticationContext tested = AuthenticationContext.bind(anotherUser);
+        Assertions.assertEquals(222L, (long) tested.getUserId());
+        Assertions.assertEquals(organization, tested.getOrganization());
+    }
+
+    @Test
+    void toStringShouldNotCrashWithNulls(){
+        AuthenticationContext tested = new AuthenticationContext(1L, null, List.of(Profile.USER));
+        assertNull(tested.getOrganization());
+        assertNotNull(tested.toString());
+    }
 }
