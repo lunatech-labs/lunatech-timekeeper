@@ -44,6 +44,8 @@ public class PersonalTimesheetsResource implements PersonalTimesheetsResourceApi
 
     @RolesAllowed({"user", "admin"})
     @Override
+    @Counted(name = "countGetPersonalMonth", description = "Counts how many times the user load his personal month on method 'getMonth'")
+    @Timed(name = "timeGetPersonalMonth", description = "Times how long it takes the user load his personal month on method 'getMonth'", unit = MetricUnits.MILLISECONDS)
     public MonthResponse getMonth(Integer year, Integer monthNumber) {
         if(logger.isDebugEnabled()) {
             logger.debug(String.format("getMonth year=%d monthNumber=%d", year, monthNumber));
