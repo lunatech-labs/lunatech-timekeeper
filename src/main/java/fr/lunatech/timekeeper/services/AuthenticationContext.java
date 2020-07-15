@@ -33,9 +33,12 @@ public final class AuthenticationContext {
     }
 
     protected final boolean canCreate(@NotNull TimeEntry timeEntry) {
-        Boolean canAccessTimeSheet = canAccess(timeEntry.timeSheet);
-        Boolean isOwner = timeEntry.timeSheet.owner.id.equals(userId);
-        return canAccessTimeSheet && (isOwner || isAdmin() || isSuperAdmin());
+        final boolean canAccessTimeSheet = canAccess(timeEntry.timeSheet);
+        final boolean isOwner = timeEntry.timeSheet.owner.id.equals(userId);
+        return canAccessTimeSheet &&
+                (isOwner ||
+                        isAdmin() ||
+                        isSuperAdmin());
     }
 
     protected final boolean canAccess(@NotNull TimeEntry timeEntry) {
@@ -103,8 +106,8 @@ public final class AuthenticationContext {
         }
     }
 
-    Boolean canJoin(@NotNull Project project) {
-        boolean organizationAccess = Objects.equals(getOrganization().id, project.organization.id);
+    protected boolean canJoin(@NotNull Project project) {
+        final boolean organizationAccess = Objects.equals(getOrganization().id, project.organization.id);
         return organizationAccess && project.publicAccess;
     }
 
