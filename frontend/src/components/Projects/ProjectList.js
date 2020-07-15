@@ -169,7 +169,7 @@ const ProjectList = () => {
                 <div className="tk_Card_ProjectTitle">
                   <p>{item.name}</p>
                 </div>
-                <span className="tk_Card_subtitle">{item.client ? <TagProjectClient client={item.client}/> : 'No client'}
+                <span className="tk_Card_subtitle">{item.client ? <TagProjectClient client={item.client}/> : <TagProjectClient />}
                   {item.publicAccess ? <UnlockOutlined/> :
                     <LockFilled/>}<span>{item.publicAccess ? ' Public' : ' Private project'}</span></span>
               </div>
