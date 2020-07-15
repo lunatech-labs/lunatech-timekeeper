@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
+import {sortListByName, useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
 import {Alert, Button, Col, Form, Input, message, Row, Space, Spin, DatePicker} from 'antd';
 import './NewEventTemplateForm.less';
 import '../../components/Button/BtnGeneral.less';
@@ -162,7 +162,7 @@ const NewEventTemplateForm = () => {
               <Form.Item
                 label="Select users :"
               >
-                <UserTreeData users={usersResponse.data}/>
+                <UserTreeData users={sortListByName(usersResponse.data)}/>
               </Form.Item>
             </Col>
           </Row>
