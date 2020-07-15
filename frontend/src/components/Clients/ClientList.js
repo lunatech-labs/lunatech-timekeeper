@@ -92,7 +92,7 @@ const ClientList = () => {
               ]}
               actions={[ item.projects.length === 0 ? <Panel id="tk_ProjectNoCollapse" header={<Space size="small"><FolderFilled />{'No project'}</Space>} key="1"/> :
                 <Collapse bordered={false} expandIconPosition={'right'} key="projects">
-                  <Panel header={<Space size="small"><FolderOpenOutlined />{'List of projects'}</Space>} key="1">
+                  <Panel header={<Space size="small"><FolderOpenOutlined /><Pluralize label="project" size={item.projects.length} /></Space>} key="1">
                     <List
                       id={'tk_ClientProjects'}
                       dataSource={sortListByName(item.projects)}
