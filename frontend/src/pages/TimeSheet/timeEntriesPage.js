@@ -46,6 +46,7 @@ const TimeEntriesPage = () => {
   const [mode, setMode] = useState('view'); //Can be 'view', 'add' or 'edit'
   const [taskMoment, setTaskMoment] = useState(moment().utc());
   const [form] = Form.useForm();
+  const [entryId, setEntryId] = useState();
 
   const weekData = useTimeKeeperAPI('/api/my/' + prefixWeekUrl);
   useEffect(
@@ -105,6 +106,14 @@ const TimeEntriesPage = () => {
     openModal();
   };
 
+  const onClickEntryCard = (e, m, entryId) => {
+    setEntryId(entryId);
+    setTaskMoment(m);
+    setEditMode();
+    openModal();
+    e.stopPropagation();
+  };
+
   const removeDuplicatesElementAndSort = (array) => {
     const set = new Set(array);
     const arraySorted = [...set].sort((a, b) => a.localeCompare(b));
@@ -113,6 +122,7 @@ const TimeEntriesPage = () => {
 
   const setViewMode = () => setMode('view');
   const setAddMode = () => setMode('add');
+  const setEditMode = () => setMode('edit');
 
   return (
     <MainPage title="Time entries">
@@ -124,13 +134,25 @@ const TimeEntriesPage = () => {
         width={'37.5%'}
         footer={null}
       >
-        <TimeEntryForm setMode={setMode} entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment} form={form} mode={mode} onSuccess={() => {
-          closeModal();
-          weekData.run();
-          monthData.run();
-          setViewMode();
-        }} onCancel={() => setViewMode()}
-        />
+        {
+          entryId && mode === 'edit' ?
+            <TimeEntryForm setMode={setMode} entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment} form={form} entryId={entryId} mode={mode} onSuccess={() => {
+              closeModal();
+              weekData.run();
+              monthData.run();
+              setViewMode();
+            }} onCancel={() => setViewMode()}
+            />
+            :
+            <TimeEntryForm setMode={setMode} entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment} form={form} mode={mode} onSuccess={() => {
+              closeModal();
+              weekData.run();
+              monthData.run();
+              setViewMode();
+            }} onCancel={() => setViewMode()}
+            />
+        }
+
       </Modal>
       <UserTimeSheetList timeSheets={timeSheets}/>
 
@@ -144,12 +166,12 @@ const TimeEntriesPage = () => {
             onPanelChange={(id, start) => setPrefixWeekUrl(start.year() + '?weekNumber=' + start.isoWeek())}
             onClickButton={onClickAddTask}
             onClickCard={onClickCard}
-            dateCellRender={(data) => {
+            dateCellRender={(data, date) => {
               return (
                 <div>
                   {data.filter(data => !!data).map(entry => {
                     return (
-                      <TimeEntry key={entry.id} entry={entry}/>
+                      <TimeEntry key={entry.id} entry={entry} onClick={e => onClickEntryCard(e, date, entry.id)}/>
                     );
                   })}
                 </div>
@@ -175,11 +197,8 @@ const TimeEntriesPage = () => {
             }}
           />
       }
-
-
     </MainPage>
   );
 };
 
 export default TimeEntriesPage;
-

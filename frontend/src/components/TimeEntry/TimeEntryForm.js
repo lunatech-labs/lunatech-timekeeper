@@ -11,7 +11,7 @@ import moment from 'moment';
 
 const {TextArea} = Input;
 
-const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, setMode}) => {
+const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, setMode, entryId}) => {
 
   const setAddMode = () => setMode('add');
   const setEditMode = () => setMode('edit');
@@ -53,7 +53,19 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
     );
   }
 
-  const Entries = ({entries}) => {
+  const Entries = ({entries, entryId}) => {
+    if(entryId) {
+      const entriesFiltered = entries.map(entriesMap => entriesMap.filter(entry => entry.id === entryId));
+      const showEntries = entriesFiltered.map(entry => <ShowTimeEntry key={entry[0].id} entry={entry[0]} onClickEdit={()=>{
+        setEntry(entry[0]);
+        setEditMode();
+      }}/>);
+      return (
+        <div className="tk_TaskInfoList">
+          {showEntries}
+        </div>
+      );
+    }
     const showEntries = entries.map(
       entriesForDay => entriesForDay.map(entry => <ShowTimeEntry key={entry.id} entry={entry} onClickEdit={()=>{
         setEntry(entry);
@@ -79,7 +91,6 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
       }).reduce(reducer);
     });
   };
-
   return (
     <div className="tk_ModalGen">
       <div className="tk_ModalTop">
@@ -94,15 +105,16 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
         <div className="tk_ModalTopBody">
           {entries.length === 0 ?
             <NoDataMessage message='No task for this day, there is still time to add one.'/> :
-            <Entries entries={entries}/>}
+            (mode === 'edit' ? <Entries entries={entries} entryId={entryId}/> : <Entries entries={entries} />)
+          }
         </div>
       </div>
       {mode === 'add' &&
-            <AddEntryForm date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess}
-              onCancel={onCancel}/>}
+          <AddEntryForm date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess}
+            onCancel={onCancel}/>}
       {mode === 'edit' && entry &&
-            <EditEntryForm date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess}
-              onCancel={onCancel} entry={entry}/>}
+          <EditEntryForm date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess}
+            onCancel={onCancel} entry={entry}/>}
     </div>
   );
 };
@@ -114,8 +126,8 @@ TimeEntryForm.propTypes = {
   onCancel: PropTypes.func,
   mode: PropTypes.string, // can be 'view', 'add' or 'edit'
   setMode: PropTypes.func,
-  entries: PropTypes.arrayOf(PropTypes.object),
-  timeSheetId: PropTypes.number.isRequired
+  entries: PropTypes.array,
+  entryId: PropTypes.number
 };
 
 export default TimeEntryForm;
