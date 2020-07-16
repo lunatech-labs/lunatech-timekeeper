@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {Alert, Button, Form, Input, Spin} from 'antd';
 import {useTimeKeeperAPI} from '../../utils/services';
@@ -16,6 +16,14 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
   const setAddMode = () => setMode('add');
   const setEditMode = () => setMode('edit');
   const [entry, setEntry] = useState();
+  useEffect(() => {
+    if(entryId) {
+      const entry = entries[0].find(e => e.id === entryId);
+      if (entry) {
+        setEntry(entry);
+      }
+    }
+  },[entryId]);
   const timeSheets = useTimeKeeperAPI('/api/my/' + currentDay.year() + '?weekNumber=' + currentDay.isoWeek(), (form => form));
   if (timeSheets.loading) {
     return (
@@ -51,25 +59,17 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
       </React.Fragment>
     );
   }
-  const Entries = ({entries, entryId}) => {
-    const showTimeEntries = (entries, entryId) => {
-      if(entryId) {
-        const entriesFiltered = entries.map(entriesMap => entriesMap.filter(entry => entry.id === entryId));
-        return entriesFiltered.map(entry => <ShowTimeEntry key={entry[0].id} entry={entry[0]} onClickEdit={()=>{
-          setEntry(entry[0]);
-          setEditMode();
-        }}/>);
-      }
-      return entries.map(
-        entriesForDay => entriesForDay.map(entry => <ShowTimeEntry key={entry.id} entry={entry} onClickEdit={()=>{
-          setEntry(entry);
-          setEditMode();
-        }}/>),
-      );
+  const Entries = ({entries}) => {
+    const showTimeEntries = (entries) => {
+      console.log(entries);
+      return entries[0].map(entry => <ShowTimeEntry key={entry.id} entry={entry} onClickEdit={()=>{
+        setEntry(entry);
+        setEditMode();
+      }}/>);
     };
     return (
       <div className="tk_TaskInfoList">
-        {showTimeEntries(entries, entryId)}
+        {showTimeEntries(entries)}
       </div>
     );
   };
@@ -85,35 +85,6 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
       }).reduce(reducer);
     });
   };
-  if(mode === 'edit'){
-    const entriesFiltered = entries.map(entriesMap => entriesMap.filter(entry => entry.id === entryId));
-    const entry = entriesFiltered.map(entry => entry[0]);
-    if(entry) {
-      return (
-        <div className="tk_ModalGen">
-          <div className="tk_ModalTop">
-            <div className="tk_ModalTopHead">
-              <div>
-                <p>{currentDay.format('ddd')}<br/><span>{currentDay.format('DD')}</span></p>
-                <h1>Day information</h1>
-              </div>
-              { (mode === 'view' || mode === 'edit') && amountOfHoursPerDay(entries) < 8 ?
-                <Button type="link" onClick={() => setMode && setAddMode()}>Add task</Button> : ''}
-            </div>
-            <div className="tk_ModalTopBody">
-              {entries.length === 0 ?
-                <NoDataMessage message='No task for this day, there is still time to add one.'/> :
-                (mode === 'edit' ? <Entries entries={entries} entryId={entryId}/> : <Entries entries={entries} />)
-              }
-            </div>
-          </div>
-          {mode === 'edit' && entry &&
-            <EditEntryForm date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess}
-              onCancel={onCancel} entry={entry[0]}/>}
-        </div>
-      );
-    }
-  }
   return (
     <div className="tk_ModalGen">
       <div className="tk_ModalTop">
@@ -128,7 +99,7 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
         <div className="tk_ModalTopBody">
           {entries.length === 0 ?
             <NoDataMessage message='No task for this day, there is still time to add one.'/> :
-            (mode === 'edit' ? <Entries entries={entries} entryId={entryId}/> : <Entries entries={entries} />)
+            (mode === 'edit' ? <Entries entries={entryId ? [entry] : entries}/> : <Entries entries={entries} />)
           }
         </div>
       </div>
