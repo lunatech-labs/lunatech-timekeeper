@@ -1,10 +1,12 @@
 import React from 'react';
-import {Button, Calendar, Select} from 'antd';
+import {Button, Calendar, Select, ConfigProvider} from 'antd';
 import PropTypes from 'prop-types';
 import {LeftOutlined, PlusOutlined, RightOutlined} from '@ant-design/icons';
 import moment from 'moment';
 import './MonthCalendar.less';
 import {isWeekEnd} from '../../utils/momentUtils';
+import en_GB from 'antd/lib/locale-provider/en_GB';
+import 'moment/locale/en-gb';  // important!
 
 const {Option} = Select;
 
@@ -90,6 +92,7 @@ const MonthCalendar = (props) => {
 
   return (
     <div id="tk_MonthCalendar">
+        <ConfigProvider locale={en_GB}>
       <Calendar
         headerRender={({value, onChange}) => {
           const onChangeCustom = (date) => {
@@ -128,6 +131,7 @@ const MonthCalendar = (props) => {
           );
         }}
       />
+        </ConfigProvider>
     </div>
   );
 };
