@@ -17,15 +17,13 @@ public class TimeKeeperDateUtils {
 
     private TimeKeeperDateUtils(){ }
 
-    public static void validateYear(final Integer year){
+    public static void validateMonth(final Integer monthNumber, final Integer year){
         if(year < 1970) throw new IllegalStateException("year should be after 1970 due to TimeStamp limitation");
-    }
-
-    public static void validateMonth(final Integer monthNumber){
         if(monthNumber<1 || monthNumber>12) throw new IllegalStateException("monthnumber must be an Int value in range 1 to 12");
     }
 
     public static void validateWeek(final Integer weekNumber, final Integer year){
+        if(year < 1970) throw new IllegalStateException("year should be after 1970 due to TimeStamp limitation");
         Integer lastWeekNumber = getWeekNumberFromDate(LocalDate.of(year, 12, 28));
         if(weekNumber<1 || weekNumber>lastWeekNumber) throw new IllegalStateException("weeknumber must be an Int value in range 1 to "+ lastWeekNumber);
     }
@@ -37,7 +35,6 @@ public class TimeKeeperDateUtils {
      * @return the Monday of this week number in the year
      */
     public static LocalDate getFirstDayOfWeekFromWeekNumber(final Integer year, final Integer weekNumber) {
-        validateYear(year);
         validateWeek(weekNumber, year);
         return LocalDate.of(year,1,1)
                 .with(IsoFields.WEEK_OF_WEEK_BASED_YEAR, weekNumber)
@@ -117,8 +114,7 @@ public class TimeKeeperDateUtils {
      * @return a predicate to test if the input date is included in the six weeks of the month
      */
     public static Predicate<LocalDate> isIncludedInSixWeeksFromMonth(final Integer year, final Integer monthNumber) {
-        validateYear(year);
-        validateMonth(monthNumber);
+        validateMonth(monthNumber, year);
         LocalDate firstDayOfMonth = LocalDate.of(year, monthNumber, 1);
         Integer weekNumber = getWeekNumberFromDate(firstDayOfMonth);
         LocalDate firstDayOfFirstWeek = getFirstDayOfWeekFromWeekNumber(year, weekNumber);

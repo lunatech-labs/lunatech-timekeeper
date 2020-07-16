@@ -256,28 +256,35 @@ class TimeKeeperDateUtilsTest {
     @Test
     void shouldThrowExceptionFor0MonthValidator(){
         Assertions.assertThrows(IllegalStateException.class, () -> {
-            TimeKeeperDateUtils.validateMonth(0);
+            TimeKeeperDateUtils.validateMonth(0, 2020);
         });
     }
 
     @Test
     void shouldThrowExceptionFor13thMonthValidator(){
         Assertions.assertThrows(IllegalStateException.class, () -> {
-            TimeKeeperDateUtils.validateMonth(13);
+            TimeKeeperDateUtils.validateMonth(13, 2020);
         });
     }
 
     @Test
     void shouldThrowExceptionForNegativehMonthValidator(){
         Assertions.assertThrows(IllegalStateException.class, () -> {
-            TimeKeeperDateUtils.validateMonth(-1);
+            TimeKeeperDateUtils.validateMonth(-1, 2020);
         });
     }
 
     @Test
-    void shouldThrowExceptionForYearBefore1970Validator(){
+    void shouldThrowExceptionForYearBefore1970ValidatorForMonth(){
         Assertions.assertThrows(IllegalStateException.class, () -> {
-            TimeKeeperDateUtils.validateYear(1969);
+            TimeKeeperDateUtils.validateMonth(12,1969);
+        });
+    }
+
+    @Test
+    void shouldThrowExceptionForYearBefore1970ValidatorForWeek(){
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            TimeKeeperDateUtils.validateWeek(1,1969);
         });
     }
 }

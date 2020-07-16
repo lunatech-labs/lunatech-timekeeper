@@ -71,7 +71,7 @@ public class CalendarFR2020 implements Calendar {
     }
 
     public List<PublicHoliday> getPublicHolidaysForMonthNumber(final Integer monthNumber) {
-        TimeKeeperDateUtils.validateMonth(monthNumber);
+        TimeKeeperDateUtils.validateMonth(monthNumber, 2020);
         Predicate<LocalDate> isValidDate = TimeKeeperDateUtils.isIncludedInSixWeeksFromMonth(2020, monthNumber);
         return publicHolidays.stream()
                 .filter(p -> isValidDate.test(p.date))
