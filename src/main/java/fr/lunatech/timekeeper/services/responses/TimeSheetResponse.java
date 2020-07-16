@@ -37,7 +37,8 @@ public class TimeSheetResponse {
 
     public final Long leftOver;
 
-    public TimeSheetResponse(Long id, ProjectResponse project, Long ownerId, TimeUnit timeUnit, Boolean defaultIsBillable, LocalDate expirationDate, Integer maxDuration, String durationUnit, List<TimeEntryResponse> entries, Long leftOver) {
+    public TimeSheetResponse(Long id, ProjectResponse project, Long ownerId, TimeUnit timeUnit,
+                             Boolean defaultIsBillable, LocalDate expirationDate, Integer maxDuration, String durationUnit, List<TimeEntryResponse> entries, Long leftOver) {
         this.id = id;
         this.project = project;
         this.ownerId = ownerId;
@@ -69,18 +70,18 @@ public class TimeSheetResponse {
     public static final class TimeEntryResponse {
 
         @NotNull
-        private final Long id;
+        public final Long id;
 
         @NotNull
-        private final String comment;
-
-        @NotNull
-        @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_TIME_PATTERN)
-        private final LocalDateTime startDateTime;
+        public final String comment;
 
         @NotNull
         @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_TIME_PATTERN)
-        private final LocalDateTime endDateTime;
+        public final LocalDateTime startDateTime;
+
+        @NotNull
+        @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_TIME_PATTERN)
+        public final LocalDateTime endDateTime;
 
         public TimeEntryResponse(
                 @NotNull Long id,
@@ -103,20 +104,9 @@ public class TimeSheetResponse {
             );
         }
 
-        public Long getId() {
-            return id;
-        }
-
-        public String getComment() {
-            return comment;
-        }
-
-        public LocalDateTime getStartDateTime() {
-            return startDateTime;
-        }
-
-        public LocalDateTime getEndDateTime() {
-            return endDateTime;
+        @Override
+        public String toString() {
+            return "TimeEntryResponse[id=" + id + "]" ;
         }
     }
 
@@ -125,7 +115,7 @@ public class TimeSheetResponse {
         List<TimeEntryResponse> restrictedEntries = this.entries
                 .stream()
                 .filter(timeEntryResponse -> {
-                    LocalDateTime startDateTime = timeEntryResponse.getStartDateTime();
+                    LocalDateTime startDateTime = timeEntryResponse.startDateTime;
                     return isValidDate.test(startDateTime.toLocalDate());
                 })
                 .collect(Collectors.toList());
@@ -145,7 +135,7 @@ public class TimeSheetResponse {
     public final TimeSheetResponse filterTimeEntriesForWeek(LocalDate startDayOfWeek){
         List<TimeEntryResponse> restrictedEntries = this.entries
                 .stream()
-                .filter(timeEntryResponse -> TimeKeeperDateUtils.isSameWeekAndYear(timeEntryResponse.getStartDateTime().toLocalDate(), startDayOfWeek))
+                .filter(timeEntryResponse -> TimeKeeperDateUtils.isSameWeekAndYear(timeEntryResponse.startDateTime.toLocalDate(), startDayOfWeek))
                 .collect(Collectors.toList());
 
         return new TimeSheetResponse(this.id,

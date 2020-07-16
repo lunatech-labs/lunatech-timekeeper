@@ -45,34 +45,25 @@ public class TimeKeeperDateUtils {
     }
 
     /**
-     * Adjust a date to the first day of week, according to the current Locale.
-     * For US Calendar, the week starts on Sunday. For European calendar, it is the Monday.
+     * Adjust a date to the first day of week, using ISO calendar.
      *
      * @param inputDate is any valid date
      * @return an adjusted LocalDate
      */
     public static LocalDate adjustToFirstDayOfWeek(final LocalDate inputDate) {
-        // We can use either the User Locale or the Organization Locale.
-        // But for the time being I set it to FR so the first day of week is a Monday
-        // This code will need to be updated later, to adjust user preferences and maybe relies on the AuthenticationContext
-        TemporalField fieldISO = WeekFields.ISO.dayOfWeek();
-        return inputDate.with(fieldISO, 1);
+        DayOfWeek firstDayOfWeek = WeekFields.ISO.getFirstDayOfWeek();
+        return inputDate.with(TemporalAdjusters.previousOrSame(firstDayOfWeek));
     }
 
     /**
-     * Adjust a date to the last day of week, according to the current Locale.
-     * For US Calendar, the week starts on Sunday. For European calendar, it is the Monday.
+     * Adjust a date to the last day of week, using ISO calendar.
      *
      * @param inputDate is any valid date
      * @return an adjusted LocalDate
      */
     public static LocalDate adjustToLastDayOfWeek(final LocalDate inputDate) {
-        // We can use either the User Locale or the Organization Locale.
-        // But for the time being I set it to FR so the last day of week is a Monday
-        // This code will need to be updated later, to adjust user preferences and maybe relies on the AuthenticationContext
-        TemporalField fieldISO = WeekFields.ISO.dayOfWeek();
-        LocalDate lastDayOfWeek = inputDate.with(fieldISO, 7);
-        return lastDayOfWeek;
+        DayOfWeek lastDayOfWeek = WeekFields.ISO.getFirstDayOfWeek().minus(1);
+        return inputDate.with(TemporalAdjusters.nextOrSame(lastDayOfWeek));
     }
 
     /**
@@ -123,6 +114,6 @@ public class TimeKeeperDateUtils {
         Integer weekNumber = getWeekNumberFromDate(firstDayOfMonth);
         LocalDate firstDayOfFirstWeek = getFirstDayOfWeekFromWeekNumber(year, weekNumber);
         LocalDate lastDayOfLastWeek = adjustToLastDayOfWeek(firstDayOfFirstWeek.plusWeeks(5));
-        return inputDate -> inputDate.isAfter(firstDayOfFirstWeek.minusDays(1)) && inputDate.isBefore(lastDayOfLastWeek);
+        return inputDate -> inputDate.isAfter(firstDayOfFirstWeek.minusDays(1)) && inputDate.isBefore(lastDayOfLastWeek.plusDays(1));
     }
 }
