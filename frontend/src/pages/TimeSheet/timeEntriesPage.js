@@ -46,7 +46,7 @@ const TimeEntriesPage = () => {
   const [mode, setMode] = useState('view'); //Can be 'view', 'add' or 'edit'
   const [taskMoment, setTaskMoment] = useState(moment().utc());
   const [form] = Form.useForm();
-  const [entryId, setEntryId] = useState();
+  const [selectedEntryId, setSelectedEntryId] = useState();
 
   const weekData = useTimeKeeperAPI('/api/my/' + prefixWeekUrl);
   useEffect(
@@ -106,8 +106,8 @@ const TimeEntriesPage = () => {
     openModal();
   };
 
-  const onClickEntryCard = (e, m, entryId) => {
-    setEntryId(entryId);
+  const onClickEntryCard = (e, m, selectedEntryId) => {
+    setSelectedEntryId(selectedEntryId);
     setTaskMoment(m);
     setEditMode();
     openModal();
@@ -125,8 +125,8 @@ const TimeEntriesPage = () => {
   const setEditMode = () => setMode('edit');
 
   const timeEntryForm = () => {
-    if(entryId && mode === 'edit'){
-      return <TimeEntryForm entryId={entryId} setMode={setMode} entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment} form={form} mode={mode} onSuccess={() => {
+    if(selectedEntryId && mode === 'edit'){
+      return <TimeEntryForm selectedEntryId={selectedEntryId} setMode={setMode} entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment} form={form} mode={mode} onSuccess={() => {
         closeModal();
         weekData.run();
         monthData.run();

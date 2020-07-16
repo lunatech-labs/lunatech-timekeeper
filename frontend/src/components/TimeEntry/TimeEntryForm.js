@@ -11,19 +11,19 @@ import moment from 'moment';
 
 const {TextArea} = Input;
 
-const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, setMode, entryId}) => {
+const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, setMode, selectedEntryId}) => {
 
   const setAddMode = () => setMode('add');
   const setEditMode = () => setMode('edit');
   const [entry, setEntry] = useState();
   useEffect(() => {
-    if(entryId) {
-      const entry = entries[0].find(e => e.id === entryId);
+    if(selectedEntryId) {
+      const entry = entries[0].find(e => e.id === selectedEntryId);
       if (entry) {
         setEntry(entry);
       }
     }
-  },[entryId]);
+  },[selectedEntryId]);
   const timeSheets = useTimeKeeperAPI('/api/my/' + currentDay.year() + '?weekNumber=' + currentDay.isoWeek(), (form => form));
   if (timeSheets.loading) {
     return (
@@ -61,8 +61,7 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
   }
   const Entries = ({entries}) => {
     const showTimeEntries = (entries) => {
-      console.log(entries);
-      return entries[0].map(entry => <ShowTimeEntry key={entry.id} entry={entry} onClickEdit={()=>{
+      return entries.map(entry => <ShowTimeEntry key={entry.id} entry={entry} onClickEdit={()=>{
         setEntry(entry);
         setEditMode();
       }}/>);
@@ -99,7 +98,7 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
         <div className="tk_ModalTopBody">
           {entries.length === 0 ?
             <NoDataMessage message='No task for this day, there is still time to add one.'/> :
-            (mode === 'edit' ? <Entries entries={entryId ? [entry] : entries}/> : <Entries entries={entries} />)
+            (mode === 'edit' ? <Entries entries={selectedEntryId ? [entry] : entries[0]}/> : <Entries entries={entries[0]} />)
           }
         </div>
       </div>
@@ -120,6 +119,6 @@ TimeEntryForm.propTypes = {
   mode: PropTypes.string, // can be 'view', 'add' or 'edit'
   setMode: PropTypes.func,
   entries: PropTypes.array,
-  entryId: PropTypes.number
+  selectedEntryId: PropTypes.number
 };
 export default TimeEntryForm;
