@@ -124,6 +124,25 @@ const TimeEntriesPage = () => {
   const setAddMode = () => setMode('add');
   const setEditMode = () => setMode('edit');
 
+  const timeEntryForm = () => {
+    if(entryId && mode === 'edit'){
+      return <TimeEntryForm entryId={entryId} setMode={setMode} entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment} form={form} mode={mode} onSuccess={() => {
+        closeModal();
+        weekData.run();
+        monthData.run();
+        setViewMode();
+      }} onCancel={() => setViewMode()}
+      />;
+    }
+    return <TimeEntryForm setMode={setMode} entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment} form={form} mode={mode} onSuccess={() => {
+      closeModal();
+      weekData.run();
+      monthData.run();
+      setViewMode();
+    }} onCancel={() => setViewMode()}
+    />;
+  };
+
   return (
     <MainPage title="Time entries">
       <Modal
@@ -134,28 +153,9 @@ const TimeEntriesPage = () => {
         width={'37.5%'}
         footer={null}
       >
-        {
-          entryId && mode === 'edit' ?
-            <TimeEntryForm setMode={setMode} entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment} form={form} entryId={entryId} mode={mode} onSuccess={() => {
-              closeModal();
-              weekData.run();
-              monthData.run();
-              setViewMode();
-            }} onCancel={() => setViewMode()}
-            />
-            :
-            <TimeEntryForm setMode={setMode} entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment} form={form} mode={mode} onSuccess={() => {
-              closeModal();
-              weekData.run();
-              monthData.run();
-              setViewMode();
-            }} onCancel={() => setViewMode()}
-            />
-        }
-
+        {timeEntryForm()}
       </Modal>
       <UserTimeSheetList timeSheets={timeSheets}/>
-
       <CalendarSelectionMode onChange={e => setCalendarMode(e.target.value)}/>
       {
         calendarMode === 'week' ?
@@ -200,5 +200,4 @@ const TimeEntriesPage = () => {
     </MainPage>
   );
 };
-
 export default TimeEntriesPage;

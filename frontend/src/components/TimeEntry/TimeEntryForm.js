@@ -41,7 +41,6 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
       </React.Fragment>
     );
   }
-
   if (timeSheets.error) {
     return (
       <React.Fragment>
@@ -53,31 +52,27 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
     );
   }
   const Entries = ({entries, entryId}) => {
-    if(entryId) {
-      const entriesFiltered = entries.map(entriesMap => entriesMap.filter(entry => entry.id === entryId));
-      const showEntries = entriesFiltered.map(entry => <ShowTimeEntry key={entry[0].id} entry={entry[0]} onClickEdit={()=>{
-        setEntry(entry[0]);
-        setEditMode();
-      }}/>);
-      return (
-        <div className="tk_TaskInfoList">
-          {showEntries}
-        </div>
+    const showTimeEntries = (entries, entryId) => {
+      if(entryId) {
+        const entriesFiltered = entries.map(entriesMap => entriesMap.filter(entry => entry.id === entryId));
+        return entriesFiltered.map(entry => <ShowTimeEntry key={entry[0].id} entry={entry[0]} onClickEdit={()=>{
+          setEntry(entry[0]);
+          setEditMode();
+        }}/>);
+      }
+      return entries.map(
+        entriesForDay => entriesForDay.map(entry => <ShowTimeEntry key={entry.id} entry={entry} onClickEdit={()=>{
+          setEntry(entry);
+          setEditMode();
+        }}/>),
       );
-    }
-    const showEntries = entries.map(
-      entriesForDay => entriesForDay.map(entry => <ShowTimeEntry key={entry.id} entry={entry} onClickEdit={()=>{
-        setEntry(entry);
-        setEditMode();
-      }}/>),
-    );
+    };
     return (
       <div className="tk_TaskInfoList">
-        {showEntries}
+        {showTimeEntries(entries, entryId)}
       </div>
     );
   };
-
   // Returns the number of hours for a day
   const amountOfHoursPerDay = (entriesArray) => {
     return entriesArray.map(entries => {
@@ -95,27 +90,27 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
     const entry = entriesFiltered.map(entry => entry[0]);
     if(entry) {
       return (
-          <div className="tk_ModalGen">
-            <div className="tk_ModalTop">
-              <div className="tk_ModalTopHead">
-                <div>
-                  <p>{currentDay.format('ddd')}<br/><span>{currentDay.format('DD')}</span></p>
-                  <h1>Day information</h1>
-                </div>
-                { (mode === 'view' || mode === 'edit') && amountOfHoursPerDay(entries) < 8 ?
-                    <Button type="link" onClick={() => setMode && setAddMode()}>Add task</Button> : ''}
+        <div className="tk_ModalGen">
+          <div className="tk_ModalTop">
+            <div className="tk_ModalTopHead">
+              <div>
+                <p>{currentDay.format('ddd')}<br/><span>{currentDay.format('DD')}</span></p>
+                <h1>Day information</h1>
               </div>
-              <div className="tk_ModalTopBody">
-                {entries.length === 0 ?
-                    <NoDataMessage message='No task for this day, there is still time to add one.'/> :
-                    (mode === 'edit' ? <Entries entries={entries} entryId={entryId}/> : <Entries entries={entries} />)
-                }
-              </div>
+              { (mode === 'view' || mode === 'edit') && amountOfHoursPerDay(entries) < 8 ?
+                <Button type="link" onClick={() => setMode && setAddMode()}>Add task</Button> : ''}
             </div>
-            {mode === 'edit' && entry &&
-            <EditEntryForm date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess}
-                           onCancel={onCancel} entry={entry[0]}/>}
+            <div className="tk_ModalTopBody">
+              {entries.length === 0 ?
+                <NoDataMessage message='No task for this day, there is still time to add one.'/> :
+                (mode === 'edit' ? <Entries entries={entries} entryId={entryId}/> : <Entries entries={entries} />)
+              }
+            </div>
           </div>
+          {mode === 'edit' && entry &&
+            <EditEntryForm date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess}
+              onCancel={onCancel} entry={entry[0]}/>}
+        </div>
       );
     }
   }
@@ -146,7 +141,6 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
     </div>
   );
 };
-
 TimeEntryForm.propTypes = {
   currentDay: PropTypes.object.isRequired,
   form: PropTypes.object,
@@ -157,5 +151,4 @@ TimeEntryForm.propTypes = {
   entries: PropTypes.array,
   entryId: PropTypes.number
 };
-
 export default TimeEntryForm;
