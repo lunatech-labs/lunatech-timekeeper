@@ -9,10 +9,8 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 import static java.util.Collections.emptyList;
-import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AuthenticationContextTest {

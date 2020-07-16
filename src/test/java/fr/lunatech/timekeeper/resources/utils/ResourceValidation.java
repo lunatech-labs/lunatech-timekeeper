@@ -2,8 +2,6 @@ package fr.lunatech.timekeeper.resources.utils;
 
 import io.restassured.response.ValidatableResponse;
 
-import java.util.Map;
-
 import static fr.lunatech.timekeeper.resources.utils.VerbDefinition.*;
 
 public class ResourceValidation {

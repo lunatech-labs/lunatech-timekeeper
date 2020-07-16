@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 import javax.inject.Inject;
-import javax.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
