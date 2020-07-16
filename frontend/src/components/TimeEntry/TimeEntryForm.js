@@ -52,7 +52,6 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
       </React.Fragment>
     );
   }
-
   const Entries = ({entries, entryId}) => {
     if(entryId) {
       const entriesFiltered = entries.map(entriesMap => entriesMap.filter(entry => entry.id === entryId));
@@ -91,6 +90,35 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
       }).reduce(reducer);
     });
   };
+  if(mode === 'edit'){
+    const entriesFiltered = entries.map(entriesMap => entriesMap.filter(entry => entry.id === entryId));
+    const entry = entriesFiltered.map(entry => entry[0]);
+    if(entry) {
+      return (
+          <div className="tk_ModalGen">
+            <div className="tk_ModalTop">
+              <div className="tk_ModalTopHead">
+                <div>
+                  <p>{currentDay.format('ddd')}<br/><span>{currentDay.format('DD')}</span></p>
+                  <h1>Day information</h1>
+                </div>
+                { (mode === 'view' || mode === 'edit') && amountOfHoursPerDay(entries) < 8 ?
+                    <Button type="link" onClick={() => setMode && setAddMode()}>Add task</Button> : ''}
+              </div>
+              <div className="tk_ModalTopBody">
+                {entries.length === 0 ?
+                    <NoDataMessage message='No task for this day, there is still time to add one.'/> :
+                    (mode === 'edit' ? <Entries entries={entries} entryId={entryId}/> : <Entries entries={entries} />)
+                }
+              </div>
+            </div>
+            {mode === 'edit' && entry &&
+            <EditEntryForm date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess}
+                           onCancel={onCancel} entry={entry[0]}/>}
+          </div>
+      );
+    }
+  }
   return (
     <div className="tk_ModalGen">
       <div className="tk_ModalTop">
