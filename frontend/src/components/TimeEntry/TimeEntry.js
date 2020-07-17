@@ -11,8 +11,7 @@ const computeSize = (nbHours) => {
 
   return minimumSize + (nbHours - 1) * 50;
 };
-const TimeEntry = ({entry}) => {
-
+const TimeEntry = ({entry, onClick}) => {
   const start = moment(entry.startDateTime).utc();
   const end = moment(entry.endDateTime).utc();
   const date = start.clone();
@@ -23,7 +22,7 @@ const TimeEntry = ({entry}) => {
   const size = computeSize(hours);
   return (
     <div className="tk_TaskCard" style={{height: `${size}px`}}
-      key={`badge-entry-${start && start.format('yyyy-mm-dd-hh-mm')}`}>
+      key={`badge-entry-${start && start.format('yyyy-mm-dd-hh-mm')}`} onClick={onClick}>
       <div>
         <Badge
           status={(entry && entry.comment) ? 'success' : 'error'}
@@ -44,7 +43,8 @@ TimeEntry.propTypes = {
     }).isRequired,
     startDateTime: PropTypes.string.isRequired,
     endDateTime: PropTypes.string.isRequired,
-  })
+  }),
+  onClick: PropTypes.func.isRequired
 };
 
 export default TimeEntry;

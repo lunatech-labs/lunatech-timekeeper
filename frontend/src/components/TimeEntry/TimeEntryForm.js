@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {Alert, Button, Form, Input, Spin} from 'antd';
 import {useTimeKeeperAPI} from '../../utils/services';
@@ -11,11 +11,19 @@ import moment from 'moment';
 
 const {TextArea} = Input;
 
-const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, setMode}) => {
+const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, setMode, selectedEntryId}) => {
 
   const setAddMode = () => setMode('add');
   const setEditMode = () => setMode('edit');
   const [entry, setEntry] = useState();
+  useEffect(() => {
+    if(selectedEntryId) {
+      const entry = entries[0].find(e => e.id === selectedEntryId);
+      if (entry) {
+        setEntry(entry);
+      }
+    }
+  },[selectedEntryId]);
   const timeSheets = useTimeKeeperAPI('/api/my/' + currentDay.year() + '?weekNumber=' + currentDay.isoWeek(), (form => form));
   if (timeSheets.loading) {
     return (
@@ -41,7 +49,6 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
       </React.Fragment>
     );
   }
-
   if (timeSheets.error) {
     return (
       <React.Fragment>
@@ -52,21 +59,19 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
       </React.Fragment>
     );
   }
-
   const Entries = ({entries}) => {
-    const showEntries = entries.map(
-      entriesForDay => entriesForDay.map(entry => <ShowTimeEntry key={entry.id} entry={entry} onClickEdit={()=>{
+    const showTimeEntries = (entries) => {
+      return entries.map(entry => <ShowTimeEntry key={entry.id} entry={entry} onClickEdit={()=>{
         setEntry(entry);
         setEditMode();
-      }}/>),
-    );
+      }}/>);
+    };
     return (
       <div className="tk_TaskInfoList">
-        {showEntries}
+        {showTimeEntries(entries)}
       </div>
     );
   };
-
   // Returns the number of hours for a day
   const amountOfHoursPerDay = (entriesArray) => {
     return entriesArray.map(entries => {
@@ -79,7 +84,6 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
       }).reduce(reducer);
     });
   };
-
   return (
     <div className="tk_ModalGen">
       <div className="tk_ModalTop">
@@ -94,19 +98,19 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
         <div className="tk_ModalTopBody">
           {entries.length === 0 ?
             <NoDataMessage message='No task for this day, there is still time to add one.'/> :
-            <Entries entries={entries}/>}
+            (mode === 'edit' ? <Entries entries={selectedEntryId ? [entry] : entries[0]}/> : <Entries entries={entries[0]} />)
+          }
         </div>
       </div>
       {mode === 'add' &&
-            <AddEntryForm date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess}
-              onCancel={onCancel}/>}
+          <AddEntryForm date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess}
+            onCancel={onCancel}/>}
       {mode === 'edit' && entry &&
-            <EditEntryForm date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess}
-              onCancel={onCancel} entry={entry}/>}
+          <EditEntryForm date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess}
+            onCancel={onCancel} entry={entry}/>}
     </div>
   );
 };
-
 TimeEntryForm.propTypes = {
   currentDay: PropTypes.object.isRequired,
   form: PropTypes.object,
@@ -114,8 +118,7 @@ TimeEntryForm.propTypes = {
   onCancel: PropTypes.func,
   mode: PropTypes.string, // can be 'view', 'add' or 'edit'
   setMode: PropTypes.func,
-  entries: PropTypes.arrayOf(PropTypes.object),
-  timeSheetId: PropTypes.number.isRequired
+  entries: PropTypes.array,
+  selectedEntryId: PropTypes.number
 };
-
 export default TimeEntryForm;
