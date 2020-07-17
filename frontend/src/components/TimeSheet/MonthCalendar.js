@@ -92,46 +92,46 @@ const MonthCalendar = (props) => {
 
   return (
     <div id="tk_MonthCalendar">
-        <ConfigProvider locale={en_GB}>
-      <Calendar
-        headerRender={({value, onChange}) => {
-          const onChangeCustom = (date) => {
-            onChange(date);
-            props.onPanelChange(date);
-          };
-          return (
-            <div id="tk_MonthCalendar_Head">
-              <MonthNavigator value={value} onChange={onChangeCustom} />
-              <div>
-                <SelectMonth value={value} onChange={onChangeCustom} />
-                <SelectYear value={value} onChange={onChangeCustom} />
+      <ConfigProvider locale={en_GB}>
+        <Calendar
+          headerRender={({value, onChange}) => {
+            const onChangeCustom = (date) => {
+              onChange(date);
+              props.onPanelChange(date);
+            };
+            return (
+              <div id="tk_MonthCalendar_Head">
+                <MonthNavigator value={value} onChange={onChangeCustom} />
+                <div>
+                  <SelectMonth value={value} onChange={onChangeCustom} />
+                  <SelectYear value={value} onChange={onChangeCustom} />
+                </div>
+              </div>);
+          }}
+          disabledDate={moment => {
+            const day = findData(moment);
+            return isDisabled(day, moment);
+          }}
+          dateCellRender={moment => {
+            const day = findData(moment);
+            const className = !(props.disabledWeekEnd && isWeekEnd(moment)) && (props.warningCardPredicate && props.warningCardPredicate(moment, day && day.data)) ?
+              'tk_CardMonthCalendar_Body_With_Warn' : '';
+            return (
+              <div className={className}>
+                <Button
+                  shape="circle"
+                  disabled={isDisabled(day, moment)}
+                  icon={<PlusOutlined/>}
+                  onClick={(e) => {
+                    props.onClickButton && props.onClickButton(e, moment);
+                    e.stopPropagation();
+                  }}/>
+                {day && day.data && props.dateCellRender(day.data, day.date, day.disabled)}
               </div>
-            </div>);
-        }}
-        disabledDate={moment => {
-          const day = findData(moment);
-          return isDisabled(day, moment);
-        }}
-        dateCellRender={moment => {
-          const day = findData(moment);
-          const className = !(props.disabledWeekEnd && isWeekEnd(moment)) && (props.warningCardPredicate && props.warningCardPredicate(moment, day && day.data)) ?
-            'tk_CardMonthCalendar_Body_With_Warn' : '';
-          return (
-            <div className={className}>
-              <Button
-                shape="circle"
-                disabled={isDisabled(day, moment)}
-                icon={<PlusOutlined/>}
-                onClick={(e) => {
-                  props.onClickButton && props.onClickButton(e, moment);
-                  e.stopPropagation();
-                }}/>
-              {day && day.data && props.dateCellRender(day.data, day.date, day.disabled)}
-            </div>
-          );
-        }}
-      />
-        </ConfigProvider>
+            );
+          }}
+        />
+      </ConfigProvider>
     </div>
   );
 };
