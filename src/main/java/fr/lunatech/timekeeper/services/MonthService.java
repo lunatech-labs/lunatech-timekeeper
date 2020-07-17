@@ -8,6 +8,7 @@ import fr.lunatech.timekeeper.timeutils.CalendarFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,15 +30,21 @@ public class MonthService {
         }
 
         var userEvents = new ArrayList<UserEvent>();
+        if (monthNumber == null) {
+            monthNumber = LocalDate.now().getMonthValue();
+        }
+        if (year == null) {
+            year = LocalDate.now().getYear();
+        }
         var publicHolidays = CalendarFactory.instanceFor("FR", year).getPublicHolidaysForMonthNumber(monthNumber);
 
-        final List<TimeSheetResponse> timeSheetsResponse = new ArrayList<>();
+        final List<TimeSheetResponse> timeSheetResponseList = new ArrayList<>();
         for (TimeSheetResponse timeSheetResponse : timeSheetService.findAllActivesForUser(ctx)) {
-            timeSheetsResponse.add(timeSheetResponse.filterToSixWeeksRange(year, monthNumber));
+            timeSheetResponseList.add(timeSheetResponse.filterToSixWeeksRange(year, monthNumber));
         }
 
         return new MonthResponse(userEvents
-                , timeSheetsResponse
+                , timeSheetResponseList
                 , publicHolidays);
 
     }
