@@ -97,10 +97,10 @@ const WeekCalendar = (props) => {
       })}
     </Select>;
 
-  const renderTopCardComponent = (item) => {
+  const TopCardComponent = ({item}) => {
     if(!isDisabled(item)){
       if(item.day && amountOfHoursPerDay(item.day.data) >= 8) {
-        return <Tag className="tk_Tag_Competed"><CheckOutlined /> Completed</Tag>;
+        return <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>;
       }
       return <Button
         shape="circle"
@@ -110,6 +110,16 @@ const WeekCalendar = (props) => {
           e.stopPropagation();
         }}/>;
     }
+    return '';
+  };
+  TopCardComponent.PropTypes = {
+    item: PropTypes.shape({
+      date: PropTypes.object,
+      day: PropTypes.shape({
+        data: PropTypes.object
+      })
+    }
+    )
   };
 
   return (
@@ -137,7 +147,7 @@ const WeekCalendar = (props) => {
               <CardWeekCalendar onClick={(e) => props.onClickCard && props.onClickCard(e, item.date)}>
                 <div className="tk_CardWeekCalendar_Head">
                   <p className={isToday(moment(item.date)) ? 'tk_CurrentDay' : ''}>{item.date.format(dateFormat)}</p>
-                  {renderTopCardComponent(item)}
+                  <TopCardComponent item={item} />
                 </div>
                 <div className={props.warningCardPredicate && props.warningCardPredicate(item.date, item.day) ?
                   'tk_CardWeekCalendar_Body tk_CardWeekCalendar_Body_With_Warn' : 'tk_CardWeekCalendar_Body'} disabled={isDisabled(item)}>
