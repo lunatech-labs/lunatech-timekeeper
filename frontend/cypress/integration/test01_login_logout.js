@@ -21,11 +21,13 @@ describe("Test Login and Logout", () => {
         cy.visit("");
     });
 
-    it("should authenticate Alice and display Avatar", () => {
+    it("should authenticate Alice an Admin User and display Avatar", () => {
         cy.visit("http://localhost:3000/home");
         cy.get('.tk_Header_Profile').should('be.visible');
         cy.get(".tk_Header_Profile p").should("contain.text", "Alice Test");
-        cy.get(".tk_Header_Profile p span").should("contain.text", "Admin");
+        cy.get(".tk_Header_Profile p span").should("contain.text", "User");
+        cy.get(':nth-child(1) > .ant-descriptions-item-label').should("contain.text", "Avatar");
+        cy.get(':nth-child(4) > .ant-descriptions-item-content').should("contain.text", "ADMIN");
     });
 
     it("should logout Alice", () => {
