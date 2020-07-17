@@ -12,7 +12,6 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class WeekService {
@@ -43,13 +42,8 @@ public class WeekService {
 
         var startDayOfWeek = TimeKeeperDateUtils.getFirstDayOfWeekFromWeekNumber(year, weekNumber);
         final List<TimeSheetResponse> timeSheetsResponse = new ArrayList<>();
-        for (TimeSheetResponse timeSheetResponse : timeSheetService
-                .findAllActivesForUser(ctx)) {
-            timeSheetResponse.entries = timeSheetResponse.entries
-                    .stream()
-                    .filter(timeEntryResponse -> TimeKeeperDateUtils.isSameWeekAndYear(timeEntryResponse.getStartDateTime().toLocalDate(), startDayOfWeek))
-                    .collect(Collectors.toList());
-            timeSheetsResponse.add(timeSheetResponse);
+        for (TimeSheetResponse timeSheetResponse : timeSheetService.findAllActivesForUser(ctx)) {
+            timeSheetsResponse.add(timeSheetResponse.filterTimeEntriesForWeek(startDayOfWeek));
         }
 
         return new WeekResponse(TimeKeeperDateUtils.adjustToFirstDayOfWeek(startDayOfWeek)

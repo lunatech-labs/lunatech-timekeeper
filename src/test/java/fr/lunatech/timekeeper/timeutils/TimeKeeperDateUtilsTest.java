@@ -7,7 +7,6 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class TimeKeeperDateUtilsTest {
 
@@ -131,9 +130,24 @@ class TimeKeeperDateUtilsTest {
     }
 
     @Test
-    void shouldBeTrueForLastDayOfLastWeekOfMonth(){
-        LocalDate inputDate = LocalDate.of(2020,3,7);
-        assertTrue(TimeKeeperDateUtils.isIncludedInSixWeeksFromMonth(2020, 02).test(inputDate));
+    void shouldBeTrueForLastDayOfLastWeekOfMonthInFebruary(){
+        LocalDate inputDate1 = LocalDate.of(2020,3,7);
+        assertTrue(TimeKeeperDateUtils.isIncludedInSixWeeksFromMonth(2020, 2).test(inputDate1));
+
+        LocalDate inputDate3 = LocalDate.of(2020,3,9);
+        assertFalse(TimeKeeperDateUtils.isIncludedInSixWeeksFromMonth(2020, 2).test(inputDate3));
+
+
+        LocalDate inputDate = LocalDate.of(2020,3,8);
+        assertTrue(TimeKeeperDateUtils.isIncludedInSixWeeksFromMonth(2020, 2).test(inputDate));
+
+    }
+
+    @Test
+    void shouldBeTrueForLastDayOfLastWeekOfMonthInDecember(){
+        // 6th january 2021 belongs to the 6th week of december, 2020
+        LocalDate inputDate = LocalDate.of(2021,1,6);
+        assertTrue(TimeKeeperDateUtils.isIncludedInSixWeeksFromMonth(2020, 12).test(inputDate));
     }
 
     @Test
@@ -180,7 +194,7 @@ class TimeKeeperDateUtilsTest {
 
     @Test
     void shouldNotBeTrueForTheDayAfterTheLastDayOfLastWeekOfMonth(){
-        LocalDate inputDate = LocalDate.of(2020,3,8);
+        LocalDate inputDate = LocalDate.of(2020,3,9);
         assertFalse(TimeKeeperDateUtils.isIncludedInSixWeeksFromMonth(2020, 02).test(inputDate));
     }
 
@@ -279,5 +293,23 @@ class TimeKeeperDateUtilsTest {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             TimeKeeperDateUtils.validateYear(1969);
         });
+    }
+
+    @Test
+    void shouldReturnSundayAsLastDayOfWeek(){
+        LocalDate inputDate = LocalDate.of(2020,2,26);
+        LocalDate expected = LocalDate.of(2020,3,1);
+        assertEquals(expected , TimeKeeperDateUtils.adjustToLastDayOfWeek(inputDate));
+
+        LocalDate inputDate2 = LocalDate.of(2020,4,30);
+        LocalDate expected2 = LocalDate.of(2020,5,3);
+        assertEquals(expected2 , TimeKeeperDateUtils.adjustToLastDayOfWeek(inputDate2));
+    }
+
+    @Test
+    void shouldReturnMondayAsFirstDayOfWeek(){
+        LocalDate inputDate = LocalDate.of(2020,7,2);
+        LocalDate expected = LocalDate.of(2020,6,29);
+        assertEquals(expected , TimeKeeperDateUtils.adjustToFirstDayOfWeek(inputDate));
     }
 }
