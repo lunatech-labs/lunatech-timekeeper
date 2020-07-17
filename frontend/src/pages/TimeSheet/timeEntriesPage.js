@@ -74,7 +74,7 @@ const TimeEntriesPage = () => {
   }
 
   const timeSheets = calendarMode === 'week' ?
-    (weekData.data && !weekData.loading ? weekData.data.sheets : []) : (monthData.data && weekData.loading ? monthData.data.sheets : []);
+    (weekData.data && !weekData.loading ? weekData.data.sheets : []) : (monthData.data && !monthData.loading ? monthData.data.sheets : []);
   const days = computeData(timeSheets);
 
   const datas = {
