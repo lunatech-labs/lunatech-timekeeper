@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateFormat;
+import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 import fr.lunatech.timekeeper.timeutils.TimeSheetUtils;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
 
@@ -11,48 +12,50 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class TimeSheetResponse {
-    public Long id;
+    public final Long id;
 
-    public ProjectResponse project;
+    public final ProjectResponse project;
 
-    public Long ownerId;
+    public final Long ownerId;
 
-    public TimeUnit timeUnit;
+    public final TimeUnit timeUnit;
 
-    public Boolean defaultIsBillable;
+    public final Boolean defaultIsBillable;
 
     @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_PATTERN)
-    public LocalDate expirationDate;
+    public final LocalDate expirationDate;
 
-    public Integer maxDuration; // eg 21
+    public final Integer maxDuration; // eg 21
 
-    public String durationUnit; // DAYS
+    public final String durationUnit; // DAYS
 
-    public List<TimeEntryResponse> entries;
+    public final List<TimeEntryResponse> entries;
 
-    public Long leftOver;
+    public final Long leftOver;
 
-    public TimeSheetResponse(Long id, ProjectResponse project, UserResponse owner, TimeUnit timeUnit, Boolean defaultIsBillable, LocalDate expirationDate, Integer maxDuration, String durationUnit, List<TimeEntryResponse> entries, Long leftOver) {
+    public TimeSheetResponse(Long id, ProjectResponse project, Long ownerId, TimeUnit timeUnit,
+                             Boolean defaultIsBillable, LocalDate expirationDate, Integer maxDuration, String durationUnit, List<TimeEntryResponse> entries, Long leftOver) {
         this.id = id;
         this.project = project;
-        this.ownerId = owner.getId();
+        this.ownerId = ownerId;
         this.timeUnit = timeUnit;
         this.defaultIsBillable = defaultIsBillable;
         this.expirationDate = expirationDate;
         this.maxDuration = maxDuration;
         this.durationUnit = durationUnit;
         this.entries = entries;
-        this.leftOver=leftOver;
+        this.leftOver = leftOver;
     }
 
     public static TimeSheetResponse bind(@NotNull TimeSheet sheet) {
         return new TimeSheetResponse(
                 sheet.id,
                 ProjectResponse.bind(sheet.project),
-                UserResponse.bind(sheet.owner),
+                sheet.owner.id,
                 sheet.timeUnit,
                 sheet.defaultIsBillable,
                 sheet.expirationDate,
@@ -67,18 +70,18 @@ public class TimeSheetResponse {
     public static final class TimeEntryResponse {
 
         @NotNull
-        private final Long id;
+        public final Long id;
 
         @NotNull
-        private final String comment;
-
-        @NotNull
-        @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_TIME_PATTERN)
-        private final LocalDateTime startDateTime;
+        public final String comment;
 
         @NotNull
         @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_TIME_PATTERN)
-        private final LocalDateTime endDateTime;
+        public final LocalDateTime startDateTime;
+
+        @NotNull
+        @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_TIME_PATTERN)
+        public final LocalDateTime endDateTime;
 
         public TimeEntryResponse(
                 @NotNull Long id,
@@ -101,21 +104,50 @@ public class TimeSheetResponse {
             );
         }
 
-        public Long getId() {
-            return id;
+        @Override
+        public String toString() {
+            return "TimeEntryResponse[id=" + id + "]" ;
         }
+    }
 
-        public String getComment() {
-            return comment;
-        }
+    public final TimeSheetResponse filterToSixWeeksRange(Integer year, Integer monthNumber) {
+        Predicate<LocalDate> isValidDate = TimeKeeperDateUtils.isIncludedInSixWeeksFromMonth(year, monthNumber);
+        List<TimeEntryResponse> restrictedEntries = this.entries
+                .stream()
+                .filter(timeEntryResponse -> {
+                    LocalDateTime startDateTime = timeEntryResponse.startDateTime;
+                    return isValidDate.test(startDateTime.toLocalDate());
+                })
+                .collect(Collectors.toList());
 
-        public LocalDateTime getStartDateTime() {
-            return startDateTime;
-        }
+        return new TimeSheetResponse(this.id,
+                this.project,
+                this.ownerId,
+                this.timeUnit,
+                this.defaultIsBillable,
+                this.expirationDate,
+                this.maxDuration,
+                this.durationUnit,
+                restrictedEntries,
+                this.leftOver);
+    }
 
-        public LocalDateTime getEndDateTime() {
-            return endDateTime;
-        }
+    public final TimeSheetResponse filterTimeEntriesForWeek(LocalDate startDayOfWeek){
+        List<TimeEntryResponse> restrictedEntries = this.entries
+                .stream()
+                .filter(timeEntryResponse -> TimeKeeperDateUtils.isSameWeekAndYear(timeEntryResponse.startDateTime.toLocalDate(), startDayOfWeek))
+                .collect(Collectors.toList());
+
+        return new TimeSheetResponse(this.id,
+                this.project,
+                this.ownerId,
+                this.timeUnit,
+                this.defaultIsBillable,
+                this.expirationDate,
+                this.maxDuration,
+                this.durationUnit,
+                restrictedEntries,
+                this.leftOver);
     }
 
     @Override

@@ -100,7 +100,7 @@ class PersonalTimesheetsResourceTest {
         );
 
 
-        final var timesheet = new TimeSheetResponse(1L, projectResponse, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null);
+        final var timesheet = new TimeSheetResponse(1L, projectResponse, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null);
         final List<PublicHoliday> holidays = new ArrayList<>();
         holidays.add(new PublicHoliday(LocalDate.of(2020, 5, 21), "Jour de l'Ascension", "Ascension Day", "FR"));
         WeekResponse response = new WeekResponse(LocalDate.of(2020, 5, 18), Collections.emptyList(), List.of(timesheet), holidays);
@@ -162,7 +162,7 @@ class PersonalTimesheetsResourceTest {
         create(1L, includedDay, jimmyToken);
         create(1L, notIncludedDay, jimmyToken);
 
-        final var timesheet = new TimeSheetResponse(1L, projectResponse, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), timeEntriesExpected, null);
+        final var timesheet = new TimeSheetResponse(1L, projectResponse, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), timeEntriesExpected, null);
         final MonthResponse response = new MonthResponse(Collections.emptyList(), List.of(timesheet), publicHolidays);
 
         getValidation(PersonalTimeSheetsMonthDef.uriWithMultiInt(2020, 7), jimmyToken).body(is(timeKeeperTestUtils.toJson(response))).statusCode(is(OK.getStatusCode()));
@@ -199,7 +199,7 @@ class PersonalTimesheetsResourceTest {
         );
 
 
-        final var timesheet = new TimeSheetResponse(1L, projectResponse, jimmy, TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null);
+        final var timesheet = new TimeSheetResponse(1L, projectResponse, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null);
         final List<PublicHoliday> holidays = new ArrayList<>();
         holidays.add(new PublicHoliday(LocalDate.of(2020, 5, 1), "Fête du premier mai", "Labour Day", "FR"));
         holidays.add(new PublicHoliday(LocalDate.of(2020, 5, 8), "Fête de la Victoire", "Victory in Europe Day", "FR"));
@@ -261,7 +261,7 @@ class PersonalTimesheetsResourceTest {
         TimeSheetResponse.TimeEntryResponse jimmyEntryDay1Response = new TimeSheetResponse.TimeEntryResponse(1L, commentDay, startDay1, endDay1);
         TimeSheetResponse.TimeEntryResponse jimmyEntryDay2Response = new TimeSheetResponse.TimeEntryResponse(2L, commentDay, startDay2, endDay2);
 
-        final var timesheet = new TimeSheetResponse(1L, projectResponse, jimmy, TimeUnit.HOURLY, true, null, 10, TimeUnit.DAY.toString(), List.of(jimmyEntryDay1Response, jimmyEntryDay2Response), 8L);
+        final var timesheet = new TimeSheetResponse(1L, projectResponse, jimmy.getId(), TimeUnit.HOURLY, true, null, 10, TimeUnit.DAY.toString(), List.of(jimmyEntryDay1Response, jimmyEntryDay2Response), 8L);
         WeekResponse response = new WeekResponse(LocalDate.of(2020, 6, 15), Collections.emptyList(), List.of(timesheet), new ArrayList<>());
 
         //THEN: the days left should be 8
