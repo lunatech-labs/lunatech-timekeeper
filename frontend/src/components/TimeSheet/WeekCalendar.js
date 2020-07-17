@@ -36,7 +36,6 @@ const amountOfHoursPerDay = (entries) => {
 };
 
 const WeekCalendar = (props) => {
-  const [showButton, setShowButton] = useState(-1);
   const [weekSelected, setWeekSelected] = useState(props.firstDay.isoWeek());
   const [weekRanges, setWeekRanges] = useState(computeWeekRanges(props.firstDay));
 
@@ -69,7 +68,7 @@ const WeekCalendar = (props) => {
   const dateFormat = props.dateFormat || 'Do';
   const headerDateFormat = props.headerDateFormat || 'ddd';
   const dataByDays = daysToData();
-  const isDisabled = (item, numberOfHours) => (item.day && item.day.disabled) || (props.disabledWeekEnd && isWeekEnd(item.date)) || numberOfHours >= 8;
+  const isDisabled = (item) => (item.day && item.day.disabled) || (props.disabledWeekEnd && isWeekEnd(item.date));
 
   const WeekNavigator = () => {
     const weekRangeIds = weekRanges.weekRange.map(weekRange => weekRange.id);
@@ -98,6 +97,31 @@ const WeekCalendar = (props) => {
       })}
     </Select>;
 
+  const TopCardComponent = ({item}) => {
+    if(!isDisabled(item)){
+      if(item.day && amountOfHoursPerDay(item.day.data) >= 8) {
+        return <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>;
+      }
+      return <Button
+        shape="circle"
+        icon={<PlusOutlined/>}
+        onClick={(e) => {
+          props.onClickButton && props.onClickButton(e, item.date);
+          e.stopPropagation();
+        }}/>;
+    }
+    return '';
+  };
+  TopCardComponent.PropTypes = {
+    item: PropTypes.shape({
+      date: PropTypes.object,
+      day: PropTypes.shape({
+        data: PropTypes.object
+      })
+    }
+    )
+  };
+
   return (
     <div id="tk_WeekCalendar">
       <div id="tk_WeekCalendar_Head">
@@ -106,7 +130,6 @@ const WeekCalendar = (props) => {
           <WeekNavigatorSelect/>
         </div>
       </div>
-
       <div id="tk_WeekCalendar_Body">
         {dataByDays.map((item, index) => {
           const renderDay = () => {
@@ -115,36 +138,20 @@ const WeekCalendar = (props) => {
               return item && item.day && props.dateCellRender(data, date, disabled);
             }
           };
-
           const isToday = (day) => {
             return moment().isSame(day, 'day');
           };
-
           return (
             <div className="tk_WeekCalendar_Day" key={`day-card-${index}`}>
               <p>{item.date.format(headerDateFormat)}</p>
-              <CardWeekCalendar
-                onClick={(e) => props.onClickCard && props.onClickCard(e, item.date)}
-                onMouseOver={() => setShowButton(index)}
-                onMouseLeave={() => setShowButton(-1)}>
+              <CardWeekCalendar onClick={(e) => props.onClickCard && props.onClickCard(e, item.date)}>
                 <div className="tk_CardWeekCalendar_Head">
                   <p className={isToday(moment(item.date)) ? 'tk_CurrentDay' : ''}>{item.date.format(dateFormat)}</p>
-                  {((props.hiddenButtons && showButton === index) || (!props.hiddenButtons)) &&
-                  <Button
-                    shape="circle"
-                    disabled={isDisabled(item, item.day ? amountOfHoursPerDay(item.day.data) : 0)}
-                    icon={<PlusOutlined/>}
-                    onClick={(e) => {
-                      props.onClickButton && props.onClickButton(e, item.date);
-                      e.stopPropagation();
-                    }}/> }
+                  <TopCardComponent item={item} />
                 </div>
                 <div className={props.warningCardPredicate && props.warningCardPredicate(item.date, item.day) ?
                   'tk_CardWeekCalendar_Body tk_CardWeekCalendar_Body_With_Warn' : 'tk_CardWeekCalendar_Body'} disabled={isDisabled(item)}>
                   {renderDay()}
-                  <div className='tk_CardWeekCalendar_Bottom'>
-                    {item.day ? amountOfHoursPerDay(item.day.data) < 8 ? '' : <Tag className="tk_Tag_Competed"><CheckOutlined /> Completed</Tag> : ''}
-                  </div>
                 </div>
               </CardWeekCalendar>
             </div>
