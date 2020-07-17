@@ -5,8 +5,8 @@ import './UserList.less';
 import Button from 'antd/lib/button';
 import TagMember from '../Tag/TagMember';
 import TkUserAvatar from './TkUserAvatar';
-import Input from "antd/lib/input";
-import SearchOutlined from "@ant-design/icons/lib/icons/SearchOutlined";
+import Input from 'antd/lib/input';
+import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined';
 
 const UserList = () => {
   const usersResponse = useTimeKeeperAPI('/api/users');
@@ -28,8 +28,8 @@ const UserList = () => {
     return listOfUsers.filter(user => user.name.toLowerCase().includes(value.toLowerCase()) ||
         user.email.toLowerCase().includes(value.toLowerCase()) ||
         user.projects.filter(project => project.name.toLowerCase().includes(value.toLowerCase())).length > 0
-    )
-  }
+    );
+  };
 
   const columns = [
     {
