@@ -112,15 +112,6 @@ const NewEventTemplateForm = () => {
                   {
                     required: true,
                   },
-                  () => ({
-                    validator(rule, value) {
-                      const name = value.toLowerCase().trim();
-                      if (!eventsName.includes(name)) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject('An event already use this name');
-                    },
-                  }),
                 ]}
               >
                 <Input
