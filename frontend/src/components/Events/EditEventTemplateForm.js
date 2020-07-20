@@ -94,7 +94,6 @@ const EditEventTemplateForm = () => {
   };
 
   if(eventResponse.data && usersResponse.data && eventsResponse.data){
-    console.log(eventResponse);
     const initialValues = {
       name: eventResponse.data.name,
       description: eventResponse.data.description,
@@ -126,6 +125,9 @@ const EditEventTemplateForm = () => {
                     validator(rule, value) {
                       const name = value.toLowerCase().trim();
                       if (!eventsName.includes(name)) {
+                        return Promise.resolve();
+                      }
+                      if (name === eventResponse.data.name.toLowerCase()){
                         return Promise.resolve();
                       }
                       return Promise.reject('An event already use this name');
