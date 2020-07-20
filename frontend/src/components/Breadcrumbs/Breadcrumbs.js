@@ -21,7 +21,7 @@ const breadcrumbDynamicMap = {
   '/projects/(\\d+)/edit': (name) => `Edit project ${name}`,
   '/projects/(\\d+)': (name) => name || 'Project details',
   '/clients/(\\d+)/edit': (name) => `Edit client ${name}`,
-  '/events/(\\d+)/edit': (name) => `Edit Event ${name}`,
+  '/events/(\\d+)/edit': (name) => `Edit event ${name}`,
 };
 
 const Breadcrumbs = ({location, entityName}) => {
