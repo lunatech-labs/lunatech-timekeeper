@@ -1,5 +1,5 @@
 import moment from 'moment';
-import _ from "lodash";
+import _ from 'lodash';
 
 // Render a range of date with the year
 // same month, same year => 22 - 25 May 2020
@@ -68,7 +68,7 @@ export const isPublicHoliday = (date, publicHolidays) => {
 
 
 export const isToday = (day) => {
-  if(!!day) {return  false;}
+  if(day) {return  false;}
   return moment.utc().isSame(day, 'day');
 };
 

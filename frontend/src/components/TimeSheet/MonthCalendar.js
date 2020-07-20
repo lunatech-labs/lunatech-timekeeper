@@ -90,52 +90,47 @@ const MonthCalendar = (props) => {
   const publicHolidays = props.publicHolidays;
 
   const isDisabled = (dateAsMoment) => {
-      if(_.isObjectLike(dateAsMoment)) {
-          let associatedData =  findData(dateAsMoment);
-          if(associatedData && associatedData.disabled){
-              return true;
-          }else{
-              return (isWeekEnd(dateAsMoment) && props.disabledWeekEnd) || isPublicHoliday(dateAsMoment, publicHolidays);
-          }
+    if(_.isObjectLike(dateAsMoment)) {
+      let associatedData =  findData(dateAsMoment);
+      if(associatedData && associatedData.disabled){
+        return true;
       }else{
-          console.log('Invalid dateAsMoment, should be an Object of type Moment');
-          return false;
+        return (isWeekEnd(dateAsMoment) && props.disabledWeekEnd) || isPublicHoliday(dateAsMoment, publicHolidays);
       }
+    }else{
+      console.log('Invalid dateAsMoment, should be an Object of type Moment');
+      return false;
+    }
   };
 
   const findData = (date) => props.days.find(day => day.date.isSame(moment(date).utc(), 'day'));
 
   const MonthCardComponent = ({item}) => {
 
-    // const className = !(props.disabledWeekEnd && (isWeekEnd(date) || isPublicHoliday(date) ) ) && (props.warningCardPredicate && props.warningCardPredicate(date, day && day.data)) ?
-    //     'tk_CardMonthCalendar_Body_With_Warn' : '';
-    const className ='';
+    let associatedData =  findData(item);
+    const className = !(props.disabledWeekEnd && (isWeekEnd(item) || isPublicHoliday(item) ) ) && (props.warningCardPredicate && props.warningCardPredicate(item, associatedData && associatedData.data)) ?
+      'tk_CardMonthCalendar_Body_With_Warn' : '';
 
     if(!isDisabled(item)){
-        let associatedData =  findData(item);
-
-        console.log('associatedData 1');
-        console.log(associatedData);
-
       if(associatedData && associatedData.date && totalHoursPerDay(associatedData.data) >= 8) {
         return (
-          <div>
-              <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>
-              {associatedData && associatedData.data && props.dateCellRender(associatedData.data, associatedData.date, associatedData.disabled)}
+          <div className={className}>
+            <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>
+            {associatedData && associatedData.data && props.dateCellRender(associatedData.data, associatedData.date, associatedData.disabled)}
           </div>
-        )
+        );
       }
-      return <div>
-          <Button
-              shape="circle"
-              icon={<PlusOutlined/>}
-              onClick={(e) => {
-                  props.onClickButton && props.onClickButton(e, item);
-                  e.stopPropagation();
-              }}>
-          </Button>
-          {associatedData && associatedData.data && props.dateCellRender(associatedData.data, associatedData.date, associatedData.disabled)}
-      </div>
+      return <div className={className}>
+        <Button
+          shape="circle"
+          icon={<PlusOutlined/>}
+          onClick={(e) => {
+            props.onClickButton && props.onClickButton(e, item);
+            e.stopPropagation();
+          }}>
+        </Button>
+        {associatedData && associatedData.data && props.dateCellRender(associatedData.data, associatedData.date, associatedData.disabled)}
+      </div>;
     }
 
     if(isPublicHoliday(item)){
@@ -146,9 +141,9 @@ const MonthCalendar = (props) => {
   };
   MonthCardComponent.propTypes = {
     item: PropTypes.shape({
-          date: PropTypes.func,
-          day: PropTypes.func
-        }
+      date: PropTypes.func,
+      day: PropTypes.func
+    }
     )
   };
 
@@ -175,7 +170,7 @@ const MonthCalendar = (props) => {
           }}
           dateCellRender={value => {
             return (
-                <MonthCardComponent item={value}></MonthCardComponent>
+              <MonthCardComponent item={value}></MonthCardComponent>
             );
           }}
         />
