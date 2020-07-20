@@ -7,6 +7,7 @@ import {Link, Redirect} from 'react-router-dom';
 import TitleSection from '../../components/Title/TitleSection';
 import moment from 'moment';
 import UserTreeData from './UserTreeData';
+import {range} from '../../utils/utils';
 
 const {TextArea} = Input;
 const { RangePicker } = DatePicker;
@@ -65,14 +66,6 @@ const NewEventTemplateForm = () => {
       </React.Fragment>
     );
   }
-
-  const range = (start, end) => {
-    const result = [];
-    [...Array(end-start).keys()].map(i => {
-      result.push(i+start);
-    });
-    return result;
-  };
 
   const disabledDate = (current) => {
     // Can not select days before today and today
