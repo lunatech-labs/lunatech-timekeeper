@@ -4,11 +4,11 @@ import EditEventTemplateForm from '../../components/Events/EditEventTemplateForm
 
 
 const EditEventTemplatePage = () => {
-    return (
-        <MainPage title="Edit an event">
-            <EditEventTemplateForm />
-        </MainPage>
-    );
+  return (
+    <MainPage title="Edit an event">
+      <EditEventTemplateForm />
+    </MainPage>
+  );
 };
 
 export default EditEventTemplatePage;
