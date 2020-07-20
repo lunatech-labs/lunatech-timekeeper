@@ -163,3 +163,23 @@ You can annotate a test with @DisabledIfEnvironmentVariable if your test is slow
 
     @DisabledIfEnvironmentVariable(named = "ENV", matches = "fast-test-only")        
 
+# Cypress end to end tests
+
+[Cypress](https://www.cypress.io/) is an end-to-end test framework
+
+You can execute all tests from the `frontend` sub-folder 
+
+    cd frontend
+    yarn install
+    yarn start
+    
+Open a 2nd Term and do 
+
+    cd frontend
+    yarn cypress
+    
+All tests are available under frontend/cypress/integration sub folder.
+
+    
+        
+
