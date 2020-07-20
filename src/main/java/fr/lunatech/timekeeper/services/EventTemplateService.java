@@ -59,7 +59,7 @@ public class EventTemplateService {
 
     @Transactional
     public Optional<Long> update(Long id, EventTemplateRequest request, AuthenticationContext ctx){
-        logger.debug("Modify event  template for for id={} with {}, {}", id, request, ctx);
+        logger.debug("Modify event template for for id={} with {}, {}", id, request, ctx);
         // early quit: eventTemplate doesn't exist
         final Optional<EventTemplate> maybeEvent = findById(id,ctx);
         if (maybeEvent.isEmpty()){

@@ -7,6 +7,7 @@ import {Link, Redirect} from 'react-router-dom';
 import TitleSection from '../../components/Title/TitleSection';
 import moment from 'moment';
 import UserTreeData from './UserTreeData';
+import {range} from '../../utils/utils';
 
 const {TextArea} = Input;
 const { RangePicker } = DatePicker;
@@ -66,14 +67,6 @@ const NewEventTemplateForm = () => {
     );
   }
 
-  const range = (start, end) => {
-    const result = [];
-    for (let i = start; i < end; i++) {
-      result.push(i);
-    }
-    return result;
-  };
-
   const disabledDate = (current) => {
     // Can not select days before today and today
     return current && current < moment().endOf('day');
@@ -91,7 +84,6 @@ const NewEventTemplateForm = () => {
   };
 
   if(eventsResponse.data && usersResponse.data){
-    const eventsName = eventsResponse.data.map(event => event.name.toLowerCase().trim());
     return (
       <Form
         id="tk_Form"
@@ -112,15 +104,6 @@ const NewEventTemplateForm = () => {
                   {
                     required: true,
                   },
-                  () => ({
-                    validator(rule, value) {
-                      const name = value.toLowerCase().trim();
-                      if (!eventsName.includes(name)) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject('An event already use this name');
-                    },
-                  }),
                 ]}
               >
                 <Input

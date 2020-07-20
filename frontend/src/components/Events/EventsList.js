@@ -57,7 +57,7 @@ const EventsList = () => {
     <Menu>
       {isAdmin &&
             <Menu.Item key="edit">
-              <a href={'#'}><EditFilled/>Edit</a>
+              <a href={`/events/${item.id}/edit`}><EditFilled/>Edit</a>
             </Menu.Item>}
       <Menu.Item key="copy">
         <a href={'#'}><CopyOutlined />Copy</a>

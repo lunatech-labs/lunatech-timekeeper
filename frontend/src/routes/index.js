@@ -18,6 +18,7 @@ import EditProjectsPage from '../pages/Project/editProject';
 import TimeEntriesPage from '../pages/TimeSheet/timeEntriesPage';
 import EventsPage from '../pages/Event/eventsPage';
 import NewEventTemplatePage from '../pages/Event/NewEventTemplatePage';
+import EditEventTemplatePage from '../pages/Event/EditEventTemplatePage';
 
 export const AppRouter = () => {
   const [, initialized] = useKeycloak();
@@ -40,7 +41,8 @@ export const AppRouter = () => {
         <PrivateRoute path="/clients/:id/edit"  component={EditClientPage} roles={['admin']} />
         <PrivateRoute path="/clients"      component={ClientsPage} roles={['admin']} />
         <PrivateRoute path="/time_entries" component={TimeEntriesPage} />
-        <PrivateRoute path="/events/new"   component={NewEventTemplatePage} roles={['admin']}/>
+        <PrivateRoute path="/events/:id/edit"  component={EditEventTemplatePage} roles={['admin']} />
+        <PrivateRoute path="/events/new"       component={NewEventTemplatePage} roles={['admin']}/>
         <PrivateRoute path="/events"       component={EventsPage} />
 
         {/*the /clients route must be after any other clients routes, else it does not work*/}
