@@ -30,7 +30,6 @@ const EditEventTemplateForm = () => {
   });
 
   const eventsResponse = useTimeKeeperAPI('/api/events/');
-  const eventResponse = useTimeKeeperAPI('/api/events/' + eventIdSlug.params.id);
   const usersResponse = useTimeKeeperAPI('/api/users/');
 
   const timeKeeperAPIPut = useTimeKeeperAPIPut('/api/events/' + eventIdSlug.params.id, (form=>form), setEventTemplateUpdated, formDataToEventRequest);
@@ -93,101 +92,104 @@ const EditEventTemplateForm = () => {
     };
   };
 
-  if(eventResponse.data && usersResponse.data && eventsResponse.data){
-    const initialValues = {
-      name: eventResponse.data.name,
-      description: eventResponse.data.description,
-      eventDateTime: [moment.utc(eventResponse.data.startDateTime),moment.utc(eventResponse.data.endDateTime)],
-      attendees: []
-    };
-    const eventsName = eventsResponse.data.map(event => event.name.toLowerCase().trim());
-    return (
-      <Form
-        id="tk_Form"
-        layout="vertical"
-        initialValues={initialValues}
-        onFinish={timeKeeperAPIPut.run}
-        form={form}
-      >
-        <div className="tk_CardLg">
-          <Row gutter={16}>
-            <Col className="gutter-row" span={12}>
-              <TitleSection title="Information"/>
-              <Form.Item
-                label="Name :"
-                name="name"
-                hasFeedback
-                rules={[
-                  {
-                    required: true,
-                  },
-                  () => ({
-                    validator(rule, value) {
-                      const name = value.toLowerCase().trim();
-                      if (!eventsName.includes(name)) {
-                        return Promise.resolve();
-                      }
-                      if (name === eventResponse.data.name.toLowerCase()){
-                        return Promise.resolve();
-                      }
-                      return Promise.reject('An event already use this name');
+  if(usersResponse.data && eventsResponse.data){
+    const event = eventsResponse.data.find(event => event.id.toString() === eventIdSlug.params.id);
+    if(event){
+      const initialValues = {
+        name: event.name,
+        description: event.description,
+        eventDateTime: [moment.utc(event.startDateTime),moment.utc(event.endDateTime)],
+        attendees: []
+      };
+      const eventsName = eventsResponse.data.map(event => event.name.toLowerCase().trim());
+      return (
+        <Form
+          id="tk_Form"
+          layout="vertical"
+          initialValues={initialValues}
+          onFinish={timeKeeperAPIPut.run}
+          form={form}
+        >
+          <div className="tk_CardLg">
+            <Row gutter={16}>
+              <Col className="gutter-row" span={12}>
+                <TitleSection title="Information"/>
+                <Form.Item
+                  label="Name :"
+                  name="name"
+                  hasFeedback
+                  rules={[
+                    {
+                      required: true,
                     },
-                  }),
-                ]}
-              >
-                <Input
-                  placeholder="Event's name"
-                />
-              </Form.Item>
-              <Form.Item
-                label="Description :"
-                name="description"
-              >
-                <TextArea
-                  rows={4}
-                  placeholder="A short description about this event"
-                />
-              </Form.Item>
+                    () => ({
+                      validator(rule, value) {
+                        const name = value.toLowerCase().trim();
+                        if (!eventsName.includes(name)) {
+                          return Promise.resolve();
+                        }
+                        if (name === event.name.toLowerCase()){
+                          return Promise.resolve();
+                        }
+                        return Promise.reject('An event already use this name');
+                      },
+                    }),
+                  ]}
+                >
+                  <Input
+                    placeholder="Event's name"
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Description :"
+                  name="description"
+                >
+                  <TextArea
+                    rows={4}
+                    placeholder="A short description about this event"
+                  />
+                </Form.Item>
 
-              <Form.Item
-                label="Date and duration"
-                name="eventDateTime"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <RangePicker
-                  disabledDate={disabledDate}
-                  disabledTime={disabledRangeTime}
-                  showTime={{
-                    hideDisabledOptions: true
-                  }}
-                  format="YYYY-MM-DD h:mm a"
-                  className="tk_RangePicker"
-                />
-              </Form.Item>
-            </Col>
-            <Col className="gutter-row" span={12}>
-              <TitleSection title="Users"/>
-              <Form.Item
-                label="Select users :"
-              >
-                <UserTreeData users={sortListByName(usersResponse.data)}/>
-              </Form.Item>
-            </Col>
-          </Row>
-          <Space className="tk_JcFe" size="middle" align="center">
-            <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={'/events'}>Cancel</Link>
-            <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Submit</Button>
-          </Space>
-        </div>
-      </Form>
-    );
+                <Form.Item
+                  label="Date and duration"
+                  name="eventDateTime"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <RangePicker
+                    disabledDate={disabledDate}
+                    disabledTime={disabledRangeTime}
+                    showTime={{
+                      hideDisabledOptions: true
+                    }}
+                    format="YYYY-MM-DD h:mm a"
+                    className="tk_RangePicker"
+                  />
+                </Form.Item>
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <TitleSection title="Users"/>
+                <Form.Item
+                  label="Select users :"
+                >
+                  <UserTreeData users={sortListByName(usersResponse.data)}/>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Space className="tk_JcFe" size="middle" align="center">
+              <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={'/events'}>Cancel</Link>
+              <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Submit</Button>
+            </Space>
+          </div>
+        </Form>
+      );
+    }
   }
 
-  if (eventResponse.loading || usersResponse.loading || eventsResponse.loading) {
+  if (usersResponse.loading || eventsResponse.loading) {
     return (
       <React.Fragment>
         <Spin size="large">
@@ -212,7 +214,7 @@ const EditEventTemplateForm = () => {
     );
   }
 
-  if (eventResponse.error || usersResponse.error || eventsResponse.error) {
+  if (usersResponse.error || eventsResponse.error) {
     return (
       <React.Fragment>
         <Alert title='Server error'
