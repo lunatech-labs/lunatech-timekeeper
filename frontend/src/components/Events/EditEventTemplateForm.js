@@ -7,6 +7,7 @@ import '../../components/Button/BtnGeneral.less';
 import moment from 'moment';
 import TitleSection from '../Title/TitleSection';
 import UserTreeData from './UserTreeData';
+import {range} from '../../utils/utils';
 
 const {TextArea} = Input;
 const { RangePicker } = DatePicker;
@@ -67,14 +68,6 @@ const EditEventTemplateForm = () => {
       </React.Fragment>
     );
   }
-
-  const range = (start, end) => {
-    const result = [];
-    [...Array(end-start).keys()].map(i => {
-      result.push(i+start);
-    });
-    return result;
-  };
 
   const disabledDate = (current) => {
     // Can not select days before today and today
