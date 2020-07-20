@@ -124,7 +124,7 @@ export const useTimeKeeperAPIPost = (urlAPI, formData, booleanCallback, formatDa
   });
 };
 
-export const useTimeKeeperAPIPut = (urlAPI, formData, booleanCallback) => {
+export const useTimeKeeperAPIPut = (urlAPI, formData, booleanCallback, formatData) => {
   const [keycloak, initialized] = useKeycloak();
 
   useEffect(() => {
@@ -137,7 +137,7 @@ export const useTimeKeeperAPIPut = (urlAPI, formData, booleanCallback) => {
   return useRequest((formData) => ({
     url: process.env.REACT_APP_QUARKUS_BACKEND + urlAPI,
     method: 'put',
-    data: formData
+    data: formatData ? formatData(formData) : formData
   }), {
     manual: true,
     onSuccess: () => {
