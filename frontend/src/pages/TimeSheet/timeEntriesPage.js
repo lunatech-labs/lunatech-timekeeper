@@ -65,17 +65,25 @@ const TimeEntriesPage = () => {
   const [selectedEntryId, setSelectedEntryId] = useState();
 
   const weekData = useTimeKeeperAPI('/api/my/' + prefixWeekUrl);
+
   useEffect(
     () => {
+      if(weekData.loading){
+        console.log('Déjà en cours de chargement dans un autre Hook');
+        return ;
+      }
       weekData.run();
     },
     /* eslint-disable react-hooks/exhaustive-deps */
-    [prefixWeekUrl, weekData.run]); // Here we cannot add `weekData` as a dependency else it generates an infinite loop. Don't know why...
+    [prefixWeekUrl, weekData.run]);
   /* eslint-enable react-hooks/exhaustive-deps */
 
   const monthData = useTimeKeeperAPI(`/api/my/${prefixMonthUrl}`);
   useEffect(
     () => {
+      if(monthData.loading){
+        return;
+      }
       monthData.run();
     },
     /* eslint-disable react-hooks/exhaustive-deps */
