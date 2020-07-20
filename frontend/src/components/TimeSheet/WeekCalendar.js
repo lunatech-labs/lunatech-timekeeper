@@ -49,7 +49,7 @@ const WeekCalendar = (props) => {
       onPanelChange(id, start, end);
       if (weekRanges.weekNumber !== id) {
         setWeekRanges(computeWeekRanges(start));
-        history.push('?weekNumber=' + id);
+        history.push('?year=2020&weekNumber=' + id);
       }
     }
   }, [weekSelected, onPanelChange, weekRanges, history]);
@@ -77,7 +77,7 @@ const WeekCalendar = (props) => {
     const disableLeft = !weekRangeIds.includes(weekSelected - 1);
     const disableRight = !weekRangeIds.includes(weekSelected + 1);
     return (
-      <div>
+      <div data-cy='weekNavigator'>
         <Button data-cy='btnWeekPrevious' data-cy-week={weekSelected - 1} icon={<LeftOutlined/>} disabled={disableLeft} onClick={() => setWeekSelected(weekSelected - 1)}/>
         <Button data-cy='btnWeekNext' data-cy-week={weekSelected + 1} icon={<RightOutlined/>} disabled={disableRight} onClick={() => setWeekSelected(weekSelected + 1)}/>
         <p>{renderRangeWithYear(start, end)}</p>
@@ -86,7 +86,7 @@ const WeekCalendar = (props) => {
   };
 
   const WeekNavigatorSelect = () =>
-    <Select onChange={id => setWeekSelected(id)} defaultValue={0} value={weekSelected}>
+    <Select data-cy='selectWeekNavigator' onChange={id => setWeekSelected(id)} defaultValue={0} value={weekSelected}>
       {weekRanges.weekRange.map(({id, start, end}) => {
         return (
           <Select.Option className={`${start.isSame(moment(), 'week') ? 'tk_CurrentWeekSelect' : ''}`}
@@ -112,7 +112,7 @@ const WeekCalendar = (props) => {
     }
     return '';
   };
-  TopCardComponent.PropTypes = {
+  TopCardComponent.propTypes = {
     item: PropTypes.shape({
       date: PropTypes.object,
       day: PropTypes.shape({

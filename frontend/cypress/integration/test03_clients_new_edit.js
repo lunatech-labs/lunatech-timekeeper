@@ -69,8 +69,8 @@ describe("03 Client new and edit actions", () => {
         cy.visit("http://localhost:3000/clients");
         cy.url().should('include', 'http://localhost:3000/clients');
         cy.get('[class*=tk_Card_ClientTitle]').should('have.text', "Client for testing");
-        cy.get('[data-cy=editProject]').should('be.visible');
-        cy.get('[data-cy=editProject]').click();
+        cy.get('[data-cy=editClient]').should('be.visible');
+        cy.get('[data-cy=editClient]').click();
         cy.url().should('include', 'http://localhost:3000/clients/1/edit');
     });
 
