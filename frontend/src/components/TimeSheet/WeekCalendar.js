@@ -5,35 +5,19 @@ import CardWeekCalendar from '../Card/CardWeekCalendar';
 import {LeftOutlined, PlusOutlined, RightOutlined, CheckOutlined, InfoCircleOutlined} from '@ant-design/icons';
 import PropTypes from 'prop-types';
 import './WeekCalendar.less';
-import {isWeekEnd, renderRange, renderRangeWithYear, weekRangeOfDate} from '../../utils/momentUtils';
+import {isWeekEnd, renderRange, renderRangeWithYear, weekRangeOfDate, totalHoursPerDay} from '../../utils/momentUtils';
 import moment from 'moment';
 import _ from 'lodash';
 
 const numberOfWeek = 15; // It's the number of weeks where we can navigate
 
-const weekRangeOfDateToMap = (weekRanges) => {
-  const map = new Map();
-  weekRanges.forEach((item) => map.set(item.id, item));
-  return map;
-};
 const computeWeekRanges = (selectedDay) => {
   const weekRanges = weekRangeOfDate(selectedDay, numberOfWeek);
   return {
     weekNumber: selectedDay.isoWeek(),
     weekRange: weekRanges,
-    weekRangeMap: weekRangeOfDateToMap(weekRanges)
+    weekRangeMap:  _.keyBy(weekRanges,'id')
   };
-};
-
-// Returns the number of hours for a day
-const amountOfHoursPerDay = (entries) => {
-  const reducer = (accumulator, currentValue) => accumulator + currentValue;
-  return entries.map( entry => {
-    const start = moment(entry.startDateTime).utc();
-    const end = moment(entry.endDateTime).utc();
-    const duration = moment.duration(end.diff(start));
-    return duration.asHours();
-  }).reduce(reducer);
 };
 
 const WeekCalendar = (props) => {
@@ -45,7 +29,7 @@ const WeekCalendar = (props) => {
   const history = useHistory();
 
   useEffect(() => {
-    const weekRange = weekRanges.weekRangeMap.get(weekSelected);
+    const weekRange = _.get(weekRanges.weekRangeMap, weekSelected);
     if (weekRange && onPanelChange) {
       const {id, start, end} = weekRange;
       onPanelChange(id, start, end);
@@ -96,7 +80,7 @@ const WeekCalendar = (props) => {
 
   const WeekNavigator = () => {
     const weekRangeIds = weekRanges.weekRange.map(weekRange => weekRange.id);
-    const weekRange = weekRanges.weekRangeMap.get(weekSelected);
+    const weekRange = _.get(weekRanges.weekRangeMap, weekSelected);
     const {start, end} = weekRange;
     const disableLeft = !weekRangeIds.includes(weekSelected - 1);
     const disableRight = !weekRangeIds.includes(weekSelected + 1);
@@ -123,7 +107,7 @@ const WeekCalendar = (props) => {
 
   const TopCardComponent = ({item}) => {
     if(!isDisabled(item)){
-      if(item.day && amountOfHoursPerDay(item.day.data) >= 8) {
+      if(item.day && totalHoursPerDay(item.day.data) >= 8) {
         return <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>;
       }
       return <Button

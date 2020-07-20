@@ -1,4 +1,5 @@
 import moment from 'moment';
+import _ from "lodash";
 
 // Render a range of date with the year
 // same month, same year => 22 - 25 May 2020
@@ -42,7 +43,15 @@ export const weekRangeOfDate = (firstDay, numberOfWeek) => {
   });
 };
 
+export const totalHoursPerDay = (timeEntries) => _.sumBy(timeEntries, function(entry){
+  const start = moment(entry.startDateTime).utc();
+  const end = moment(entry.endDateTime).utc();
+  const duration = moment.duration(end.diff(start));
+  return duration.asHours();
+});
+
 export const isToday = (day) => {
+  if(!!day) {return  false;}
   return moment.utc().isSame(day, 'day');
 };
 
