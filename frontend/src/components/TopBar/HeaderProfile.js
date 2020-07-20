@@ -8,7 +8,7 @@ import TkUserAvatar from '../Users/TkUserAvatar';
 const HeaderProfile = ({ user }) => {
 
   const displayProfile = (profiles) => {
-    if(profiles.includes('Admin')){
+    if(profiles.includes('ADMIN')){
       return 'Admin';
     } else {
       return 'User';
