@@ -6,7 +6,8 @@ import moment from 'moment';
 import './MonthCalendar.less';
 import {isWeekEnd} from '../../utils/momentUtils';
 import en_GB from 'antd/lib/locale-provider/en_GB';
-import 'moment/locale/en-gb';  // important!
+import 'moment/locale/en-gb';
+import _ from 'lodash';  // important!
 
 const {Option} = Select;
 
@@ -87,7 +88,31 @@ MonthNavigator.propTypes = {
 
 
 const MonthCalendar = (props) => {
-  const isDisabled = (item, date) => (item && item.day && item.day.disabled) || (props.disabledWeekEnd && isWeekEnd(date));
+  const publicHolidays = props.publicHolidays;
+  const isPublicHoliday = (date) => {
+    if(date) {
+      var res = _.find(publicHolidays, function(d){
+        if(d.date){
+          var formatted = date.format('YYYY-MM-DD');
+          var isSameDate = formatted.localeCompare(d.date);
+          return isSameDate === 0;
+        }
+        return false;
+      });
+      return _.isObject(res);
+    }else{
+      return false;
+    }
+  };
+
+  const isDisabled = (item, date) => {
+    if(item && item.day) {
+      return (item.day.disabled || isPublicHoliday(item.day.date));
+    }else{
+      return props.disabledWeekEnd && ( isWeekEnd(date) || isPublicHoliday(date));
+    }
+  };
+
   const findData = (date) => props.days.find(day => day.date.isSame(moment(date).utc(), 'day'));
 
   return (
@@ -114,7 +139,7 @@ const MonthCalendar = (props) => {
           }}
           dateCellRender={moment => {
             const day = findData(moment);
-            const className = !(props.disabledWeekEnd && isWeekEnd(moment)) && (props.warningCardPredicate && props.warningCardPredicate(moment, day && day.data)) ?
+            const className = !(props.disabledWeekEnd && (isWeekEnd(moment) || isPublicHoliday(moment) ) ) && (props.warningCardPredicate && props.warningCardPredicate(moment, day && day.data)) ?
               'tk_CardMonthCalendar_Body_With_Warn' : '';
             return (
               <div className={className}>
@@ -148,7 +173,15 @@ MonthCalendar.propTypes = {
   ).isRequired,
   onClickButton: PropTypes.func, // (event, moment) => void
   warningCardPredicate: PropTypes.func, // (date, day) => bool
-  onPanelChange: PropTypes.func // (date) => void
+  onPanelChange: PropTypes.func, // (date) => void
+  publicHolidays:  PropTypes.arrayOf(
+    PropTypes.shape({
+      date: PropTypes.string,
+      localName: PropTypes.string,
+      name: PropTypes.string,
+      countryCode: PropTypes.string
+    })
+  )
 };
 
 export default MonthCalendar;

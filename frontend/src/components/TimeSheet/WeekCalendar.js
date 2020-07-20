@@ -210,12 +210,12 @@ WeekCalendar.propTypes = {
   onClickCard: PropTypes.func, // (event, moment) => void
   warningCardPredicate : PropTypes.func, // (date, day) => bool
   publicHolidays:  PropTypes.arrayOf(
-      PropTypes.shape({
-        date: PropTypes.string,
-        localName: PropTypes.string,
-        name: PropTypes.string,
-        countryCode: PropTypes.string
-      })
+    PropTypes.shape({
+      date: PropTypes.string,
+      localName: PropTypes.string,
+      name: PropTypes.string,
+      countryCode: PropTypes.string
+    })
   )
 };
 

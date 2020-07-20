@@ -69,7 +69,6 @@ const TimeEntriesPage = () => {
   useEffect(
     () => {
       if(weekData.loading){
-        console.log('Déjà en cours de chargement dans un autre Hook');
         return ;
       }
       weekData.run();
@@ -107,7 +106,7 @@ const TimeEntriesPage = () => {
   const days = computeData(timeSheets);
 
   const publicHolidays = calendarMode === 'week' ?
-      (weekData.data && !weekData.loading ? weekData.data.publicHolidays : []) : (monthData.data && !monthData.loading ? monthData.data.publicHolidays : []);
+    (weekData.data && !weekData.loading ? weekData.data.publicHolidays : []) : (monthData.data && !monthData.loading ? monthData.data.publicHolidays : []);
 
   const datas = {
     firstDayOfWeek: weekData.data ? moment.utc(weekData.data.firstDayOfWeek) : today(),
@@ -232,6 +231,7 @@ const TimeEntriesPage = () => {
             onPanelChange={(date) => {
               setPrefixMonthUrl(`${date.year()}/month?monthNumber=${getIsoMonth(date)}`);
             }}
+            publicHolidays={publicHolidays}
           />
       }
     </MainPage>
