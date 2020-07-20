@@ -1,13 +1,13 @@
 import React from 'react';
-import {Button, Calendar, Select, ConfigProvider, Tag} from 'antd';
+import {Button, Calendar, ConfigProvider, Select, Tag} from 'antd';
 import PropTypes from 'prop-types';
 import {CheckOutlined, InfoCircleOutlined, LeftOutlined, PlusOutlined, RightOutlined} from '@ant-design/icons';
 import moment from 'moment';
 import './MonthCalendar.less';
-import {isWeekEnd, totalHoursPerDay, isPublicHoliday} from '../../utils/momentUtils';
+import {isPublicHoliday, isWeekEnd, totalHoursPerDay} from '../../utils/momentUtils';
 import en_GB from 'antd/lib/locale-provider/en_GB';
 import 'moment/locale/en-gb';
-import _ from 'lodash';  // important!
+import _ from 'lodash'; // important!
 
 const {Option} = Select;
 
@@ -39,7 +39,6 @@ SelectYear.propTypes = {
   value: PropTypes.object.isRequired, // moment
   onChange: PropTypes.func.isRequired
 };
-
 
 const SelectMonth = ({value, onChange}) => {
   const numberOfMonth = 12; // It is like ant.d
@@ -93,11 +92,8 @@ const MonthCalendar = (props) => {
   const isDisabled = (dateAsMoment) => {
       if(_.isObjectLike(dateAsMoment)) {
           let associatedData =  findData(dateAsMoment);
-          if(associatedData){
-              if(associatedData.disabled){
-                  return associatedData.disabled;
-              }
-              return false;
+          if(associatedData && associatedData.disabled){
+              return true;
           }else{
               return (isWeekEnd(dateAsMoment) && props.disabledWeekEnd) || isPublicHoliday(dateAsMoment, publicHolidays);
           }
@@ -116,19 +112,30 @@ const MonthCalendar = (props) => {
     const className ='';
 
     if(!isDisabled(item)){
-      if(item.day && totalHoursPerDay(item.day.data) >= 8) {
-        return <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>;
+        let associatedData =  findData(item);
+
+        console.log('associatedData 1');
+        console.log(associatedData);
+
+      if(associatedData && associatedData.date && totalHoursPerDay(associatedData.data) >= 8) {
+        return (
+          <div>
+              <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>
+              {associatedData && associatedData.data && props.dateCellRender(associatedData.data, associatedData.date, associatedData.disabled)}
+          </div>
+        )
       }
-      return <Button
-          shape="circle"
-          icon={<PlusOutlined/>}
-          onClick={(e) => {
-            props.onClickButton && props.onClickButton(e, item.date);
-            e.stopPropagation();
-          }}>
-          {item.day && item.day.data && props.dateCellRender(item.day.data, item.day.date, item.day.disabled)}
-        </Button>
-          ;
+      return <div>
+          <Button
+              shape="circle"
+              icon={<PlusOutlined/>}
+              onClick={(e) => {
+                  props.onClickButton && props.onClickButton(e, item);
+                  e.stopPropagation();
+              }}>
+          </Button>
+          {associatedData && associatedData.data && props.dateCellRender(associatedData.data, associatedData.date, associatedData.disabled)}
+      </div>
     }
 
     if(isPublicHoliday(item)){
