@@ -84,7 +84,6 @@ const NewEventTemplateForm = () => {
   };
 
   if(eventsResponse.data && usersResponse.data){
-    const eventsName = eventsResponse.data.map(event => event.name.toLowerCase().trim());
     return (
       <Form
         id="tk_Form"

@@ -94,7 +94,6 @@ const EditEventTemplateForm = () => {
         eventDateTime: [moment.utc(event.startDateTime),moment.utc(event.endDateTime)],
         attendees: []
       };
-      const eventsName = eventsResponse.data.map(event => event.name.toLowerCase().trim());
       return (
         <Form
           id="tk_Form"
