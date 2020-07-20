@@ -106,6 +106,9 @@ const TimeEntriesPage = () => {
     (weekData.data && !weekData.loading ? weekData.data.sheets : []) : (monthData.data && !monthData.loading ? monthData.data.sheets : []);
   const days = computeData(timeSheets);
 
+  const publicHolidays = calendarMode === 'week' ?
+      (weekData.data && !weekData.loading ? weekData.data.publicHolidays : []) : (monthData.data && !monthData.loading ? monthData.data.publicHolidays : []);
+
   const datas = {
     firstDayOfWeek: weekData.data ? moment.utc(weekData.data.firstDayOfWeek) : today(),
     days: days
@@ -211,6 +214,7 @@ const TimeEntriesPage = () => {
               );
             }}
             days={datas.days}
+            publicHolidays={publicHolidays}
             warningCardPredicate={hasWarnNoEntryInPastDay}
           /> :
           <MonthCalendar

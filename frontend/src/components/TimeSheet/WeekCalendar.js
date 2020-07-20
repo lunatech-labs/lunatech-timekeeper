@@ -2,11 +2,12 @@ import React, {useEffect, useState} from 'react';
 import { useHistory } from 'react-router-dom';
 import {Button, Select, Tag} from 'antd';
 import CardWeekCalendar from '../Card/CardWeekCalendar';
-import {LeftOutlined, PlusOutlined, RightOutlined, CheckOutlined} from '@ant-design/icons';
+import {LeftOutlined, PlusOutlined, RightOutlined, CheckOutlined, InfoCircleOutlined} from '@ant-design/icons';
 import PropTypes from 'prop-types';
 import './WeekCalendar.less';
 import {isWeekEnd, renderRange, renderRangeWithYear, weekRangeOfDate} from '../../utils/momentUtils';
 import moment from 'moment';
+import _ from 'lodash';
 
 const numberOfWeek = 15; // It's the number of weeks where we can navigate
 
@@ -36,6 +37,7 @@ const amountOfHoursPerDay = (entries) => {
 };
 
 const WeekCalendar = (props) => {
+  const publicHolidays = props.publicHolidays;
   const [weekSelected, setWeekSelected] = useState(props.firstDay.isoWeek());
   const [weekRanges, setWeekRanges] = useState(computeWeekRanges(props.firstDay));
 
@@ -54,7 +56,6 @@ const WeekCalendar = (props) => {
     }
   }, [weekSelected, onPanelChange, weekRanges, history]);
 
-
   const daysToData = () => {
     const daysOfWeek = [...Array(7).keys()].map(i => props.firstDay.clone().add(i, 'day'));
     return daysOfWeek.map(dayOfWeek => {
@@ -68,7 +69,30 @@ const WeekCalendar = (props) => {
   const dateFormat = props.dateFormat || 'Do';
   const headerDateFormat = props.headerDateFormat || 'ddd';
   const dataByDays = daysToData();
-  const isDisabled = (item) => (item.day && item.day.disabled) || (props.disabledWeekEnd && isWeekEnd(item.date));
+
+  const isPublicHoliday = (date) => {
+    if(date) {
+      var res = _.find(publicHolidays, function(d){
+        if(d.date){
+          var formatted = date.format('YYYY-MM-DD');
+          var isSameDate = formatted.localeCompare(d.date);
+          return isSameDate === 0;
+        }
+        return false;
+      });
+      return _.isObject(res);
+    }else{
+      return false;
+    }
+  };
+
+  const isDisabled = (item) => {
+    if(item.day) {
+      return (item.day.disabled || isPublicHoliday(item.day.date));
+    }else{
+      return props.disabledWeekEnd && ( isWeekEnd(item.date) || isPublicHoliday(item.date));
+    }
+  };
 
   const WeekNavigator = () => {
     const weekRangeIds = weekRanges.weekRange.map(weekRange => weekRange.id);
@@ -110,13 +134,18 @@ const WeekCalendar = (props) => {
           e.stopPropagation();
         }}/>;
     }
+
+    if(isPublicHoliday(item.date)){
+      return <Tag className="tk_Tag_Public_Holiday"><InfoCircleOutlined /> Public holiday</Tag>;
+    }
+
     return '';
   };
   TopCardComponent.propTypes = {
     item: PropTypes.shape({
       date: PropTypes.object,
       day: PropTypes.shape({
-        data: PropTypes.object
+        data: PropTypes.arrayOf(PropTypes.object)
       })
     }
     )
@@ -179,7 +208,15 @@ WeekCalendar.propTypes = {
   onClickButton: PropTypes.func, // (event, moment) => void
   onPanelChange: PropTypes.func, // (id, start, end) => void
   onClickCard: PropTypes.func, // (event, moment) => void
-  warningCardPredicate : PropTypes.func // (date, day) => bool
+  warningCardPredicate : PropTypes.func, // (date, day) => bool
+  publicHolidays:  PropTypes.arrayOf(
+      PropTypes.shape({
+        date: PropTypes.string,
+        localName: PropTypes.string,
+        name: PropTypes.string,
+        countryCode: PropTypes.string
+      })
+  )
 };
 
 export default WeekCalendar;
