@@ -70,9 +70,9 @@ const EditEventTemplateForm = () => {
 
   const range = (start, end) => {
     const result = [];
-    for (let i = start; i < end; i++) {
-      result.push(i);
-    }
+    [...Array(end-start).keys()].map(i => {
+      result.push(i+start);
+    });
     return result;
   };
 
