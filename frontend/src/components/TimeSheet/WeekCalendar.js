@@ -5,7 +5,7 @@ import CardWeekCalendar from '../Card/CardWeekCalendar';
 import {LeftOutlined, PlusOutlined, RightOutlined, CheckOutlined, InfoCircleOutlined} from '@ant-design/icons';
 import PropTypes from 'prop-types';
 import './WeekCalendar.less';
-import {isWeekEnd, renderRange, renderRangeWithYear, weekRangeOfDate, totalHoursPerDay} from '../../utils/momentUtils';
+import {isWeekEnd, renderRange, renderRangeWithYear, weekRangeOfDate, totalHoursPerDay, isPublicHoliday} from '../../utils/momentUtils';
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -54,27 +54,11 @@ const WeekCalendar = (props) => {
   const headerDateFormat = props.headerDateFormat || 'ddd';
   const dataByDays = daysToData();
 
-  const isPublicHoliday = (date) => {
-    if(date) {
-      var res = _.find(publicHolidays, function(d){
-        if(d.date){
-          var formatted = date.format('YYYY-MM-DD');
-          var isSameDate = formatted.localeCompare(d.date);
-          return isSameDate === 0;
-        }
-        return false;
-      });
-      return _.isObject(res);
-    }else{
-      return false;
-    }
-  };
-
   const isDisabled = (item) => {
     if(item.day) {
-      return (item.day.disabled || isPublicHoliday(item.day.date));
+      return (item.day.disabled || isPublicHoliday(item.day.date, publicHolidays));
     }else{
-      return props.disabledWeekEnd && ( isWeekEnd(item.date) || isPublicHoliday(item.date));
+      return props.disabledWeekEnd && ( isWeekEnd(item.date) || isPublicHoliday(item.date, publicHolidays));
     }
   };
 
@@ -119,7 +103,7 @@ const WeekCalendar = (props) => {
         }}/>;
     }
 
-    if(isPublicHoliday(item.date)){
+    if(isPublicHoliday(item.date,publicHolidays)){
       return <Tag className="tk_Tag_Public_Holiday"><InfoCircleOutlined /> Public holiday</Tag>;
     }
 

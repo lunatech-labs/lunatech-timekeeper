@@ -50,6 +50,23 @@ export const totalHoursPerDay = (timeEntries) => _.sumBy(timeEntries, function(e
   return duration.asHours();
 });
 
+export const isPublicHoliday = (date, publicHolidays) => {
+  if(date) {
+    var res = _.find(publicHolidays, function(d){
+      if(d.date){
+        var formatted = date.format('YYYY-MM-DD');
+        var isSameDate = formatted.localeCompare(d.date);
+        return isSameDate === 0;
+      }
+      return false;
+    });
+    return _.isObject(res);
+  }else{
+    return false;
+  }
+};
+
+
 export const isToday = (day) => {
   if(!!day) {return  false;}
   return moment.utc().isSame(day, 'day');

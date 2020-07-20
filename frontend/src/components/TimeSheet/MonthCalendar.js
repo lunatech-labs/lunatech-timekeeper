@@ -1,10 +1,10 @@
 import React from 'react';
-import {Button, Calendar, Select, ConfigProvider} from 'antd';
+import {Button, Calendar, Select, ConfigProvider, Tag} from 'antd';
 import PropTypes from 'prop-types';
-import {LeftOutlined, PlusOutlined, RightOutlined} from '@ant-design/icons';
+import {CheckOutlined, InfoCircleOutlined, LeftOutlined, PlusOutlined, RightOutlined} from '@ant-design/icons';
 import moment from 'moment';
 import './MonthCalendar.less';
-import {isWeekEnd} from '../../utils/momentUtils';
+import {isWeekEnd, totalHoursPerDay, isPublicHoliday} from '../../utils/momentUtils';
 import en_GB from 'antd/lib/locale-provider/en_GB';
 import 'moment/locale/en-gb';
 import _ from 'lodash';  // important!
@@ -89,31 +89,61 @@ MonthNavigator.propTypes = {
 
 const MonthCalendar = (props) => {
   const publicHolidays = props.publicHolidays;
-  const isPublicHoliday = (date) => {
-    if(date) {
-      var res = _.find(publicHolidays, function(d){
-        if(d.date){
-          var formatted = date.format('YYYY-MM-DD');
-          var isSameDate = formatted.localeCompare(d.date);
-          return isSameDate === 0;
-        }
-        return false;
-      });
-      return _.isObject(res);
-    }else{
-      return false;
-    }
-  };
 
-  const isDisabled = (item, date) => {
-    if(item && item.day) {
-      return (item.day.disabled || isPublicHoliday(item.day.date));
-    }else{
-      return props.disabledWeekEnd && ( isWeekEnd(date) || isPublicHoliday(date));
-    }
+  const isDisabled = (dateAsMoment) => {
+      if(_.isObjectLike(dateAsMoment)) {
+          let associatedData =  findData(dateAsMoment);
+          if(associatedData){
+              if(associatedData.disabled){
+                  return associatedData.disabled;
+              }
+              return false;
+          }else{
+              return (isWeekEnd(dateAsMoment) && props.disabledWeekEnd) || isPublicHoliday(dateAsMoment, publicHolidays);
+          }
+      }else{
+          console.log('Invalid dateAsMoment, should be an Object of type Moment');
+          return false;
+      }
   };
 
   const findData = (date) => props.days.find(day => day.date.isSame(moment(date).utc(), 'day'));
+
+  const MonthCardComponent = ({item}) => {
+
+    // const className = !(props.disabledWeekEnd && (isWeekEnd(date) || isPublicHoliday(date) ) ) && (props.warningCardPredicate && props.warningCardPredicate(date, day && day.data)) ?
+    //     'tk_CardMonthCalendar_Body_With_Warn' : '';
+    const className ='';
+
+    if(!isDisabled(item)){
+      if(item.day && totalHoursPerDay(item.day.data) >= 8) {
+        return <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>;
+      }
+      return <Button
+          shape="circle"
+          icon={<PlusOutlined/>}
+          onClick={(e) => {
+            props.onClickButton && props.onClickButton(e, item.date);
+            e.stopPropagation();
+          }}>
+          {item.day && item.day.data && props.dateCellRender(item.day.data, item.day.date, item.day.disabled)}
+        </Button>
+          ;
+    }
+
+    if(isPublicHoliday(item)){
+      return <Tag className="tk_Tag_Public_Holiday"><InfoCircleOutlined /> Public holiday</Tag>;
+    }
+
+    return <div className='tk_CardMonthCalendar_Body'></div>;
+  };
+  MonthCardComponent.propTypes = {
+    item: PropTypes.shape({
+          date: PropTypes.func,
+          day: PropTypes.func
+        }
+    )
+  };
 
   return (
     <div id="tk_MonthCalendar">
@@ -133,26 +163,12 @@ const MonthCalendar = (props) => {
                 </div>
               </div>);
           }}
-          disabledDate={moment => {
-            const day = findData(moment);
-            return isDisabled(day, moment);
+          disabledDate={value => {
+            return isDisabled(value);
           }}
-          dateCellRender={moment => {
-            const day = findData(moment);
-            const className = !(props.disabledWeekEnd && (isWeekEnd(moment) || isPublicHoliday(moment) ) ) && (props.warningCardPredicate && props.warningCardPredicate(moment, day && day.data)) ?
-              'tk_CardMonthCalendar_Body_With_Warn' : '';
+          dateCellRender={value => {
             return (
-              <div className={className}>
-                <Button
-                  shape="circle"
-                  disabled={isDisabled(day, moment)}
-                  icon={<PlusOutlined/>}
-                  onClick={(e) => {
-                    props.onClickButton && props.onClickButton(e, moment);
-                    e.stopPropagation();
-                  }}/>
-                {day && day.data && props.dateCellRender(day.data, day.date, day.disabled)}
-              </div>
+                <MonthCardComponent item={value}></MonthCardComponent>
             );
           }}
         />
