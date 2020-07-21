@@ -19,7 +19,7 @@ import {Avatar, Table} from 'antd';
 import PropTypes from 'prop-types';
 import './UserTreeData.less';
 
-const UserTreeData = ({users}) => {
+const UserTreeData = ({users, usersSelected, setUsersSelected}) => {
   const renderAvatar = (pictureUrl) => {
     return <Avatar src={pictureUrl}/>;
   };
@@ -51,6 +51,9 @@ const UserTreeData = ({users}) => {
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setHasSelected(selectedRows.length);
+      setUsersSelected(selectedRows.map(user => {
+        return {'userId' :user.id};
+      }));
     },
   };
 
@@ -71,7 +74,9 @@ const UserTreeData = ({users}) => {
   );
 };
 UserTreeData.propTypes = {
-  users: PropTypes.array
+  users: PropTypes.array.isRequired,
+  usersSelected: PropTypes.array.isRequired,
+  setUsersSelected: PropTypes.func.isRequired
 };
 
 export default UserTreeData;
