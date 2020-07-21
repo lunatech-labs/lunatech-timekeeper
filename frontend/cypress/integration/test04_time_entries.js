@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Lunatech Labs
+ * Copyright 2020 Lunatech S.A.S
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,33 +29,33 @@ describe("04 Time entries", () => {
         cy.visit("http://localhost:3000/home");
         cy.get('.tk_Header_Profile').should('be.visible');
     });
-    //
-    // it("should return an empty list of timesheets", () => {
-    //     cy.get('#linkEntries').should('be.visible');
-    //     cy.get('#linkEntries').trigger('mouseover').click();
-    //     cy.url().should('include', 'http://localhost:3000/time_entries');
-    //     cy.get('#title').should('be.visible');
-    //     cy.get('#title').should("contain.text", "Time entries");
-    //
-    //     cy.get('.ant-collapse-header').click();
-    //     cy.contains('Time sheets list').should('be.visible');
-    //     cy.get('.ant-empty-img-simple').should('be.visible');
-    //     cy.get('.ant-collapse-header').click();
-    //     cy.get('.ant-empty-img-simple').should('not.be.visible');
-    // });
-    //
-    // it("should navigate to previous week", () => {
-    //     cy.visit("http://localhost:3000/time_entries");
-    //     cy.url().should('include', 'http://localhost:3000/time_entries');
-    //
-    //     cy.scrollTo('top');
-    //
-    //     cy.get('[data-cy=btnWeekPrevious]').should('be.visible');
-    //     cy.scrollTo('top');
-    //
-    //     cy.get('[data-cy=btnWeekPrevious]').click({force: true});
-    //     cy.url().should('include', '?weekNumber');
-    // });
+
+    it("should return an empty list of timesheets", () => {
+        cy.get('#linkEntries').should('be.visible');
+        cy.get('#linkEntries').trigger('mouseover').click();
+        cy.url().should('include', 'http://localhost:3000/time_entries');
+        cy.get('#title').should('be.visible');
+        cy.get('#title').should("contain.text", "Time entries");
+
+        cy.get('.ant-collapse-header').click();
+        cy.contains('Time sheets list').should('be.visible');
+        cy.get('.ant-empty-img-simple').should('be.visible');
+        cy.get('.ant-collapse-header').click();
+        cy.get('.ant-empty-img-simple').should('not.be.visible');
+    });
+
+    it("should navigate to previous week", () => {
+        cy.visit("http://localhost:3000/time_entries");
+        cy.url().should('include', 'http://localhost:3000/time_entries');
+
+        cy.scrollTo('top');
+
+        cy.get('[data-cy=btnWeekPrevious]').should('be.visible');
+        cy.scrollTo('top');
+
+        cy.get('[data-cy=btnWeekPrevious]').click({force: true});
+        cy.url().should('include', '?weekNumber');
+    });
 
     it("should display bank holiday", () => {
         cy.visit("http://localhost:3000/time_entries?weekNumber=29");
