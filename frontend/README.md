@@ -89,22 +89,43 @@ https://github.com/panz3r/react-keycloak#readme
 
 # Cypress 
 
-Cypress is a very powerful end-to-end test system. 
+[Cypress](https://www.cypress.io/) is an end-to-end test framework
+
 We use Cypress for non-regression testing of the user interface. 
 We also use [db-migrate](https://db-migrate.readthedocs.io/en/latest/) to clean-up and reset the local database to a well know configuration before each test.
 
-## How can I launch the tests?
+## How can I install Cypress?
 
 First, check that the latest node packages are installed 
 
+    cd frontend
     yarn install
+    
+# How can I execute Cypress tests suite?
 
-Second step : create a test user "Alice" on [keycloak](http://localhost:8082). Make sure Alice has role "user" and "admin". Set the password to 'alice'.
+## Pre-requisites
 
-Then, execute the cypress command :
+- Quarkus backend is started
+- the Frontend application is up and running
+- user "Alice" exists and is configured on Keycloak 
 
+All tests run with a set of demo users. As a prerequisite, the following user should be created on [your local Keycloak server](http://localhost:8082/) :
+
+Username : alice
+Password : alice
+Roles    : user, admin
+
+Attributes : create an `organization` key with a value set to `lunatech.fr`
+
+## How can I execute the tests?
+
+You can execute all tests from the `frontend` sub-folder 
+
+    cd frontend
     yarn cypress
     
+All tests are available under frontend/cypress/integration sub folder.
+      
 ## How can I write a test?
 
 Check [cypress/integration](./cypress/integration) sub folder

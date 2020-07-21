@@ -8,18 +8,15 @@
 
 # Intro
 
-Why another Toggl you might ask… 
+Welcome to the TimeKeeper project page.
+This open-source project, distributed under the Apache 2.0 license, was created by Lunatech. It allows to show you a complete example of a time tracking application.
+We built this software first for Lunatech employees. The tool allows us to track the time spent by project and by customer. We use this tool every month, in order to edit time reports and invoices.
 
-That’s a good question.
+We decided to make the code open-source. We also plan to create a service for companies interested in this project, but who may not be able to install the software.
 
-We know that there is a lot of open-source solution or SaaS solution (à la Toggl). We decided to bootstrap this project with only one objective : we want to learn.
-We want to learn to design a product, to do workshop and brainstorming. We also want to demonstrate what kind of work we’re able to offer to our client. Have a look at the various workshops we did in Chessy. 
-Our main purpose is to build a cool playground where we can learn, experiment and build a great tool. 
-Toggl is a good tool. We’ve been using it since 2016. However there is some requirements that are not and will never be cover by this tool.
+If you wish to contribute or propose corrections, please read our contribution rules. 
 
-Thus, Timekeeper
-
-Enjoy, have fun and contribute ! 
+You can contact Lunatech by email: timekeeper@lunatech.com
 
 # Documentation 
 
@@ -31,7 +28,7 @@ Timekeeper dashboard is [here](https://lunatech.atlassian.net/jira/software/proj
 
 # Technical stack 
 
-All ADRs are on Confluence [here](https://lunatech.atlassian.net/wiki/spaces/INTRANET/pages/1686077447/Technical+architecture#Architecture-decision-records)
+All ADR (Architecture Decision Records) are on Confluence [here](https://lunatech.atlassian.net/wiki/spaces/INTRANET/pages/1686077447/Technical+architecture#Architecture-decision-records)
 
 # Developer guide
 
@@ -39,15 +36,18 @@ Read [How to setup your development environment](https://lunatech.atlassian.net/
 
 ## Backend 
 
-- Quarkus 1.3
+- Quarkus
 - PostgresSQL 12.2
 - Hibernate-panache
 - JsonB
 - Docker
+- Keycloak
 
 ## FrontEnd
 
-- React
+- React 0.16
+- AntD library
+- Less
 
 # Getting started
 
@@ -63,7 +63,7 @@ If you want to run docker in background :
 
     docker-compose up -d    
     
-2 main services will be started :
+The following services should start :
 
 - PostgreSQL dedicated to TimeKeeper app on port 5435 
 - Keycloak (+ one postgres dedicated to Keycloak) on http://localhost:8081
@@ -73,7 +73,7 @@ If you want to run docker in background :
 
     mvn quarkus:dev
     
-We are using Flyway extension. Database's model will be created at the first run of the app.
+This project relies on Flyway for database schema migration. Database's model will be created at the first run of the app.
 
 ## 2.1 - Start TimeKeeper on Debug (with IntelliJ)
 
@@ -89,22 +89,10 @@ Then start the debug. You can now use the debug mode.
 
     ./mvnw compile test
 
-⚠️ Don't run your tests directly with IntelliJ ! 
 
-There are some issues, probably with maven, IntelliJ will not compile your current code before running.
-You must use the command first, then run IntelliJ for more readability if the tests failed.
+## 3 - Front End   
 
-## 3 - FrontEnd   
-
-Go to the `frontend` folder
-
-Install npm dependencies :
-
-    npm install
-    
-Start the React application in development mode
-
-    npm run start    
+Go to the `frontend` folder and check the [README](https://github.com/lunatech-labs/lunatech-timekeeper/blob/develop/frontend/README.md) for more details
 
 ## 4 - Keycloak setup
 
@@ -114,7 +102,7 @@ docker compose imports `keycloak/realm-export.json`. This JSON file will create 
 - backend-service for Quarkus
 - react-ff for the React Frontend
 
-Some users are also automatically imported (alice/alice).
+For Cypress end-to-end tests, a specific test user should be manually created. See [README](https://github.com/lunatech-labs/lunatech-timekeeper/blob/develop/frontend/README.md) for more details
 
 # Git branch and naming convention
 
@@ -162,24 +150,4 @@ The integration suite is a bit slow with Docker + Keycloak. When you want to exe
 You can annotate a test with @DisabledIfEnvironmentVariable if your test is slow
 
     @DisabledIfEnvironmentVariable(named = "ENV", matches = "fast-test-only")        
-
-# Cypress end to end tests
-
-[Cypress](https://www.cypress.io/) is an end-to-end test framework
-
-You can execute all tests from the `frontend` sub-folder 
-
-    cd frontend
-    yarn install
-    yarn start
-    
-Open a 2nd Term and do 
-
-    cd frontend
-    yarn cypress
-    
-All tests are available under frontend/cypress/integration sub folder.
-
-    
-        
 
