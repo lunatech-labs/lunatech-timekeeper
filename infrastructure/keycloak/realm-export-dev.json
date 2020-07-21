@@ -474,7 +474,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "secret-ae4c5ec2",
+      "secret": "****Password_not_stored_on_git***********",
       "defaultRoles": [
         "view-profile",
         "manage-account"
@@ -521,7 +521,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "secret-ae4c5ec2",
+      "secret": "****Password_not_stored_on_git***********",
       "redirectUris": [
         "/realms/quarkus/account/*"
       ],
@@ -574,7 +574,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "secret-ae4c5ec2",
+      "secret": "****Password_not_stored_on_git***********",
       "redirectUris": [],
       "webOrigins": [],
       "notBefore": 0,
@@ -613,7 +613,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "secret-ae4c5ec2",
+      "secret": "****Password_not_stored_on_git***********",
       "redirectUris": [],
       "webOrigins": [],
       "notBefore": 0,
@@ -655,7 +655,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "secret-ae4c5ec2",
+      "secret": "****Password_not_stored_on_git***********",
       "redirectUris": [
         "http://127.0.0.1:5000/*",
         "http://localhost:3000/*",
@@ -715,7 +715,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "secret-ae4c5ec2",
+      "secret": "****Password_not_stored_on_git***********",
       "redirectUris": [],
       "webOrigins": [],
       "notBefore": 0,
@@ -756,7 +756,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "secret-ae4c5ec2",
+      "secret": "****Password_not_stored_on_git***********",
       "redirectUris": [
         "/admin/Timekeeper/console/*"
       ],
@@ -821,7 +821,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "ae4c5ec2-7514-43e9-b026-dafc4eb52453",
+      "secret": "ae4c5ec2-CHANGE_ME",
       "redirectUris": [
         "http://localhost:8081/"
       ],
@@ -1526,8 +1526,8 @@
       "linkOnly": false,
       "firstBrokerLoginFlowAlias": "first broker login",
       "config": {
-        "clientSecret": "_TOW4vSvNX0dgkVaH0MXKXKi",
-        "clientId": "941763132071-skunln329de3efa6j53mpc69eon6vpni.apps.googleusercontent.com",
+        "clientSecret": "_TO**********",
+        "clientId": "9-**************ask_nicmarti*****.apps.googleusercontent.com",
         "defaultScope": "openid profile email",
         "useJwksUrl": "true"
       }

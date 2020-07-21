@@ -474,7 +474,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "secret-ae4c5ec2",
+      "secret": "************see_README*******",
       "defaultRoles": [
         "view-profile",
         "manage-account"
@@ -531,7 +531,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "secret-ae4c5ec2",
+      "secret": "************see_README*******",
       "redirectUris": [
         "/realms/quarkus/account/*"
       ],
@@ -584,7 +584,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "secret-ae4c5ec2",
+      "secret": "************see_README*******",
       "redirectUris": [],
       "webOrigins": [],
       "notBefore": 0,
@@ -633,7 +633,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "secret-ae4c5ec2",
+      "secret": "************see_README*******",
       "redirectUris": [],
       "webOrigins": [],
       "notBefore": 0,
@@ -685,7 +685,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "secret-ae4c5ec2",
+      "secret": "************see_README*******",
       "redirectUris": [
         "https://acceptance.timekeeper.lunatech.fr/*"
       ],
@@ -752,7 +752,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "secret-ae4c5ec2",
+      "secret": "************see_README*******",
       "redirectUris": [],
       "webOrigins": [],
       "notBefore": 0,
@@ -803,7 +803,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "secret-ae4c5ec2",
+      "secret": "************see_README*******",
       "redirectUris": [
         "/admin/Timekeeper/console/*"
       ],
@@ -868,7 +868,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "ae4c5ec2-7514-43e9-b026-dafc4eb52453",
+      "secret": "ae4c5ec2-CHANGE_ME",
       "redirectUris": [
         "https://acceptance.api.timekeeper.lunatech.fr/*"
       ],
@@ -1576,8 +1576,8 @@
       "linkOnly": false,
       "firstBrokerLoginFlowAlias": "first broker login",
       "config": {
-        "clientSecret": "JHUK8Fk-FxMGdgHCFqCMqeY7",
-        "clientId": "941763132071-tl1n3g2jm0du6n01cthan7ki6p09m4c5.apps.googleusercontent.com",
+        "clientSecret": "*************",
+        "clientId": "***************.apps.googleusercontent.com",
         "defaultScope": "openid profile email",
         "useJwksUrl": "true"
       }
