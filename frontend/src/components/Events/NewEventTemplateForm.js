@@ -23,7 +23,8 @@ import {Link, Redirect} from 'react-router-dom';
 import TitleSection from '../../components/Title/TitleSection';
 import moment from 'moment';
 import UserTreeData from './UserTreeData';
-import _ from 'lodash'; // important!
+import _ from 'lodash';
+import 'moment/locale/en-gb';
 
 const {TextArea} = Input;
 const { RangePicker } = DatePicker;
@@ -88,11 +89,40 @@ const NewEventTemplateForm = () => {
     return current && current < moment().endOf('day');
   };
 
-  const disabledRangeTime = () => {
+  function disabledTime(time, type) {
+    if (type === 'start') {
+      return {
+        disabledHours() {
+          let morning =  _.range(0, 7);
+          let evening =  _.range(20, 24);
+          return _.concat(morning,evening);
+        },
+        disabledMinutes: function () {
+          return _.filter(_.range(0, 60), function (x) {
+            return x % 15 !== 0;
+          });
+        },
+        disabledSeconds() {
+          return _.range(0, 60);
+        },
+      };
+    }
     return {
-      disabledMinutes: () =>  _.range(0, 59, 15)
+      disabledHours() {
+        let morning =  _.range(0, 7);
+        let evening =  _.range(20, 24);
+        return _.concat(morning,evening);
+      },
+      disabledMinutes: function () {
+        return _.filter(_.range(0, 60), function (x) {
+          return x % 15 !== 0;
+        });
+      },
+      disabledSeconds() {
+        return _.range(0, 60);
+      },
     };
-  };
+  }
 
   if(eventsResponse.data && usersResponse.data){
     return (
@@ -140,15 +170,16 @@ const NewEventTemplateForm = () => {
                   },
                 ]}
               >
-                <RangePicker
-                  disabledDate={disabledDate}
-                  disabledTime={disabledRangeTime}
-                  showTime={{
-                    hideDisabledOptions: true
-                  }}
-                  format="YYYY-MM-DD h:mm a"
-                  className="tk_RangePicker"
-                />
+
+                  <RangePicker
+                    disabledDate={disabledDate}
+                    disabledTime={disabledTime}
+                    showTime={{
+                      hideDisabledOptions: true
+                    }}
+                    format="YYYY-MM-DD h:mm"
+                    className="tk_RangePicker"
+                  />
               </Form.Item>
             </Col>
             <Col className="gutter-row" span={12}>
