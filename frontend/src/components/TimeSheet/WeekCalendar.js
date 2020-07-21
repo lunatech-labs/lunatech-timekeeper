@@ -2,40 +2,26 @@ import React, {useEffect, useState} from 'react';
 import { useHistory } from 'react-router-dom';
 import {Button, Select, Tag} from 'antd';
 import CardWeekCalendar from '../Card/CardWeekCalendar';
-import {LeftOutlined, PlusOutlined, RightOutlined, CheckOutlined} from '@ant-design/icons';
+import {LeftOutlined, PlusOutlined, RightOutlined, CheckOutlined, InfoCircleOutlined} from '@ant-design/icons';
 import PropTypes from 'prop-types';
 import './WeekCalendar.less';
-import {isWeekEnd, renderRange, renderRangeWithYear, weekRangeOfDate} from '../../utils/momentUtils';
+import {isWeekEnd, renderRange, renderRangeWithYear, weekRangeOfDate, totalHoursPerDay, isPublicHoliday} from '../../utils/momentUtils';
 import moment from 'moment';
+import _ from 'lodash';
 
 const numberOfWeek = 15; // It's the number of weeks where we can navigate
 
-const weekRangeOfDateToMap = (weekRanges) => {
-  const map = new Map();
-  weekRanges.forEach((item) => map.set(item.id, item));
-  return map;
-};
 const computeWeekRanges = (selectedDay) => {
   const weekRanges = weekRangeOfDate(selectedDay, numberOfWeek);
   return {
     weekNumber: selectedDay.isoWeek(),
     weekRange: weekRanges,
-    weekRangeMap: weekRangeOfDateToMap(weekRanges)
+    weekRangeMap:  _.keyBy(weekRanges,'id')
   };
 };
 
-// Returns the number of hours for a day
-const amountOfHoursPerDay = (entries) => {
-  const reducer = (accumulator, currentValue) => accumulator + currentValue;
-  return entries.map( entry => {
-    const start = moment(entry.startDateTime).utc();
-    const end = moment(entry.endDateTime).utc();
-    const duration = moment.duration(end.diff(start));
-    return duration.asHours();
-  }).reduce(reducer);
-};
-
 const WeekCalendar = (props) => {
+  const publicHolidays = props.publicHolidays;
   const [weekSelected, setWeekSelected] = useState(props.firstDay.isoWeek());
   const [weekRanges, setWeekRanges] = useState(computeWeekRanges(props.firstDay));
 
@@ -43,17 +29,16 @@ const WeekCalendar = (props) => {
   const history = useHistory();
 
   useEffect(() => {
-    const weekRange = weekRanges.weekRangeMap.get(weekSelected);
+    const weekRange = _.get(weekRanges.weekRangeMap, weekSelected);
     if (weekRange && onPanelChange) {
       const {id, start, end} = weekRange;
       onPanelChange(id, start, end);
       if (weekRanges.weekNumber !== id) {
         setWeekRanges(computeWeekRanges(start));
-        history.push('?weekNumber=' + id);
+        history.push('?year=2020&weekNumber=' + id);
       }
     }
   }, [weekSelected, onPanelChange, weekRanges, history]);
-
 
   const daysToData = () => {
     const daysOfWeek = [...Array(7).keys()].map(i => props.firstDay.clone().add(i, 'day'));
@@ -68,16 +53,23 @@ const WeekCalendar = (props) => {
   const dateFormat = props.dateFormat || 'Do';
   const headerDateFormat = props.headerDateFormat || 'ddd';
   const dataByDays = daysToData();
-  const isDisabled = (item) => (item.day && item.day.disabled) || (props.disabledWeekEnd && isWeekEnd(item.date));
+
+  const isDisabled = (item) => {
+    if(item.day) {
+      return (item.day.disabled || isPublicHoliday(item.day.date, publicHolidays));
+    }else{
+      return props.disabledWeekEnd && ( isWeekEnd(item.date) || isPublicHoliday(item.date, publicHolidays));
+    }
+  };
 
   const WeekNavigator = () => {
     const weekRangeIds = weekRanges.weekRange.map(weekRange => weekRange.id);
-    const weekRange = weekRanges.weekRangeMap.get(weekSelected);
+    const weekRange = _.get(weekRanges.weekRangeMap, weekSelected);
     const {start, end} = weekRange;
     const disableLeft = !weekRangeIds.includes(weekSelected - 1);
     const disableRight = !weekRangeIds.includes(weekSelected + 1);
     return (
-      <div>
+      <div data-cy='weekNavigator'>
         <Button data-cy='btnWeekPrevious' data-cy-week={weekSelected - 1} icon={<LeftOutlined/>} disabled={disableLeft} onClick={() => setWeekSelected(weekSelected - 1)}/>
         <Button data-cy='btnWeekNext' data-cy-week={weekSelected + 1} icon={<RightOutlined/>} disabled={disableRight} onClick={() => setWeekSelected(weekSelected + 1)}/>
         <p>{renderRangeWithYear(start, end)}</p>
@@ -86,7 +78,7 @@ const WeekCalendar = (props) => {
   };
 
   const WeekNavigatorSelect = () =>
-    <Select onChange={id => setWeekSelected(id)} defaultValue={0} value={weekSelected}>
+    <Select data-cy='selectWeekNavigator' onChange={id => setWeekSelected(id)} defaultValue={0} value={weekSelected}>
       {weekRanges.weekRange.map(({id, start, end}) => {
         return (
           <Select.Option className={`${start.isSame(moment(), 'week') ? 'tk_CurrentWeekSelect' : ''}`}
@@ -99,7 +91,7 @@ const WeekCalendar = (props) => {
 
   const TopCardComponent = ({item}) => {
     if(!isDisabled(item)){
-      if(item.day && amountOfHoursPerDay(item.day.data) >= 8) {
+      if(item.day && totalHoursPerDay(item.day.data) >= 8) {
         return <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>;
       }
       return <Button
@@ -110,13 +102,18 @@ const WeekCalendar = (props) => {
           e.stopPropagation();
         }}/>;
     }
+
+    if(isPublicHoliday(item.date,publicHolidays)){
+      return <Tag className="tk_Tag_Public_Holiday"><InfoCircleOutlined /> Public holiday</Tag>;
+    }
+
     return '';
   };
-  TopCardComponent.PropTypes = {
+  TopCardComponent.propTypes = {
     item: PropTypes.shape({
       date: PropTypes.object,
       day: PropTypes.shape({
-        data: PropTypes.object
+        data: PropTypes.arrayOf(PropTypes.object)
       })
     }
     )
@@ -179,7 +176,15 @@ WeekCalendar.propTypes = {
   onClickButton: PropTypes.func, // (event, moment) => void
   onPanelChange: PropTypes.func, // (id, start, end) => void
   onClickCard: PropTypes.func, // (event, moment) => void
-  warningCardPredicate : PropTypes.func // (date, day) => bool
+  warningCardPredicate : PropTypes.func, // (date, day) => bool
+  publicHolidays:  PropTypes.arrayOf(
+    PropTypes.shape({
+      date: PropTypes.string,
+      localName: PropTypes.string,
+      name: PropTypes.string,
+      countryCode: PropTypes.string
+    })
+  )
 };
 
 export default WeekCalendar;

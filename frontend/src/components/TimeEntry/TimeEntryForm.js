@@ -23,7 +23,8 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
         setEntry(entry);
       }
     }
-  },[selectedEntryId]);
+  },[entries,selectedEntryId]);
+
   const timeSheets = useTimeKeeperAPI('/api/my/' + currentDay.year() + '?weekNumber=' + currentDay.isoWeek(), (form => form));
   if (timeSheets.loading) {
     return (
