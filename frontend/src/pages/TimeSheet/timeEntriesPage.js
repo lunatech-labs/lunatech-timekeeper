@@ -12,7 +12,7 @@ import TimeEntryForm from '../../components/TimeEntry/TimeEntryForm';
 import UserTimeSheetList from '../../components/TimeSheet/UserTimeSheetList';
 import MonthCalendar from '../../components/TimeSheet/MonthCalendar';
 import CalendarSelectionMode from '../../components/TimeSheet/CalendarSelectionMode';
-import {getIsoMonth} from '../../utils/momentUtils';
+import {getIsoMonth, isNotWeekEnd} from '../../utils/momentUtils';
 
 //https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-an-array-of-objects/34890276#34890276
 const groupBy = function (xs, key) {
@@ -132,9 +132,11 @@ const TimeEntriesPage = () => {
   };
 
   const onClickCard = (e, m) => {
-    setTaskMoment(m);
-    setViewMode();
-    openModal();
+    if(isNotWeekEnd(m)){
+      setTaskMoment(m);
+      setViewMode();
+      openModal();
+    }
   };
 
   const onClickEntryCard = (e, m, selectedEntryId) => {
