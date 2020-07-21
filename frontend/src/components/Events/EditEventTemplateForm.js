@@ -31,7 +31,12 @@ const { RangePicker } = DatePicker;
 const EditEventTemplateForm = () => {
 
   const [eventTemplateUpdated, setEventTemplateUpdated] = useState(false);
-
+  const [usersSelected, setUsersSelected] = useState([]);
+  useEffect(() => {
+    if(usersId){
+      setUsersSelected(usersId);
+    }
+  },[usersSelected, usersId]);
   const formDataToEventRequest = (formData) => ({
     name: formData.name,
     description: formData.description,
@@ -99,11 +104,14 @@ const EditEventTemplateForm = () => {
   if(usersResponse.data && eventsResponse.data){
     const event = eventsResponse.data.find(event => event.id.toString() === eventIdSlug.params.id);
     if(event){
+      const usersId = event.attendees.map(user => user.userId);
+      console.log(event)
+      console.log(usersSelected)
       const initialValues = {
         name: event.name,
         description: event.description,
         eventDateTime: [moment.utc(event.startDateTime),moment.utc(event.endDateTime)],
-        attendees: []
+        attendees: usersSelected
       };
       return (
         <Form
@@ -166,7 +174,7 @@ const EditEventTemplateForm = () => {
                 <Form.Item
                   label="Select users :"
                 >
-                  <UserTreeData users={sortListByName(usersResponse.data)}/>
+                  <UserTreeData users={sortListByName(usersResponse.data)} usersSelected={usersSelected} setUsersSelected={setUsersSelected}/>
                 </Form.Item>
               </Col>
             </Row>
