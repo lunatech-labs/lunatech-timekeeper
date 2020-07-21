@@ -16,6 +16,7 @@
 
 package fr.lunatech.timekeeper.resources;
 
+import fr.lunatech.timekeeper.resources.utils.HttpTestRuntimeException;
 import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
 import fr.lunatech.timekeeper.services.requests.ClientRequest;
 import fr.lunatech.timekeeper.services.responses.ClientResponse;
@@ -40,6 +41,7 @@ import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.*;
 import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.Response.Status.*;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
@@ -63,65 +65,72 @@ class ClientResourceTest {
     @Test
     void shouldCreateClientWhenAdminProfile() {
         final String samToken = getAdminAccessToken();
-
         final var client = create(new ClientRequest("NewClient", "NewDescription"), samToken);
-        getValidation(ClientDef.uriWithid(client.getId()), samToken, OK).body(is(timeKeeperTestUtils.toJson(client)));
+        getValidation(ClientDef.uriPlusId(client.getId()), samToken)
+                .body(is(timeKeeperTestUtils.toJson(client)))
+                .statusCode(is(OK.getStatusCode()))
+        ;
     }
 
     @Test
     void shouldNotCreateClientWhenUserProfile() {
         final String jimmyToken = getUserAccessToken();
-
         final ClientRequest client = new ClientRequest("ClientShouldNotBeCreated", "Jimmy (user) is trying to create a Client...");
-        postValidation(ClientDef.uri, jimmyToken, client, FORBIDDEN);
+        postValidation(ClientDef.uri, jimmyToken, client).statusCode(is(FORBIDDEN.getStatusCode()));
     }
 
     @Test
     void shouldNotFindUnknownClient() {
         final String jimmyToken = getUserAccessToken();
         final Long NO_EXISTING_CLIENT_ID = 243L;
-        getValidation(ClientDef.uriWithid(NO_EXISTING_CLIENT_ID), jimmyToken, NOT_FOUND);
-
+        getValidation(ClientDef.uriPlusId(NO_EXISTING_CLIENT_ID), jimmyToken).statusCode(is(NOT_FOUND.getStatusCode()));
     }
 
     @Test
     void shouldFindAllClients() {
         final String samToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
-
         final var client1 = create(new ClientRequest("NewClient", "NewDescription"), samToken);
         final var client2 = create(new ClientRequest("NewClient2", "NewDescription2"), samToken);
-
-        getValidation(ClientDef.uri, jimmyToken, OK).body(is(timeKeeperTestUtils.listOfTasJson(client1, client2)));
+        getValidation(ClientDef.uri, jimmyToken)
+                .body(is(timeKeeperTestUtils.listOfTasJson(client1, client2)))
+                .statusCode(is(OK.getStatusCode()));
     }
 
     @Test
     void shouldFindAllClientsEmpty() {
         final String jimmyToken = getUserAccessToken();
-        getValidation(ClientDef.uri, jimmyToken, OK).body(is("[]"));
+        getValidation(ClientDef.uri, jimmyToken).body(is("[]")).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
     void shouldModifyClientWhenAdminProfile() {
         final String samToken = getAdminAccessToken();
-
         final var client = create(new ClientRequest("NewClient", "NewDescription"), samToken);
-        update(new ClientRequest("NewClient", "NewDescription2"), ClientDef.uriWithid(client.getId()), samToken);
-
+        update(new ClientRequest("NewClient", "NewDescription2"), ClientDef.uriPlusId(client.getId()), samToken);
         final var expectedClient = new ClientResponse(client.getId(), "NewClient", "NewDescription2", emptyList());
-
-        getValidation(ClientDef.uriWithid(client.getId()), samToken, OK).body(is(timeKeeperTestUtils.toJson(expectedClient)));
+        getValidation(ClientDef.uriPlusId(client.getId()), samToken).body(is(timeKeeperTestUtils.toJson(expectedClient))).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
     void shouldNotModifyClientWhenUserProfile() {
         final String samToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
-
         final var client = create(new ClientRequest("Client created by Sam", "a valid new client"), samToken);
         final ClientRequest client2 = new ClientRequest("Client cannot be modified by user", "Client cannot be modified by user");
+        putValidation(ClientDef.uriPlusId(client.getId()), jimmyToken, client2).statusCode(is(FORBIDDEN.getStatusCode()));
+    }
 
-        putValidation(ClientDef.uriWithid(client.getId()), jimmyToken, client2, FORBIDDEN);
-
+    @Test
+    void shouldNotCreateClientWithDuplicateName() {
+        final String samToken = getAdminAccessToken();
+        final var client = create(new ClientRequest("NewClient", "NewDescription"), samToken);
+        getValidation(ClientDef.uriPlusId(client.getId()), samToken).body(is(timeKeeperTestUtils.toJson(client))).statusCode(is(OK.getStatusCode()));
+        try {
+            create(new ClientRequest("NewClient", "NewDescription"), samToken);
+        } catch (HttpTestRuntimeException httpError) {
+            assertEquals("application/json", httpError.getMimeType());
+            assertEquals(400, httpError.getHttpStatus());
+        }
     }
 }

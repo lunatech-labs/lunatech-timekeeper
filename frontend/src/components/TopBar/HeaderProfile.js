@@ -15,15 +15,16 @@
  */
 
 import React from 'react';
-import {Avatar, Menu, Dropdown, Button} from 'antd';
+import {Menu, Dropdown, Button} from 'antd';
 import './HeaderProfile.less';
 import {useKeycloak} from '@react-keycloak/web';
 import PropTypes from 'prop-types';
+import TkUserAvatar from '../Users/TkUserAvatar';
 
 const HeaderProfile = ({ user }) => {
 
   const displayProfile = (profiles) => {
-    if(profiles.includes('Admin')){
+    if(profiles.includes('ADMIN')){
       return 'Admin';
     } else {
       return 'User';
@@ -36,7 +37,7 @@ const HeaderProfile = ({ user }) => {
     <Menu>
       <Menu.Item key="1">
         {!!keycloak.authenticated && (
-          <Button type="link" onClick={() => keycloak.logout()}>Logout</Button>
+          <Button id="logoutBtn" type="link" onClick={() => keycloak.logout()}>Logout</Button>
         )}
       </Menu.Item>
     </Menu>
@@ -45,8 +46,8 @@ const HeaderProfile = ({ user }) => {
   return (
     <div className="tk_Header_Profile">
       <Dropdown overlay={menu}>
-        <Button type="link" onClick={e => e.preventDefault()}>
-          <Avatar src={user.picture} />
+        <Button id="avatarBtn" type="link" onClick={e => e.preventDefault()}>
+          <TkUserAvatar picture={user.picture} name={user.name}/>
           <p>{user.name}<br/><span>{displayProfile(user.profiles)}</span></p>
         </Button>
       </Dropdown>

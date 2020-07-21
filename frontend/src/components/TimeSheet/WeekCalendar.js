@@ -15,52 +15,16 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {Button, Radio, Select} from 'antd';
+import { useHistory } from 'react-router-dom';
+import {Button, Select, Tag} from 'antd';
 import CardWeekCalendar from '../Card/CardWeekCalendar';
-import {LeftOutlined, PlusOutlined, RightOutlined} from '@ant-design/icons';
+import {LeftOutlined, PlusOutlined, RightOutlined, CheckOutlined} from '@ant-design/icons';
 import PropTypes from 'prop-types';
 import './WeekCalendar.less';
-
-const moment = require('moment');
-const renderWeekYear = (start, end) => {
-  const panelFormatWithYear = 'DD MMM YYYY';
-  const panelFormat = 'DD MMM';
-  if ((start.isSame(end, 'month') && start.isSame(end, 'year'))) {
-    // same month, same year => 22 - 25 May 2020
-    return `${start.format('DD')} - ${end.format(panelFormatWithYear)}`;
-  } else if ((!start.isSame(end, 'month') && start.isSame(end, 'year'))) {
-    // different months, same year => 22 Jan - 01 Feb 2020
-    return `${start.format(panelFormat)} - ${end.format(panelFormatWithYear)}`;
-  } else {
-    return `${start.format(panelFormatWithYear)} - ${end.format(panelFormatWithYear)}`;
-  }
-};
-
-const renderWeekRange = (start, end) => {
-  const panelFormat = 'DD MMM';
-  if (start.isSame(end, 'month')) {
-    return `${start.format('DD')} - ${end.format(panelFormat)}`;
-  } else {
-    return `${start.format(panelFormat)} - ${end.format(panelFormat)}`;
-  }
-};
-
+import {isWeekEnd, renderRange, renderRangeWithYear, weekRangeOfDate} from '../../utils/momentUtils';
+import moment from 'moment';
 
 const numberOfWeek = 15; // It's the number of weeks where we can navigate
-const weekRangeOfDate = (firstDay) => {
-  const startOfCurrentWeek = firstDay || moment().utc().startOf('week');
-  return [...Array(numberOfWeek).keys()].map(i => {
-    const toAdd = i - 7;
-    const start = startOfCurrentWeek.clone().add(toAdd, 'week');
-    const end = start.clone().endOf('week');
-    return {
-      id: start.isoWeek(),
-      start: start,
-      end: end
-    };
-  });
-};
-
 
 const weekRangeOfDateToMap = (weekRanges) => {
   const map = new Map();
@@ -68,19 +32,31 @@ const weekRangeOfDateToMap = (weekRanges) => {
   return map;
 };
 const computeWeekRanges = (selectedDay) => {
-  const weekRanges = weekRangeOfDate(selectedDay);
+  const weekRanges = weekRangeOfDate(selectedDay, numberOfWeek);
   return {
     weekNumber: selectedDay.isoWeek(),
     weekRange: weekRanges,
     weekRangeMap: weekRangeOfDateToMap(weekRanges)
   };
 };
+
+// Returns the number of hours for a day
+const amountOfHoursPerDay = (entries) => {
+  const reducer = (accumulator, currentValue) => accumulator + currentValue;
+  return entries.map( entry => {
+    const start = moment(entry.startDateTime).utc();
+    const end = moment(entry.endDateTime).utc();
+    const duration = moment.duration(end.diff(start));
+    return duration.asHours();
+  }).reduce(reducer);
+};
+
 const WeekCalendar = (props) => {
-  const [showButton, setShowButton] = useState(-1);
   const [weekSelected, setWeekSelected] = useState(props.firstDay.isoWeek());
   const [weekRanges, setWeekRanges] = useState(computeWeekRanges(props.firstDay));
 
   const {onPanelChange} = props;
+  const history = useHistory();
 
   useEffect(() => {
     const weekRange = weekRanges.weekRangeMap.get(weekSelected);
@@ -89,9 +65,10 @@ const WeekCalendar = (props) => {
       onPanelChange(id, start, end);
       if (weekRanges.weekNumber !== id) {
         setWeekRanges(computeWeekRanges(start));
+        history.push('?weekNumber=' + id);
       }
     }
-  }, [weekSelected, onPanelChange, weekRanges]);
+  }, [weekSelected, onPanelChange, weekRanges, history]);
 
 
   const daysToData = () => {
@@ -107,7 +84,6 @@ const WeekCalendar = (props) => {
   const dateFormat = props.dateFormat || 'Do';
   const headerDateFormat = props.headerDateFormat || 'ddd';
   const dataByDays = daysToData();
-  const isWeekEnd = (date) => date.isoWeekday() === 6 || date.isoWeekday() === 7;
   const isDisabled = (item) => (item.day && item.day.disabled) || (props.disabledWeekEnd && isWeekEnd(item.date));
 
   const WeekNavigator = () => {
@@ -118,11 +94,9 @@ const WeekCalendar = (props) => {
     const disableRight = !weekRangeIds.includes(weekSelected + 1);
     return (
       <div>
-        <Button icon={<LeftOutlined/>} disabled={disableLeft} shape='circle'
-          onClick={() => setWeekSelected(weekSelected - 1)}/>
-        <Button icon={<RightOutlined/>} disabled={disableRight} shape='circle'
-          onClick={() => setWeekSelected(weekSelected + 1)}/>
-        <p>{renderWeekYear(start, end)}</p>
+        <Button data-cy='btnWeekPrevious' data-cy-week={weekSelected - 1} icon={<LeftOutlined/>} disabled={disableLeft} onClick={() => setWeekSelected(weekSelected - 1)}/>
+        <Button data-cy='btnWeekNext' data-cy-week={weekSelected + 1} icon={<RightOutlined/>} disabled={disableRight} onClick={() => setWeekSelected(weekSelected + 1)}/>
+        <p>{renderRangeWithYear(start, end)}</p>
       </div>
     );
   };
@@ -133,17 +107,36 @@ const WeekCalendar = (props) => {
         return (
           <Select.Option className={`${start.isSame(moment(), 'week') ? 'tk_CurrentWeekSelect' : ''}`}
             key={`date-range-${id}`} value={id} disabled={id === weekSelected}>
-            {renderWeekRange(start, end)}
+            {renderRange(start, end)}
           </Select.Option>
         );
       })}
     </Select>;
 
-  const SelectionMode = () =>
-    <Radio.Group defaultValue="Week">
-      <Radio.Button value="Week">Week</Radio.Button>
-      <Radio.Button value="Month">Month</Radio.Button>
-    </Radio.Group>;
+  const TopCardComponent = ({item}) => {
+    if(!isDisabled(item)){
+      if(item.day && amountOfHoursPerDay(item.day.data) >= 8) {
+        return <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>;
+      }
+      return <Button
+        shape="circle"
+        icon={<PlusOutlined/>}
+        onClick={(e) => {
+          props.onClickButton && props.onClickButton(e, item.date);
+          e.stopPropagation();
+        }}/>;
+    }
+    return '';
+  };
+  TopCardComponent.PropTypes = {
+    item: PropTypes.shape({
+      date: PropTypes.object,
+      day: PropTypes.shape({
+        data: PropTypes.object
+      })
+    }
+    )
+  };
 
   return (
     <div id="tk_WeekCalendar">
@@ -151,10 +144,8 @@ const WeekCalendar = (props) => {
         <WeekNavigator/>
         <div>
           <WeekNavigatorSelect/>
-          <SelectionMode/>
         </div>
       </div>
-
       <div id="tk_WeekCalendar_Body">
         {dataByDays.map((item, index) => {
           const renderDay = () => {
@@ -163,29 +154,16 @@ const WeekCalendar = (props) => {
               return item && item.day && props.dateCellRender(data, date, disabled);
             }
           };
-
           const isToday = (day) => {
             return moment().isSame(day, 'day');
           };
-
           return (
             <div className="tk_WeekCalendar_Day" key={`day-card-${index}`}>
               <p>{item.date.format(headerDateFormat)}</p>
-              <CardWeekCalendar
-                onClick={(e) => props.onClickCard && props.onClickCard(e, item.date)}
-                onMouseOver={() => setShowButton(index)}
-                onMouseLeave={() => setShowButton(-1)}>
+              <CardWeekCalendar onClick={(e) => props.onClickCard && props.onClickCard(e, item.date)}>
                 <div className="tk_CardWeekCalendar_Head">
                   <p className={isToday(moment(item.date)) ? 'tk_CurrentDay' : ''}>{item.date.format(dateFormat)}</p>
-                  {((props.hiddenButtons && showButton === index) || (!props.hiddenButtons)) &&
-                  <Button
-                    shape="circle"
-                    disabled={isDisabled(item)}
-                    icon={<PlusOutlined/>}
-                    onClick={(e) => {
-                      props.onClickAddTask && props.onClickAddTask(e, item.date);
-                      e.stopPropagation();
-                    }}/> }
+                  <TopCardComponent item={item} />
                 </div>
                 <div className={props.warningCardPredicate && props.warningCardPredicate(item.date, item.day) ?
                   'tk_CardWeekCalendar_Body tk_CardWeekCalendar_Body_With_Warn' : 'tk_CardWeekCalendar_Body'} disabled={isDisabled(item)}>
@@ -214,7 +192,7 @@ WeekCalendar.propTypes = {
     })
   ).isRequired,
   hiddenButtons: PropTypes.bool,
-  onClickAddTask: PropTypes.func, // (event, moment) => void
+  onClickButton: PropTypes.func, // (event, moment) => void
   onPanelChange: PropTypes.func, // (id, start, end) => void
   onClickCard: PropTypes.func, // (event, moment) => void
   warningCardPredicate : PropTypes.func // (date, day) => bool

@@ -32,7 +32,6 @@ const ShowTimeSheet = ({project, member}) => {
   const [selectedTimeSheet, setSelectedTimeSheet] = useState();
 
   const TimeSheet = ({timeSheet}) => {
-
     return (
       <div className="tk_ModalGen">
         <div className="tk_ModalTop">
@@ -43,7 +42,7 @@ const ShowTimeSheet = ({project, member}) => {
           <div className="tk_ModalTopBody">
             <div className="tk_ModalTopProject">
               <ProjectClientHeader project={project}/>
-              <p><FieldTimeOutlined/>Days left: (TO DO)</p>
+              <p><FieldTimeOutlined/>Days left: {timeSheet.leftOver ? timeSheet.leftOver : 'Unlimited'}</p>
             </div>
             <ProjectMemberTag member={member}/>
             <Row gutter={32}>
@@ -79,6 +78,7 @@ const ShowTimeSheet = ({project, member}) => {
       maxDuration: PropTypes.number,
       durationUnit: PropTypes.string,
       timeUnit: PropTypes.string,
+      leftOver: PropTypes.number
     })
   };
 

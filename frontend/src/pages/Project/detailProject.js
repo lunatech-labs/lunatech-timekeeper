@@ -18,12 +18,14 @@ import React, {useCallback} from 'react';
 import MainPage from '../MainPage/MainPage';
 import ShowProject from '../../components/Projects/ShowProject';
 import {useTimeKeeperAPI} from '../../utils/services';
-import {Alert, Button} from 'antd';
+import {Alert} from 'antd';
 import {Link, useRouteMatch} from 'react-router-dom';
-import EditOutlined from '@ant-design/icons/lib/icons/EditOutlined';
 import '../../components/Button/BtnGeneral.less';
+import {canEditProject} from '../../utils/rights';
+import {useKeycloak} from '@react-keycloak/web';
 
 const DetailProjectPage = () => {
+
 
   const projectIdSlug = useRouteMatch({
     path: '/projects/:id',
@@ -31,41 +33,44 @@ const DetailProjectPage = () => {
     sensitive: true
   });
 
+  const [keycloak] = useKeycloak();
+
   const projectId = projectIdSlug.params.id;
 
-  const {data, error, loading, run} = useTimeKeeperAPI('/api/projects/' + projectId);
+  const useTimeKeeperAPICurrentUser = useTimeKeeperAPI('/api/users/me');
+  const useTimeKeeperAPIProject = useTimeKeeperAPI('/api/projects/' + projectId);
+  const {run} = useTimeKeeperAPICurrentUser;
 
   const onSuccessCallback = useCallback(() => {
     run();
   }, [run]);
 
-  if (error) {
-    let errorReason = 'Message: ' + error;
+  if (useTimeKeeperAPIProject.error || useTimeKeeperAPICurrentUser.error) {
+    let errorReason = 'Message: ' + useTimeKeeperAPIProject.error;
     return (
       <React.Fragment>
         <Alert title='Server error'
-          message='Failed to load projects from Quarkus backend server'
+          message='Failed to load projects or current user from Quarkus backend server'
           type='error'
           description={errorReason}
         />
       </React.Fragment>
     );
   }
-  if (loading) {
+  if (useTimeKeeperAPIProject.loading || useTimeKeeperAPICurrentUser.loading) {
     return (
       <div>loading...</div>
     );
   }
 
+  const actions = canEditProject(useTimeKeeperAPIProject.data, useTimeKeeperAPICurrentUser.data, keycloak)
+    && <Link id="btnEditProject" className="tk_Btn tk_BtnPrimary" to={`/projects/${useTimeKeeperAPIProject.data.id}/edit`}>Edit project</Link>;
   return (
-    <MainPage title="Project details" entityName={data.name}
-      actions={<Link key='editLink' to={`/projects/${data.id}/edit`}>
-        <Button id="tk_Btn"
-          className="tk_BtnPrimary"
-          icon={<EditOutlined/>}>Edit project
-        </Button>
-      </Link>}>
-      <ShowProject project={data} onSuccessJoinProject={onSuccessCallback} />
+    <MainPage title="Project details" entityName={useTimeKeeperAPIProject.data.name}
+      actions={
+        actions
+      }>
+      <ShowProject project={useTimeKeeperAPIProject.data} onSuccessJoinProject={onSuccessCallback} />
     </MainPage>
   );
 };

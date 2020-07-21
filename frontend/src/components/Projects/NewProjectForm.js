@@ -17,13 +17,14 @@
 import React, {useEffect, useState} from 'react';
 import {Link, Redirect} from 'react-router-dom';
 import {useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
-import {Alert, Avatar, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin, Row, Col, Tooltip} from 'antd';
+import {Alert, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin, Row, Col} from 'antd';
 import {DeleteFilled} from '@ant-design/icons';
 import './NewProjectForm.less';
 import PropTypes from 'prop-types';
 import TitleSection from '../Title/TitleSection';
 import '../../components/Button/BtnGeneral.less';
 import NoDataMessage from '../NoDataMessage/NoDataMessage';
+import TkUserAvatar from '../Users/TkUserAvatar';
 
 
 const {TextArea} = Input;
@@ -84,6 +85,11 @@ const NewProjectForm = () => {
 
   if (clientsResponse.data && projectsResponse.data && usersResponse.data) {
     const projectsName = projectsResponse.data.map(project => project.name.toLowerCase().trim());
+    const clientsSorted = () => clientsResponse.data.sort((a,b)=>{
+      if(a.name.toLowerCase() < b.name.toLowerCase()){return -1;}
+      if(a.name.toLowerCase() > b.name.toLowerCase()){return 1;}
+      return 0;
+    });
     const UserName = ({value = {}}) => {
       return (<p>{usersResponse.data.find(u => u.id === value).name}</p>);
     };
@@ -91,7 +97,8 @@ const NewProjectForm = () => {
       value: PropTypes.string
     };
     const UserPicture = ({value}) => {
-      return (<Avatar src={usersResponse.data.find(u => u.id === value).picture}/>);
+      const currentUser = usersResponse.data.find(u => u.id === value);
+      return (<TkUserAvatar picture={currentUser.picture} name={currentUser.name}/>);
     };
     UserPicture.propTypes = {
       value: PropTypes.string
@@ -149,7 +156,7 @@ const NewProjectForm = () => {
                   placeholder="Select a client"
                 >
                   <Option key={'option-client-empty'} value={null}><i>None</i></Option>
-                  {clientsResponse.data.map(client => <Option key={`option-client-${client.id}`} value={client.id}>{client.name}</Option>)}
+                  {clientsSorted().map(client => <Option key={`option-client-${client.id}`} value={client.id}>{client.name}</Option>)}
                 </Select>
               </Form.Item>
               <Row gutter={16}>
@@ -238,9 +245,7 @@ const NewProjectForm = () => {
                                     name={manager}
                                     valuePropName="checked"
                                   >
-                                    <Tooltip title="Team leader">
-                                      <Checkbox className="tk_Crown_Checkbox"/>
-                                    </Tooltip>
+                                    <Checkbox className="tk_Crown_Checkbox"/>
                                   </Form.Item>
                                   <DeleteFilled
                                     className="dynamic-delete-button"
@@ -262,8 +267,8 @@ const NewProjectForm = () => {
             </Col>
           </Row>
           <Space className="tk_JcFe" size="middle" align="center">
-            <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={'/projects'}>Cancel</Link>
-            <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Submit</Button>
+            <Link id="btnCancelNewProject" className="tk_Btn tk_BtnSecondary" key="cancelLink" to={'/projects'}>Cancel</Link>
+            <Button id="btnSubmitNewProject" className="tk_Btn tk_BtnPrimary" htmlType="submit">Submit</Button>
           </Space>
         </div>
       </Form>

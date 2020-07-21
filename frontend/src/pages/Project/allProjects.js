@@ -24,7 +24,7 @@ import {useKeycloak} from '@react-keycloak/web';
 const ProjectsPage = () => {
   const [keycloak] = useKeycloak();
   const isAdmin = keycloak.hasRealmRole('admin');
-  const actions = isAdmin && <Link id="tk_Btn" className="tk_BtnPrimary" key='addLink' to={'/projects/new'}>Add a project</Link>;
+  const actions = isAdmin && <Link id="btnAddProject" className="tk_Btn tk_BtnPrimary" key='addLink' to={'/projects/new'}>Add a project</Link>;
   return (
     <MainPage
       title={'List of projects'}

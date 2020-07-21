@@ -17,12 +17,14 @@
 package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.Client;
+import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.services.requests.ClientRequest;
 import fr.lunatech.timekeeper.services.responses.ClientResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
@@ -49,7 +51,11 @@ public class ClientService {
     public Long create(ClientRequest request, AuthenticationContext ctx) {
         logger.debug("Create a new client with {}, {}", request, ctx);
         final Client client = request.unbind(ctx);
-        Client.persist(client);
+        try {
+            client.persistAndFlush();
+        } catch (PersistenceException pe) {
+            throw new CreateResourceException("Client was not created due to constraint violation");
+        }
         return client.id;
     }
 

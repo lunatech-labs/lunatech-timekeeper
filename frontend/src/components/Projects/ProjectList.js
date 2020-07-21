@@ -13,34 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {Alert, Avatar, Button, Card, Collapse, Divider, Dropdown, List, Menu, Spin, Space} from 'antd';
 import logo from '../../img/logo_timekeeper_homepage.png';
-import {useTimeKeeperAPI} from '../../utils/services';
+import {sortListByName, useTimeKeeperAPI} from '../../utils/services';
 import EditFilled from '@ant-design/icons/lib/icons/EditFilled';
 import UserOutlined from '@ant-design/icons/lib/icons/UserOutlined';
 import LockFilled from '@ant-design/icons/lib/icons/LockFilled';
 import UnlockOutlined from '@ant-design/icons/lib/icons/UnlockOutlined';
-import EllipsisOutlined from '@ant-design/icons/lib/icons/EllipsisOutlined';
 import Meta from 'antd/lib/card/Meta';
 
 import './ProjectList.less';
 import ProjectMemberTag from './ProjectMemberTag';
-import EyeFilled from '@ant-design/icons/lib/icons/EyeFilled';
 import TitleSection from '../Title/TitleSection';
 import DownOutlined from '@ant-design/icons/lib/icons/DownOutlined';
 import PropTypes from 'prop-types';
 import {useKeycloak} from '@react-keycloak/web';
+import {UserContext} from '../../context/UserContext';
+import {canEditProject, isAdmin} from '../../utils/rights';
+import Pluralize from '../Pluralize/Pluralize';
+import TagProjectClient from '../Tag/TagProjectClient';
+import Tooltip from 'antd/lib/tooltip';
 
 const {Panel} = Collapse;
 
 
 const ProjectList = () => {
   const [keycloak] = useKeycloak();
-  const isAdmin = keycloak.hasRealmRole('admin');
-
+  const currentUserIsAdmin = isAdmin(keycloak);
+  const {currentUser} = useContext(UserContext);
   const [filterText, setFilterText] = useState('All');
+
+  const canEditOneProject =  (projectData) =>{
+    return canEditProject(projectData, currentUser, keycloak);
+  };
 
   const [groupBy, setGroupBy] = useState('All');
 
@@ -160,19 +166,9 @@ const ProjectList = () => {
     );
   }
 
-  const memberComparator = (m1, m2) => m2.manager - m1.manager;
-
-  const Pagoland = (item, isAdmin) => (
-    <Menu>
-      <Menu.Item key="view">
-        <a href={`/projects/${item.id}`}><EyeFilled/>View</a>
-      </Menu.Item>
-      {isAdmin &&
-      <Menu.Item key="edit">
-        <a href={`/projects/${item.id}/edit`}><EditFilled/>Edit</a>
-      </Menu.Item>}
-    </Menu>
-  );
+  const sortMember = (listOfMembers) => {
+    return sortListByName(listOfMembers).sort((a,b) => b.manager - a.manager);
+  };
 
   const DataList = ({data}) => <List
     id="tk_List"
@@ -189,27 +185,28 @@ const ProjectList = () => {
               <div className="tk_Card_ProjectHeader">
                 <div className="tk_Card_ProjectTitle">
                   <p>{item.name}</p>
-                  <p>{item.client ? item.client.name : 'No client'}</p>
                 </div>
-                <p className="tk_Card_ProjectType">{item.publicAccess ? <UnlockOutlined/> :
-                  <LockFilled/>}<span>{item.publicAccess ? ' Public' : ' Private project'}</span></p>
+                <span className="tk_Card_subtitle">{item.client ? <TagProjectClient client={item.client}/> : <TagProjectClient />}
+                  {item.publicAccess ? <UnlockOutlined/> :
+                    <LockFilled/>}<span>{item.publicAccess ? ' Public' : ' Private project'}</span></span>
               </div>
             </Space>
           }
           extra={[
-            <Dropdown overlay={Pagoland(item, isAdmin)}>
-              <a className="ant-dropdown-link" onClick={e => e.preventDefault()}><EllipsisOutlined /></a>
-            </Dropdown>,
+            <span>{canEditOneProject(item)? <Tooltip title="Edit this project" key="edit">
+              <Button data-cy="editProject" type="link" size="small" ghost shape="circle" icon={<EditFilled/>} href={`/projects/${item.id}/edit`}/>
+            </Tooltip> : ''}</span>
+
           ]}
           actions={[item.users.length === 0 ? <Panel id="tk_ProjectNoCollapse" header={<Space
-            size="small"><UserOutlined/>{item.users.length}{item.users.length <= 1 ? 'member' : 'members'}</Space>}/> :
+            size="small"><UserOutlined/><Pluralize label="member" size={item.users.length}/></Space>}/> :
             <Collapse bordered={false} expandIconPosition={'right'} key="projects">
               <Panel header={<Space
                 size="small"><UserOutlined/>{item.users.length}{item.users.length <= 1 ? 'member' : 'members'}</Space>}
               key="members">
                 <List
                   id={'tk_ProjectMembers'}
-                  dataSource={item.users.sort(((a, b) => memberComparator(a, b)))}
+                  dataSource={sortMember(item.users)}
                   renderItem={member => (
                     <List.Item>
                       <ProjectMemberTag member={member}/>
@@ -220,9 +217,11 @@ const ProjectList = () => {
             </Collapse>
           ]}
         >
-          <Meta
-            description={item.description}
-          />
+          <a href={`/projects/${item.id}`}>
+            <Meta
+              description={item.description}
+            />
+          </a>
         </Card>
       </List.Item>
     )}
@@ -236,9 +235,9 @@ const ProjectList = () => {
   return (
     <React.Fragment>
       <div className="tk_SubHeader">
-        <p>{projectsFiltered.length} project(s)
-          | {Array.from(new Set(projectsFiltered.filter(project => !!project.client).map((project) => project.client.id))).length} client(s)</p>
-        {isAdmin && <div className="tk_SubHeader_RightPart">
+        <p><Pluralize label="project" size={projectsFiltered.length}/>&nbsp;|&nbsp;
+          <Pluralize label="client" size= {Array.from(new Set(projectsFiltered.filter(project => !!project.client).map((project) => project.client.id))).length}/></p>
+        {currentUserIsAdmin && <div className="tk_SubHeader_RightPart">
           <div className="tk_SubHeader_Filters">{filterComponent}</div>
           <div className="tk_SubHeader_Filters">{groupByComponent}</div>
         </div>}

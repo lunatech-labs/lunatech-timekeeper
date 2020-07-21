@@ -19,6 +19,7 @@ package fr.lunatech.timekeeper.services;
 import fr.lunatech.timekeeper.models.Project;
 import fr.lunatech.timekeeper.models.ProjectUser;
 import fr.lunatech.timekeeper.models.User;
+import fr.lunatech.timekeeper.resources.exceptions.ConflictOnVersionException;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
@@ -31,7 +32,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
-import javax.transaction.UserTransaction;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -41,15 +41,11 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static javax.transaction.Transactional.*;
-import static javax.transaction.Transactional.TxType.*;
+import static javax.transaction.Transactional.TxType.MANDATORY;
 
 @ApplicationScoped
 public class ProjectService {
-    private static Logger logger = LoggerFactory.getLogger(ProjectService.class);
-
-    @Inject
-    UserTransaction transaction;
+    private static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
 
     @Inject
     ClientService clientService;
@@ -111,10 +107,18 @@ public class ProjectService {
             throw new ForbiddenException("The user can't edit this project with id : " + project.id);
         }
 
+        if (!project.version.equals(request.getVersion())) {
+            throw new ConflictOnVersionException(String.format("Version of this project does not match the current project version (%d) ", project.version));
+        }
+
         // It has to be done before the project is unbind
         deleteOldMembers(project, request::notContains, ctx);
 
         final Project updatedProject = request.unbind(maybeProject.get(), clientService::findById, userService::findById, ctx);
+
+        // This code is for Quarkus Issue https://github.com/quarkusio/quarkus/issues/7193
+        updatedProject.persistAndFlush();
+
         createTimeSheetsForNewUsers(updatedProject, ctx);
         return Optional.of(project.id);
     }
@@ -124,7 +128,7 @@ public class ProjectService {
         logger.debug("Modify project for for id={} with userId={}, {}", id, userContext.getUserId(), userContext);
         final Optional<Project> maybeProject = findById(id, userContext);
         maybeProject.ifPresent(project -> {
-            if(!userContext.canJoin(project)) {
+            if (!userContext.canJoin(project)) {
                 throw new ForbiddenException("The user can't join the project with id : " + project.id);
             }
         });

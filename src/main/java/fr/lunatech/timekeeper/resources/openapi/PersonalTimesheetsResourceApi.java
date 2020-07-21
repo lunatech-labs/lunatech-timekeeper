@@ -16,6 +16,7 @@
 
 package fr.lunatech.timekeeper.resources.openapi;
 
+import fr.lunatech.timekeeper.services.responses.MonthResponse;
 import fr.lunatech.timekeeper.services.responses.WeekResponse;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -24,7 +25,6 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.List;
 
 @Path("/my")
 public interface PersonalTimesheetsResourceApi {
@@ -47,7 +47,7 @@ public interface PersonalTimesheetsResourceApi {
                     responseCode = "403",
                     description = "Invalid JWT token")
     })
-    List<WeekResponse> getMonth(@PathParam("year") Integer year,
+    MonthResponse getMonth(@PathParam("year") Integer year,
                            @QueryParam("monthNumber") Integer monthNumber);
 
     @GET

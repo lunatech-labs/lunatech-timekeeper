@@ -145,7 +145,9 @@ This command configures pre-commit hook and validation.
 
 Use mvn with profile "sonar"
 
-    ./mvnw -P sonar verify sonar:sonar
+    ./mvnw -P sonar clean verify sonar:sonar
+
+Tests coverage are generated as XML file, as described [on sonarqube-scanner-maven](https://github.com/SonarSource/sonar-scanning-examples/tree/master/sonarqube-scanner-maven/maven-basic) sample project
     
 # Fast tests : how to execute only H2 Test
 
@@ -157,4 +159,24 @@ The integration suite is a bit slow with Docker + Keycloak. When you want to exe
 You can annotate a test with @DisabledIfEnvironmentVariable if your test is slow
 
     @DisabledIfEnvironmentVariable(named = "ENV", matches = "fast-test-only")        
+
+# Cypress end to end tests
+
+[Cypress](https://www.cypress.io/) is an end-to-end test framework
+
+You can execute all tests from the `frontend` sub-folder 
+
+    cd frontend
+    yarn install
+    yarn start
+    
+Open a 2nd Term and do 
+
+    cd frontend
+    yarn cypress
+    
+All tests are available under frontend/cypress/integration sub folder.
+
+    
+        
 

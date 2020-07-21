@@ -18,7 +18,6 @@ package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.UserEvent;
-import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import fr.lunatech.timekeeper.services.responses.WeekResponse;
 import fr.lunatech.timekeeper.timeutils.CalendarFactory;
@@ -54,19 +53,19 @@ public class WeekService {
             throw new IllegalStateException("User not found, cannot load current week");
         }
 
-        List<TimeSheetResponse> timeSheets = timeSheetService.findAllActivesForUser(ctx);
-
         var userEvents = new ArrayList<UserEvent>();
+        var publicHolidays = CalendarFactory.instanceFor("FR", year).getPublicHolidaysForWeekNumber(weekNumber);
 
-        var desiredDate = TimeKeeperDateUtils.getFirstDayOfWeekFromWeekNumber(year, weekNumber);
-        var publicHolidays = CalendarFactory.instanceFor("FR",year).getPublicHolidaysForWeekNumber(weekNumber);
+        var startDayOfWeek = TimeKeeperDateUtils.getFirstDayOfWeekFromWeekNumber(year, weekNumber);
+        final List<TimeSheetResponse> timeSheetsResponse = new ArrayList<>();
+        for (TimeSheetResponse timeSheetResponse : timeSheetService.findAllActivesForUser(ctx)) {
+            timeSheetsResponse.add(timeSheetResponse.filterTimeEntriesForWeek(startDayOfWeek));
+        }
 
-        WeekResponse weekResponse = new WeekResponse(TimeKeeperDateUtils.adjustToFirstDayOfWeek(desiredDate)
+        return new WeekResponse(TimeKeeperDateUtils.adjustToFirstDayOfWeek(startDayOfWeek)
                 , userEvents
-                , timeSheets
+                , timeSheetsResponse
                 , publicHolidays);
-
-        return weekResponse;
     }
 
 

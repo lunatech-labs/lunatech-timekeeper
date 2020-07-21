@@ -52,6 +52,8 @@ public final class ProjectResponse {
     @NotNull
     private final Boolean publicAccess;
 
+    private final Long version;
+
     public ProjectResponse(
             @NotNull Long id,
             @NotBlank String name,
@@ -59,7 +61,8 @@ public final class ProjectResponse {
             @NotNull String description,
             @Null ProjectClientResponse client,
             @Null List<ProjectUserResponse> users,
-            @NotNull Boolean publicAccess
+            @NotNull Boolean publicAccess,
+            @NotNull Long version
     ) {
         this.id = id;
         this.name = name;
@@ -68,6 +71,7 @@ public final class ProjectResponse {
         this.client = client;
         this.users = users;
         this.publicAccess = publicAccess;
+        this.version = version;
     }
 
     public static ProjectResponse bind(@NotNull Project project, Optional<Boolean> optimized) {
@@ -84,14 +88,14 @@ public final class ProjectResponse {
                         .map(ProjectClientResponse::bind)
                         .orElse(null),
                 optimized.orElse(false) ? null : users,
-                project.publicAccess
+                project.publicAccess,
+                project.version
         );
     }
 
     public static ProjectResponse bind(@NotNull Project project) {
         return bind(project, Optional.empty());
     }
-
 
     public Long getId() {
         return id;
@@ -121,6 +125,7 @@ public final class ProjectResponse {
         return publicAccess;
     }
 
+    public Long getVersion() { return  version; }
 
     /* 👤 ProjectUserResponse */
     public static final class ProjectUserResponse {
@@ -175,7 +180,6 @@ public final class ProjectResponse {
         }
     }
 
-
     /* 🌐 ProjectClientResponse */
     public static final class ProjectClientResponse {
 
@@ -221,6 +225,7 @@ public final class ProjectResponse {
     public String toString() {
         return "ProjectResponse{" +
                 "id=" + id +
+                ", version=" + getVersion() +
                 ", name='" + name + '\'' +
                 ", billable=" + billable +
                 ", description='" + description + '\'' +

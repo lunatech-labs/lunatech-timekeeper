@@ -19,27 +19,26 @@ import './TimeEntry.less';
 import {Badge} from 'antd';
 import {ClockCircleOutlined} from '@ant-design/icons';
 import PropTypes from 'prop-types';
+import {computeNumberOfHours} from '../../utils/momentUtils';
+import moment from 'moment';
 
-const moment = require('moment');
-const TimeEntry = ({entry}) => {
-  const computeSize = (nbHours) => {
-    const minimumSize = 75;
+const computeSize = (nbHours) => {
+  const minimumSize = 75;
 
-    return minimumSize + (nbHours - 1) * 50;
-  };
-
+  return minimumSize + (nbHours - 1) * 50;
+};
+const TimeEntry = ({entry, onClick}) => {
   const start = moment(entry.startDateTime).utc();
   const end = moment(entry.endDateTime).utc();
-  const duration = moment.duration(end.diff(start));
   const date = start.clone();
+  const hours = computeNumberOfHours(start, end);
   date.set({
-    hour: duration.asHours()
+    hour: hours
   });
-  const hours = duration.asHours();
   const size = computeSize(hours);
   return (
     <div className="tk_TaskCard" style={{height: `${size}px`}}
-      key={`badge-entry-${start && start.format('yyyy-mm-dd-hh-mm')}`}>
+      key={`badge-entry-${start && start.format('yyyy-mm-dd-hh-mm')}`} onClick={onClick}>
       <div>
         <Badge
           status={(entry && entry.comment) ? 'success' : 'error'}
@@ -60,7 +59,8 @@ TimeEntry.propTypes = {
     }).isRequired,
     startDateTime: PropTypes.string.isRequired,
     endDateTime: PropTypes.string.isRequired,
-  })
+  }),
+  onClick: PropTypes.func.isRequired
 };
 
 export default TimeEntry;

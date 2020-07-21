@@ -53,13 +53,16 @@ public final class ProjectRequest {
     @NotNull
     private final List<ProjectUserRequest> users;
 
+    private final Long version;
+
     public ProjectRequest(
             @NotBlank String name,
             @NotNull Boolean billable,
             @NotNull String description,
             @Null Long clientId,
             @NotNull Boolean publicAccess,
-            @NotNull List<ProjectUserRequest> users
+            @NotNull List<ProjectUserRequest> users,
+            Long version
     ) {
         this.name = name;
         this.billable = billable;
@@ -67,6 +70,7 @@ public final class ProjectRequest {
         this.clientId = clientId;
         this.publicAccess = publicAccess;
         this.users = users;
+        this.version = version;
     }
 
     public Project unbind(
@@ -87,6 +91,7 @@ public final class ProjectRequest {
                 .map(user -> user.unbind(project, findUser, ctx))
                 .collect(Collectors.toList());
         project.publicAccess = isPublicAccess();
+        project.version = this.version;
         return project;
     }
 
@@ -128,10 +133,15 @@ public final class ProjectRequest {
         return users;
     }
 
+    public Long getVersion() {
+        return version;
+    }
+
     @Override
     public String toString() {
         return "ProjectRequest{" +
                 "name='" + name + '\'' +
+                ", version='" + version + '\'' +
                 ", billable=" + billable +
                 ", description='" + description + '\'' +
                 ", clientId=" + clientId +

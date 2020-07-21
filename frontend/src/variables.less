@@ -89,6 +89,19 @@
 @table-header-bg: @tk_Black;
 @table-header-color: @tk_LightGray;
 @table-row-hover-bg: @tk_MediumGray;
+@table-body-sort-bg: #fafafa;
+@table-row-hover-bg: @tk_Black;
+@table-selected-row-color: inherit;
+@table-selected-row-bg: @tk_Black;
+@table-body-selected-sort-bg: @table-selected-row-bg;
+@table-selected-row-hover-bg: darken(@table-selected-row-bg, 2%);
+@table-padding-vertical: 10px;
+@table-padding-horizontal: 16px;
+@table-padding-vertical-md: @table-padding-vertical * 3 / 4;
+@table-padding-horizontal-md: @table-padding-horizontal / 2;
+@table-padding-vertical-sm: @table-padding-vertical / 2;
+@table-padding-horizontal-sm: @table-padding-horizontal / 2;
+@table-border-radius-base: @border-radius-base;
 
 // ------------------- CARD -------------------
 //---------------------------------------------
@@ -131,3 +144,26 @@
 //-------------------------------------------------
 @calendar-bg: @tk_MediumGray;
 @picker-basic-cell-hover-color: @tk_Red;
+
+// ------------------- BUTTONS -------------------
+//------------------------------------------------
+@btn-font-weight: 400;
+@btn-primary-color: @tk_White;
+@btn-primary-bg: @tk_Red;
+@btn-default-color: @tk_White;
+@btn-default-bg: @tk_Red;
+@btn-default-border: @tk_Red;
+
+// ------------------- TIMEPICKER-----------------
+//------------------------------------------------
+@picker-bg: @tk_DarkGray;
+@picker-basic-cell-active-with-range-color: rgba(39, 40, 54, 0.8);
+@picker-basic-cell-disabled-bg: rgba(39, 40, 54, 0.3);
+@picker-border-color: rgba(216, 216, 216, 0.1);
+@picker-date-hover-range-border-color: @tk_Red;
+@picker-date-hover-range-color: rgb(39, 40, 54);
+@picker-time-panel-cell-height: 28px;
+@picker-panel-cell-height: 24px;
+@picker-panel-cell-width: 36px;
+@picker-text-height: 40px;
+@picker-panel-without-time-cell-height: 66px;

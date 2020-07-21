@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import {Alert, Avatar, Spin, Table} from 'antd';
-import {useTimeKeeperAPI} from '../../utils/services';
+import React, {useState} from 'react';
+import {Alert, AutoComplete, Spin, Table} from 'antd';
+import {sortListByName, useTimeKeeperAPI} from '../../utils/services';
 import './UserList.less';
 import Button from 'antd/lib/button';
 import TagMember from '../Tag/TagMember';
+import TkUserAvatar from './TkUserAvatar';
+import Input from 'antd/lib/input';
+import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined';
 
 const UserList = () => {
   const usersResponse = useTimeKeeperAPI('/api/users');
+
+  const [value, setValue] = useState('');
+  const onSearch = searchText => setValue(searchText);
 
   const userToUserData = (user) => {
     return {
@@ -32,13 +38,18 @@ const UserList = () => {
   };
 
   // local component created to avoid an es-lint error
-  const renderAvatar = (value) => <Avatar src={value} />;
+  const renderAvatar = (user) => <TkUserAvatar name={user.name} picture={user.picture} />;
+
+  const usersFiltered = (listOfUsers) => {
+    return listOfUsers.filter(user => user.name.toLowerCase().includes(value.toLowerCase()) ||
+        user.email.toLowerCase().includes(value.toLowerCase()) ||
+        user.projects.filter(project => project.name.toLowerCase().includes(value.toLowerCase())).length > 0
+    );
+  };
 
   const columns = [
     {
       title: '',
-      dataIndex: 'picture',
-      key: 'picture',
       width: 60,
       align: 'right',
       render: (value) => renderAvatar(value),
@@ -109,11 +120,16 @@ const UserList = () => {
       <div className="tk_SubHeader">
         <p>{usersResponse.data.length} Users</p>
         <div className="tk_SubHeader_RightPart">
+          <div className="tk_Search_Input">
+            <AutoComplete onSearch={onSearch}>
+              <Input data-cy="searchUserBox" size="large" placeholder="Search in users..." allowClear  prefix={<SearchOutlined />} />
+            </AutoComplete>
+          </div>
         </div>
       </div>
 
       <Table id="tk_Table"
-        dataSource={usersResponse.data.map(user => userToUserData(user))}
+        dataSource={usersFiltered(sortListByName(usersResponse.data.map(user => userToUserData(user))))}
         columns={columns} pagination={{ position:['bottomCenter'], pageSize:20, hideOnSinglePage:true, itemRender: paginationItemRender }}
       />
     </React.Fragment>

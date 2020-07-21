@@ -26,7 +26,8 @@ const breadcrumbNameMap = {
   '/projects': 'Projects',
   '/projects/new': 'New project',
   '/time_entries': 'Time entries',
-  '/events': 'Events'
+  '/events': 'Events',
+  '/events/new': 'New event'
 };
 
 // The dynamic breadcrumb must be used for an exact pathname only.
@@ -36,6 +37,7 @@ const breadcrumbDynamicMap = {
   '/projects/(\\d+)/edit': (name) => `Edit project ${name}`,
   '/projects/(\\d+)': (name) => name || 'Project details',
   '/clients/(\\d+)/edit': (name) => `Edit client ${name}`,
+  '/events/(\\d+)/edit': (name) => `Edit event ${name}`,
 };
 
 const Breadcrumbs = ({location, entityName}) => {

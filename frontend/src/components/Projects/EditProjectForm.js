@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
-import {Alert, Avatar, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin, Row, Col} from 'antd';
+import React, {useContext, useEffect, useState} from 'react';
+import {Alert, Button, Checkbox, Form, Input, message, Radio, Select, Space, Spin, Row, Col} from 'antd';
 import {useTimeKeeperAPI, useTimeKeeperAPIPut} from '../../utils/services';
 import {Link, Redirect, useRouteMatch} from 'react-router-dom';
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined';
@@ -23,14 +23,21 @@ import PropTypes from 'prop-types';
 import './EditProjectForm.less';
 import TitleSection from '../Title/TitleSection';
 import '../../components/Button/BtnGeneral.less';
+import TkUserAvatar from '../Users/TkUserAvatar';
+import {ForbiddenRoute} from '../../routes/utils';
+import {UserContext} from '../../context/UserContext';
+import {useKeycloak} from '@react-keycloak/web';
+import {canEditProject} from '../../utils/rights';
 
 
 const {TextArea} = Input;
 const {Option} = Select;
-const EditProjectForm = () => {
+const EditProjectForm = ({...rest}) => {
 
   const [projectUpdated, setProjectUpdated] = useState(false);
+  const {currentUser} = useContext(UserContext);
 
+  const [keycloak] = useKeycloak();
   const projectIdSlug = useRouteMatch({
     path: '/projects/:id',
     strict: true,
@@ -81,11 +88,21 @@ const EditProjectForm = () => {
   }
 
   if (clientsResponse.data && projectsResponse.data && usersResponse.data && projectResponse.data) {
+    if(!canEditProject(projectResponse.data, currentUser, keycloak)) {
+      return (
+        <ForbiddenRoute {...rest}/>
+      );
+    }
+
+    const clientsSorted = () => clientsResponse.data.sort((a,b)=>{
+      if(a.name.toLowerCase() < b.name.toLowerCase()){return -1;}
+      if(a.name.toLowerCase() > b.name.toLowerCase()){return 1;}
+      return 0;
+    });
     const initialValues = {
       ...projectResponse.data,
       clientId: (projectResponse.data.client && projectResponse.data.client.id) || null
     };
-    const projectsName = projectsResponse.data.map(project => project.name.toLowerCase().trim());
     const UserName = ({value = {}}) => {
       return (<span>{usersResponse.data.find(u => u.id === value).name}</span>);
     };
@@ -93,7 +110,8 @@ const EditProjectForm = () => {
       value: PropTypes.string
     };
     const UserPicture = ({value}) => {
-      return (<Avatar src={usersResponse.data.find(u => u.id === value).picture}/>);
+      const currentUser = usersResponse.data.find(u => u.id === value);
+      return (<TkUserAvatar picture={currentUser.picture} name={currentUser.name}/>);
     };
     UserPicture.propTypes = {
       value: PropTypes.string
@@ -106,6 +124,11 @@ const EditProjectForm = () => {
         onFinish={timeKeeperAPIPut.run}
         form={form}
       >
+        <Form.Item
+          noStyle
+          name="version"
+          rules={[{required: true}]}
+        ></Form.Item>
         <div className="tk_CardLg">
           <Row gutter={16}>
             <Col className="gutter-row" span={12}>
@@ -117,16 +140,7 @@ const EditProjectForm = () => {
                 rules={[
                   {
                     required: true,
-                  },
-                  () => ({
-                    validator(rule, value) {
-                      const name = value.toLowerCase().trim();
-                      if (!projectsName.includes(name) || name === initialValues.name.toLowerCase()) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject('A project already use this name');
-                    },
-                  }),
+                  }
                 ]}
               >
                 <Input
@@ -152,7 +166,7 @@ const EditProjectForm = () => {
                   placeholder="Select a client"
                 >
                   <Option key={'option-client-empty'} value={null}><i>None</i></Option>
-                  {clientsResponse.data.map(client => <Option key={`option-client-${client.id}`} value={client.id}>{client.name}</Option>)}
+                  {clientsSorted().map(client => <Option key={`option-client-${client.id}`} value={client.id}>{client.name}</Option>)}
                 </Select>
               </Form.Item>
               <Row gutter={16}>
@@ -266,10 +280,11 @@ const EditProjectForm = () => {
         </div>
         <Form.Item>
           <Space className="tk_JcFe" size="middle" align="center">
-            <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={'/projects'}>Cancel</Link>
-            <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Submit</Button>
+            <Link id="btnCancelEditProject" className="tk_Btn tk_BtnSecondary" key="cancelLink" to={'/projects'}>Cancel</Link>
+            <Button id="btnSubmitEditProject" className="tk_Btn tk_BtnPrimary" htmlType="submit">Submit</Button>
           </Space>
         </Form.Item>
+
       </Form>
     );
   }

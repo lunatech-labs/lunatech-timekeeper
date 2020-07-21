@@ -18,7 +18,7 @@ import React, {useState} from 'react';
 import {Alert, AutoComplete, Avatar, Button, Card, Collapse, List, Spin} from 'antd';
 import logo from '../../img/logo_timekeeper_homepage.png';
 import './ClientList.less';
-import {useTimeKeeperAPI} from '../../utils/services';
+import {sortListByName, useTimeKeeperAPI} from '../../utils/services';
 import FolderFilled from '@ant-design/icons/lib/icons/FolderFilled';
 import EditFilled from '@ant-design/icons/lib/icons/EditFilled';
 import Tooltip from 'antd/lib/tooltip';
@@ -30,6 +30,7 @@ import Input from 'antd/lib/input';
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined';
 import Meta from 'antd/lib/card/Meta';
 import CardXs from '../Card/CardXs';
+import Pluralize from '../Pluralize/Pluralize';
 
 const { Panel } = Collapse;
 
@@ -72,11 +73,11 @@ const ClientList = () => {
   return (
     <React.Fragment>
       <div className="tk_SubHeader">
-        <p>{clientsFiltered().length} Clients</p>
+        <p><Pluralize label="client" size={clientsFiltered().length}/></p>
         <div className="tk_SubHeader_RightPart">
           <div className="tk_Search_Input">
             <AutoComplete onSearch={onSearch}>
-              <Input size="large" placeholder="Search in clients" allowClear  prefix={<SearchOutlined />} />
+              <Input data-cy="searchClientBox" size="large" placeholder="Search in clients..." allowClear  prefix={<SearchOutlined />} />
             </AutoComplete>
           </div>
         </div>
@@ -96,21 +97,21 @@ const ClientList = () => {
                   <Avatar src={logo} shape={'square'} size="large"/>
                   <div className="tk_Card_ClientHeader">
                     <p className="tk_Card_ClientTitle">{item.name}</p>
-                    <p className="tk_Card_ClientNbProject">{item.projects.length} projects</p>
+                    <p className="tk_Card_ClientNbProject"><Pluralize label="project" size={item.projects.length}/></p>
                   </div>
                 </Space>
               }
               extra={[
                 <Tooltip title="Edit" key="edit">
-                  <Button type="link" size="small" ghost shape="circle" icon={<EditFilled/>} href={`/clients/${item.id}/edit`}/>
+                  <Button data-cy="editClient" type="link" size="small" ghost shape="circle" icon={<EditFilled/>} href={`/clients/${item.id}/edit`}/>
                 </Tooltip>
               ]}
               actions={[ item.projects.length === 0 ? <Panel id="tk_ProjectNoCollapse" header={<Space size="small"><FolderFilled />{'No project'}</Space>} key="1"/> :
                 <Collapse bordered={false} expandIconPosition={'right'} key="projects">
-                  <Panel header={<Space size="small"><FolderOpenOutlined />{'List of projects'}</Space>} key="1">
+                  <Panel header={<Space size="small"><FolderOpenOutlined /><Pluralize label="project" size={item.projects.length} /></Space>} key="1">
                     <List
                       id={'tk_ClientProjects'}
-                      dataSource={item.projects}
+                      dataSource={sortListByName(item.projects)}
                       renderItem={projectItem => (
                         <List.Item>
                           <CardXs>

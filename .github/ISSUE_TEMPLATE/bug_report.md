@@ -1,42 +1,36 @@
 ---
 name: Bug report
 about: Create a report to help us improve
+title: ''
+labels: 'Type: bug'
+assignees: ''
 
 ---
 
-<!--
+**Describe the bug**
+A clear and concise description of what the bug is.
 
-Have you read TimeKeeper's Code of Conduct? By filing an Issue, you are expected to comply with it, including treating everyone with respect: https://github.com/lunatech-labs/lunatech-timekeeper/.github/blob/master/CONTRIBUTING.md
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Go to '...'
+2. Click on '....'
+3. Scroll down to '....'
+4. See error
 
--->
+**Expected behavior**
+A clear and concise description of what you expected to happen.
 
-### Description
+**Screenshots**
+If applicable, add screenshots to help explain your problem.
 
-<!-- Description of the issue -->
+**Desktop (please complete the following information):**
+ - Browser [e.g. chrome, safari]
+ - Version [e.g. 22]
 
-### Steps to Reproduce
+**TimeKeeper component (if you have a clue):**
+- backend
+- frontend
+- I don't know
 
-1. <!-- First Step -->
-2. <!-- Second Step -->
-3. <!-- and so on… -->
-
-**Expected behavior:**
-
-<!-- What you expect to happen -->
-
-**Actual behavior:**
-
-<!-- What actually happens -->
-
-**Reproduces how often:**
-
-<!-- What percentage of the time does it reproduce? -->
-
-### Versions
-
-<!-- You can get this information from the TimeKeeper Footer page or from the view source page for the Frontend part. For the 
- backend part, the Version is available as a simple call at /api/about -->
-
-### Additional Information
-
-<!-- Any additional informatio -->
+**Additional context**
+Add any other context about the problem here.

@@ -27,6 +27,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @ApplicationScoped
 public class TimeEntryService {
@@ -36,7 +37,7 @@ public class TimeEntryService {
     protected TimeSheetService timeSheetService;
 
     @Transactional
-    public Long createTimeEntry(Long timeSheetId, TimeEntryRequest request, AuthenticationContext ctx, Enum TimeUnit) {
+    public Long createTimeEntry(Long timeSheetId, TimeEntryRequest request, AuthenticationContext ctx) {
         logger.debug("Create a new TimeEntry with {}, {}", request, ctx);
         final TimeEntry timeEntry = request.unbind(timeSheetId, timeSheetService::findById, ctx);
         if (!ctx.canCreate(timeEntry)) {
@@ -50,4 +51,16 @@ public class TimeEntryService {
         return timeEntry.id;
     }
 
+    @Transactional
+    public Optional<Long> updateTimeEntry(Long timeSheetId, Long timeEntryId, TimeEntryRequest request, AuthenticationContext ctx) {
+        logger.debug("Modify timeEntry for id={} with {}, {}", timeSheetId, request, ctx);
+        return findById(timeEntryId, ctx)
+                .map(timeEntry -> request.unbind(timeEntry, timeSheetId, timeSheetService::findById, ctx))
+                .map(timeEntry -> timeEntry.id);
+    }
+
+    Optional<TimeEntry> findById(Long id, AuthenticationContext ctx) {
+        return TimeEntry.<TimeEntry>findByIdOptional(id)
+                .filter(ctx::canAccess);
+    }
 }

@@ -15,8 +15,9 @@
  */
 
 @import '../../main.less';
-
 #tk_WeekCalendar_Head {
+  position: relative;
+  padding-right: 172px;
   .mixin_Flexbox_Basis();
   justify-content: space-between;
   border-bottom: @tk_Border_Base;
@@ -57,9 +58,9 @@
   }
   > div:last-child {
     .mixin_Flexbox_Basis();
+    position: relative;
     .ant-select {
       width: 140px;
-      margin-right: 32px;
       color: @tk_LightGray;
       .ant-select-selector {
         background: none;
@@ -84,6 +85,14 @@
     width: 14.2857142857%;
     margin: 0 8px;
   }
+  .tk_Tag_Completed {
+    background: rgba(24, 200, 34, .2);
+    color: #18C822;
+    float: right;
+    padding: 0 4px;
+    font-size: 11px;
+    border: 0;
+  }
 }
 .tk_WeekCalendar_Day {
   > p {
@@ -103,4 +112,9 @@
   height: 6px;
   .mixin_Flexbox_Basis();
   margin: 8px 8px 0 0;
+}
+.tk_CardWeekCalendar_Body_With_Warn {
+  background-color: rgba(233, 73, 78, 0.2);
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
 }

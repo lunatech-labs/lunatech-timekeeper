@@ -32,16 +32,21 @@ public class CreateResourceExceptionMapper implements ExceptionMapper<CreateReso
 
     @Override
     public Response toResponse(CreateResourceException e) {
-        logger.warn( "CreateResourceException: " + e.getMessage());
+        if(logger.isWarnEnabled()) {
+            logger.warn(String.format("CreateResourceException: %s", e.getMessage()));
+        }
         // We could use also a CONFLICT but since we do not check the exact constraint name, we prefer to use a
         // more generic "Bad request" http response here.
         return Response
                 .status(Response.Status.BAD_REQUEST)
                 .type(MediaType.APPLICATION_JSON)
-                .entity(Json.createObjectBuilder()
+                .entity(
+                        Json.createObjectBuilder()
                         // e.getMessage can be null, but JSON format requires a value. This is why there is a String.format here
                         .add("message", String.format("%s", e.getMessage()))
-                        .build())
+                        .build()
+                        .toString()
+                )
                 .build();
     }
 }
