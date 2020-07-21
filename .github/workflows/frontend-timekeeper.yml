@@ -14,7 +14,7 @@ on:
       - 'frontend/**'
 
 jobs:
-  build-and-test:
+  build-and-test-frontend:
     runs-on: ubuntu-latest
     name: Build and test
     steps:
