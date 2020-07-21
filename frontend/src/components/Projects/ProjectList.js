@@ -178,7 +178,7 @@ const ProjectList = () => {
             </Space>
           }
           extra={[
-            <span>{canEditOneProject(item)? <Tooltip title="Edit this project" key="edit">
+            <span key='editKey'>{canEditOneProject(item)? <Tooltip title="Edit this project" key="edit">
               <Button data-cy="editProject" type="link" size="small" ghost shape="circle" icon={<EditFilled/>} href={`/projects/${item.id}/edit`}/>
             </Tooltip> : ''}</span>
 
