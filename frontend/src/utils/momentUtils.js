@@ -52,10 +52,10 @@ export const totalHoursPerDay = (timeEntries) => _.sumBy(timeEntries, function(e
 
 export const isPublicHoliday = (date, publicHolidays) => {
   if(date) {
-    var res = _.find(publicHolidays, function(d){
+    const res = _.find(publicHolidays, function(d){
       if(d.date){
-        var formatted = date.format('YYYY-MM-DD');
-        var isSameDate = formatted.localeCompare(d.date);
+        const formatted = date.format('YYYY-MM-DD');
+        const isSameDate = formatted.localeCompare(d.date);
         return isSameDate === 0;
       }
       return false;

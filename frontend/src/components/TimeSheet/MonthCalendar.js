@@ -21,10 +21,9 @@ const SelectYear = ({value, onChange}) => {
   });
   const newValue = (year) => {
     const numberYear = moment.utc(year, 'YYYY').year();
-    const newMoment = value.clone().set({
+    return value.clone().set({
       'year': numberYear
     });
-    return newMoment;
   };
   return (
     <Select style={{width: 200}}
@@ -49,17 +48,16 @@ const SelectMonth = ({value, onChange}) => {
   });
   const newValue = (month) => {
     const numberMonth = moment.utc(month, 'MMM').month();
-    const newMoment = value.clone().set({
+    return value.clone().set({
       'month': numberMonth
     });
-    return newMoment;
   };
   return (
     <Select style={{width: 200}}
       defaultValue={value.format('MMM')}
       value={value.format('MMM')}
-      onSelect={value => {
-        onChange(newValue(value));
+      onSelect={v => {
+        onChange(newValue(v));
       }}>
       {options}
     </Select>
@@ -91,7 +89,7 @@ const MonthCalendar = (props) => {
 
   const isDisabled = (dateAsMoment) => {
     if(_.isObjectLike(dateAsMoment)) {
-      let associatedData =  findData(dateAsMoment);
+      const associatedData =  findData(dateAsMoment);
       if(associatedData && associatedData.disabled){
         return true;
       }else{
@@ -116,7 +114,7 @@ const MonthCalendar = (props) => {
         return (
           <div className={className}>
             <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>
-            {associatedData && associatedData.data && props.dateCellRender(associatedData.data, associatedData.date, associatedData.disabled)}
+            {props.dateCellRender(associatedData.data, associatedData.date, associatedData.disabled)}
           </div>
         );
       }
@@ -137,14 +135,10 @@ const MonthCalendar = (props) => {
       return <Tag className="tk_Tag_Public_Holiday"><InfoCircleOutlined /> Public holiday</Tag>;
     }
 
-    return <div className='tk_CardMonthCalendar_Body'></div>;
+    return <div className='tk_CardMonthCalendar_Body'/>;
   };
   MonthCardComponent.propTypes = {
-    item: PropTypes.shape({
-      date: PropTypes.func,
-      day: PropTypes.func
-    }
-    )
+    item: PropTypes.instanceOf(moment)
   };
 
   return (
@@ -165,12 +159,12 @@ const MonthCalendar = (props) => {
                 </div>
               </div>);
           }}
-          disabledDate={value => {
-            return isDisabled(value);
+          disabledDate={dateAsMoment => {
+            return isDisabled(dateAsMoment);
           }}
-          dateCellRender={value => {
+          dateCellRender={dateAsMoment => {
             return (
-              <MonthCardComponent item={value}></MonthCardComponent>
+              <MonthCardComponent item={dateAsMoment}/>
             );
           }}
         />

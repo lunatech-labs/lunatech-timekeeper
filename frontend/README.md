@@ -87,7 +87,6 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 https://www.npmjs.com/package/@react-keycloak/web
 https://github.com/panz3r/react-keycloak#readme
 
-
 # Cypress 
 
 Cypress is a very powerful end-to-end test system. 
@@ -99,7 +98,9 @@ We also use [db-migrate](https://db-migrate.readthedocs.io/en/latest/) to clean-
 First, check that the latest node packages are installed 
 
     yarn install
-    
+
+Second step : create a test user "Alice" on [keycloak](http://localhost:8082). Make sure Alice has role "user" and "admin". Set the password to 'alice'.
+
 Then, execute the cypress command :
 
     yarn cypress
