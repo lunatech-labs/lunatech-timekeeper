@@ -49,6 +49,9 @@ export const isToday = (day) => {
 // Returns true if the date is saturday or sunday
 export const isWeekEnd = (date) => date.isoWeekday() === 6 || date.isoWeekday() === 7;
 
+//Returns false if the date is saturday or sunday
+export const isNotWeekEnd = (date) => !isWeekEnd(date);
+
 // Returns the number of hours between two dates
 export const computeNumberOfHours = (start, end) => {
   return moment.duration(end.diff(start)).asHours();
