@@ -28,7 +28,7 @@ Timekeeper dashboard is [here](https://lunatech.atlassian.net/jira/software/proj
 
 # Technical stack 
 
-All ADRs are on Confluence [here](https://lunatech.atlassian.net/wiki/spaces/INTRANET/pages/1686077447/Technical+architecture#Architecture-decision-records)
+All ADR (Architecture Decision Records) are on Confluence [here](https://lunatech.atlassian.net/wiki/spaces/INTRANET/pages/1686077447/Technical+architecture#Architecture-decision-records)
 
 # Developer guide
 
@@ -36,15 +36,18 @@ Read [How to setup your development environment](https://lunatech.atlassian.net/
 
 ## Backend 
 
-- Quarkus 1.3
+- Quarkus
 - PostgresSQL 12.2
 - Hibernate-panache
 - JsonB
 - Docker
+- Keycloak
 
 ## FrontEnd
 
-- React
+- React 0.16
+- AntD library
+- Less
 
 # Getting started
 
@@ -60,7 +63,7 @@ If you want to run docker in background :
 
     docker-compose up -d    
     
-2 main services will be started :
+The following services should start :
 
 - PostgreSQL dedicated to TimeKeeper app on port 5435 
 - Keycloak (+ one postgres dedicated to Keycloak) on http://localhost:8081
@@ -70,7 +73,7 @@ If you want to run docker in background :
 
     mvn quarkus:dev
     
-We are using Flyway extension. Database's model will be created at the first run of the app.
+This project relies on Flyway for database schema migration. Database's model will be created at the first run of the app.
 
 ## 2.1 - Start TimeKeeper on Debug (with IntelliJ)
 
@@ -86,22 +89,10 @@ Then start the debug. You can now use the debug mode.
 
     ./mvnw compile test
 
-⚠️ Don't run your tests directly with IntelliJ ! 
 
-There are some issues, probably with maven, IntelliJ will not compile your current code before running.
-You must use the command first, then run IntelliJ for more readability if the tests failed.
+## 3 - Front End   
 
-## 3 - FrontEnd   
-
-Go to the `frontend` folder
-
-Install npm dependencies :
-
-    npm install
-    
-Start the React application in development mode
-
-    npm run start    
+Go to the `frontend` folder and check the [README](https://github.com/lunatech-labs/lunatech-timekeeper/blob/develop/frontend/README.md) for more details
 
 ## 4 - Keycloak setup
 
@@ -111,7 +102,7 @@ docker compose imports `keycloak/realm-export.json`. This JSON file will create 
 - backend-service for Quarkus
 - react-ff for the React Frontend
 
-Some users are also automatically imported (alice/alice).
+For Cypress end-to-end tests, a specific test user should be manually created. See [README](https://github.com/lunatech-labs/lunatech-timekeeper/blob/develop/frontend/README.md) for more details
 
 # Git branch and naming convention
 
@@ -159,24 +150,4 @@ The integration suite is a bit slow with Docker + Keycloak. When you want to exe
 You can annotate a test with @DisabledIfEnvironmentVariable if your test is slow
 
     @DisabledIfEnvironmentVariable(named = "ENV", matches = "fast-test-only")        
-
-# Cypress end to end tests
-
-[Cypress](https://www.cypress.io/) is an end-to-end test framework
-
-You can execute all tests from the `frontend` sub-folder 
-
-    cd frontend
-    yarn install
-    yarn start
-    
-Open a 2nd Term and do 
-
-    cd frontend
-    yarn cypress
-    
-All tests are available under frontend/cypress/integration sub folder.
-
-    
-        
 

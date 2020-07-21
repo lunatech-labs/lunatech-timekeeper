@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Lunatech Labs
+ * Copyright 2020 Lunatech S.A.S
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import moment from 'moment';
 
 const computeSize = (nbHours) => {
   const minimumSize = 75;
-
   return minimumSize + (nbHours - 1) * 50;
 };
 const TimeEntry = ({entry, onClick}) => {
