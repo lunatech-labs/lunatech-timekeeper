@@ -21,6 +21,9 @@ import fr.lunatech.timekeeper.resources.providers.AuthenticationContextProvider;
 import fr.lunatech.timekeeper.services.OrganizationService;
 import fr.lunatech.timekeeper.services.requests.OrganizationRequest;
 import fr.lunatech.timekeeper.services.responses.OrganizationResponse;
+import org.eclipse.microprofile.metrics.MetricUnits;
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -41,6 +44,8 @@ public class OrganizationResource implements OrganizationResourceApi {
 
     @RolesAllowed({"super_admin"})
     @Override
+    @Counted(name = "countGetAllOrganizations", description = "Counts how many times the user load the organization list on method 'getAllOrganizations'")
+    @Timed(name = "timeGetAllOrganizations", description = "Times how long it takes the user load the organization list on method 'getAllOrganizations'", unit = MetricUnits.MILLISECONDS)
     public List<OrganizationResponse> getAllOrganizations() {
         final var ctx = authentication.context();
         return organizationService.listAllResponses(ctx);
@@ -48,6 +53,8 @@ public class OrganizationResource implements OrganizationResourceApi {
 
     @RolesAllowed({"super_admin"})
     @Override
+    @Counted(name = "countCreateOrganization", description = "Counts how many times the user create an organization on method 'createOrganization'")
+    @Timed(name = "timeCreateOrganization", description = "Times how long it takes the user create an organization on method 'createOrganization'", unit = MetricUnits.MILLISECONDS)
     public Response createOrganization(@Valid OrganizationRequest request, UriInfo uriInfo) {
         final var ctx = authentication.context();
         final long organizationId = organizationService.create(request, ctx);
@@ -57,6 +64,8 @@ public class OrganizationResource implements OrganizationResourceApi {
 
     @RolesAllowed({"super_admin"})
     @Override
+    @Counted(name = "countGetOrganization", description = "Counts how many times the user to get the organization on method 'getOrganization'")
+    @Timed(name = "timeGetOrganization", description = "Times how long it takes the user to get the organization on method 'getOrganization'", unit = MetricUnits.MILLISECONDS)
     public OrganizationResponse getOrganization(Long id) {
         final var ctx = authentication.context();
         return organizationService.findResponseById(id, ctx)
@@ -65,6 +74,8 @@ public class OrganizationResource implements OrganizationResourceApi {
 
     @RolesAllowed({"super_admin"})
     @Override
+    @Counted(name = "countUpdateOrganization", description = "Counts how many times the user to update the organization on method 'updateOrganization'")
+    @Timed(name = "timeUpdateOrganization", description = "Times how long it takes the user to update the organization on method 'updateOrganization'", unit = MetricUnits.MILLISECONDS)
     public Response updateOrganization(Long id, @Valid OrganizationRequest request) {
         final var ctx = authentication.context();
         return organizationService.update(id, request, ctx)
