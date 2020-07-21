@@ -15,6 +15,7 @@
  */
 
 import moment from 'moment';
+import _ from 'lodash';
 
 // Render a range of date with the year
 // same month, same year => 22 - 25 May 2020
@@ -58,12 +59,40 @@ export const weekRangeOfDate = (firstDay, numberOfWeek) => {
   });
 };
 
+export const totalHoursPerDay = (timeEntries) => _.sumBy(timeEntries, function(entry){
+  const start = moment(entry.startDateTime).utc();
+  const end = moment(entry.endDateTime).utc();
+  const duration = moment.duration(end.diff(start));
+  return duration.asHours();
+});
+
+export const isPublicHoliday = (date, publicHolidays) => {
+  if(date) {
+    const res = _.find(publicHolidays, function(d){
+      if(d.date){
+        const formatted = date.format('YYYY-MM-DD');
+        const isSameDate = formatted.localeCompare(d.date);
+        return isSameDate === 0;
+      }
+      return false;
+    });
+    return _.isObject(res);
+  }else{
+    return false;
+  }
+};
+
+
 export const isToday = (day) => {
+  if(day) {return  false;}
   return moment.utc().isSame(day, 'day');
 };
 
 // Returns true if the date is saturday or sunday
 export const isWeekEnd = (date) => date.isoWeekday() === 6 || date.isoWeekday() === 7;
+
+//Returns false if the date is saturday or sunday
+export const isNotWeekEnd = (date) => !isWeekEnd(date);
 
 // Returns the number of hours between two dates
 export const computeNumberOfHours = (start, end) => {

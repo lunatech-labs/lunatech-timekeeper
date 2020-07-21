@@ -15,17 +15,20 @@
  */
 
 import React, {useEffect, useState} from 'react';
+import {useHistory} from 'react-router-dom';
+import {useLocation} from 'react-router';
+import queryString from 'query-string';
+import moment from 'moment';
 import MainPage from '../MainPage/MainPage';
 import WeekCalendar from '../../components/TimeSheet/WeekCalendar';
 import TimeEntry from '../../components/TimeEntry/TimeEntry';
 import {useTimeKeeperAPI} from '../../utils/services';
 import {Alert, Badge, Form, Modal} from 'antd';
 import TimeEntryForm from '../../components/TimeEntry/TimeEntryForm';
-import moment from 'moment';
 import UserTimeSheetList from '../../components/TimeSheet/UserTimeSheetList';
 import MonthCalendar from '../../components/TimeSheet/MonthCalendar';
 import CalendarSelectionMode from '../../components/TimeSheet/CalendarSelectionMode';
-import {getIsoMonth} from '../../utils/momentUtils';
+import {getIsoMonth, isNotWeekEnd} from '../../utils/momentUtils';
 
 //https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-an-array-of-objects/34890276#34890276
 const groupBy = function (xs, key) {
@@ -47,12 +50,25 @@ const computeData = (timeSheets) => Object.entries(groupBy(timeSheets.flatMap(({
 });
 
 const TimeEntriesPage = () => {
+  let history = useHistory();
+  let location = useLocation();
   const [calendarMode, setCalendarMode] = useState('week');
   const firstDayOfCurrentWeek = moment().utc().startOf('week').add(1, 'day');
   const today = () => firstDayOfCurrentWeek.clone();
   const [prefixWeekUrl, setPrefixWeekUrl] = useState(() => {
+    if (location.search) {
+      let searchParams = queryString.parse(location.search);
+      if (searchParams.weekNumber && searchParams.year) {
+        return searchParams.year + '?weekNumber='+searchParams.weekNumber;
+      }
+      if (searchParams.weekNumber) {
+        return '2020?weekNumber='+searchParams.weekNumber;
+      }
+    }
     const tmpDate = firstDayOfCurrentWeek.clone();
-    return tmpDate.year() + '?weekNumber=' + tmpDate.isoWeek();
+    const weekNumber = tmpDate.isoWeek();
+    history.push('?year=' + tmpDate.year() + '&weekNumber=' + weekNumber);
+    return tmpDate.year() + '?weekNumber=' + weekNumber;
   });
   const [prefixMonthUrl, setPrefixMonthUrl] = useState(() => {
     const tmpDate = firstDayOfCurrentWeek.clone();
@@ -65,17 +81,29 @@ const TimeEntriesPage = () => {
   const [selectedEntryId, setSelectedEntryId] = useState();
 
   const weekData = useTimeKeeperAPI('/api/my/' + prefixWeekUrl);
+
   useEffect(
     () => {
+      if(weekData.loading){
+        return ;
+      }
       weekData.run();
-    }, [prefixWeekUrl, weekData.run]);
+    },
+    /* eslint-disable react-hooks/exhaustive-deps */
+    [prefixWeekUrl, weekData.run]);
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   const monthData = useTimeKeeperAPI(`/api/my/${prefixMonthUrl}`);
-
   useEffect(
     () => {
+      if(monthData.loading){
+        return;
+      }
       monthData.run();
-    }, [prefixMonthUrl, monthData.run]);
+    },
+    /* eslint-disable react-hooks/exhaustive-deps */
+    [prefixMonthUrl, monthData.run]);
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   if (weekData.error || monthData.error) {
     return (
@@ -93,6 +121,9 @@ const TimeEntriesPage = () => {
     (weekData.data && !weekData.loading ? weekData.data.sheets : []) : (monthData.data && !monthData.loading ? monthData.data.sheets : []);
   const days = computeData(timeSheets);
 
+  const publicHolidays = calendarMode === 'week' ?
+    (weekData.data && !weekData.loading ? weekData.data.publicHolidays : []) : (monthData.data && !monthData.loading ? monthData.data.publicHolidays : []);
+
   const datas = {
     firstDayOfWeek: weekData.data ? moment.utc(weekData.data.firstDayOfWeek) : today(),
     days: days
@@ -106,8 +137,8 @@ const TimeEntriesPage = () => {
 
 
   // A day without entries in the past should be displayed with "warn" design
-  const hasWarnNoEntryInPastDay =(date,day) => {
-    return moment().subtract('1','days').isAfter(date) && !day;
+  const hasWarnNoEntryInPastDay = (date, day) => {
+    return moment().subtract('1', 'days').isAfter(date) && !day;
   };
 
   const onClickAddTask = (e, m) => {
@@ -117,9 +148,11 @@ const TimeEntriesPage = () => {
   };
 
   const onClickCard = (e, m) => {
-    setTaskMoment(m);
-    setViewMode();
-    openModal();
+    if(isNotWeekEnd(m)){
+      setTaskMoment(m);
+      setViewMode();
+      openModal();
+    }
   };
 
   const onClickEntryCard = (e, m, selectedEntryId) => {
@@ -141,21 +174,24 @@ const TimeEntriesPage = () => {
   const setEditMode = () => setMode('edit');
 
   const timeEntryForm = () => {
-    if(selectedEntryId && mode === 'edit'){
-      return <TimeEntryForm selectedEntryId={selectedEntryId} setMode={setMode} entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment} form={form} mode={mode} onSuccess={() => {
+    if (selectedEntryId && mode === 'edit') {
+      return <TimeEntryForm selectedEntryId={selectedEntryId} setMode={setMode}
+        entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment}
+        form={form} mode={mode} onSuccess={() => {
+          closeModal();
+          weekData.run();
+          monthData.run();
+          setViewMode();
+        }} onCancel={() => setViewMode()}
+      />;
+    }
+    return <TimeEntryForm setMode={setMode} entries={entriesOfSelectedDay.map(entries => entries.data)}
+      currentDay={taskMoment} form={form} mode={mode} onSuccess={() => {
         closeModal();
         weekData.run();
         monthData.run();
         setViewMode();
       }} onCancel={() => setViewMode()}
-      />;
-    }
-    return <TimeEntryForm setMode={setMode} entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment} form={form} mode={mode} onSuccess={() => {
-      closeModal();
-      weekData.run();
-      monthData.run();
-      setViewMode();
-    }} onCancel={() => setViewMode()}
     />;
   };
 
@@ -187,13 +223,15 @@ const TimeEntriesPage = () => {
                 <div>
                   {data.filter(data => !!data).map(entry => {
                     return (
-                      <TimeEntry key={entry.id} entry={entry} onClick={e => onClickEntryCard(e, date, entry.id)}/>
+                      <TimeEntry key={entry.id} entry={entry}
+                        onClick={e => onClickEntryCard(e, date, entry.id)}/>
                     );
                   })}
                 </div>
               );
             }}
             days={datas.days}
+            publicHolidays={publicHolidays}
             warningCardPredicate={hasWarnNoEntryInPastDay}
           /> :
           <MonthCalendar
@@ -211,6 +249,7 @@ const TimeEntriesPage = () => {
             onPanelChange={(date) => {
               setPrefixMonthUrl(`${date.year()}/month?monthNumber=${getIsoMonth(date)}`);
             }}
+            publicHolidays={publicHolidays}
           />
       }
     </MainPage>

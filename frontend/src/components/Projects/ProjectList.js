@@ -193,12 +193,12 @@ const ProjectList = () => {
             </Space>
           }
           extra={[
-            <span>{canEditOneProject(item)? <Tooltip title="Edit this project" key="edit">
+            <span key='editKey'>{canEditOneProject(item)? <Tooltip title="Edit this project" key="edit">
               <Button data-cy="editProject" type="link" size="small" ghost shape="circle" icon={<EditFilled/>} href={`/projects/${item.id}/edit`}/>
             </Tooltip> : ''}</span>
 
           ]}
-          actions={[item.users.length === 0 ? <Panel id="tk_ProjectNoCollapse" header={<Space
+          actions={[item.users.length === 0 ? <Panel id="tk_ProjectNoCollapse" key="projectList" header={<Space
             size="small"><UserOutlined/><Pluralize label="member" size={item.users.length}/></Space>}/> :
             <Collapse bordered={false} expandIconPosition={'right'} key="projects">
               <Panel header={<Space

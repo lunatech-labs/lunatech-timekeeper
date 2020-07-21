@@ -55,10 +55,16 @@ describe("04 Time entries", () => {
 
         cy.get('[data-cy=btnWeekPrevious]').click({force: true});
         cy.url().should('include', '?weekNumber');
+    });
 
-
+    it("should display bank holiday", () => {
+        cy.visit("http://localhost:3000/time_entries?weekNumber=29");
+        cy.url().should('include', 'http://localhost:3000/time_entries?weekNumber=29');
+        cy.scrollTo('top');
+        cy.get('[data-cy=weekNavigator] > p').should('contain.text','13 - 19 Jul 2020');
 
     });
+
 
     // it("should create a new client", () => {
     //     cy.visit("http://localhost:3000/clients");

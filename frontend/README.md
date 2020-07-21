@@ -87,7 +87,6 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 https://www.npmjs.com/package/@react-keycloak/web
 https://github.com/panz3r/react-keycloak#readme
 
-
 # Cypress 
 
 [Cypress](https://www.cypress.io/) is an end-to-end test framework
@@ -110,7 +109,7 @@ First, check that the latest node packages are installed
 - the Frontend application is up and running
 - user "Alice" exists and is configured on Keycloak 
 
-All tests run with a set of demo users. As a prerequisite, the following user should be created on your local Keycloak server :
+All tests run with a set of demo users. As a prerequisite, the following user should be created on [your local Keycloak server](http://localhost:8082/) :
 
 Username : alice
 Password : alice

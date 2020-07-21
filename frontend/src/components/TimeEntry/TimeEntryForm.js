@@ -34,12 +34,13 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
   const [entry, setEntry] = useState();
   useEffect(() => {
     if(selectedEntryId) {
-      const entry = entries[0].find(e => e.id === selectedEntryId);
-      if (entry) {
-        setEntry(entry);
+      const localEntry = entries[0].find(e => e.id === selectedEntryId);
+      if (localEntry) {
+        setEntry(localEntry);
       }
     }
-  },[selectedEntryId]);
+  },[entries,selectedEntryId]);
+
   const timeSheets = useTimeKeeperAPI('/api/my/' + currentDay.year() + '?weekNumber=' + currentDay.isoWeek(), (form => form));
   if (timeSheets.loading) {
     return (

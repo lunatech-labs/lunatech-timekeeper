@@ -23,7 +23,7 @@ import '../../components/Button/BtnGeneral.less';
 import moment from 'moment';
 import TitleSection from '../Title/TitleSection';
 import UserTreeData from './UserTreeData';
-import {range} from '../../utils/utils';
+import _ from 'lodash'; // important!
 
 const {TextArea} = Input;
 const { RangePicker } = DatePicker;
@@ -90,14 +90,9 @@ const EditEventTemplateForm = () => {
     return current && current < moment().endOf('day');
   };
 
-  const disabledRangeTime = (_, type) => {
-    if (type === 'start') {
-      return {
-        disabledMinutes: () => range(0, 59).filter(minute => minute % 15 !== 0)
-      };
-    }
+  const disabledRangeTime = () => {
     return {
-      disabledMinutes: () => range(0, 59).filter(minute => minute % 15 !== 0)
+      disabledMinutes: () =>  _.range(0, 59, 15)
     };
   };
 

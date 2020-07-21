@@ -23,7 +23,7 @@ import {Link, Redirect} from 'react-router-dom';
 import TitleSection from '../../components/Title/TitleSection';
 import moment from 'moment';
 import UserTreeData from './UserTreeData';
-import {range} from '../../utils/utils';
+import _ from 'lodash'; // important!
 
 const {TextArea} = Input;
 const { RangePicker } = DatePicker;
@@ -88,14 +88,9 @@ const NewEventTemplateForm = () => {
     return current && current < moment().endOf('day');
   };
 
-  const disabledRangeTime = (_, type) => {
-    if (type === 'start') {
-      return {
-        disabledMinutes: () => range(0, 59).filter(minute => minute % 15 !== 0)
-      };
-    }
+  const disabledRangeTime = () => {
     return {
-      disabledMinutes: () => range(0, 59).filter(minute => minute % 15 !== 0)
+      disabledMinutes: () =>  _.range(0, 59, 15)
     };
   };
 
