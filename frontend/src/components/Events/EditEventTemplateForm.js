@@ -32,17 +32,13 @@ const EditEventTemplateForm = () => {
 
   const [eventTemplateUpdated, setEventTemplateUpdated] = useState(false);
   const [usersSelected, setUsersSelected] = useState([]);
-  useEffect(() => {
-    if(usersId){
-      setUsersSelected(usersId);
-    }
-  },[usersSelected, usersId]);
+
   const formDataToEventRequest = (formData) => ({
     name: formData.name,
     description: formData.description,
     startDateTime: formData.eventDateTime[0],
     endDateTime: formData.eventDateTime[1],
-    attendees: []
+    attendees: usersSelected
   });
 
   const eventIdSlug = useRouteMatch({
@@ -53,6 +49,16 @@ const EditEventTemplateForm = () => {
 
   const eventsResponse = useTimeKeeperAPI('/api/events/');
   const usersResponse = useTimeKeeperAPI('/api/users/');
+
+  useEffect(() => {
+    if(eventsResponse.data){
+      const event = eventsResponse.data.find(event => event.id.toString() === eventIdSlug.params.id);
+      const usersId = event.attendees.map(user => user.userId);
+      setUsersSelected(usersId.map(id => {
+        return {"userId": id}
+      }))
+    }
+  }, [eventsResponse.data]);
 
   const timeKeeperAPIPut = useTimeKeeperAPIPut('/api/events/' + eventIdSlug.params.id, (form=>form), setEventTemplateUpdated, formDataToEventRequest);
 
@@ -104,9 +110,6 @@ const EditEventTemplateForm = () => {
   if(usersResponse.data && eventsResponse.data){
     const event = eventsResponse.data.find(event => event.id.toString() === eventIdSlug.params.id);
     if(event){
-      const usersId = event.attendees.map(user => user.userId);
-      console.log(event)
-      console.log(usersSelected)
       const initialValues = {
         name: event.name,
         description: event.description,
