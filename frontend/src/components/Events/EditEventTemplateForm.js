@@ -55,8 +55,8 @@ const EditEventTemplateForm = () => {
       const event = eventsResponse.data.find(event => event.id.toString() === eventIdSlug.params.id);
       const usersId = event.attendees.map(user => user.userId);
       setUsersSelected(usersId.map(id => {
-        return {"userId": id}
-      }))
+        return {'userId': id};
+      }));
     }
   }, [eventsResponse.data]);
 

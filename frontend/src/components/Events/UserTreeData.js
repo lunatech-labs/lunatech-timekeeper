@@ -29,7 +29,7 @@ const UserTreeData = ({users, usersSelected, setUsersSelected}) => {
     if(usersSelected){
       setSelectedRowKeys(usersSelected.map(user => `event-user-row-${user.userId}`));
     }
-  }, [usersSelected])
+  }, [usersSelected]);
 
   const columns = [
     {
@@ -60,7 +60,7 @@ const UserTreeData = ({users, usersSelected, setUsersSelected}) => {
     onChange: (selectedRowKeys, selectedRows) => {
       setHasSelected(selectedRows.length);
       setUsersSelected(selectedRows.map(user => {
-          return {'userId' :user.id};
+        return {'userId' :user.id};
       }));
     },
   };
