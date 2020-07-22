@@ -22,6 +22,9 @@ import fr.lunatech.timekeeper.services.EventTemplateService;
 import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
 import fr.lunatech.timekeeper.services.responses.EventTemplateResponse;
 import fr.lunatech.timekeeper.services.responses.UserResponse;
+import org.eclipse.microprofile.metrics.MetricUnits;
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -48,18 +51,24 @@ public class EventResource implements EventResourceApi {
 
     @RolesAllowed({"user", "admin"})
     @Override
+    @Counted(name = "countGetAllEvents", description = "Counts how many times the user load the event list on method 'getAllEvents'")
+    @Timed(name = "timeGetAllEvents", description = "Times how long it takes the user load the event list on method 'getAllEvents'", unit = MetricUnits.MILLISECONDS)
     public List<EventTemplateResponse> getAllEvents() {
         return eventTemplateService.listAllResponses(authentication.context());
     }
 
     @RolesAllowed({"user", "admin"})
     @Override
+    @Counted(name = "countGetEventUsers", description = "Counts how many times the user load the attendees for an event on method 'getEventUsers'")
+    @Timed(name = "timeGetEventUsers", description = "Times how long it takes the user load the attendees for an event on method 'getEventUsers'", unit = MetricUnits.MILLISECONDS)
     public List<UserResponse> getEventUsers(Long id) {
         return eventTemplateService.getAttendees(id);
     }
 
     @RolesAllowed({"user", "admin"})
     @Override
+    @Counted(name = "countCreateEvent", description = "Counts how many times the user create an event on method 'createEvent'")
+    @Timed(name = "timeCreateEvent", description = "Times how long it takes the user create an event on method 'createEvent'", unit = MetricUnits.MILLISECONDS)
     public Response createEvent(@Valid EventTemplateRequest request, UriInfo uriInfo) {
         Long eventTemplateId = eventTemplateService.create(request, authentication.context());
         final URI uri = uriInfo.getAbsolutePathBuilder().path(Long.toString(eventTemplateId)).build();
@@ -68,6 +77,8 @@ public class EventResource implements EventResourceApi {
 
     @RolesAllowed({"user", "admin"})
     @Override
+    @Counted(name = "countUpdateEvent", description = "Counts how many times the user to update an event on method 'updateEvent'")
+    @Timed(name = "timeUpdateEvent", description = "Times how long it takes the user to update an event on method 'updateEvent'", unit = MetricUnits.MILLISECONDS)
     public Response updateEvent(Long id, EventTemplateRequest request) {
         return eventTemplateService.update(id, request, authentication.context())
                 .map(it -> Response.noContent().build())

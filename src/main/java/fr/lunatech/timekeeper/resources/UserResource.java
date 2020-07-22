@@ -20,6 +20,9 @@ import fr.lunatech.timekeeper.resources.openapi.UserResourceApi;
 import fr.lunatech.timekeeper.resources.providers.AuthenticationContextProvider;
 import fr.lunatech.timekeeper.services.UserService;
 import fr.lunatech.timekeeper.services.responses.UserResponse;
+import org.eclipse.microprofile.metrics.MetricUnits;
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -36,6 +39,8 @@ public class UserResource implements UserResourceApi {
 
     @RolesAllowed({"user", "admin"})
     @Override
+    @Counted(name = "countMe", description = "Counts how many times the user load his information on method 'me'")
+    @Timed(name = "timeMe", description = "Times how long it takes the user load his information on method 'me'", unit = MetricUnits.MILLISECONDS)
     public UserResponse me() {
         final var ctx = authentication.context();
         return userService.findResponseById(ctx.getUserId(), ctx)
@@ -44,6 +49,8 @@ public class UserResource implements UserResourceApi {
 
     @RolesAllowed({"user", "admin"})
     @Override
+    @Counted(name = "countGetAllUsers", description = "Counts how many times the user load the organization list on method 'getAllUsers'")
+    @Timed(name = "timeGetAllUsers", description = "Times how long it takes the user load the organization list on method 'getAllUsers'", unit = MetricUnits.MILLISECONDS)
     public List<UserResponse> getAllUsers() {
         final var ctx = authentication.context();
         return userService.listAllResponses(ctx);
@@ -51,6 +58,8 @@ public class UserResource implements UserResourceApi {
 
     @RolesAllowed({"user", "admin"})
     @Override
+    @Counted(name = "countGetUser", description = "Counts how many times the user to get the organization on method 'getUser'")
+    @Timed(name = "timeGetUser", description = "Times how long it takes the user to get the organization on method 'getUser'", unit = MetricUnits.MILLISECONDS)
     public UserResponse getUser(Long id) {
         final var ctx = authentication.context();
         return userService.findResponseById(id, ctx)
