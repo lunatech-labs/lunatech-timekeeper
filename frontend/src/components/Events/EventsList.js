@@ -83,11 +83,11 @@ const EventsList = () => {
 
   const displayMembersButton = (item) => {
     if(item.attendees.length === 0){
-      return <Button className="tk_Link" type="link">{item.attendees.length}{' people'}</Button>;
+      return <Button className="tk_Link_People" type="link">{item.attendees.length}{' people'}</Button>;
     }
     return(
       <Dropdown overlay={menu(item)} key="members">
-        <Button className="tk_Link" type="link" onClick={e => e.preventDefault()}>{item.attendees.length}{' people'}</Button>
+        <Button className="tk_Link_People" type="link" onClick={e => e.preventDefault()}>{item.attendees.length}{' people'}</Button>
       </Dropdown>
     );
   };
