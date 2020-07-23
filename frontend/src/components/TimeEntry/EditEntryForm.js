@@ -139,7 +139,7 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry}) => 
     return timeSheets.find(timeSheet => !!timeSheet.entries.find(entry => entry.id === entryId)).id;
   };
 
-  const hoursOptions = [...Array(8).keys()].map(i => <Option value={i+1} >{i+1}</Option>);
+  const hoursOptions = [...Array(8).keys()].map(i => <Option key={`option-hour-${i}`} value={i+1} >{i+1}</Option>);
 
   return (
     <div className="tk_ModalBottom">
@@ -202,7 +202,7 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry}) => 
                         <Form.Item name="numberHours" label="Number of hours:"
                           rules={[{required: true}]}>
                           <Select
-                              showSearch
+                            showSearch
                           >
                             {hoursOptions}
                           </Select>

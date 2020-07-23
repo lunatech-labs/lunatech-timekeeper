@@ -116,7 +116,7 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel}) => {
     }
   };
 
-  const hoursOptions = [...Array(8).keys()].map(i => <Option value={i+1} >{i+1}</Option>);
+  const hoursOptions = [...Array(8).keys()].map(i => <Option key={`option-hour-${i}`} value={i+1} >{i+1}</Option>);
 
   return (
     <div className="tk_ModalBottom">
@@ -177,7 +177,7 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel}) => {
                       <div>
                         <Form.Item name="numberHours" label="Number of hours:" rules={[{required: true}]}>
                           <Select
-                              showSearch
+                            showSearch
                           >
                             {hoursOptions}
                           </Select>

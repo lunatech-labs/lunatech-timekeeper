@@ -171,15 +171,15 @@ const NewEventTemplateForm = () => {
                 ]}
               >
 
-                  <RangePicker
-                    disabledDate={disabledDate}
-                    disabledTime={disabledTime}
-                    showTime={{
-                      hideDisabledOptions: true
-                    }}
-                    format="YYYY-MM-DD h:mm"
-                    className="tk_RangePicker"
-                  />
+                <RangePicker
+                  disabledDate={disabledDate}
+                  disabledTime={disabledTime}
+                  showTime={{
+                    hideDisabledOptions: true
+                  }}
+                  format="YYYY-MM-DD h:mm"
+                  className="tk_RangePicker"
+                />
               </Form.Item>
             </Col>
             <Col className="gutter-row" span={12}>
