@@ -31,13 +31,14 @@ const { RangePicker } = DatePicker;
 
 const NewEventTemplateForm = () => {
   const [eventTemplateCreated, setEventTemplateCreated] = useState(false);
+  const [usersSelected, setUsersSelected] = useState([]);
 
   const formDataToEventRequest = (formData) => ({
     name: formData.name,
     description: formData.description,
     startDateTime: formData.eventDateTime[0],
     endDateTime: formData.eventDateTime[1],
-    attendees: []
+    attendees: usersSelected
   });
   const usersResponse = useTimeKeeperAPI('/api/users');
   const eventsResponse = useTimeKeeperAPI('/api/users');
@@ -122,8 +123,7 @@ const NewEventTemplateForm = () => {
         return _.range(0, 60);
       },
     };
-  }
-
+  };
   if(eventsResponse.data && usersResponse.data){
     return (
       <Form
@@ -186,8 +186,9 @@ const NewEventTemplateForm = () => {
               <TitleSection title="Users"/>
               <Form.Item
                 label="Select users :"
+                name="usersSelected"
               >
-                <UserTreeData users={sortListByName(usersResponse.data)}/>
+                <UserTreeData users={sortListByName(usersResponse.data)} usersSelected={usersSelected} setUsersSelected={setUsersSelected}/>
               </Form.Item>
             </Col>
           </Row>

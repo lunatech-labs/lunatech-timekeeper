@@ -15,14 +15,13 @@
  */
 import React, {useContext, useState} from 'react';
 import {Alert, Avatar, Button, Card, Collapse, Divider, Dropdown, List, Menu, Spin, Space} from 'antd';
-import logo from '../../img/logo_timekeeper_homepage.png';
 import {sortListByName, useTimeKeeperAPI} from '../../utils/services';
 import EditFilled from '@ant-design/icons/lib/icons/EditFilled';
 import UserOutlined from '@ant-design/icons/lib/icons/UserOutlined';
 import LockFilled from '@ant-design/icons/lib/icons/LockFilled';
 import UnlockOutlined from '@ant-design/icons/lib/icons/UnlockOutlined';
 import Meta from 'antd/lib/card/Meta';
-
+import _ from 'lodash';
 import './ProjectList.less';
 import ProjectMemberTag from './ProjectMemberTag';
 import TitleSection from '../Title/TitleSection';
@@ -170,6 +169,15 @@ const ProjectList = () => {
     return sortListByName(listOfMembers).sort((a,b) => b.manager - a.manager);
   };
 
+  const getLogoURL = (item) => {
+      if(item && item.name) {
+          let cleanSeed = _.snakeCase(item.name);
+          return 'https://picsum.photos/seed/' + cleanSeed + '/40';
+      }else{
+          return 'https://picsum.photos/40';
+      }
+  };
+
   const DataList = ({data}) => <List
     id="tk_List"
     grid={{gutter: 32, column: 3}}
@@ -181,7 +189,7 @@ const ProjectList = () => {
           bordered={false}
           title={
             <Space size={'middle'}>
-              <Avatar src={logo} shape={'square'} size="large"/>
+              <Avatar src={getLogoURL(item)} shape={'square'} size="large"/>
               <div className="tk_Card_ProjectHeader">
                 <div className="tk_Card_ProjectTitle">
                   <p>{item.name}</p>

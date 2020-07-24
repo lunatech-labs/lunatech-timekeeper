@@ -16,7 +16,6 @@
 
 import React, {useState} from 'react';
 import {Alert, AutoComplete, Avatar, Button, Card, Collapse, List, Spin} from 'antd';
-import logo from '../../img/logo_timekeeper_homepage.png';
 import './ClientList.less';
 import {sortListByName, useTimeKeeperAPI} from '../../utils/services';
 import FolderFilled from '@ant-design/icons/lib/icons/FolderFilled';
@@ -31,7 +30,7 @@ import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined';
 import Meta from 'antd/lib/card/Meta';
 import CardXs from '../Card/CardXs';
 import Pluralize from '../Pluralize/Pluralize';
-
+import _ from 'lodash';
 const { Panel } = Collapse;
 
 const ClientList = () => {
@@ -47,6 +46,15 @@ const ClientList = () => {
     if(a.name.toLowerCase() > b.name.toLowerCase()){return 1;}
     return 0;
   });
+
+    const getLogoURL = (item) => {
+        if(item && item.name) {
+            let cleanSeed = _.snakeCase(item.name);
+            return 'https://picsum.photos/seed/' + cleanSeed + '/40';
+        }else{
+            return 'https://picsum.photos/40';
+        }
+    };
 
   if (clientsResponse.loading) {
     return (
@@ -94,7 +102,7 @@ const ClientList = () => {
               bordered={false}
               title={
                 <Space size={'middle'}>
-                  <Avatar src={logo} shape={'square'} size="large"/>
+                  <Avatar src={getLogoURL(item)} shape={'square'} size="large"/>
                   <div className="tk_Card_ClientHeader">
                     <p className="tk_Card_ClientTitle">{item.name}</p>
                     <p className="tk_Card_ClientNbProject"><Pluralize label="project" size={item.projects.length}/></p>

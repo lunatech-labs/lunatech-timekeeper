@@ -32,22 +32,27 @@ All ADR (Architecture Decision Records) are on Confluence [here](https://lunatec
 
 # Developer guide
 
-Read [How to setup your development environment](https://lunatech.atlassian.net/wiki/spaces/INTRANET/pages/1879343105/How-to+setup+your+development+environment) 
+Read [How to setup your development environment](https://github.com/lunatech-labs/lunatech-timekeeper/blob/develop/DEV_ENVIRONMENT.md) 
+Feel free to contribute for other platforms (Linux, Windows...) if you wish. PR for documentations are welcome. 
 
 ## Backend 
 
-- Quarkus
+- Quarkus 1.3 
+- Java 11
+- Graal VM 19.3.1
 - PostgresSQL 12.2
 - Hibernate-panache
-- JsonB
+- Jackson
 - Docker
-- Keycloak
+- Keycloak 10.x
 
 ## FrontEnd
 
 - React 0.16
 - AntD library
 - Less
+
+The UX/UI design was made by Geoffroy Bouet, Lunatech.
 
 # Getting started
 
