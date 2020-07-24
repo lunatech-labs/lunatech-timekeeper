@@ -19,7 +19,7 @@ import {useTimeKeeperAPIPost} from '../../utils/services';
 import {Button, Col, Form, Input, message, Radio, Row, Select, Space} from 'antd';
 import PropTypes from 'prop-types';
 import TitleSection from '../Title/TitleSection';
-import './AddEntryForm.less'
+import './AddEntryForm.less';
 var _ = require('lodash');
 
 const {Option} = Select;
@@ -122,14 +122,14 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel, numberOfHour
     const hourDisabled = (hour) => {
       return parseInt(hour) + parseInt(numberOfHoursForDay) > 8;
     };
-    return _.range(1, 9, 1).map(i => <Option key={`option-hour-${i}`} disabled={hourDisabled(i)} value={i} >{i}</Option>)
+    return _.range(1, 9, 1).map(i => <Option key={`option-hour-${i}`} disabled={hourDisabled(i)} value={i} >{i}</Option>);
   };
 
   const disabledClassName = (disabled) => {
     if(disabled) {
       return 'tk-radio-disabled';
     }
-  }
+  };
 
   return (
     <div className="tk_ModalBottom">

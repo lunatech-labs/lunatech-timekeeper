@@ -124,7 +124,7 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
             onCancel={onCancel} numberOfHoursForDay={amountOfHoursPerDay(entries)}/>}
       {mode === 'edit' && entry &&
           <EditEntryForm date={currentDay} form={form} timeSheets={timeSheets.data.sheets} onSuccess={onSuccess}
-            onCancel={onCancel} entry={entry}/>}
+            onCancel={onCancel} entry={entry} numberOfHoursForDay={amountOfHoursPerDay(entries)}/>}
     </div>
   );
 };
