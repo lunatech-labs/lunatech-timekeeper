@@ -19,6 +19,7 @@ import {useTimeKeeperAPIPost} from '../../utils/services';
 import {Button, Col, Form, Input, message, Radio, Row, Select, Space} from 'antd';
 import PropTypes from 'prop-types';
 import TitleSection from '../Title/TitleSection';
+var _ = require('lodash');
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -78,7 +79,7 @@ const url = (form) => {
   return `/api/timeSheet/${timeSheetId}/timeEntry`;
 };
 
-const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel}) => {
+const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel, numberOfHoursForDay}) => {
   const [entryCreated, setEntryCreated] = useState(false);
   const [selectedTimeSheet, setSelectedTimeSheet] = useState();
   const timeKeeperAPIPost = useTimeKeeperAPIPost(url(form), (form => form), setEntryCreated);
@@ -116,7 +117,12 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel}) => {
     }
   };
 
-  const hoursOptions = [...Array(8).keys()].map(i => <Option key={`option-hour-${i}`} value={i+1} >{i+1}</Option>);
+  const hoursOptions = (numberOfHoursForDay) => {
+    const hourDisabled = (hour) => {
+      return parseInt(hour) + parseInt(numberOfHoursForDay) > 8;
+    };
+    return _.range(1, 9, 1).map(i => <Option key={`option-hour-${i}`} disabled={hourDisabled(i)} value={i} >{i}</Option>)
+  };
 
   return (
     <div className="tk_ModalBottom">
@@ -150,11 +156,12 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel}) => {
               {() => {
                 const timeUnit = selectedTimeSheet && selectedTimeSheet.timeUnit;
                 const hourDisabled = timeUnit && timeUnit !== 'HOURLY';
-                const halfDayDisabled = timeUnit && timeUnit !== 'HOURLY' && timeUnit !== 'HALFDAY';
+                const halfDayDisabled = (timeUnit && timeUnit !== 'HOURLY' && timeUnit !== 'HALFDAY') || (numberOfHoursForDay && numberOfHoursForDay > 4);
+                const dayDisabled = numberOfHoursForDay && numberOfHoursForDay > 0;
                 return (
                   <Form.Item name="timeUnit" label="Logged time:" rules={[{required: true}]}>
                     <Radio.Group>
-                      <Radio value="DAY">Day</Radio>
+                      <Radio value="DAY" disabled={dayDisabled}>Day</Radio>
                       <Radio value="HALFDAY" disabled={halfDayDisabled}>Half-day</Radio>
                       <Radio value="HOURLY" disabled={hourDisabled}>Hours</Radio>
                     </Radio.Group>
@@ -179,7 +186,7 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel}) => {
                           <Select
                             showSearch
                           >
-                            {hoursOptions}
+                            {hoursOptions(numberOfHoursForDay)}
                           </Select>
                         </Form.Item>
                       </div>
@@ -211,6 +218,7 @@ AddEntryForm.propTypes = {
   timeSheets: PropTypes.array.isRequired,
   onSuccess: PropTypes.func,
   onCancel: PropTypes.func,
+  numberOfHoursForDay: PropTypes.array
 };
 
 export default AddEntryForm;
