@@ -73,5 +73,4 @@ public interface TimeEntryResourceApi {
             )
     })
     Response updateTimeEntry(@PathParam("timeSheetId") Long timeSheetId, @PathParam("timeEntryid") Long timeEntryId, @Valid @RequestBody TimeEntryRequest request, @Context UriInfo uriInfo);
-
 }

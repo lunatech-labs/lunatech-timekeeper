@@ -25,7 +25,6 @@ import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 
 import javax.annotation.security.RolesAllowed;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -34,8 +33,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
-//@RegisterForReflection
-@ApplicationScoped
 public class TimeEntryResource implements TimeEntryResourceApi {
 
     @Inject
@@ -43,7 +40,6 @@ public class TimeEntryResource implements TimeEntryResourceApi {
 
     @Inject
     AuthenticationContextProvider authentication;
-
 
     @RolesAllowed({"user"})
     @Override
