@@ -16,15 +16,24 @@
 
 import React from 'react';
 import {Avatar, Divider} from 'antd';
-import logo from '../../img/logo_timekeeper_homepage.png';
 import TagProjectClient from '../Tag/TagProjectClient';
 import PropTypes from 'prop-types';
 import './ProjectClientHeader.less';
+import _ from 'lodash';
+
+const getLogoURL = (item) => {
+    if(item && item.name) {
+        let cleanSeed = _.snakeCase(item.name);
+        return 'https://picsum.photos/seed/' + cleanSeed + '/40';
+    }else{
+        return 'https://picsum.photos/40';
+    }
+};
 
 const ProjectClientHeader = ({project}) => {
   return (
     <div className='tk_ProjectClientHeader'>
-      <Avatar src={logo} shape={'square'} size="large"/>
+      <Avatar src={getLogoURL(project)} shape={'square'} size="large"/>
       <p>{project.name}</p>
       <Divider type="vertical"/>
       <TagProjectClient client={project.client}/>

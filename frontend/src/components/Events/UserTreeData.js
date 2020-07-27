@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Avatar, Table} from 'antd';
 import PropTypes from 'prop-types';
 import './UserTreeData.less';
 
-const UserTreeData = ({users}) => {
+const UserTreeData = ({users, usersSelected, setUsersSelected}) => {
   const renderAvatar = (pictureUrl) => {
     return <Avatar src={pictureUrl}/>;
   };
+
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  useEffect(()=> {
+    if(usersSelected){
+      setSelectedRowKeys(usersSelected.map(user => `event-user-row-${user.userId}`));
+    }
+  }, [usersSelected]);
 
   const columns = [
     {
@@ -49,11 +56,14 @@ const UserTreeData = ({users}) => {
 
   // rowSelection objects indicates the need for row selection
   const rowSelection = {
+    selectedRowKeys,
     onChange: (selectedRowKeys, selectedRows) => {
       setHasSelected(selectedRows.length);
+      setUsersSelected(selectedRows.map(user => {
+        return {'userId' :user.id};
+      }));
     },
   };
-
   return (
     <div>
       <span style={{ marginLeft: 8 }}>
@@ -71,7 +81,9 @@ const UserTreeData = ({users}) => {
   );
 };
 UserTreeData.propTypes = {
-  users: PropTypes.array
+  users: PropTypes.array.isRequired,
+  usersSelected: PropTypes.array.isRequired,
+  setUsersSelected: PropTypes.func.isRequired
 };
 
 export default UserTreeData;

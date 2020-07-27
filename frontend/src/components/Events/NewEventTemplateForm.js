@@ -23,20 +23,22 @@ import {Link, Redirect} from 'react-router-dom';
 import TitleSection from '../../components/Title/TitleSection';
 import moment from 'moment';
 import UserTreeData from './UserTreeData';
-import _ from 'lodash'; // important!
+import _ from 'lodash';
+import 'moment/locale/en-gb';
 
 const {TextArea} = Input;
 const { RangePicker } = DatePicker;
 
 const NewEventTemplateForm = () => {
   const [eventTemplateCreated, setEventTemplateCreated] = useState(false);
+  const [usersSelected, setUsersSelected] = useState([]);
 
   const formDataToEventRequest = (formData) => ({
     name: formData.name,
     description: formData.description,
     startDateTime: formData.eventDateTime[0],
     endDateTime: formData.eventDateTime[1],
-    attendees: []
+    attendees: usersSelected
   });
   const usersResponse = useTimeKeeperAPI('/api/users');
   const eventsResponse = useTimeKeeperAPI('/api/users');
@@ -88,12 +90,40 @@ const NewEventTemplateForm = () => {
     return current && current < moment().endOf('day');
   };
 
-  const disabledRangeTime = () => {
+  function disabledTime(time, type) {
+    if (type === 'start') {
+      return {
+        disabledHours() {
+          let morning =  _.range(0, 7);
+          let evening =  _.range(20, 24);
+          return _.concat(morning,evening);
+        },
+        disabledMinutes: function () {
+          return _.filter(_.range(0, 60), function (x) {
+            return x % 15 !== 0;
+          });
+        },
+        disabledSeconds() {
+          return _.range(0, 60);
+        },
+      };
+    }
     return {
-      disabledMinutes: () =>  _.range(0, 59, 15)
+      disabledHours() {
+        let morning =  _.range(0, 7);
+        let evening =  _.range(20, 24);
+        return _.concat(morning,evening);
+      },
+      disabledMinutes: function () {
+        return _.filter(_.range(0, 60), function (x) {
+          return x % 15 !== 0;
+        });
+      },
+      disabledSeconds() {
+        return _.range(0, 60);
+      },
     };
   };
-
   if(eventsResponse.data && usersResponse.data){
     return (
       <Form
@@ -140,23 +170,25 @@ const NewEventTemplateForm = () => {
                   },
                 ]}
               >
-                <RangePicker
-                  disabledDate={disabledDate}
-                  disabledTime={disabledRangeTime}
-                  showTime={{
-                    hideDisabledOptions: true
-                  }}
-                  format="YYYY-MM-DD h:mm a"
-                  className="tk_RangePicker"
-                />
+
+                  <RangePicker
+                    disabledDate={disabledDate}
+                    disabledTime={disabledTime}
+                    showTime={{
+                      hideDisabledOptions: true
+                    }}
+                    format="YYYY-MM-DD h:mm"
+                    className="tk_RangePicker"
+                  />
               </Form.Item>
             </Col>
             <Col className="gutter-row" span={12}>
               <TitleSection title="Users"/>
               <Form.Item
                 label="Select users :"
+                name="usersSelected"
               >
-                <UserTreeData users={sortListByName(usersResponse.data)}/>
+                <UserTreeData users={sortListByName(usersResponse.data)} usersSelected={usersSelected} setUsersSelected={setUsersSelected}/>
               </Form.Item>
             </Col>
           </Row>

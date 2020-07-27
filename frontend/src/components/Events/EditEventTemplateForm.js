@@ -31,13 +31,14 @@ const { RangePicker } = DatePicker;
 const EditEventTemplateForm = () => {
 
   const [eventTemplateUpdated, setEventTemplateUpdated] = useState(false);
+  const [usersSelected, setUsersSelected] = useState([]);
 
   const formDataToEventRequest = (formData) => ({
     name: formData.name,
     description: formData.description,
     startDateTime: formData.eventDateTime[0],
     endDateTime: formData.eventDateTime[1],
-    attendees: []
+    attendees: usersSelected
   });
 
   const eventIdSlug = useRouteMatch({
@@ -48,6 +49,16 @@ const EditEventTemplateForm = () => {
 
   const eventsResponse = useTimeKeeperAPI('/api/events/');
   const usersResponse = useTimeKeeperAPI('/api/users/');
+
+  useEffect(() => {
+    if(eventsResponse.data){
+      const event = eventsResponse.data.find(event => event.id.toString() === eventIdSlug.params.id);
+      const usersId = event.attendees.map(user => user.userId);
+      setUsersSelected(usersId.map(id => {
+        return {'userId': id};
+      }));
+    }
+  }, [eventsResponse.data]);
 
   const timeKeeperAPIPut = useTimeKeeperAPIPut('/api/events/' + eventIdSlug.params.id, (form=>form), setEventTemplateUpdated, formDataToEventRequest);
 
@@ -90,11 +101,40 @@ const EditEventTemplateForm = () => {
     return current && current < moment().endOf('day');
   };
 
-  const disabledRangeTime = () => {
+  function disabledTime(time, type) {
+    if (type === 'start') {
+      return {
+        disabledHours() {
+          let morning =  _.range(0, 7);
+          let evening =  _.range(20, 24);
+          return _.concat(morning,evening);
+        },
+        disabledMinutes: function () {
+          return _.filter(_.range(0, 60), function (x) {
+            return x % 15 !== 0;
+          });
+        },
+        disabledSeconds() {
+          return _.range(0, 60);
+        },
+      };
+    }
     return {
-      disabledMinutes: () =>  _.range(0, 59, 15)
+      disabledHours() {
+        let morning =  _.range(0, 7);
+        let evening =  _.range(20, 24);
+        return _.concat(morning,evening);
+      },
+      disabledMinutes: function () {
+        return _.filter(_.range(0, 60), function (x) {
+          return x % 15 !== 0;
+        });
+      },
+      disabledSeconds() {
+        return _.range(0, 60);
+      },
     };
-  };
+  }
 
   if(usersResponse.data && eventsResponse.data){
     const event = eventsResponse.data.find(event => event.id.toString() === eventIdSlug.params.id);
@@ -103,7 +143,7 @@ const EditEventTemplateForm = () => {
         name: event.name,
         description: event.description,
         eventDateTime: [moment.utc(event.startDateTime),moment.utc(event.endDateTime)],
-        attendees: []
+        attendees: usersSelected
       };
       return (
         <Form
@@ -152,11 +192,11 @@ const EditEventTemplateForm = () => {
                 >
                   <RangePicker
                     disabledDate={disabledDate}
-                    disabledTime={disabledRangeTime}
+                    disabledTime={disabledTime}
                     showTime={{
                       hideDisabledOptions: true
                     }}
-                    format="YYYY-MM-DD h:mm a"
+                    format="YYYY-MM-DD h:mm"
                     className="tk_RangePicker"
                   />
                 </Form.Item>
@@ -166,7 +206,7 @@ const EditEventTemplateForm = () => {
                 <Form.Item
                   label="Select users :"
                 >
-                  <UserTreeData users={sortListByName(usersResponse.data)}/>
+                  <UserTreeData users={sortListByName(usersResponse.data)} usersSelected={usersSelected} setUsersSelected={setUsersSelected}/>
                 </Form.Item>
               </Col>
             </Row>
