@@ -22,10 +22,10 @@ import fr.lunatech.timekeeper.services.TimeEntryService;
 import fr.lunatech.timekeeper.services.requests.TimeEntryRequest;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Counted;
-import org.eclipse.microprofile.metrics.annotation.Gauge;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 
 import javax.annotation.security.RolesAllowed;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -34,6 +34,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
+//@RegisterForReflection
+@ApplicationScoped
 public class TimeEntryResource implements TimeEntryResourceApi {
 
     @Inject
@@ -43,30 +45,12 @@ public class TimeEntryResource implements TimeEntryResourceApi {
     AuthenticationContextProvider authentication;
 
 
-    static class TimeEntriesNumberOfHoursGauge {
-        int fourHours;
-        int eightHours;
-        int otherHours;
-    }
-    private TimeEntriesNumberOfHoursGauge timeEntriesNumberOfHoursGauge = new TimeEntriesNumberOfHoursGauge();
-
     @RolesAllowed({"user"})
     @Override
     @Counted(name = "countCreateTimeEntry", description = "Counts how many times the user create an time entry on method 'createTimeEntry'")
     @Timed(name = "timeCreateTimeEntry", description = "Times how long it takes the user create an time entry on method 'createTimeEntry'", unit = MetricUnits.MILLISECONDS)
     public Response createTimeEntry(@NotNull Long timeSheetId, @Valid TimeEntryRequest request, UriInfo uriInfo) {
         final var ctx = authentication.context();
-        switch (request.getNumberHours()) {
-            case 4:
-                timeEntriesNumberOfHoursGauge.fourHours++;
-                break;
-            case 8:
-                timeEntriesNumberOfHoursGauge.eightHours++;
-                break;
-            default:
-                timeEntriesNumberOfHoursGauge.otherHours++;
-                break;
-        }
         final long timeId = timeEntryService.createTimeEntry(timeSheetId, request, ctx);
         final URI uri = uriInfo.getAbsolutePathBuilder().path(Long.toString(timeId)).build();
         return Response.created(uri).build();
@@ -81,29 +65,5 @@ public class TimeEntryResource implements TimeEntryResourceApi {
         return timeEntryService.updateTimeEntry(timeSheetId, timeEntryId, request, ctx)
                 .map(it -> Response.noContent().build())
                 .orElseThrow(NotFoundException::new);
-    }
-
-    @Gauge(name = "numberOfHalfDayEntries", unit = MetricUnits.NONE, description = "Number of entries created for a half day")
-    public Integer numberOfHalfDayEntries() {
-//        return timeEntriesNumberOfHoursGauge.fourHours;
-        return 4;
-    }
-
-
-    @Gauge(name = "numberOfFullDayEntries", unit = MetricUnits.NONE, description = "Number of entries created for a full day")
-    public Integer numberOfDayEntries() {
-//        return timeEntriesNumberOfHoursGauge.eightHours;
-        return 8;
-    }
-
-    @Gauge(name = "numberOfOtherHoursEntries", unit = MetricUnits.NONE, description = "Number of entries created with an amount of hours different than 4 and 8 hours")
-    public Integer numberOfOtherHoursEntries() {
-//        return timeEntriesNumberOfHoursGauge.otherHours;
-        return 3;
-    }
-
-//    @Gauge(name = "numberOfOtherHoursEntries", unit = MetricUnits.NONE, description = "Number of entries created with an amount of hours different than 1, 4 and 8 hours")
-    public Response yolo() {
-        return Response.ok(timeEntriesNumberOfHoursGauge.otherHours).build();
     }
 }

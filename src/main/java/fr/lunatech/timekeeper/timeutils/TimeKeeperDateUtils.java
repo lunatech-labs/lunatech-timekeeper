@@ -17,6 +17,7 @@
 package fr.lunatech.timekeeper.timeutils;
 
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -131,5 +132,9 @@ public class TimeKeeperDateUtils {
         LocalDate firstDayOfFirstWeek = getFirstDayOfWeekFromWeekNumber(year, weekNumber);
         LocalDate lastDayOfLastWeek = adjustToLastDayOfWeek(firstDayOfFirstWeek.plusWeeks(5));
         return inputDate -> inputDate.isAfter(firstDayOfFirstWeek.minusDays(1)) && inputDate.isBefore(lastDayOfLastWeek.plusDays(1));
+    }
+
+    public static Long numberOfHours(LocalDateTime start, LocalDateTime end) {
+        return Duration.between(start, end).toHours();
     }
 }
