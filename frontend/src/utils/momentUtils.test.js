@@ -138,17 +138,31 @@ test('renderRange with same day', () => {
 });
 
 // eslint-disable-next-line
-test('weekRangeOfDate with a week', () => {
-    const firstDay = moment('2020-07-23').utc().startOf('week');
+test('weekRangeOfDate with a specified firstDay', () => {
+    const firstDay = moment('2020-07-23');
     const numberOfWeeks = 7;
     const result = weekRangeOfDate(firstDay, numberOfWeeks);
 
     // eslint-disable-next-line
     expect(result).toHaveLength(7);
 
-//    expect(result).toBe([]);
+    expect(result[0].id).toBe(23);
+    expect(result[0].start.format()).toBe("2020-06-04T00:00:00+02:00");
+    expect(result[0].end.format()).toBe("2020-06-06T23:59:59+02:00");
+});
 
-    expect(result[0].id).toBe(22);
-    expect(result[0].start).toBe(moment("2020-05-31").utc());
-    expect(result[0].end).toBe(moment("2020-06-06T21:59:59.999Z"));
+// eslint-disable-next-line
+test('weekRangeOfDate with a specified firstDay as monday', () => {
+    const firstDay = moment('2020-07-20'); // monday
+    const numberOfWeeks = 7;
+    const result = weekRangeOfDate(firstDay, numberOfWeeks);
+
+    // eslint-disable-next-line
+    expect(result).toHaveLength(7);
+
+    //expect(result).toBe([]);
+
+    expect(result[0].id).toBe(23);
+    expect(result[0].start.format()).toBe("2020-06-01T00:00:00+02:00"); // monday
+    expect(result[0].end.format()).toBe("2020-06-06T23:59:59+02:00"); // saturday
 });
