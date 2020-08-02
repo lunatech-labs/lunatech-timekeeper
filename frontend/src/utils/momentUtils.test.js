@@ -1,0 +1,154 @@
+/*
+ * Copyright 2020 Lunatech Labs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import {renderRangeWithYear, renderRange, weekRangeOfDate} from './momentUtils';
+import moment from 'moment';
+
+// eslint-disable-next-line
+test('renderRangeWithYear a range year with different month', () => {
+    const startDate = moment('2020-01-22');
+    const endDate = moment('2020-02-01');
+    const result = renderRangeWithYear(startDate, endDate);
+
+    // eslint-disable-next-line
+    expect(result).toBe('22 Jan - 01 Feb 2020');
+});
+
+// eslint-disable-next-line
+test('renderRangeWithYear a range year', () => {
+    const startDate = moment('2020-01-01');
+    const endDate = moment('2020-01-31');
+    const result = renderRangeWithYear(startDate, endDate);
+
+    // eslint-disable-next-line
+    expect(result).toBe('01 - 31 Jan 2020');
+});
+
+// eslint-disable-next-line
+test('renderRangeWithYear a range with 2 different years', () => {
+    const startDate = moment('2019-12-22');
+    const endDate = moment('2020-02-01');
+    const result = renderRangeWithYear(startDate, endDate);
+
+    // eslint-disable-next-line
+    expect(result).toBe('22 Dec 2019 - 01 Feb 2020');
+});
+
+// eslint-disable-next-line
+test('renderRangeWithYear should not crash if start is not valid', () => {
+    const startDate = undefined;
+    const endDate = moment('2020-02-01');
+    const result = renderRangeWithYear(startDate, endDate);
+
+    // eslint-disable-next-line
+    expect(result).toBe('invalid startDate');
+});
+
+// eslint-disable-next-line
+test('renderRangeWithYear should not crash if end is not valid', () => {
+    const startDate = moment('2020-02-01');
+    const endDate = undefined;
+    const result = renderRangeWithYear(startDate, endDate);
+
+    // eslint-disable-next-line
+    expect(result).toBe('invalid endDate');
+});
+
+// eslint-disable-next-line
+test('renderRangeWithYear should not accept endDate that is before startDate', () => {
+    const startDate = moment('2020-05-25');
+    const endDate = moment('2020-02-01');
+    const result = renderRangeWithYear(startDate, endDate);
+
+    // eslint-disable-next-line
+    expect(result).toBe('invalid range, endDate must be after startDate');
+});
+
+// eslint-disable-next-line
+test('renderRangeWithYear should accept if startDate and endDate are the same day', () => {
+    const startDate = moment('2020-05-25');
+    const endDate = moment('2020-05-25');
+    const result = renderRangeWithYear(startDate, endDate);
+
+    // eslint-disable-next-line
+    expect(result).toBe('25 May 2020');
+});
+
+// eslint-disable-next-line
+test('renderRange with a start and an end date', () => {
+    const startDate = moment('2020-02-01');
+    const endDate = moment('2020-05-25');
+    const result = renderRange(startDate, endDate);
+
+    // eslint-disable-next-line
+    expect(result).toBe('01 Feb - 25 May');
+});
+
+// eslint-disable-next-line
+test('renderRange with a start and an end date same month', () => {
+    const startDate = moment('2020-05-01');
+    const endDate = moment('2020-05-25');
+    const result = renderRange(startDate, endDate);
+
+    // eslint-disable-next-line
+    expect(result).toBe('01 - 25 May');
+});
+
+// eslint-disable-next-line
+test('renderRange with invalid start date', () => {
+    const startDate = undefined;
+    const endDate = moment('2020-05-25');
+    const result = renderRange(startDate, endDate);
+
+    // eslint-disable-next-line
+    expect(result).toBe('invalid startDate');
+});
+
+// eslint-disable-next-line
+test('renderRange with invalid end date', () => {
+    const startDate = moment('2020-05-25');
+    const endDate = undefined;
+    const result = renderRange(startDate, endDate);
+
+    // eslint-disable-next-line
+    expect(result).toBe('invalid endDate');
+});
+
+// eslint-disable-next-line
+test('renderRange with same day', () => {
+    const startDate = moment('2020-05-01');
+    const endDate = moment('2020-05-01');
+    const result = renderRange(startDate, endDate);
+
+    // eslint-disable-next-line
+    expect(result).toBe('01 May');
+});
+
+// eslint-disable-next-line
+test('weekRangeOfDate with a week', () => {
+    const firstDay = moment('2020-07-23').utc().startOf('week');
+    const numberOfWeeks = 7;
+    const result = weekRangeOfDate(firstDay, numberOfWeeks);
+
+    // eslint-disable-next-line
+    expect(result).toHaveLength(7);
+
+//    expect(result).toBe([]);
+
+    expect(result[0].id).toBe(22);
+    expect(result[0].start).toBe(moment("2020-05-31").utc());
+    expect(result[0].end).toBe(moment("2020-06-06T21:59:59.999Z"));
+});

@@ -23,6 +23,22 @@ import _ from 'lodash';
 export const renderRangeWithYear = (start, end) => {
   const panelFormatWithYear = 'DD MMM YYYY';
   const panelFormat = 'DD MMM';
+
+  if(!start){
+    return "invalid startDate";
+  }
+  if(!end){
+    return "invalid endDate";
+  }
+
+  if(start.isAfter(end)){
+    return 'invalid range, endDate must be after startDate';
+  }
+
+  if(start.isSame(end)){
+    return `${start.format(panelFormatWithYear)}`;
+  }
+
   if ((start.isSame(end, 'month') && start.isSame(end, 'year'))) {
     // same month, same year => 22 - 25 May 2020
     return `${start.format('DD')} - ${end.format(panelFormatWithYear)}`;
@@ -37,6 +53,17 @@ export const renderRangeWithYear = (start, end) => {
 // Render a range of date without the year
 export const renderRange = (start, end) => {
   const panelFormat = 'DD MMM';
+  if(!start){
+    return "invalid startDate";
+  }
+  if(!end){
+    return "invalid endDate";
+  }
+
+  if(start.isSame(end)){
+    return `${start.format(panelFormat)}`;
+  }
+
   if (start.isSame(end, 'month')) {
     return `${start.format('DD')} - ${end.format(panelFormat)}`;
   } else {
@@ -82,7 +109,6 @@ export const isPublicHoliday = (date, publicHolidays) => {
   }
 };
 
-
 export const isToday = (day) => {
   if(day) {return  false;}
   return moment.utc().isSame(day, 'day');
@@ -100,4 +126,4 @@ export const computeNumberOfHours = (start, end) => {
 };
 
 // Moment gives the month number with the index starting from 0
-export const getIsoMonth = (moment) => moment.month() + 1;
+export const getIsoMonth = (m) => m.month() + 1;
