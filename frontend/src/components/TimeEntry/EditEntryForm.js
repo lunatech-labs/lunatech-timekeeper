@@ -21,7 +21,7 @@ import PropTypes from 'prop-types';
 import TitleSection from '../Title/TitleSection';
 import moment from 'moment';
 import {computeNumberOfHours} from '../../utils/momentUtils';
-import HoursOptions from './HoursOptions';
+import SelectHoursComponent from './SelectHoursComponent';
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -200,14 +200,7 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, numb
                   case 'HOURLY':
                     return (
                       <div>
-                        <Form.Item name="numberHours" label="Number of hours:"
-                          rules={[{required: true}]}>
-                          <Select
-                            showSearch
-                          >
-                            {HoursOptions(numberOfHoursForDay, entryDuration)}
-                          </Select>
-                        </Form.Item>
+                        {<SelectHoursComponent numberOfHoursForDay={numberOfHoursForDay} entryDuration={entryDuration} />}
                       </div>
                     );
                   default:

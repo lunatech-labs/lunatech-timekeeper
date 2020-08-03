@@ -15,24 +15,32 @@
  */
 
 import React from 'react';
-import {Select} from 'antd';
+import {Form, Select} from 'antd';
 import PropTypes from 'prop-types';
-var _ = require('lodash');
+const _ = require('lodash');
 
 const {Option} = Select;
 
-const HoursOptions = (numberOfHoursForDay, entryDuration) => {
+const SelectHoursComponent = ({numberOfHoursForDay, entryDuration}) => {
   const hourDisabled = (hour) => {
     if(entryDuration){
       return parseInt(hour) + (parseInt(numberOfHoursForDay) - entryDuration) > 8;
     }
     return parseInt(hour) + parseInt(numberOfHoursForDay) > 8;
   };
-  return _.range(1, 9, 1).map(i => <Option key={`option-hour-${i}`} disabled={hourDisabled(i)} value={i} >{i}</Option>);
+  return (
+    <Form.Item name="numberHours" label="Number of hours:" rules={[{required: true}]}>
+      <Select
+        showSearch
+      >
+        {_.range(1, 9, 1).map(i => <Option key={`option-hour-${i}`} disabled={hourDisabled(i)} value={i} >{i}</Option>)};
+      </Select>
+    </Form.Item>
+  );
 };
-HoursOptions.propTypes = {
+SelectHoursComponent.propTypes = {
   numberOfHoursForDay: PropTypes.array.isRequired,
   entryDuration: PropTypes.number,
 };
 
-export default HoursOptions;
+export default SelectHoursComponent;

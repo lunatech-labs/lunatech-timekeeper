@@ -20,7 +20,7 @@ import {Button, Col, Form, Input, message, Radio, Row, Select, Space} from 'antd
 import PropTypes from 'prop-types';
 import TitleSection from '../Title/TitleSection';
 import './AddEntryForm.less';
-import HoursOptions from './HoursOptions';
+import SelectHoursComponent from './SelectHoursComponent';
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -176,13 +176,7 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel, numberOfHour
                   case 'HOURLY':
                     return (
                       <div>
-                        <Form.Item name="numberHours" label="Number of hours:" rules={[{required: true}]}>
-                          <Select
-                            showSearch
-                          >
-                            {HoursOptions(numberOfHoursForDay)}
-                          </Select>
-                        </Form.Item>
+                        {<SelectHoursComponent numberOfHoursForDay={numberOfHoursForDay} />}
                       </div>
                     );
                   default:
