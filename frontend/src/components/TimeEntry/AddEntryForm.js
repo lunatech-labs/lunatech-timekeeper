@@ -20,7 +20,7 @@ import {Button, Col, Form, Input, message, Radio, Row, Select, Space} from 'antd
 import PropTypes from 'prop-types';
 import TitleSection from '../Title/TitleSection';
 import './AddEntryForm.less';
-import {hoursOptions, radioDisabledClassName} from '../../utils/utils';
+import HoursOptions from './HoursOptions';
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -155,8 +155,8 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel, numberOfHour
                 return (
                   <Form.Item name="timeUnit" label="Logged time:" rules={[{required: true}]}>
                     <Radio.Group>
-                      <Radio value="DAY" className={radioDisabledClassName(dayDisabled)} disabled={dayDisabled}>Day</Radio>
-                      <Radio value="HALFDAY" className={radioDisabledClassName(halfDayDisabled)} disabled={halfDayDisabled}>Half-day</Radio>
+                      <Radio value="DAY" className="tk-radio" disabled={dayDisabled}>Day</Radio>
+                      <Radio value="HALFDAY" className="tk-radio" disabled={halfDayDisabled}>Half-day</Radio>
                       <Radio value="HOURLY" disabled={hourDisabled}>Hours</Radio>
                     </Radio.Group>
                   </Form.Item>
@@ -180,7 +180,7 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel, numberOfHour
                           <Select
                             showSearch
                           >
-                            {hoursOptions(numberOfHoursForDay)}
+                            {HoursOptions(numberOfHoursForDay)}
                           </Select>
                         </Form.Item>
                       </div>

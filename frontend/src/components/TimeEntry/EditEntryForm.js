@@ -21,7 +21,7 @@ import PropTypes from 'prop-types';
 import TitleSection from '../Title/TitleSection';
 import moment from 'moment';
 import {computeNumberOfHours} from '../../utils/momentUtils';
-import {hoursOptions, radioDisabledClassName} from '../../utils/utils';
+import HoursOptions from './HoursOptions';
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -179,8 +179,8 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, numb
                 return (
                   <Form.Item name="timeUnit" label="Logged time:" rules={[{required: true}]}>
                     <Radio.Group>
-                      <Radio value="DAY" className={radioDisabledClassName(dayDisabled)} disabled={dayDisabled}>Day</Radio>
-                      <Radio value="HALFDAY" className={radioDisabledClassName(halfDayDisabled)} disabled={halfDayDisabled}>Half-day</Radio>
+                      <Radio value="DAY" className="tk-radio" disabled={dayDisabled}>Day</Radio>
+                      <Radio value="HALFDAY" className="tk-radio" disabled={halfDayDisabled}>Half-day</Radio>
                       <Radio value="HOURLY" disabled={hourDisabled}>Hours</Radio>
                     </Radio.Group>
                   </Form.Item>
@@ -205,7 +205,7 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, numb
                           <Select
                             showSearch
                           >
-                            {hoursOptions(numberOfHoursForDay, entryDuration)}
+                            {HoursOptions(numberOfHoursForDay, entryDuration)}
                           </Select>
                         </Form.Item>
                       </div>

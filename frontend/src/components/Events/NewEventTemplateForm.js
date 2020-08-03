@@ -123,7 +123,7 @@ const NewEventTemplateForm = () => {
         return _.range(0, 60);
       },
     };
-  };
+  }
   if(eventsResponse.data && usersResponse.data){
     return (
       <Form
