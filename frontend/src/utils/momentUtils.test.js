@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {renderRangeWithYear, renderRange, weekRangeOfDate} from './momentUtils';
+import {renderRangeWithYear, renderRange, weekRangeOfDate, totalHoursPerDay} from './momentUtils';
 import moment from 'moment';
 
 // eslint-disable-next-line
@@ -169,4 +169,49 @@ test('weekRangeOfDate with a specified firstDay as monday', () => {
     expect(result[0].start.isSame(moment.utc("2020-06-01"))).toBe(true); // monday
     //expect(result[0].end.isSame(moment.utc("2020-06-07"))).toBe(true); // saturday
     expect(result[0].end.format()).toBe("2020-06-06T23:59:59Z"); // saturday
+});
+
+// eslint-disable-next-line
+test('totalHoursPerDay should return 0 for no entries', () =>{
+    const emptyEntries=[];
+    const result = totalHoursPerDay(emptyEntries);
+    expect(result).toBe(0);
+});
+
+// eslint-disable-next-line
+test('totalHoursPerDay should return 8 for some entries', () =>{
+    const emptyEntries=[];
+    emptyEntries.push({
+        startDateTime: moment.utc("2020-08-04T09:00:00Z"),
+        endDateTime: moment.utc("2020-08-04T11:00:00Z"),
+    });
+    emptyEntries.push({
+        startDateTime: moment.utc("2020-08-04T11:00:00Z"),
+        endDateTime: moment.utc("2020-08-04T13:00:00Z"),
+    });
+    emptyEntries.push({
+        startDateTime: moment.utc("2020-08-04T15:00:00Z"),
+        endDateTime: moment.utc("2020-08-04T17:00:00Z"),
+    });
+    emptyEntries.push({
+        startDateTime: moment.utc("2020-08-04T17:00:00Z"),
+        endDateTime: moment.utc("2020-08-04T19:00:00Z"),
+    });
+    const result = totalHoursPerDay(emptyEntries);
+    expect(result).toBe(8);
+});
+
+// eslint-disable-next-line
+test('totalHoursPerDay should return 3 hours for 2 entries that overlaps each other by one hour', () =>{
+    const emptyEntries=[];
+    emptyEntries.push({
+        startDateTime: moment.utc("2020-08-04T09:00:00Z"),
+        endDateTime: moment.utc("2020-08-04T11:00:00Z"),
+    });
+    emptyEntries.push({
+        startDateTime: moment.utc("2020-08-04T10:00:00Z"),
+        endDateTime: moment.utc("2020-08-04T11:00:00Z"),
+    });
+    const result = totalHoursPerDay(emptyEntries);
+    expect(result).toBe(3);
 });

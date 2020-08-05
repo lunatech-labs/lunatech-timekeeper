@@ -109,11 +109,6 @@ export const isPublicHoliday = (date, publicHolidays) => {
   }
 };
 
-export const isToday = (day) => {
-  if(day) {return  false;}
-  return moment.utc().isSame(day, 'day');
-};
-
 // Returns true if the date is saturday or sunday
 export const isWeekEnd = (date) => date.isoWeekday() === 6 || date.isoWeekday() === 7;
 
