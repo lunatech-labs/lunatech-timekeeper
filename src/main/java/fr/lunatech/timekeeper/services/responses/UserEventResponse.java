@@ -23,6 +23,7 @@ import java.time.Duration;
 
 public class UserEventResponse {
     private Long id;
+    private String name;
     private String description;
     private String startDateTime;
     private String endDateTime;
@@ -37,6 +38,7 @@ public class UserEventResponse {
     public static UserEventResponse bind(UserEvent event) {
         UserEventResponse response = new UserEventResponse();
         response.id = event.id;
+        response.name = event.name;
         response.description = event.description;
 
         if (event.startDateTime != null) {
@@ -63,6 +65,10 @@ public class UserEventResponse {
 
     public Long getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getDescription() {
@@ -96,11 +102,13 @@ public class UserEventResponse {
     public String toString() {
         return "UserEventResponse{" +
                 "id=" + id +
+                ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", startDateTime='" + startDateTime + '\'' +
                 ", endDateTime='" + endDateTime + '\'' +
                 ", date='" + date + '\'' +
                 ", eventType='" + eventType + '\'' +
+                ", duration='" + duration + '\'' +
                 '}';
     }
 }
