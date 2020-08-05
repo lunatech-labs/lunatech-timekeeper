@@ -38,6 +38,9 @@ public class MonthService {
     @Inject
     TimeSheetService timeSheetService;
 
+    @Inject
+    UserEventService userEventService;
+
     public MonthResponse getMonth(AuthenticationContext ctx, Integer year, Integer monthNumber) {
         Long userId = ctx.getUserId();
         Optional<User> maybeUser = userService.findById(userId, ctx);
@@ -45,7 +48,7 @@ public class MonthService {
             throw new IllegalStateException("User not found, cannot load current month");
         }
 
-        var userEvents = new ArrayList<UserEvent>();
+        var userEvents = userEventService.getEventsByUser(maybeUser.get().id);
         if (monthNumber == null) {
             monthNumber = LocalDate.now().getMonthValue();
         }
