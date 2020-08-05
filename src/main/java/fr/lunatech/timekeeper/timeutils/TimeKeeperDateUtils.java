@@ -134,7 +134,14 @@ public class TimeKeeperDateUtils {
         return inputDate -> inputDate.isAfter(firstDayOfFirstWeek.minusDays(1)) && inputDate.isBefore(lastDayOfLastWeek.plusDays(1));
     }
 
-    public static Long numberOfHours(LocalDateTime start, LocalDateTime end) {
+    /**
+     * Compute the number of hours between two LocalDateTime
+     * @param start
+     * @param end
+     * @return the number of hours between start and end
+     */
+    public static Long numberOfHoursBetween(LocalDateTime start, LocalDateTime end) {
+        if(start.isAfter(end)) throw new IllegalStateException("The start date is after end date ");
         return Duration.between(start, end).toHours();
     }
 }
