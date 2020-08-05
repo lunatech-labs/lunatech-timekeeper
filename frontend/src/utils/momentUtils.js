@@ -36,7 +36,7 @@ export const renderRangeWithYear = (start, end) => {
   }
 
   if(start.isSame(end)){
-    return `${start.format(panelFormatWithYear)}`;
+    return start.format(panelFormatWithYear);
   }
 
   if ((start.isSame(end, 'month') && start.isSame(end, 'year'))) {
@@ -73,7 +73,7 @@ export const renderRange = (start, end) => {
 
 // Compute the week from the first day (or the start of the current week)
 export const weekRangeOfDate = (firstDay, numberOfWeek) => {
-  const startOfCurrentWeek = firstDay || moment().utc().startOf('week');
+  const startOfCurrentWeek = firstDay || moment.utc().startOf('week');
   return [...Array(numberOfWeek).keys()].map(i => {
     const toAdd = i - 7;
     const start = startOfCurrentWeek.clone().add(toAdd, 'week');
@@ -87,8 +87,8 @@ export const weekRangeOfDate = (firstDay, numberOfWeek) => {
 };
 
 export const totalHoursPerDay = (timeEntries) => _.sumBy(timeEntries, function(entry){
-  const start = moment(entry.startDateTime).utc();
-  const end = moment(entry.endDateTime).utc();
+  const start = moment.utc(entry.startDateTime);
+  const end = moment.utc(entry.endDateTime);
   const duration = moment.duration(end.diff(start));
   return duration.asHours();
 });

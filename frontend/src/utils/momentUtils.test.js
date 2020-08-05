@@ -19,8 +19,8 @@ import moment from 'moment';
 
 // eslint-disable-next-line
 test('renderRangeWithYear a range year with different month', () => {
-    const startDate = moment('2020-01-22');
-    const endDate = moment('2020-02-01');
+    const startDate = moment.utc('2020-01-22');
+    const endDate = moment.utc('2020-02-01');
     const result = renderRangeWithYear(startDate, endDate);
 
     // eslint-disable-next-line
@@ -29,8 +29,8 @@ test('renderRangeWithYear a range year with different month', () => {
 
 // eslint-disable-next-line
 test('renderRangeWithYear a range year', () => {
-    const startDate = moment('2020-01-01');
-    const endDate = moment('2020-01-31');
+    const startDate = moment.utc('2020-01-01');
+    const endDate = moment.utc('2020-01-31');
     const result = renderRangeWithYear(startDate, endDate);
 
     // eslint-disable-next-line
@@ -39,8 +39,8 @@ test('renderRangeWithYear a range year', () => {
 
 // eslint-disable-next-line
 test('renderRangeWithYear a range with 2 different years', () => {
-    const startDate = moment('2019-12-22');
-    const endDate = moment('2020-02-01');
+    const startDate = moment.utc('2019-12-22');
+    const endDate = moment.utc('2020-02-01');
     const result = renderRangeWithYear(startDate, endDate);
 
     // eslint-disable-next-line
@@ -50,7 +50,7 @@ test('renderRangeWithYear a range with 2 different years', () => {
 // eslint-disable-next-line
 test('renderRangeWithYear should not crash if start is not valid', () => {
     const startDate = undefined;
-    const endDate = moment('2020-02-01');
+    const endDate = moment.utc('2020-02-01');
     const result = renderRangeWithYear(startDate, endDate);
 
     // eslint-disable-next-line
@@ -59,7 +59,7 @@ test('renderRangeWithYear should not crash if start is not valid', () => {
 
 // eslint-disable-next-line
 test('renderRangeWithYear should not crash if end is not valid', () => {
-    const startDate = moment('2020-02-01');
+    const startDate = moment.utc('2020-02-01');
     const endDate = undefined;
     const result = renderRangeWithYear(startDate, endDate);
 
@@ -69,8 +69,8 @@ test('renderRangeWithYear should not crash if end is not valid', () => {
 
 // eslint-disable-next-line
 test('renderRangeWithYear should not accept endDate that is before startDate', () => {
-    const startDate = moment('2020-05-25');
-    const endDate = moment('2020-02-01');
+    const startDate = moment.utc('2020-05-25');
+    const endDate = moment.utc('2020-02-01');
     const result = renderRangeWithYear(startDate, endDate);
 
     // eslint-disable-next-line
@@ -79,8 +79,8 @@ test('renderRangeWithYear should not accept endDate that is before startDate', (
 
 // eslint-disable-next-line
 test('renderRangeWithYear should accept if startDate and endDate are the same day', () => {
-    const startDate = moment('2020-05-25');
-    const endDate = moment('2020-05-25');
+    const startDate = moment.utc('2020-05-25');
+    const endDate = moment.utc('2020-05-25');
     const result = renderRangeWithYear(startDate, endDate);
 
     // eslint-disable-next-line
@@ -89,8 +89,8 @@ test('renderRangeWithYear should accept if startDate and endDate are the same da
 
 // eslint-disable-next-line
 test('renderRange with a start and an end date', () => {
-    const startDate = moment('2020-02-01');
-    const endDate = moment('2020-05-25');
+    const startDate = moment.utc('2020-02-01');
+    const endDate = moment.utc('2020-05-25');
     const result = renderRange(startDate, endDate);
 
     // eslint-disable-next-line
@@ -99,8 +99,8 @@ test('renderRange with a start and an end date', () => {
 
 // eslint-disable-next-line
 test('renderRange with a start and an end date same month', () => {
-    const startDate = moment('2020-05-01');
-    const endDate = moment('2020-05-25');
+    const startDate = moment.utc('2020-05-01');
+    const endDate = moment.utc('2020-05-25');
     const result = renderRange(startDate, endDate);
 
     // eslint-disable-next-line
@@ -110,7 +110,7 @@ test('renderRange with a start and an end date same month', () => {
 // eslint-disable-next-line
 test('renderRange with invalid start date', () => {
     const startDate = undefined;
-    const endDate = moment('2020-05-25');
+    const endDate = moment.utc('2020-05-25');
     const result = renderRange(startDate, endDate);
 
     // eslint-disable-next-line
@@ -119,7 +119,7 @@ test('renderRange with invalid start date', () => {
 
 // eslint-disable-next-line
 test('renderRange with invalid end date', () => {
-    const startDate = moment('2020-05-25');
+    const startDate = moment.utc('2020-05-25');
     const endDate = undefined;
     const result = renderRange(startDate, endDate);
 
@@ -129,8 +129,8 @@ test('renderRange with invalid end date', () => {
 
 // eslint-disable-next-line
 test('renderRange with same day', () => {
-    const startDate = moment('2020-05-01');
-    const endDate = moment('2020-05-01');
+    const startDate = moment.utc('2020-05-01');
+    const endDate = moment.utc('2020-05-01');
     const result = renderRange(startDate, endDate);
 
     // eslint-disable-next-line
@@ -139,7 +139,7 @@ test('renderRange with same day', () => {
 
 // eslint-disable-next-line
 test('weekRangeOfDate with a specified firstDay', () => {
-    const firstDay = moment('2020-07-23');
+    const firstDay = moment.utc('2020-07-23');
     const numberOfWeeks = 7;
     const result = weekRangeOfDate(firstDay, numberOfWeeks);
 
@@ -147,13 +147,16 @@ test('weekRangeOfDate with a specified firstDay', () => {
     expect(result).toHaveLength(7);
 
     expect(result[0].id).toBe(23);
-    expect(result[0].start.format()).toBe("2020-06-04T00:00:00+02:00");
-    expect(result[0].end.format()).toBe("2020-06-06T23:59:59+02:00");
+    expect(result[0].start.isSame(moment.utc("2020-06-04"))).toBe(true);
+    expect(result[0].end.format()).toBe("2020-06-06T23:59:59Z"); // saturday
+    expect(result[0].end.isSame(moment.utc("2020-06-06"),'year')).toBe(true);
+    expect(result[0].end.isSame(moment.utc("2020-06-06"),'month')).toBe(true);
+    expect(result[0].end.isSame(moment.utc("2020-06-06"),'day')).toBe(true);
 });
 
 // eslint-disable-next-line
 test('weekRangeOfDate with a specified firstDay as monday', () => {
-    const firstDay = moment('2020-07-20'); // monday
+    const firstDay = moment.utc('2020-07-20'); // monday
     const numberOfWeeks = 7;
     const result = weekRangeOfDate(firstDay, numberOfWeeks);
 
@@ -163,6 +166,7 @@ test('weekRangeOfDate with a specified firstDay as monday', () => {
     //expect(result).toBe([]);
 
     expect(result[0].id).toBe(23);
-    expect(result[0].start.format()).toBe("2020-06-01T00:00:00+02:00"); // monday
-    expect(result[0].end.format()).toBe("2020-06-06T23:59:59+02:00"); // saturday
+    expect(result[0].start.isSame(moment.utc("2020-06-01"))).toBe(true); // monday
+    //expect(result[0].end.isSame(moment.utc("2020-06-07"))).toBe(true); // saturday
+    expect(result[0].end.format()).toBe("2020-06-06T23:59:59Z"); // saturday
 });
