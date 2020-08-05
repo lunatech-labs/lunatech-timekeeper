@@ -16,7 +16,7 @@
 
 package fr.lunatech.timekeeper.services;
 
-import fr.lunatech.timekeeper.gauges.TimeEntriesNumberOfHoursGauge;
+import fr.lunatech.timekeeper.gauges.TimeEntriesNumberPerHoursGauge;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.services.requests.TimeEntryRequest;
@@ -39,7 +39,7 @@ public class TimeEntryService {
     protected TimeSheetService timeSheetService;
 
     @Inject
-    private TimeEntriesNumberOfHoursGauge timeEntriesNumberOfHoursGauge;
+    private TimeEntriesNumberPerHoursGauge timeEntriesNumberPerHoursGauge;
 
     @Transactional
     public Long createTimeEntry(Long timeSheetId, TimeEntryRequest request, AuthenticationContext ctx) {
@@ -50,7 +50,7 @@ public class TimeEntryService {
         }
         try {
             timeEntry.persistAndFlush();
-            timeEntriesNumberOfHoursGauge.incrementGauges(request.getNumberHours());
+            timeEntriesNumberPerHoursGauge.incrementGauges(request.getNumberHours());
         } catch (PersistenceException pe) {
             throw new CreateResourceException("TimeEntry was not created due to constraint violation");
         }
@@ -62,10 +62,10 @@ public class TimeEntryService {
         logger.debug("Modify timeEntry for id={} with {}, {}", timeSheetId, request, ctx);
         Optional<TimeEntry> timeEntryOptional = findById(timeEntryId, ctx);
         timeEntryOptional.ifPresent(timeEntry -> {
-            int oldNumberOfHours = TimeKeeperDateUtils.numberOfHours(timeEntry.startDateTime, timeEntry.endDateTime).intValue();
+            int oldNumberOfHours = TimeKeeperDateUtils.numberOfHoursBetween(timeEntry.startDateTime, timeEntry.endDateTime).intValue();
             if (oldNumberOfHours != request.getNumberHours()) {
-                timeEntriesNumberOfHoursGauge.decrementGauges(oldNumberOfHours);
-                timeEntriesNumberOfHoursGauge.incrementGauges(request.getNumberHours());
+                timeEntriesNumberPerHoursGauge.decrementGauges(oldNumberOfHours);
+                timeEntriesNumberPerHoursGauge.incrementGauges(request.getNumberHours());
             }
         });
         return timeEntryOptional

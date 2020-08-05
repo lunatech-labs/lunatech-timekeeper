@@ -8,7 +8,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 
 @ApplicationScoped
-public class TimeEntriesNumberOfHoursGauge {
+public class TimeEntriesNumberPerHoursGauge {
 
     private long fourHours;
     private long eightHours;
