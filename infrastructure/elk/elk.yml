@@ -12,20 +12,20 @@ services:
     networks:
       - elk
 
-  logstash:
-    image: docker.elastic.co/logstash/logstash-oss:6.8.2
-    volumes:
-      - source: $HOME/pipelines
-        target: /usr/share/logstash/pipeline
-        type: bind
-    ports:
-      - "12201:12201/udp"
-      - "5000:5000"
-      - "9600:9600"
-    networks:
-      - elk
-    depends_on:
-      - elasticsearch
+#  logstash:
+#    image: docker.elastic.co/logstash/logstash-oss:6.8.2
+#    volumes:
+#      - source: $HOME/pipelines
+#        target: /usr/share/logstash/pipeline
+#        type: bind
+#    ports:
+#      - "12201:12201/udp"
+#      - "5000:5000"
+#      - "9600:9600"
+#    networks:
+#      - elk
+#    depends_on:
+#      - elasticsearch
 
   kibana:
     image: docker.elastic.co/kibana/kibana-oss:6.8.2
