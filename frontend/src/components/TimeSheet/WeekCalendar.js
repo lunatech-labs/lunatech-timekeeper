@@ -18,12 +18,26 @@ import React, {useEffect, useState} from 'react';
 import { useHistory } from 'react-router-dom';
 import {Button, Select, Tag} from 'antd';
 import CardWeekCalendar from '../Card/CardWeekCalendar';
-import {LeftOutlined, PlusOutlined, RightOutlined, CheckOutlined, InfoCircleOutlined} from '@ant-design/icons';
+import {
+  LeftOutlined,
+  PlusOutlined,
+  RightOutlined,
+  CheckOutlined,
+  InfoCircleOutlined,
+} from '@ant-design/icons';
 import PropTypes from 'prop-types';
 import './WeekCalendar.less';
-import {isWeekEnd, renderRange, renderRangeWithYear, weekRangeOfDate, totalHoursPerDay, isPublicHoliday} from '../../utils/momentUtils';
+import {
+  isWeekEnd,
+  renderRange,
+  renderRangeWithYear,
+  weekRangeOfDate,
+  totalHoursPerDay,
+  isPublicHoliday,
+} from '../../utils/momentUtils';
 import moment from 'moment';
 import _ from 'lodash';
+import UserEvent from "../UserEvent/UserEvent";
 
 const numberOfWeek = 15; // It's the number of weeks where we can navigate
 
@@ -38,6 +52,7 @@ const computeWeekRanges = (selectedDay) => {
 
 const WeekCalendar = (props) => {
   const publicHolidays = props.publicHolidays;
+  const userEvents = props.userEvents;
   const [weekSelected, setWeekSelected] = useState(props.firstDay.isoWeek());
   const [weekRanges, setWeekRanges] = useState(computeWeekRanges(props.firstDay));
 
@@ -118,11 +133,9 @@ const WeekCalendar = (props) => {
           e.stopPropagation();
         }}/>;
     }
-
     if(isPublicHoliday(item.date,publicHolidays)){
       return <Tag className="tk_Tag_Public_Holiday"><InfoCircleOutlined /> Public holiday</Tag>;
     }
-
     return '';
   };
   TopCardComponent.propTypes = {
@@ -131,10 +144,8 @@ const WeekCalendar = (props) => {
       day: PropTypes.shape({
         data: PropTypes.arrayOf(PropTypes.object)
       })
-    }
-    )
+    })
   };
-
   return (
     <div id="tk_WeekCalendar">
       <div id="tk_WeekCalendar_Head">
@@ -151,6 +162,13 @@ const WeekCalendar = (props) => {
               return item && item.day && props.dateCellRender(data, date, disabled);
             }
           };
+          const renderUserEvents = (userEvents) => {
+            return userEvents.map(event => {
+              if(event.date === item.date.format('YYYY-MM-DD')){
+                return <UserEvent userEvent={event}/>;
+              }
+            })
+          };
           const isToday = (day) => {
             return moment().isSame(day, 'day');
           };
@@ -164,6 +182,7 @@ const WeekCalendar = (props) => {
                 </div>
                 <div className={props.warningCardPredicate && props.warningCardPredicate(item.date, item.day) ?
                   'tk_CardWeekCalendar_Body tk_CardWeekCalendar_Body_With_Warn' : 'tk_CardWeekCalendar_Body'} disabled={isDisabled(item)}>
+                  {renderUserEvents(userEvents)}
                   {renderDay()}
                 </div>
               </CardWeekCalendar>
@@ -200,6 +219,18 @@ WeekCalendar.propTypes = {
       name: PropTypes.string,
       countryCode: PropTypes.string
     })
+  ),
+  userEvents: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number,
+        date: PropTypes.string,
+        name: PropTypes.string,
+        description: PropTypes.string,
+        eventType: PropTypes.string,
+        startDateTime: PropTypes.string,
+        endDateTime: PropTypes.string,
+        duration: PropTypes.string
+      })
   )
 };
 

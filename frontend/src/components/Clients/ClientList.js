@@ -47,14 +47,14 @@ const ClientList = () => {
     return 0;
   });
 
-    const getLogoURL = (item) => {
-        if(item && item.name) {
-            let cleanSeed = _.snakeCase(item.name);
-            return 'https://picsum.photos/seed/' + cleanSeed + '/40';
-        }else{
-            return 'https://picsum.photos/40';
-        }
-    };
+  const getLogoURL = (item) => {
+    if(item && item.name) {
+      let cleanSeed = _.snakeCase(item.name);
+      return 'https://picsum.photos/seed/' + cleanSeed + '/40';
+    }else{
+      return 'https://picsum.photos/40';
+    }
+  };
 
   if (clientsResponse.loading) {
     return (
