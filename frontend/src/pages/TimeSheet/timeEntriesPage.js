@@ -254,6 +254,7 @@ const TimeEntriesPage = () => {
               setPrefixMonthUrl(`${date.year()}/month?monthNumber=${getIsoMonth(date)}`);
             }}
             publicHolidays={publicHolidays}
+            userEvents={userEvents}
           />
       }
     </MainPage>
