@@ -37,8 +37,8 @@ services:
 
   monitoring:
     image: "prom/prometheus"
-    container_name: "super-visor"
+    container_name: "monitoring"
     ports:
       - 9090:9090
     volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/prometheus/prometheus-dev.yml:/etc/prometheus/prometheus.yml
