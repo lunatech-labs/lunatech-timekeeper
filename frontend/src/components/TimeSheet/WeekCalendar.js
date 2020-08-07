@@ -55,7 +55,6 @@ const WeekCalendar = (props) => {
   const userEvents = props.userEvents;
   const [weekSelected, setWeekSelected] = useState(props.firstDay.isoWeek());
   const [weekRanges, setWeekRanges] = useState(computeWeekRanges(props.firstDay));
-
   const {onPanelChange} = props;
   const history = useHistory();
 
@@ -163,11 +162,17 @@ const WeekCalendar = (props) => {
             }
           };
           const renderUserEvents = (userEvents) => {
-            return userEvents.map(event => {
-              if(event.date === item.date.format('YYYY-MM-DD')){
-                return <UserEvent userEvent={event}/>;
+            if(userEvents && item){
+              if(!isWeekEnd(item.date) && !isPublicHoliday(item.date,publicHolidays)){
+                return userEvents.map(userEvent => {
+                  return userEvent.eventUserDaysResponse.map(userEventDay => {
+                    if(userEventDay.date === item.date.format('YYYY-MM-DD')){
+                      return <UserEvent userEvent={userEventDay}/>;
+                    }
+                  })
+                })
               }
-            })
+            }
           };
           const isToday = (day) => {
             return moment().isSame(day, 'day');
@@ -226,6 +231,15 @@ WeekCalendar.propTypes = {
         date: PropTypes.string,
         name: PropTypes.string,
         description: PropTypes.string,
+        eventUserDaysResponse: PropTypes.arrayOf(
+            PropTypes.shape({
+              name: PropTypes.string,
+              description: PropTypes.string,
+              startDateTime: PropTypes.string,
+              endDateTime: PropTypes.string,
+              date: PropTypes.string
+            })
+        ),
         eventType: PropTypes.string,
         startDateTime: PropTypes.string,
         endDateTime: PropTypes.string,

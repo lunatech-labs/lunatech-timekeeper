@@ -235,6 +235,7 @@ const TimeEntriesPage = () => {
             }}
             days={datas.days}
             publicHolidays={publicHolidays}
+            userEvents={userEvents}
             warningCardPredicate={hasWarnNoEntryInPastDay}
           /> :
           <MonthCalendar
