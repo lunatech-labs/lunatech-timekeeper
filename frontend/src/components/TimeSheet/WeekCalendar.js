@@ -37,7 +37,7 @@ import {
 } from '../../utils/momentUtils';
 import moment from 'moment';
 import _ from 'lodash';
-import UserEvent from "../UserEvent/UserEvent";
+import UserEvent from '../UserEvent/UserEvent';
 
 const numberOfWeek = 15; // It's the number of weeks where we can navigate
 
@@ -119,9 +119,11 @@ const WeekCalendar = (props) => {
       })}
     </Select>;
 
-  const TopCardComponent = ({item}) => {
+  const TopCardComponent = ({item, userEvents}) => {
     if(!isDisabled(item)){
-      if(item.day && totalHoursPerDay(item.day.data) >= 8) {
+      if(item.day && totalHoursPerDay(userEvents, item.date, item.day.data) >= 8) {
+        return <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>;
+      } else if (userEvents && totalHoursPerDay(userEvents, item.date) >= 8) {
         return <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>;
       }
       return <Button
@@ -143,7 +145,28 @@ const WeekCalendar = (props) => {
       day: PropTypes.shape({
         data: PropTypes.arrayOf(PropTypes.object)
       })
-    })
+    }),
+    userEvents: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number,
+        date: PropTypes.string,
+        name: PropTypes.string,
+        description: PropTypes.string,
+        eventUserDaysResponse: PropTypes.arrayOf(
+          PropTypes.shape({
+            name: PropTypes.string,
+            description: PropTypes.string,
+            startDateTime: PropTypes.string,
+            endDateTime: PropTypes.string,
+            date: PropTypes.string
+          })
+        ),
+        eventType: PropTypes.string,
+        startDateTime: PropTypes.string,
+        endDateTime: PropTypes.string,
+        duration: PropTypes.string
+      })
+    )
   };
   return (
     <div id="tk_WeekCalendar">
@@ -169,8 +192,8 @@ const WeekCalendar = (props) => {
                     if(userEventDay.date === item.date.format('YYYY-MM-DD')){
                       return <UserEvent userEvent={userEventDay}/>;
                     }
-                  })
-                })
+                  });
+                });
               }
             }
           };
@@ -183,7 +206,7 @@ const WeekCalendar = (props) => {
               <CardWeekCalendar onClick={(e) => props.onClickCard && props.onClickCard(e, item.date)}>
                 <div className="tk_CardWeekCalendar_Head">
                   <p className={isToday(moment(item.date)) ? 'tk_CurrentDay' : ''}>{item.date.format(dateFormat)}</p>
-                  <TopCardComponent item={item} />
+                  <TopCardComponent item={item} userEvents={userEvents} />
                 </div>
                 <div className={props.warningCardPredicate && props.warningCardPredicate(item.date, item.day) ?
                   'tk_CardWeekCalendar_Body tk_CardWeekCalendar_Body_With_Warn' : 'tk_CardWeekCalendar_Body'} disabled={isDisabled(item)}>
@@ -226,25 +249,25 @@ WeekCalendar.propTypes = {
     })
   ),
   userEvents: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number,
-        date: PropTypes.string,
-        name: PropTypes.string,
-        description: PropTypes.string,
-        eventUserDaysResponse: PropTypes.arrayOf(
-            PropTypes.shape({
-              name: PropTypes.string,
-              description: PropTypes.string,
-              startDateTime: PropTypes.string,
-              endDateTime: PropTypes.string,
-              date: PropTypes.string
-            })
-        ),
-        eventType: PropTypes.string,
-        startDateTime: PropTypes.string,
-        endDateTime: PropTypes.string,
-        duration: PropTypes.string
-      })
+    PropTypes.shape({
+      id: PropTypes.number,
+      date: PropTypes.string,
+      name: PropTypes.string,
+      description: PropTypes.string,
+      eventUserDaysResponse: PropTypes.arrayOf(
+        PropTypes.shape({
+          name: PropTypes.string,
+          description: PropTypes.string,
+          startDateTime: PropTypes.string,
+          endDateTime: PropTypes.string,
+          date: PropTypes.string
+        })
+      ),
+      eventType: PropTypes.string,
+      startDateTime: PropTypes.string,
+      endDateTime: PropTypes.string,
+      duration: PropTypes.string
+    })
   )
 };
 

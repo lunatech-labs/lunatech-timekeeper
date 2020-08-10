@@ -24,7 +24,6 @@ import {isPublicHoliday, isWeekEnd, totalHoursPerDay} from '../../utils/momentUt
 import en_GB from 'antd/lib/locale-provider/en_GB';
 import 'moment/locale/en-gb';
 import _ from 'lodash';
-import UserEvent from "../UserEvent/UserEvent"; // important!
 
 const {Option} = Select;
 
@@ -103,7 +102,7 @@ MonthNavigator.propTypes = {
 
 const MonthCalendar = (props) => {
   const publicHolidays = props.publicHolidays;
-  const userEvents = props.userEvents
+  const userEvents = props.userEvents;
 
   const isDisabled = (dateAsMoment) => {
     if(_.isObjectLike(dateAsMoment)) {
@@ -122,13 +121,13 @@ const MonthCalendar = (props) => {
   const findData = (date) => props.days.find(day => day.date.isSame(moment(date).utc(), 'day'));
   const renderUserEvents = (userEvents, item) => {
     if(userEvents && item){
-        return userEvents.map(userEvent => {
-            return userEvent.eventUserDaysResponse.map(userEventDay => {
-                if(item.format('YYYY-MM-DD') === userEventDay.date){
-                    return <Tag className="tk_Tag_UserEvent">{userEventDay.name}</Tag>;
-                }
-            })
-        })
+      return userEvents.map(userEvent => {
+        return userEvent.eventUserDaysResponse.map(userEventDay => {
+          if(item.format('YYYY-MM-DD') === userEventDay.date){
+            return <Tag className="tk_Tag_UserEvent">{userEventDay.name}</Tag>;
+          }
+        });
+      });
     }
   };
 
@@ -224,25 +223,25 @@ MonthCalendar.propTypes = {
     })
   ),
   userEvents: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number,
-        date: PropTypes.string,
-        name: PropTypes.string,
-        description: PropTypes.string,
-        eventUserDaysResponse: PropTypes.arrayOf(
-            PropTypes.shape({
-              name: PropTypes.string,
-              description: PropTypes.string,
-              startDateTime: PropTypes.string,
-              endDateTime: PropTypes.string,
-              date: PropTypes.string
-            })
-        ),
-        eventType: PropTypes.string,
-        startDateTime: PropTypes.string,
-        endDateTime: PropTypes.string,
-        duration: PropTypes.string
-      })
+    PropTypes.shape({
+      id: PropTypes.number,
+      date: PropTypes.string,
+      name: PropTypes.string,
+      description: PropTypes.string,
+      eventUserDaysResponse: PropTypes.arrayOf(
+        PropTypes.shape({
+          name: PropTypes.string,
+          description: PropTypes.string,
+          startDateTime: PropTypes.string,
+          endDateTime: PropTypes.string,
+          date: PropTypes.string
+        })
+      ),
+      eventType: PropTypes.string,
+      startDateTime: PropTypes.string,
+      endDateTime: PropTypes.string,
+      duration: PropTypes.string
+    })
   )
 };
 

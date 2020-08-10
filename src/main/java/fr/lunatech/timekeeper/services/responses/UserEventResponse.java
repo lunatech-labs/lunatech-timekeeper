@@ -62,17 +62,45 @@ public class UserEventResponse {
                 response.eventUserDaysResponse = dates.stream()
                         .map(date -> {
                             if(date.isEqual(event.startDateTime.toLocalDate())){
-                                return new EventUserDayResponse(event.name,event.description,TimeKeeperDateUtils.formatToString(date.atTime(event.startDateTime.getHour(), event.startDateTime.getMinute())), TimeKeeperDateUtils.formatToString(date.atTime(17, 0)),TimeKeeperDateUtils.formatToString(date));
+                                return new EventUserDayResponse(
+                                        event.name,
+                                        event.description,
+                                        TimeKeeperDateUtils.formatToString(date.atTime(
+                                                event.startDateTime.getHour(),
+                                                event.startDateTime.getMinute())),
+                                        TimeKeeperDateUtils.formatToString(date.atTime(17, 0)),
+                                        TimeKeeperDateUtils.formatToString(date));
                             }else if(date.isEqual(event.endDateTime.toLocalDate())){
-                                return new EventUserDayResponse(event.name,event.description,TimeKeeperDateUtils.formatToString(date.atTime(9, 0)), TimeKeeperDateUtils.formatToString(date.atTime(event.endDateTime.getHour(), event.endDateTime.getMinute())),TimeKeeperDateUtils.formatToString(date));
+                                return new EventUserDayResponse(
+                                        event.name,
+                                        event.description,
+                                        TimeKeeperDateUtils.formatToString(date.atTime(9, 0)),
+                                        TimeKeeperDateUtils.formatToString(date.atTime(
+                                                event.endDateTime.getHour(),
+                                                event.endDateTime.getMinute())),
+                                        TimeKeeperDateUtils.formatToString(date));
                             } else {
-                                return new EventUserDayResponse(event.name,event.description,TimeKeeperDateUtils.formatToString(date.atTime(9, 0)), TimeKeeperDateUtils.formatToString(date.atTime(17, 0)),TimeKeeperDateUtils.formatToString(date));
+                                return new EventUserDayResponse(
+                                        event.name,
+                                        event.description,
+                                        TimeKeeperDateUtils.formatToString(date.atTime(9, 0)),
+                                        TimeKeeperDateUtils.formatToString(date.atTime(17, 0)),
+                                        TimeKeeperDateUtils.formatToString(date));
                             }
                         })
                         .collect(Collectors.toList());
             } else {
                 response.eventUserDaysResponse = dates.stream()
-                        .map(date -> new EventUserDayResponse(event.name,event.description,TimeKeeperDateUtils.formatToString(date.atTime(event.startDateTime.getHour(), event.startDateTime.getMinute())), TimeKeeperDateUtils.formatToString(date.atTime(event.endDateTime.getHour(), event.endDateTime.getMinute())),TimeKeeperDateUtils.formatToString(date)))
+                        .map(date -> new EventUserDayResponse(
+                                event.name,
+                                event.description,
+                                TimeKeeperDateUtils.formatToString(date.atTime(
+                                        event.startDateTime.getHour(),
+                                        event.startDateTime.getMinute())),
+                                TimeKeeperDateUtils.formatToString(date.atTime(
+                                        event.endDateTime.getHour(),
+                                        event.endDateTime.getMinute())),
+                                TimeKeeperDateUtils.formatToString(date)))
                         .collect(Collectors.toList());
             }
         }
