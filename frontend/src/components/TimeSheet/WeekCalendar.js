@@ -121,9 +121,8 @@ const WeekCalendar = (props) => {
 
   const TopCardComponent = ({item, userEvents}) => {
     if(!isDisabled(item)){
-      if(item.day && totalHoursPerDay(userEvents, item.date, item.day.data) >= 8) {
-        return <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>;
-      } else if (userEvents && totalHoursPerDay(userEvents, item.date) >= 8) {
+      const timeEntries = item.day ? item.day.data : [];
+      if(totalHoursPerDay(userEvents, item.date, timeEntries) >= 8) {
         return <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>;
       }
       return <Button
