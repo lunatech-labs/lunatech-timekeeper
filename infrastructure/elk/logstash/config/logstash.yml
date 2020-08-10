@@ -1,2 +1,1 @@
 xpack.monitoring.enabled: false
-#xpack.monitoring.elasticsearch.hosts: [ "http://c734b0e6fb06.ngrok.io:80" ]
