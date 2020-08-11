@@ -180,7 +180,8 @@ const TimeEntriesPage = () => {
     if (selectedEntryId && mode === 'edit') {
       return <TimeEntryForm selectedEntryId={selectedEntryId} setMode={setMode}
         entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment}
-        form={form} mode={mode} onSuccess={() => {
+        userEvents={userEvents} form={form} mode={mode}
+        onSuccess={() => {
           closeModal();
           weekData.run();
           monthData.run();
@@ -189,7 +190,8 @@ const TimeEntriesPage = () => {
       />;
     }
     return <TimeEntryForm setMode={setMode} entries={entriesOfSelectedDay.map(entries => entries.data)}
-      currentDay={taskMoment} form={form} mode={mode} onSuccess={() => {
+      userEvents={userEvents} currentDay={taskMoment} form={form} mode={mode}
+      onSuccess={() => {
         closeModal();
         weekData.run();
         monthData.run();

@@ -23,11 +23,12 @@ import NoDataMessage from '../NoDataMessage/NoDataMessage';
 import ShowTimeEntry from './ShowTimeEntry';
 import AddEntryForm from './AddEntryForm';
 import EditEntryForm from './EditEntryForm';
-import moment from 'moment';
+import UserEventCard from '../UserEvent/UserEventCard';
+import {totalHoursPerDay} from '../../utils/momentUtils';
 
 const {TextArea} = Input;
 
-const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, setMode, selectedEntryId}) => {
+const TimeEntryForm = ({entries, userEvents, currentDay, form, onSuccess, onCancel, mode, setMode, selectedEntryId}) => {
 
   const setAddMode = () => setMode('add');
   const setEditMode = () => setMode('edit');
@@ -76,6 +77,31 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
       </React.Fragment>
     );
   }
+  const UserEventsAndEntries = ({entries, userEvents, date}) => {
+    const displayUserEventsAndEntries = (entries, userEvents, date) => {
+      if(entries && userEvents){
+        return(
+          <div>
+            <div>
+              <Entries entries={entries} />
+            </div>
+            <div id="tk_EntriesLine">
+
+            </div>
+            <div>
+              <UserEvents userEvents={userEvents} date={date} />
+            </div>
+          </div>
+        );
+      }
+      return (
+        <div>
+          <UserEvents userEvents={userEvents} date={date} />
+        </div>
+      );
+    };
+    return displayUserEventsAndEntries(entries, userEvents, date);
+  };
   const Entries = ({entries}) => {
     const showTimeEntries = (entries) => {
       return entries.map(entry => <ShowTimeEntry key={entry.id} entry={entry} onClickEdit={()=>{
@@ -89,17 +115,21 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
       </div>
     );
   };
+  const UserEvents = ({userEvents, date}) => {
+    const showUserEvents = (userEvents) => {
+      return userEvents.map(userEvent => {
+        return [...Array(userEvent.eventUserDaysResponse.length).keys()]
+          .filter(i => date.format('YYYY-MM-DD') === userEvent.eventUserDaysResponse[i].date)
+          .map(i => {
+            return <UserEventCard event={userEvent.eventUserDaysResponse[i]} key={`tk_UserEventCard_${userEvent.eventUserDaysResponse[i].startDateTime}`}/>;
+          });
+      });
+    };
+    return showUserEvents(userEvents);
+  };
   // Returns the number of hours for a day
-  const amountOfHoursPerDay = (entriesArray) => {
-    return entriesArray.map(entries => {
-      const reducer = (accumulator, currentValue) => accumulator + currentValue;
-      return entries.map( entry => {
-        const start = moment(entry.startDateTime).utc();
-        const end = moment(entry.endDateTime).utc();
-        const duration = moment.duration(end.diff(start));
-        return duration.asHours();
-      }).reduce(reducer);
-    });
+  const amountOfHoursPerDay = (entriesArray, userEvents, date) => {
+    return totalHoursPerDay(userEvents, date, entriesArray[0]);
   };
   return (
     <div className="tk_ModalGen">
@@ -109,13 +139,15 @@ const TimeEntryForm = ({entries, currentDay, form, onSuccess, onCancel, mode, se
             <p>{currentDay.format('ddd')}<br/><span>{currentDay.format('DD')}</span></p>
             <h1>Day information</h1>
           </div>
-          { (mode === 'view' || mode === 'edit') && amountOfHoursPerDay(entries) < 8 ?
+          { (mode === 'view' || mode === 'edit') && amountOfHoursPerDay(entries, userEvents, currentDay) < 8 ?
             <Button type="link" onClick={() => setMode && setAddMode()}>Add task</Button> : ''}
         </div>
         <div className="tk_ModalTopBody">
-          {entries.length === 0 ?
+          {entries.length === 0 && userEvents.length === 0 ?
             <NoDataMessage message='No task for this day, there is still time to add one.'/> :
-            (mode === 'edit' ? <Entries entries={selectedEntryId ? [entry] : entries[0]}/> : <Entries entries={entries[0]} />)
+            (mode === 'edit' ?
+              <Entries entries={selectedEntryId ? [entry] : entries[0]}/> :
+              <UserEventsAndEntries entries={entries[0]} userEvents={userEvents} date={currentDay} />)
           }
         </div>
       </div>
@@ -136,6 +168,27 @@ TimeEntryForm.propTypes = {
   mode: PropTypes.string, // can be 'view', 'add' or 'edit'
   setMode: PropTypes.func,
   entries: PropTypes.array,
-  selectedEntryId: PropTypes.number
+  selectedEntryId: PropTypes.number,
+  userEvents: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      date: PropTypes.string,
+      name: PropTypes.string,
+      description: PropTypes.string,
+      eventUserDaysResponse: PropTypes.arrayOf(
+        PropTypes.shape({
+          name: PropTypes.string,
+          description: PropTypes.string,
+          startDateTime: PropTypes.string,
+          endDateTime: PropTypes.string,
+          date: PropTypes.string
+        })
+      ),
+      eventType: PropTypes.string,
+      startDateTime: PropTypes.string,
+      endDateTime: PropTypes.string,
+      duration: PropTypes.string
+    })
+  )
 };
 export default TimeEntryForm;
