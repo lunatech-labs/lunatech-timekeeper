@@ -85,9 +85,6 @@ const TimeEntryForm = ({entries, userEvents, currentDay, form, onSuccess, onCanc
             <div>
               <Entries entries={entries} />
             </div>
-            <div id="tk_EntriesLine">
-
-            </div>
             <div>
               <UserEvents userEvents={userEvents} date={date} />
             </div>
