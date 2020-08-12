@@ -2,8 +2,6 @@ package fr.lunatech.timekeeper.services.responses;
 
 import fr.lunatech.timekeeper.models.time.EventType;
 import fr.lunatech.timekeeper.models.time.UserEvent;
-import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -13,260 +11,158 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserEventResponseTest {
 
     @Test
-    void shouldFormatUserEventResponseWithNoStartDateTime() {
+    void shouldCreateFromUserEvent() {
         var userEvent = new UserEvent();
+        userEvent.id = 1L;
+        userEvent.name = "Event name";
+        userEvent.description = "Event description";
+        var response = UserEventResponse.createFromUserEvent(userEvent);
+
+        assertEquals(UserEventResponse.createFromUserEvent(userEvent),response);
+    }
+
+    @Test
+    void shouldCreateFromUserEventWithEventUserDaysResponse() {
+        var userEvent = new UserEvent();
+        userEvent.id = 1L;
+        userEvent.name = "Event name";
+        userEvent.description = "Event description";
+        userEvent.startDateTime = LocalDateTime.of(2020,03,16,9,0,0);
+        userEvent.endDateTime = LocalDateTime.of(2020,03,16,17,0,0);
+        var response = UserEventResponse.createFromUserEvent(userEvent);
+
+        assertEquals(UserEventResponse.createFromUserEvent(userEvent),response);
+    }
+
+    @Test
+    void shouldCreateFromUserEventWithNoStartDateTime() {
+        var userEvent = new UserEvent();
+        userEvent.id = 1L;
+        userEvent.name = "Event name";
+        userEvent.description = "Event description";
         userEvent.startDateTime = null;
-        var result = UserEventResponse.formatUserEventResponse(userEvent,
-                UserEventResponse.createFromUserEvent(userEvent)
-        );
+        var response = UserEventResponse.createFromUserEvent(userEvent);
 
-        assertNull(result.getStartDateTime());
+        assertNull(response.getStartDateTime());
+        assertNull(response.getEventUserDaysResponse());
+        assertEquals("",response.getDuration());
     }
 
     @Test
-    void shouldFormatUserEventResponseWithStartDateTime() {
+    void shouldCreateFromUserEventWithStartDateTime() {
         var userEvent = new UserEvent();
-        var february = LocalDateTime.of(2020,02,29,12,23,13);
-        userEvent.startDateTime = february;
-        var result = UserEventResponse.formatUserEventResponse(userEvent,
-                UserEventResponse.createFromUserEvent(userEvent)
-        );
+        userEvent.id = 1L;
+        userEvent.name = "Event name";
+        userEvent.description = "Event description";
+        userEvent.startDateTime = LocalDateTime.of(2020,03,16,9,0,0);
+        var response = UserEventResponse.createFromUserEvent(userEvent);
 
-        assertEquals( "2020-02-29T12:23:13", result.getStartDateTime());
-        assertNull(result.getEndDateTime());
+        assertEquals("2020-03-16T09:00:00",response.getStartDateTime());
+        assertNull(response.getEventUserDaysResponse());
+        assertEquals("",response.getDuration());
     }
 
     @Test
-    void shouldFormatUserEventResponseWithNoDate() {
+    void shouldCreateFromUserEventWithNoEndDateTime() {
         var userEvent = new UserEvent();
-        userEvent.startDateTime = null;
-        var result = UserEventResponse.formatUserEventResponse(userEvent,
-                UserEventResponse.createFromUserEvent(userEvent)
-        );
-
-        assertNull(result.getDate());
-    }
-
-    @Test
-    void shouldFormatUserEventResponseWithDate() {
-        var userEvent = new UserEvent();
-        var february = LocalDateTime.of(2020,02,29,12,23,13);
-        userEvent.startDateTime = february;
-        var result = UserEventResponse.formatUserEventResponse(userEvent,
-                UserEventResponse.createFromUserEvent(userEvent)
-        );
-
-        assertEquals( "2020-02-29", result.getDate());
-    }
-
-    @Test
-    void shouldFormatUserEventResponseWithNoEndDateTime() {
-        var userEvent = new UserEvent();
+        userEvent.id = 1L;
+        userEvent.name = "Event name";
+        userEvent.description = "Event description";
         userEvent.endDateTime = null;
-        var result = UserEventResponse.formatUserEventResponse(userEvent,
-                UserEventResponse.createFromUserEvent(userEvent)
-        );
+        var response = UserEventResponse.createFromUserEvent(userEvent);
 
-        assertNull(result.getEndDateTime());
+        assertNull(response.getEndDateTime());
+        assertNull(response.getEventUserDaysResponse());
+        assertEquals("",response.getDuration());
     }
 
     @Test
-    void shouldFormatUserEventResponseWithEndDateTime() {
+    void shouldCreateFromUserEventWithEndDateTime() {
         var userEvent = new UserEvent();
-        var february = LocalDateTime.of(2020,02,29,12,23,13);
-        userEvent.endDateTime = february;
-        var result = UserEventResponse.formatUserEventResponse(userEvent,
-                UserEventResponse.createFromUserEvent(userEvent)
-        );
+        userEvent.id = 1L;
+        userEvent.name = "Event name";
+        userEvent.description = "Event description";
+        userEvent.endDateTime = LocalDateTime.of(2020,03,16,17,0,0);
+        var response = UserEventResponse.createFromUserEvent(userEvent);
 
-        assertEquals( "2020-02-29T12:23:13", result.getEndDateTime());
+        assertEquals("2020-03-16T17:00:00",response.getEndDateTime());
+        assertNull(response.getEventUserDaysResponse());
+        assertEquals("",response.getDuration());
     }
 
     @Test
-    void shouldFormatUserEventResponseWithNoEventType() {
+    void shouldCreateFromUserEventWithStartDateTimeAndEndDateTimeInSameDay() {
         var userEvent = new UserEvent();
-        userEvent.eventType = null;
-        var result = UserEventResponse.formatUserEventResponse(userEvent,
-                UserEventResponse.createFromUserEvent(userEvent)
-        );
+        userEvent.id = 1L;
+        userEvent.name = "Event name";
+        userEvent.description = "Event description";
+        userEvent.startDateTime = LocalDateTime.of(2020,03,16,9,0,0);
+        userEvent.endDateTime = LocalDateTime.of(2020,03,16,17,0,0);
+        var response = UserEventResponse.createFromUserEvent(userEvent);
 
-        assertNull(result.getEventType());
+        assertEquals("2020-03-16T09:00:00",response.getStartDateTime());
+        assertEquals("2020-03-16T17:00:00",response.getEndDateTime());
+        assertEquals("PT8H",response.getDuration());
+        assertEquals(UserEventResponse.createFromUserEvent(userEvent).getEventUserDaysResponse(),response.getEventUserDaysResponse());
+        assertEquals("2020-03-16",response.getDate());
     }
 
     @Test
-    void shouldFormatUserEventResponseWithEventTypeCompany() {
+    void shouldCreateFromUserEventWithEventTypeCompany() {
         var userEvent = new UserEvent();
+        userEvent.id = 1L;
+        userEvent.name = "Event name";
+        userEvent.description = "Event description";
         userEvent.eventType = EventType.COMPANY;
-        var result = UserEventResponse.formatUserEventResponse(userEvent,
-                UserEventResponse.createFromUserEvent(userEvent)
-        );
+        var response = UserEventResponse.createFromUserEvent(userEvent);
 
-        assertEquals(EventType.COMPANY.toString(),result.getEventType());
+        assertEquals("COMPANY",response.getEventType());
     }
 
     @Test
-    void shouldFormatUserEventResponseWithEventTypePersonal() {
+    void shouldCreateFromUserEventWithEventTypePersonal() {
         var userEvent = new UserEvent();
+        userEvent.id = 1L;
+        userEvent.name = "Event name";
+        userEvent.description = "Event description";
         userEvent.eventType = EventType.PERSONAL;
-        var result = UserEventResponse.formatUserEventResponse(userEvent,
-                UserEventResponse.createFromUserEvent(userEvent)
-        );
+        var response = UserEventResponse.createFromUserEvent(userEvent);
 
-        assertEquals(EventType.PERSONAL.toString(),result.getEventType());
+        assertEquals("PERSONAL",response.getEventType());
     }
 
     @Test
-    void shouldFormatUserEventResponseWithNoStartDateTimeAndNoEndDateTime() {
+    void shouldCreateFromUserEventWithStartDateTimeAndEndDateTimeInTwoDifferentDays() {
         var userEvent = new UserEvent();
-        userEvent.startDateTime = null;
-        userEvent.endDateTime = null;
-        var result = UserEventResponse.formatUserEventResponse(userEvent,
-                UserEventResponse.createFromUserEvent(userEvent)
-        );
+        userEvent.id = 1L;
+        userEvent.name = "Event name";
+        userEvent.description = "Event description";
+        userEvent.startDateTime = LocalDateTime.of(2020,03,16,9,0,0);
+        userEvent.endDateTime = LocalDateTime.of(2020,03,17,17,0,0);
+        var response = UserEventResponse.createFromUserEvent(userEvent);
 
-        assertEquals("",result.getDuration());
+        assertEquals("2020-03-16T09:00:00",response.getStartDateTime());
+        assertEquals("2020-03-17T17:00:00",response.getEndDateTime());
+        assertEquals("PT32H",response.getDuration());
+        assertEquals(UserEventResponse.createFromUserEvent(userEvent).getEventUserDaysResponse(),response.getEventUserDaysResponse());
+        assertEquals("2020-03-16",response.getDate());
     }
 
     @Test
-    void shouldFormatUserEventResponseWithStartDateTimeAndEndDateTime() {
+    void shouldCreateFromUserEventWithStartDateTimeAndEndDateTimeWithAMiddleDay() {
         var userEvent = new UserEvent();
-        var februaryStart = LocalDateTime.of(2020,02,29,12,23,13);
-        var marchEnd = LocalDateTime.of(2020,03,01,15,22,0);
-        userEvent.startDateTime = februaryStart;
-        userEvent.endDateTime = marchEnd;
-        var result = UserEventResponse.formatUserEventResponse(userEvent,
-                UserEventResponse.createFromUserEvent(userEvent)
-        );
+        userEvent.id = 1L;
+        userEvent.name = "Event name";
+        userEvent.description = "Event description";
+        userEvent.startDateTime = LocalDateTime.of(2020,03,16,9,0,0);
+        userEvent.endDateTime = LocalDateTime.of(2020,03,18,17,0,0);
+        var response = UserEventResponse.createFromUserEvent(userEvent);
 
-        assertEquals("PT26H58M47S",result.getDuration());
+        assertEquals("2020-03-16T09:00:00",response.getStartDateTime());
+        assertEquals("2020-03-18T17:00:00",response.getEndDateTime());
+        assertEquals("PT56H",response.getDuration());
+        assertEquals(UserEventResponse.createFromUserEvent(userEvent).getEventUserDaysResponse(),response.getEventUserDaysResponse());
+        assertEquals("2020-03-16",response.getDate());
     }
 
-
-
-    @Test
-    void ShouldCreateEventUserDayResponseWithStartDateTimeAndEndDateTimeInSameDay() {
-        var userEvent = new UserEvent();
-        var februaryStart = LocalDateTime.of(2020,02,29,12,0,0);
-        var februaryEnd = LocalDateTime.of(2020,02,29,15,0,0);
-        userEvent.startDateTime = februaryStart;
-        userEvent.endDateTime = februaryEnd;
-        var userEventResponse = UserEventResponse.createFromUserEvent(userEvent);
-        var result = UserEventResponse.createEventUserDayResponse(userEvent, userEventResponse);
-
-        var expected = UserEventResponse.createEventUserDayResponse(userEvent, userEventResponse);
-        assertEquals(expected, result);
-    }
-
-    @Test
-    void ShouldCreateEventUserDayResponseWithStartDateTimeAndEndDateTimeInTwoDifferentDays() {
-        var userEvent = new UserEvent();
-        var februaryStart = LocalDateTime.of(2020,02,29,12,0,0);
-        var marchEnd = LocalDateTime.of(2020,03,01,15,0,0);
-        userEvent.startDateTime = februaryStart;
-        userEvent.endDateTime = marchEnd;
-        var userEventResponse = UserEventResponse.createFromUserEvent(userEvent);
-        var result = UserEventResponse.createEventUserDayResponse(userEvent, userEventResponse);
-
-        var expected = UserEventResponse.createEventUserDayResponse(userEvent, userEventResponse);
-        assertEquals(expected, result);
-    }
-
-    @Test
-    void ShouldCreateEventUserDayResponseWithStartDateTimeAndEndDateTimeInThreeDifferentDays() {
-        var userEvent = new UserEvent();
-        var februaryStart = LocalDateTime.of(2020,02,29,12,0,0);
-        var marchEnd = LocalDateTime.of(2020,03,02,15,0,0);
-        userEvent.startDateTime = februaryStart;
-        userEvent.endDateTime = marchEnd;
-        var userEventResponse = UserEventResponse.createFromUserEvent(userEvent);
-        var result = UserEventResponse.createEventUserDayResponse(userEvent, userEventResponse);
-
-        var expected = UserEventResponse.createEventUserDayResponse(userEvent, userEventResponse);
-        assertEquals(expected, result);
-    }
-
-    @Test
-    void ShouldNotCreateEventUserDayResponseWithNoStartDateTime() {
-        Assertions.assertThrows(NullPointerException.class, () -> {
-            var userEvent = new UserEvent();
-            var marchEnd = LocalDateTime.of(2020,03,02,15,0,0);
-            userEvent.startDateTime = null;
-            userEvent.endDateTime = marchEnd;
-            var userEventResponse = UserEventResponse.createFromUserEvent(userEvent);
-            UserEventResponse.createEventUserDayResponse(userEvent, userEventResponse);
-        });
-    }
-
-    @Test
-    void ShouldNotCreateEventUserDayResponseWithNoEndDateTime() {
-        Assertions.assertThrows(NullPointerException.class, () -> {
-            var userEvent = new UserEvent();
-            var marchStart = LocalDateTime.of(2020,03,02,15,0,0);
-            userEvent.startDateTime = marchStart;
-            userEvent.endDateTime = null;
-            var userEventResponse = UserEventResponse.createFromUserEvent(userEvent);
-            UserEventResponse.createEventUserDayResponse(userEvent, userEventResponse);
-        });
-    }
-
-    @Test
-    void ShouldNotCreateEventUserDayResponseWithNoStartDateTimeAndNoEndDateTime() {
-        Assertions.assertThrows(NullPointerException.class, () -> {
-            var userEvent = new UserEvent();
-            userEvent.startDateTime = null;
-            userEvent.endDateTime = null;
-            var userEventResponse = UserEventResponse.createFromUserEvent(userEvent);
-            UserEventResponse.createEventUserDayResponse(userEvent, userEventResponse);
-        });
-    }
-
-    @Test
-    void ShouldNotEventUserDayResponseWithEndDateTimeBeforeStartDateTime() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            var userEvent = new UserEvent();
-            var februaryEnd = LocalDateTime.of(2020, 02, 29, 12, 0, 0);
-            var marchStart = LocalDateTime.of(2020, 03, 02, 15, 0, 0);
-            userEvent.startDateTime = marchStart;
-            userEvent.endDateTime = februaryEnd;
-            var userEventResponse = UserEventResponse.createFromUserEvent(userEvent);
-            UserEventResponse.createEventUserDayResponse(userEvent, userEventResponse);
-        });
-    }
-
-    @Test
-    void ShouldBindWithNoStartDateTime() {
-        var userEvent = new UserEvent();
-        var marchEnd = LocalDateTime.of(2020,03,02,15,0,0);
-        userEvent.startDateTime = null;
-        userEvent.endDateTime = marchEnd;
-        var result = UserEventResponse.bind(userEvent);
-        var expected = UserEventResponse.formatUserEventResponse(userEvent, UserEventResponse.createFromUserEvent(userEvent));
-
-        assertEquals(expected, result);
-    }
-
-    @Test
-    void ShouldBindWithNoEndDateTime() {
-        var userEvent = new UserEvent();
-        var marchStart = LocalDateTime.of(2020,03,02,15,0,0);
-        userEvent.startDateTime = marchStart;
-        userEvent.endDateTime = null;
-        var result = UserEventResponse.bind(userEvent);
-        var expected = UserEventResponse.formatUserEventResponse(userEvent, UserEventResponse.createFromUserEvent(userEvent));
-
-        assertEquals(expected, result);
-    }
-
-    @Test
-    void ShouldBindWithStartDateTimeAndEndDateTime() {
-        var userEvent = new UserEvent();
-        var marchStart = LocalDateTime.of(2020,03,01,15,0,0);
-        var marchEnd = LocalDateTime.of(2020,03,02,16,0,0);
-        userEvent.startDateTime = marchStart;
-        userEvent.endDateTime = marchEnd;
-        var result = UserEventResponse.bind(userEvent);
-        var expected = UserEventResponse.formatUserEventResponse(userEvent, UserEventResponse.createEventUserDayResponse(userEvent, UserEventResponse.createFromUserEvent(userEvent)));
-
-        assertEquals(expected, result);
-    }
 }

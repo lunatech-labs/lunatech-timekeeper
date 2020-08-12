@@ -21,9 +21,8 @@ import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class UserEventResponse {
@@ -42,12 +41,7 @@ public class UserEventResponse {
     }
 
     public static UserEventResponse bind(UserEvent event) {
-        UserEventResponse response = UserEventResponse.createFromUserEvent(event);
-
-        if(event.startDateTime != null && event.endDateTime != null){
-            response = createEventUserDayResponse(event, response);
-        }
-        return formatUserEventResponse(event, response);
+        return UserEventResponse.createFromUserEvent(event);
     }
 
     /**
@@ -56,92 +50,118 @@ public class UserEventResponse {
      * @return a new UserEventResponse initialized
      */
     protected static UserEventResponse createFromUserEvent(UserEvent event) {
-        UserEventResponse response = new UserEventResponse();
-        response.id = event.id;
-        response.name = event.name;
-        response.description = event.description;
-        return response;
-    }
-
-    protected static UserEventResponse formatUserEventResponse(UserEvent event, UserEventResponse response) {
-        if (event.startDateTime != null) {
-            response.startDateTime = TimeKeeperDateUtils.formatToString(event.startDateTime);
+        var userEventResponse = new UserEventResponse();
+        userEventResponse.id = event.id;
+        userEventResponse.name = event.name;
+        userEventResponse.description = event.description;
+        if(event.startDateTime != null && event.endDateTime != null){
+            userEventResponse.eventUserDaysResponse = createEventUserDayResponseList(event);
+            userEventResponse.duration = Duration.between(event.startDateTime, event.endDateTime).toString();
         }
-        if (event.getDay() != null) {
-            response.date = TimeKeeperDateUtils.formatToString(event.getDay());
+        if (event.startDateTime != null) {
+            userEventResponse.startDateTime = TimeKeeperDateUtils.formatToString(event.startDateTime);
         }
         if (event.endDateTime != null) {
-            response.endDateTime = TimeKeeperDateUtils.formatToString(event.endDateTime);
+            userEventResponse.endDateTime = TimeKeeperDateUtils.formatToString(event.endDateTime);
         }
-        if(event.eventType!=null){
-            response.eventType = event.eventType.name();
+        if (event.getDay() != null) {
+            userEventResponse.date = TimeKeeperDateUtils.formatToString(event.getDay());
         }
-        if(event.startDateTime != null && event.endDateTime!=null) {
-            response.duration = Duration.between(event.startDateTime, event.endDateTime).toString();
+        if(event.eventType != null){
+            userEventResponse.eventType = event.eventType.name();
         }
-        return response;
+        return userEventResponse;
     }
+
 
 
     /**
-     * Create UserEventResponse with an eventUserDayResponse
-     * For the eventUserDayResponse, it uses a sequential ordered stream of dates. The returned stream starts from this date
-     * (inclusive) and goes to {@code endExclusive} (exclusive) by an incremental step of 1 day. Because it goes to the exclusive end date,
-     * this uses the endTimeDate + 1.
+     *  Create a List of UserEventResponse with an event
+     *  For the event, it uses a sequential ordered stream of dates. The returned stream starts from this date
+     *  (inclusive) and goes to {@code endExclusive} (exclusive) by an incremental step of 1 day. Because it goes to the exclusive end date,
+     *  this uses the endTimeDate + 1.
      * @param event
-     * @param response
-     * @return UserEventResponse
+     * @return List<EventUserDayResponse>
      */
-    protected static UserEventResponse createEventUserDayResponse(UserEvent event, UserEventResponse response) {
-
+    protected static List<EventUserDayResponse> createEventUserDayResponseList(UserEvent event) {
         List<LocalDate> dates = event.startDateTime.toLocalDate().datesUntil(event.endDateTime.toLocalDate().plusDays(1))
                 .collect(Collectors.toList());
-        if(dates.size() > 1){
-            response.eventUserDaysResponse = dates.stream()
-                    .map(date -> {
-                        if(date.isEqual(event.startDateTime.toLocalDate())){
-                            return new EventUserDayResponse(
-                                    event.name,
-                                    event.description,
-                                    TimeKeeperDateUtils.formatToString(date.atTime(
-                                            event.startDateTime.getHour(),
-                                            event.startDateTime.getMinute())),
-                                    TimeKeeperDateUtils.formatToString(date.atTime(17, 0)),
-                                    TimeKeeperDateUtils.formatToString(date));
-                        }else if(date.isEqual(event.endDateTime.toLocalDate())){
-                            return new EventUserDayResponse(
-                                    event.name,
-                                    event.description,
-                                    TimeKeeperDateUtils.formatToString(date.atTime(9, 0)),
-                                    TimeKeeperDateUtils.formatToString(date.atTime(
-                                            event.endDateTime.getHour(),
-                                            event.endDateTime.getMinute())),
-                                    TimeKeeperDateUtils.formatToString(date));
-                        } else {
-                            return new EventUserDayResponse(
-                                    event.name,
-                                    event.description,
-                                    TimeKeeperDateUtils.formatToString(date.atTime(9, 0)),
-                                    TimeKeeperDateUtils.formatToString(date.atTime(17, 0)),
-                                    TimeKeeperDateUtils.formatToString(date));
-                        }
-                    })
+            return dates.stream()
+                    .map(date -> createEventUserDayResponse(event, date, dates.size()))
                     .collect(Collectors.toList());
+    }
+
+    /**
+     * Create One day of EventUserDayResponse with the startDateTime and EndDateTime of the event.
+     * @param event
+     * @param date
+     * @return EventUserDayResponse
+     */
+    private static EventUserDayResponse createEventUserOneDayResponse(UserEvent event, LocalDate date){
+            return new EventUserDayResponse(
+                    event.name,
+                    event.description,
+                    TimeKeeperDateUtils.formatToString(date.atTime(
+                            event.startDateTime.getHour(),
+                            event.startDateTime.getMinute())),
+                    TimeKeeperDateUtils.formatToString(date.atTime(
+                            event.endDateTime.getHour(),
+                            event.endDateTime.getMinute())),
+                    TimeKeeperDateUtils.formatToString(date)
+            );
+    }
+
+    /**
+     * Create an EventUserDayResponse from the startDateTime to 5PM if the date is the first day of the Event,
+     * from 9AM to endDateTime if the date is the last day of the Event,
+     * from 9AM to 5PM if the date is a day between the first day and the last day of the Event.
+     * @param event
+     * @param date
+     * @return EventUserDayResponse
+     */
+    private static EventUserDayResponse createEventUserDayResponse(UserEvent event, LocalDate date, int datesSize) {
+        if(datesSize <= 1) {
+            return createEventUserOneDayResponse(event, date);
         } else {
-            response.eventUserDaysResponse = dates.stream()
-                    .map(date -> new EventUserDayResponse(
-                            event.name,
-                            event.description,
-                            TimeKeeperDateUtils.formatToString(date.atTime(
-                                    event.startDateTime.getHour(),
-                                    event.startDateTime.getMinute())),
-                            TimeKeeperDateUtils.formatToString(date.atTime(
-                                    event.endDateTime.getHour(),
-                                    event.endDateTime.getMinute())),
-                            TimeKeeperDateUtils.formatToString(date)))
-                    .collect(Collectors.toList());
+            if (date.isEqual(event.startDateTime.toLocalDate())) {
+                return createUserEventFirstDayResponse(event, date);
+            } else if (date.isEqual(event.endDateTime.toLocalDate())) {
+                return createUserEventLastDayResponse(event, date);
+            } else {
+                return createUserEventMiddleDayResponse(event, date);
+            }
         }
-        return response;
+    }
+
+    private static EventUserDayResponse createUserEventMiddleDayResponse(UserEvent event, LocalDate date) {
+        return new EventUserDayResponse(
+                event.name,
+                event.description,
+                TimeKeeperDateUtils.formatToString(date.atTime(9, 0)),
+                TimeKeeperDateUtils.formatToString(date.atTime(17, 0)),
+                TimeKeeperDateUtils.formatToString(date));
+    }
+
+    private static EventUserDayResponse createUserEventLastDayResponse(UserEvent event, LocalDate date) {
+        return new EventUserDayResponse(
+                event.name,
+                event.description,
+                TimeKeeperDateUtils.formatToString(date.atTime(9, 0)),
+                TimeKeeperDateUtils.formatToString(date.atTime(
+                        event.endDateTime.getHour(),
+                        event.endDateTime.getMinute())),
+                TimeKeeperDateUtils.formatToString(date));
+    }
+
+    private static EventUserDayResponse createUserEventFirstDayResponse(UserEvent event, LocalDate date) {
+        return new EventUserDayResponse(
+                event.name,
+                event.description,
+                TimeKeeperDateUtils.formatToString(date.atTime(
+                        event.startDateTime.getHour(),
+                        event.startDateTime.getMinute())),
+                TimeKeeperDateUtils.formatToString(date.atTime(17, 0)),
+                TimeKeeperDateUtils.formatToString(date));
     }
 
     public Long getId() {
@@ -185,25 +205,17 @@ public class UserEventResponse {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (!(o instanceof UserEventResponse)) return false;
 
         UserEventResponse that = (UserEventResponse) o;
 
-        if (getId() != null ? !getId().equals(that.getId()) : that.getId() != null) return false;
-        if (getName() != null ? !getName().equals(that.getName()) : that.getName() != null) return false;
-        if (getDescription() != null ? !getDescription().equals(that.getDescription()) : that.getDescription() != null)
-            return false;
-        if (getEventUserDaysResponse() != null ? !getEventUserDaysResponse().equals(that.getEventUserDaysResponse()) : that.getEventUserDaysResponse() != null)
-            return false;
-        if (getStartDateTime() != null ? !getStartDateTime().equals(that.getStartDateTime()) : that.getStartDateTime() != null)
-            return false;
-        if (getEndDateTime() != null ? !getEndDateTime().equals(that.getEndDateTime()) : that.getEndDateTime() != null)
-            return false;
-        if (getDate() != null ? !getDate().equals(that.getDate()) : that.getDate() != null) return false;
-        if (getEventType() != null ? !getEventType().equals(that.getEventType()) : that.getEventType() != null)
-            return false;
-        return getDuration() != null ? getDuration().equals(that.getDuration()) : that.getDuration() == null;
+        return this.id.equals(that.id) && this.name.equals(that.name) && this.description.equals(that.description) &&
+                (Objects.equals(this.eventUserDaysResponse, that.eventUserDaysResponse)) &&
+                (Objects.equals(this.startDateTime, that.startDateTime)) &&
+                (Objects.equals(this.endDateTime, that.endDateTime)) &&
+                (Objects.equals(this.date, that.date)) &&
+                (Objects.equals(this.eventType, that.eventType)) &&
+                (Objects.equals(this.duration, that.duration));
     }
 
     @Override
@@ -257,19 +269,14 @@ public class UserEventResponse {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
             if (!(o instanceof EventUserDayResponse)) return false;
 
             EventUserDayResponse that = (EventUserDayResponse) o;
 
-            if (getName() != null ? !getName().equals(that.getName()) : that.getName() != null) return false;
-            if (getDescription() != null ? !getDescription().equals(that.getDescription()) : that.getDescription() != null)
-                return false;
-            if (getStartDateTime() != null ? !getStartDateTime().equals(that.getStartDateTime()) : that.getStartDateTime() != null)
-                return false;
-            if (getEndDateTime() != null ? !getEndDateTime().equals(that.getEndDateTime()) : that.getEndDateTime() != null)
-                return false;
-            return getDate() != null ? getDate().equals(that.getDate()) : that.getDate() == null;
+            return this.name.equals(that.name) && this.description.equals(that.description) &&
+                    (Objects.equals(this.startDateTime, that.startDateTime)) &&
+                    (Objects.equals(this.endDateTime, that.endDateTime)) &&
+                    (Objects.equals(this.date, that.date));
         }
 
         @Override
