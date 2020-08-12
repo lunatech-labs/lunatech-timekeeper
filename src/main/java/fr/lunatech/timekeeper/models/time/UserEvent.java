@@ -17,6 +17,7 @@
 package fr.lunatech.timekeeper.models.time;
 
 import fr.lunatech.timekeeper.models.User;
+import fr.lunatech.timekeeper.timeutils.EventDuration;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
@@ -69,6 +70,10 @@ public class UserEvent extends PanacheEntityBase {
             return null;
         }
         return startDateTime.toLocalDate();
+    }
+
+    public long durationInHours() {
+        return EventDuration.durationInHours(startDateTime, endDateTime);
     }
 
     @Override

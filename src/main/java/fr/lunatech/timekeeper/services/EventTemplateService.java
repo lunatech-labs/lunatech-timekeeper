@@ -16,18 +16,23 @@
 
 package fr.lunatech.timekeeper.services;
 
+import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.EventTemplate;
 import fr.lunatech.timekeeper.models.time.UserEvent;
+import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
 import fr.lunatech.timekeeper.services.responses.EventTemplateResponse;
 import fr.lunatech.timekeeper.services.responses.UserResponse;
+import fr.lunatech.timekeeper.timeutils.EventDuration;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import io.quarkus.panache.common.Parameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +47,8 @@ import static javax.transaction.Transactional.TxType.MANDATORY;
 public class EventTemplateService {
 
     private static final Logger logger = LoggerFactory.getLogger(EventTemplateService.class);
+
+    private static final int MAX_HOURS_EVENTS_PER_DAY = 8;
 
     @Inject
     UserService userService;
@@ -63,9 +70,35 @@ public class EventTemplateService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Checks if all attendees can join the event
+     * @param request the incoming request
+     * @param ctx the authentication request
+     * @throws IllegalEntityStateException is thrown when an attendee of the request cannot join the event
+     */
+    private void checkAttendeesAvailability(EventTemplateRequest request, AuthenticationContext ctx) throws IllegalEntityStateException {
+        long duration = EventDuration.durationInHours(request.getStartDateTime(), request.getEndDateTime());
+
+        for (EventTemplateRequest.UserEventRequest attendee: request.getAttendees()) {
+            long cumulatedHours = cumulatedHoursOfEvent(findUserEventByUserIdAndStartDate(attendee.getUserId(), request.getStartDateTime()));
+            if (cumulatedHours + duration > MAX_HOURS_EVENTS_PER_DAY)
+                throw new IllegalEntityStateException(
+                        "Attendee " +
+                                userService.findById(attendee.getUserId(), ctx).map(User::getFullName).orElse("") +
+                                " has already more than " +
+                                MAX_HOURS_EVENTS_PER_DAY +
+                                " hours of events on this day"
+                );
+        }
+    }
+
     @Transactional
     public Long create (EventTemplateRequest request, AuthenticationContext ctx){
         logger.debug("Create a new event template with {}, {}", request, ctx);
+
+        // check that all attendees can join
+        checkAttendeesAvailability(request, ctx);
+
         EventTemplate eventTemplate = request.unbind(userService::findById, ctx);
         // by unbinding we also generate userEvent in db for each user
         // user event attributes will be inherited from eventTemplate (startTime, etc.)
@@ -76,6 +109,10 @@ public class EventTemplateService {
     @Transactional
     public Optional<Long> update(Long id, EventTemplateRequest request, AuthenticationContext ctx){
         logger.debug("Modify event template for for id={} with {}, {}", id, request, ctx);
+
+        // check that all attendees can join
+        checkAttendeesAvailability(request, ctx);
+
         // early quit: eventTemplate doesn't exist
         final Optional<EventTemplate> maybeEvent = findById(id,ctx);
         if (maybeEvent.isEmpty()){
@@ -115,4 +152,24 @@ public class EventTemplateService {
         event.attendees
                 .forEach(PanacheEntityBase::delete);
     }
+
+    Stream<UserEvent> findUserEventsByUserId(long ownerId) {
+        return UserEvent.find("owner_id = :id", Parameters.with("id", ownerId)).stream();
+    }
+
+    Stream<UserEvent> findUserEventByUserIdAndStartDate(long userId, LocalDateTime startDate) {
+        return UserEvent
+                .<UserEvent>find(
+                        "owner_id = :id AND date(startDateTime) = :date",
+                        Parameters.with("id", userId).and("date", startDate)
+                )
+                .stream();
+    }
+
+    private long cumulatedHoursOfEvent(Stream<UserEvent> stream) {
+        return stream
+                .map(UserEvent::durationInHours)
+                .reduce(0L, Long::sum);
+    }
+
 }
