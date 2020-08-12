@@ -18,6 +18,7 @@ package fr.lunatech.timekeeper.services.responses;
 
 import fr.lunatech.timekeeper.models.time.UserEvent;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
+import net.bytebuddy.implementation.bytecode.Throw;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -55,6 +56,12 @@ public class UserEventResponse {
         userEventResponse.name = event.name;
         userEventResponse.description = event.description;
         if(event.startDateTime != null && event.endDateTime != null){
+            if(event.startDateTime.isAfter(event.endDateTime)){
+                throw new IllegalArgumentException("StartDateTime must be before endDateTime");
+            }
+            if(event.startDateTime.isEqual(event.endDateTime)){
+                throw new IllegalArgumentException("StartDateTime and EndDateTime must be different");
+            }
             userEventResponse.eventUserDaysResponse = createEventUserDayResponseList(event);
             userEventResponse.duration = Duration.between(event.startDateTime, event.endDateTime).toString();
         }
@@ -220,16 +227,7 @@ public class UserEventResponse {
 
     @Override
     public int hashCode() {
-        int result = getId() != null ? getId().hashCode() : 0;
-        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
-        result = 31 * result + (getDescription() != null ? getDescription().hashCode() : 0);
-        result = 31 * result + (getEventUserDaysResponse() != null ? getEventUserDaysResponse().hashCode() : 0);
-        result = 31 * result + (getStartDateTime() != null ? getStartDateTime().hashCode() : 0);
-        result = 31 * result + (getEndDateTime() != null ? getEndDateTime().hashCode() : 0);
-        result = 31 * result + (getDate() != null ? getDate().hashCode() : 0);
-        result = 31 * result + (getEventType() != null ? getEventType().hashCode() : 0);
-        result = 31 * result + (getDuration() != null ? getDuration().hashCode() : 0);
-        return result;
+        return Objects.hash(id, name, description, eventUserDaysResponse, startDateTime, endDateTime, date, eventType, duration);
     }
 
     public static class EventUserDayResponse {
@@ -281,12 +279,7 @@ public class UserEventResponse {
 
         @Override
         public int hashCode() {
-            int result = getName() != null ? getName().hashCode() : 0;
-            result = 31 * result + (getDescription() != null ? getDescription().hashCode() : 0);
-            result = 31 * result + (getStartDateTime() != null ? getStartDateTime().hashCode() : 0);
-            result = 31 * result + (getEndDateTime() != null ? getEndDateTime().hashCode() : 0);
-            result = 31 * result + (getDate() != null ? getDate().hashCode() : 0);
-            return result;
+            return Objects.hash(name, description, startDateTime, endDateTime, date);
         }
     }
 
