@@ -89,14 +89,16 @@ export const weekRangeOfDate = (firstDay, numberOfWeek) => {
 // Compute userEvents Duration Per Day
 const userEventsDurationPerDay = (userEvents, date) => {
   return _.sumBy(userEvents, function(userEvent){
-    return [...Array(userEvent.eventUserDaysResponse.length).keys()]
-      .filter(i => date.format('YYYY-MM-DD') === userEvent.eventUserDaysResponse[i].date)
-      .map(i => {
-        const start = moment(userEvent.eventUserDaysResponse[i].startDateTime).utc();
-        const end = moment(userEvent.eventUserDaysResponse[i].endDateTime).utc();
-        const duration = moment.duration(end.diff(start));
-        return duration.asHours();
-      });
+    if(userEvent.eventUserDaysResponse) {
+      return [...Array(userEvent.eventUserDaysResponse.length).keys()]
+        .filter(i => date.format('YYYY-MM-DD') === userEvent.eventUserDaysResponse[i].date)
+        .map(i => {
+          const start = moment(userEvent.eventUserDaysResponse[i].startDateTime).utc();
+          const end = moment(userEvent.eventUserDaysResponse[i].endDateTime).utc();
+          const duration = moment.duration(end.diff(start));
+          return duration.asHours();
+        });
+    }
   });
 };
 
