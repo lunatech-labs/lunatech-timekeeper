@@ -25,10 +25,10 @@ export const renderRangeWithYear = (start, end) => {
   const panelFormat = 'DD MMM';
 
   if(!start){
-    return "invalid startDate";
+    return 'invalid startDate';
   }
   if(!end){
-    return "invalid endDate";
+    return 'invalid endDate';
   }
 
   if(start.isAfter(end)){
@@ -54,10 +54,10 @@ export const renderRangeWithYear = (start, end) => {
 export const renderRange = (start, end) => {
   const panelFormat = 'DD MMM';
   if(!start){
-    return "invalid startDate";
+    return 'invalid startDate';
   }
   if(!end){
-    return "invalid endDate";
+    return 'invalid endDate';
   }
 
   if(start.isSame(end)){
