@@ -25,6 +25,7 @@ import AddEntryForm from './AddEntryForm';
 import EditEntryForm from './EditEntryForm';
 import UserEventCard from '../UserEvent/UserEventCard';
 import {totalHoursPerDay} from '../../utils/momentUtils';
+import {getMaximumHoursPerDay} from '../../utils/configUtils';
 
 const {TextArea} = Input;
 
@@ -136,7 +137,7 @@ const TimeEntryForm = ({entries, userEvents, currentDay, form, onSuccess, onCanc
             <p>{currentDay.format('ddd')}<br/><span>{currentDay.format('DD')}</span></p>
             <h1>Day information</h1>
           </div>
-          { (mode === 'view' || mode === 'edit') && amountOfHoursPerDay(entries, userEvents, currentDay) < 8 ?
+          { (mode === 'view' || mode === 'edit') && amountOfHoursPerDay(entries, userEvents, currentDay) < getMaximumHoursPerDay() ?
             <Button type="link" onClick={() => setMode && setAddMode()}>Add task</Button> : ''}
         </div>
         <div className="tk_ModalTopBody">

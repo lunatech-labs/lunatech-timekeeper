@@ -38,6 +38,7 @@ import {
 import moment from 'moment';
 import _ from 'lodash';
 import UserEvent from '../UserEvent/UserEvent';
+import {getMaximumHoursPerDay} from '../../utils/configUtils';
 
 const numberOfWeek = 15; // It's the number of weeks where we can navigate
 
@@ -122,7 +123,7 @@ const WeekCalendar = (props) => {
   const TopCardComponent = ({item, userEvents}) => {
     if(!isDisabled(item)){
       const timeEntries = item.day ? item.day.data : [];
-      if(totalHoursPerDay(userEvents, item.date, timeEntries) >= 8) {
+      if(totalHoursPerDay(userEvents, item.date, timeEntries) >= getMaximumHoursPerDay()) {
         return <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>;
       }
       return <Button
