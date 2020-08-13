@@ -1,1 +1,2 @@
-xpack.monitoring.enabled: false
+http.port: 9600
+http.host: "0.0.0.0"
