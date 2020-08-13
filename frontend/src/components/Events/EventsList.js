@@ -33,6 +33,11 @@ const EventsList = () => {
   const isAdmin = keycloak.hasRealmRole('admin');
   const eventsResponse = useTimeKeeperAPI('/api/events');
 
+  // Sort events by startDateTime order (DESC)
+  if(eventsResponse.data){
+    eventsResponse.data.sort((a,b) => a.startDateTime > b.startDateTime ? -1 : a.startDateTime < b.startDateTime ? 1 : 0);
+  }
+
   if (eventsResponse.loading) {
     return (
       <React.Fragment>
