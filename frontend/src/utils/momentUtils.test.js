@@ -191,6 +191,7 @@ test('totalHoursPerDay should return 0 for no entries', () =>{
 // eslint-disable-next-line
 test('totalHoursPerDay should return 8 for some entries', () =>{
   const emptyEntries=[];
+  const emptyUserEvent=[];
   emptyEntries.push({
     startDateTime: moment.utc('2020-08-04T09:00:00Z'),
     endDateTime: moment.utc('2020-08-04T11:00:00Z'),
@@ -207,7 +208,7 @@ test('totalHoursPerDay should return 8 for some entries', () =>{
     startDateTime: moment.utc('2020-08-04T17:00:00Z'),
     endDateTime: moment.utc('2020-08-04T19:00:00Z'),
   });
-  const result = totalHoursPerDay(emptyEntries);
+  const result = totalHoursPerDay(emptyUserEvent,'2020-08-04',emptyEntries);
   // eslint-disable-next-line
   expect(result).toBe(8);
 });
@@ -215,6 +216,7 @@ test('totalHoursPerDay should return 8 for some entries', () =>{
 // eslint-disable-next-line
 test('totalHoursPerDay should return 3 hours for 2 entries that overlaps each other by one hour', () =>{
   const emptyEntries=[];
+  const emptyUserEvent=[];
   emptyEntries.push({
     startDateTime: moment.utc('2020-08-04T09:00:00Z'),
     endDateTime: moment.utc('2020-08-04T11:00:00Z'),
@@ -223,7 +225,7 @@ test('totalHoursPerDay should return 3 hours for 2 entries that overlaps each ot
     startDateTime: moment.utc('2020-08-04T10:00:00Z'),
     endDateTime: moment.utc('2020-08-04T11:00:00Z'),
   });
-  const result = totalHoursPerDay(emptyEntries);
+  const result = totalHoursPerDay(emptyUserEvent,'2020-08-04',emptyEntries);
   // eslint-disable-next-line
   expect(result).toBe(3);
 });
