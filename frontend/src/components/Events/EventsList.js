@@ -27,6 +27,7 @@ import EllipsisOutlined from '@ant-design/icons/lib/icons/EllipsisOutlined';
 import CopyOutlined from '@ant-design/icons/lib/icons/CopyOutlined';
 import {useKeycloak} from '@react-keycloak/web';
 import EditFilled from '@ant-design/icons/lib/icons/EditFilled';
+import _ from 'lodash';
 
 const EventsList = () => {
   const [keycloak] = useKeycloak();
@@ -54,6 +55,11 @@ const EventsList = () => {
       </React.Fragment>
     );
   }
+
+  // Sort events by startDateTime order (DESC)
+  const eventsOrdered = _.orderBy(eventsResponse.data, (userEvent) => {
+    return moment(userEvent.startDateTime).utc();
+  },'desc');
 
   const menu = (item) => {
     return (
@@ -96,48 +102,42 @@ const EventsList = () => {
     return moment(date, 'YYYY-MM-DD-HH:mm:ss.SSS\'Z\'').utc().format('LLL');
   };
 
-  const DataList = ({data}) => <List
-    id="tk_List"
-    grid={{gutter: 32, column: 3}}
-    dataSource={data}
-    renderItem={item => (
-      <List.Item key={`event-list-${item.id}`}>
-        <Card
-          id="tk_CardEvent"
-          bordered={false}
-          title={item.name}
-          extra={[
-            <Dropdown key={`ant-dropdown-${item.id}`} overlay={dropdownCardAction(item, isAdmin)}>
-              <a className="ant-dropdown-link" onClick={e => e.preventDefault()}><EllipsisOutlined /></a>
-            </Dropdown>,
-          ]}
-        >
-          <div className="tk_EventCard_Body">
-            <p className="tk_CardEvent_Desc">{item.description}</p>
-            <div className="tk_CardEvent_Bottom">
-              <div className="tk_CardEvent_Date">
-                <CalendarOutlined />
-                <p>{formatDateEvent(item.startDateTime)}<br />{formatDateEvent(item.endDateTime)}</p>
-              </div>
-              <div className="tk_CardEvent_People">
-                <div>
-                  <EventMembersPictures key={`event-member-picture-${item.id}`} membersIds={item.attendees.map(user => user.userId)} />
+  return(
+    <List
+      id="tk_List"
+      grid={{gutter: 32, column: 3}}
+      dataSource={eventsOrdered}
+      renderItem={item => (
+        <List.Item key={`event-list-${item.id}`}>
+          <Card
+            id="tk_CardEvent"
+            bordered={false}
+            title={item.name}
+            extra={[
+              <Dropdown key={`ant-dropdown-${item.id}`} overlay={dropdownCardAction(item, isAdmin)}>
+                <a className="ant-dropdown-link" onClick={e => e.preventDefault()}><EllipsisOutlined /></a>
+              </Dropdown>,
+            ]}
+          >
+            <div className="tk_EventCard_Body">
+              <p className="tk_CardEvent_Desc">{item.description}</p>
+              <div className="tk_CardEvent_Bottom">
+                <div className="tk_CardEvent_Date">
+                  <CalendarOutlined />
+                  <p>{formatDateEvent(item.startDateTime)}<br />{formatDateEvent(item.endDateTime)}</p>
                 </div>
-                {displayMembersButton(item)}
+                <div className="tk_CardEvent_People">
+                  <div>
+                    <EventMembersPictures key={`event-member-picture-${item.id}`} membersIds={item.attendees.map(user => user.userId)} />
+                  </div>
+                  {displayMembersButton(item)}
+                </div>
               </div>
             </div>
-          </div>
-        </Card>
-      </List.Item>
-    )}
-  />;
-
-  DataList.propTypes = {
-    data: PropTypes.array
-  };
-
-  return(
-    DataList(eventsResponse)
+          </Card>
+        </List.Item>
+      )}
+    />
   );
 };
 export default EventsList;
