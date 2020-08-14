@@ -1,0 +1,11 @@
+{
+  "apps": [
+    {
+      "app_id": "app_bf8c1edc-9275-47d9-9138-9e974fa06ca8",
+      "org_id": "orga_5435396e-2abd-4028-932e-1d025fbe6166",
+      "deploy_url": "https://github.com/lunatech-labs/lunatech-timekeeper.git",
+      "name": "lunatech-timekeeper-logstash",
+      "alias": "lunatech-timekeeper-logstash"
+    }
+  ]
+}
