@@ -23,6 +23,22 @@ import _ from 'lodash';
 export const renderRangeWithYear = (start, end) => {
   const panelFormatWithYear = 'DD MMM YYYY';
   const panelFormat = 'DD MMM';
+
+  if(!start){
+    return 'invalid startDate';
+  }
+  if(!end){
+    return 'invalid endDate';
+  }
+
+  if(start.isAfter(end)){
+    return 'invalid range, endDate must be after startDate';
+  }
+
+  if(start.isSame(end)){
+    return start.format(panelFormatWithYear);
+  }
+
   if ((start.isSame(end, 'month') && start.isSame(end, 'year'))) {
     // same month, same year => 22 - 25 May 2020
     return `${start.format('DD')} - ${end.format(panelFormatWithYear)}`;
@@ -37,6 +53,17 @@ export const renderRangeWithYear = (start, end) => {
 // Render a range of date without the year
 export const renderRange = (start, end) => {
   const panelFormat = 'DD MMM';
+  if(!start){
+    return 'invalid startDate';
+  }
+  if(!end){
+    return 'invalid endDate';
+  }
+
+  if(start.isSame(end)){
+    return `${start.format(panelFormat)}`;
+  }
+
   if (start.isSame(end, 'month')) {
     return `${start.format('DD')} - ${end.format(panelFormat)}`;
   } else {
@@ -46,7 +73,7 @@ export const renderRange = (start, end) => {
 
 // Compute the week from the first day (or the start of the current week)
 export const weekRangeOfDate = (firstDay, numberOfWeek) => {
-  const startOfCurrentWeek = firstDay || moment().utc().startOf('week');
+  const startOfCurrentWeek = firstDay || moment.utc().startOf('week');
   return [...Array(numberOfWeek).keys()].map(i => {
     const toAdd = i - 7;
     const start = startOfCurrentWeek.clone().add(toAdd, 'week');
@@ -60,8 +87,8 @@ export const weekRangeOfDate = (firstDay, numberOfWeek) => {
 };
 
 export const totalHoursPerDay = (timeEntries) => _.sumBy(timeEntries, function(entry){
-  const start = moment(entry.startDateTime).utc();
-  const end = moment(entry.endDateTime).utc();
+  const start = moment.utc(entry.startDateTime);
+  const end = moment.utc(entry.endDateTime);
   const duration = moment.duration(end.diff(start));
   return duration.asHours();
 });
@@ -82,12 +109,6 @@ export const isPublicHoliday = (date, publicHolidays) => {
   }
 };
 
-
-export const isToday = (day) => {
-  if(day) {return  false;}
-  return moment.utc().isSame(day, 'day');
-};
-
 // Returns true if the date is saturday or sunday
 export const isWeekEnd = (date) => date.isoWeekday() === 6 || date.isoWeekday() === 7;
 
@@ -100,4 +121,4 @@ export const computeNumberOfHours = (start, end) => {
 };
 
 // Moment gives the month number with the index starting from 0
-export const getIsoMonth = (moment) => moment.month() + 1;
+export const getIsoMonth = (m) => m.month() + 1;

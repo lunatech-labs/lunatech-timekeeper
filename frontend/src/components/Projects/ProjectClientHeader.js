@@ -22,12 +22,12 @@ import './ProjectClientHeader.less';
 import _ from 'lodash';
 
 const getLogoURL = (item) => {
-    if(item && item.name) {
-        let cleanSeed = _.snakeCase(item.name);
-        return 'https://picsum.photos/seed/' + cleanSeed + '/40';
-    }else{
-        return 'https://picsum.photos/40';
-    }
+  if(item && item.name) {
+    let cleanSeed = _.snakeCase(item.name);
+    return 'https://picsum.photos/seed/' + cleanSeed + '/40';
+  }else{
+    return 'https://picsum.photos/40';
+  }
 };
 
 const ProjectClientHeader = ({project}) => {

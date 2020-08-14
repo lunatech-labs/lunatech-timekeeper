@@ -32,7 +32,7 @@ const {Content, Footer} = Layout;
 const MainPage = ({title, children, actions, entityName, ...rest}) => {
   const {data, error, loading} = useTimeKeeperAPI('/api/users/me');
 
-  const [collapsed, toggle] = useState(true);
+  const [collapsed, toggle] = useState(false);
 
   if (error) {
     return (
@@ -69,7 +69,7 @@ const MainPage = ({title, children, actions, entityName, ...rest}) => {
               {children}
             </div>
           </Content>
-          <Footer className="tk_Footer">Time Keeper v0.1 ©2020 Created by Lunatech</Footer>
+          <Footer className="tk_Footer">TimeKeeper ©2020 Lunatech</Footer>
         </Layout>
       </UserProvider>
     </Layout>

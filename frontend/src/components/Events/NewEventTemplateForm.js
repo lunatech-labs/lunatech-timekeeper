@@ -123,7 +123,7 @@ const NewEventTemplateForm = () => {
         return _.range(0, 60);
       },
     };
-  };
+  }
   if(eventsResponse.data && usersResponse.data){
     return (
       <Form
@@ -171,15 +171,15 @@ const NewEventTemplateForm = () => {
                 ]}
               >
 
-                  <RangePicker
-                    disabledDate={disabledDate}
-                    disabledTime={disabledTime}
-                    showTime={{
-                      hideDisabledOptions: true
-                    }}
-                    format="YYYY-MM-DD h:mm"
-                    className="tk_RangePicker"
-                  />
+                <RangePicker
+                  disabledDate={disabledDate}
+                  disabledTime={disabledTime}
+                  showTime={{
+                    hideDisabledOptions: true
+                  }}
+                  format="YYYY-MM-DD h:mm"
+                  className="tk_RangePicker"
+                />
               </Form.Item>
             </Col>
             <Col className="gutter-row" span={12}>
