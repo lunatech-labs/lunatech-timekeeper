@@ -102,10 +102,10 @@ const EventsList = () => {
     return moment(date, 'YYYY-MM-DD-HH:mm:ss.SSS\'Z\'').utc().format('LLL');
   };
 
-  const DataList = (userEvent) => <List
+  const DataList = (userEvents) => <List
     id="tk_List"
     grid={{gutter: 32, column: 3}}
-    dataSource={userEvent}
+    dataSource={userEvents}
     renderItem={item => (
       <List.Item key={`event-list-${item.id}`}>
         <Card
