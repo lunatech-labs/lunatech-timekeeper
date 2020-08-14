@@ -27,16 +27,12 @@ import EllipsisOutlined from '@ant-design/icons/lib/icons/EllipsisOutlined';
 import CopyOutlined from '@ant-design/icons/lib/icons/CopyOutlined';
 import {useKeycloak} from '@react-keycloak/web';
 import EditFilled from '@ant-design/icons/lib/icons/EditFilled';
+import _ from 'lodash';
 
 const EventsList = () => {
   const [keycloak] = useKeycloak();
   const isAdmin = keycloak.hasRealmRole('admin');
   const eventsResponse = useTimeKeeperAPI('/api/events');
-
-  // Sort events by startDateTime order (DESC)
-  if(eventsResponse.data){
-    eventsResponse.data.sort((a,b) => a.startDateTime > b.startDateTime ? -1 : a.startDateTime < b.startDateTime ? 1 : 0);
-  }
 
   if (eventsResponse.loading) {
     return (
@@ -59,6 +55,11 @@ const EventsList = () => {
       </React.Fragment>
     );
   }
+
+  // Sort events by startDateTime order (DESC)
+  const eventsOrdered = _.orderBy(eventsResponse.data, (userEvent) => {
+    return moment(userEvent.startDateTime).utc();
+  },'desc');
 
   const menu = (item) => {
     return (
@@ -101,10 +102,10 @@ const EventsList = () => {
     return moment(date, 'YYYY-MM-DD-HH:mm:ss.SSS\'Z\'').utc().format('LLL');
   };
 
-  const DataList = ({data}) => <List
+  const DataList = (userEvent) => <List
     id="tk_List"
     grid={{gutter: 32, column: 3}}
-    dataSource={data}
+    dataSource={userEvent}
     renderItem={item => (
       <List.Item key={`event-list-${item.id}`}>
         <Card
@@ -142,7 +143,7 @@ const EventsList = () => {
   };
 
   return(
-    DataList(eventsResponse)
+    DataList(eventsOrdered)
   );
 };
 export default EventsList;
