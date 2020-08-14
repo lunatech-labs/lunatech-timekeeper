@@ -18,7 +18,6 @@ package fr.lunatech.timekeeper.services.responses;
 
 import fr.lunatech.timekeeper.models.time.UserEvent;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
-import net.bytebuddy.implementation.bytecode.Throw;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -55,6 +54,16 @@ public class UserEventResponse {
         userEventResponse.id = event.id;
         userEventResponse.name = event.name;
         userEventResponse.description = event.description;
+        return checkParameters(event, userEventResponse);
+    }
+
+    /**
+     * Method that check parameters for business logic
+     * @param event
+     * @param userEventResponse
+     * @return UserEventResponse
+     */
+    private static UserEventResponse checkParameters(UserEvent event, UserEventResponse userEventResponse) {
         if(event.startDateTime != null && event.endDateTime != null){
             if(event.startDateTime.isAfter(event.endDateTime)){
                 throw new IllegalArgumentException("StartDateTime must be before endDateTime");
@@ -79,7 +88,6 @@ public class UserEventResponse {
         }
         return userEventResponse;
     }
-
 
 
     /**
