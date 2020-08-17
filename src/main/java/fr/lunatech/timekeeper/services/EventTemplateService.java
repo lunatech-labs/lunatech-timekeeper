@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -64,13 +65,37 @@ public class EventTemplateService {
     }
 
     @Transactional
-    public Long create (EventTemplateRequest request, AuthenticationContext ctx){
-        logger.debug("Create a new event template with {}, {}", request, ctx);
-        EventTemplate eventTemplate = request.unbind(userService::findById, ctx);
+    public Optional<Long> create(EventTemplateRequest request, AuthenticationContext ctx) {
+        logger.debug("Create a new event template with Request - " + request + " ,context - " + ctx);
+        final EventTemplate eventTemplate = request.unbind(userService::findById, ctx);
         // by unbinding we also generate userEvent in db for each user
         // user event attributes will be inherited from eventTemplate (startTime, etc.)
-        eventTemplate.persistAndFlush();
-        return eventTemplate.id;
+        if(checkIfEventExistsWithSameDates(
+                eventTemplate.name,
+                eventTemplate.startDateTime,
+                eventTemplate.endDateTime, ctx)
+        ) {
+            logger.debug("Event with name - " + request.getName() + " , already exists with same Start and End Date.");
+            return Optional.empty();
+        } else {
+            logger.debug("Event with name - " + request.getName() + " , is getting created with id - " + eventTemplate.id);
+            eventTemplate.persistAndFlush();
+            return Optional.of(eventTemplate.id);
+        }
+    }
+
+    private Boolean checkIfEventExistsWithSameDates(String name, LocalDateTime startDateTime, LocalDateTime endDateTime, AuthenticationContext ctx) {
+        final var maybeEvent = findByEventName(name, ctx);
+        if (maybeEvent.isPresent()) {
+            final var mayBeStartDate = maybeEvent.get().startDateTime.toLocalDate();
+            final var mayBeEndDate = maybeEvent.get().endDateTime.toLocalDate();
+            if (startDateTime.toLocalDate().isEqual(mayBeStartDate)
+                    && endDateTime.toLocalDate().isEqual(mayBeEndDate)) {
+                return true;
+            }
+            return false;
+        }
+        return false;
     }
 
     @Transactional
@@ -93,6 +118,13 @@ public class EventTemplateService {
 
     private Optional<EventTemplate> findById(Long id, AuthenticationContext ctx) {
         return EventTemplate.<EventTemplate>findByIdOptional(id)
+                .filter(ctx::canAccess);
+    }
+
+    private Optional<EventTemplate> findByEventName(String name, AuthenticationContext ctx) {
+        return EventTemplate.<EventTemplate>find("name", name)
+                .stream()
+                .findAny()
                 .filter(ctx::canAccess);
     }
 

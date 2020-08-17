@@ -29,10 +29,10 @@ import org.eclipse.microprofile.metrics.annotation.Timed;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.Valid;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.net.URI;
 import java.util.List;
 
 public class EventResource implements EventResourceApi {
@@ -70,9 +70,15 @@ public class EventResource implements EventResourceApi {
     @Counted(name = "countCreateEvent", description = "Counts how many times the user create an event on method 'createEvent'")
     @Timed(name = "timeCreateEvent", description = "Times how long it takes the user create an event on method 'createEvent'", unit = MetricUnits.MILLISECONDS)
     public Response createEvent(@Valid EventTemplateRequest request, UriInfo uriInfo) {
-        Long eventTemplateId = eventTemplateService.create(request, authentication.context());
-        final URI uri = uriInfo.getAbsolutePathBuilder().path(Long.toString(eventTemplateId)).build();
-        return Response.created(uri).build();
+
+        return eventTemplateService.create(request, authentication.context())
+                .map(eventId ->
+                        Response.created(
+                                uriInfo.getAbsolutePathBuilder()
+                                        .path(Long.toString(eventId))
+                                        .build()
+                        ).build()
+                ).orElseThrow(BadRequestException::new);
     }
 
     @RolesAllowed({"user", "admin"})
