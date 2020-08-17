@@ -175,16 +175,4 @@ class UserEventResponseTest {
         userEvent.endDateTime = LocalDateTime.of(2020,03,15,17,0,0);
         assertThrows(IllegalArgumentException.class, () -> UserEventResponse.createFromUserEvent(userEvent));
     }
-
-    @Test
-    void shouldNotCreateFromUserEventWithSameStartDateTimeAndEndDateTime() {
-        var userEvent = new UserEvent();
-        userEvent.id = 1L;
-        userEvent.name = "Event name";
-        userEvent.description = "Event description";
-        userEvent.startDateTime = LocalDateTime.of(2020,03,16,9,0,0);
-        userEvent.endDateTime = LocalDateTime.of(2020,03,16,9,0,0);
-        assertThrows(IllegalArgumentException.class, () -> UserEventResponse.createFromUserEvent(userEvent));
-    }
-
 }
