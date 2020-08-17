@@ -50,7 +50,6 @@ const UserEvent = ({userEvent}) => {
       </div>
     );
   }
-  return 'Hello';
 };
 UserEvent.propTypes = {
   userEvent: PropTypes.arrayOf(
