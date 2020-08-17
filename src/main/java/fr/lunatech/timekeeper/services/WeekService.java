@@ -19,6 +19,7 @@ package fr.lunatech.timekeeper.services;
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.UserEvent;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
+import fr.lunatech.timekeeper.services.responses.UserEventResponse;
 import fr.lunatech.timekeeper.services.responses.WeekResponse;
 import fr.lunatech.timekeeper.timeutils.CalendarFactory;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
@@ -38,6 +39,9 @@ public class WeekService {
     @Inject
     TimeSheetService timeSheetService;
 
+    @Inject
+    UserEventService userEventService;
+
     /**
      * Loads a specific week for the current authenticated user
      *
@@ -53,7 +57,7 @@ public class WeekService {
             throw new IllegalStateException("User not found, cannot load current week");
         }
 
-        var userEvents = new ArrayList<UserEvent>();
+        var userEvents = userEventService.getEventsByUser(maybeUser.get().id);
         var publicHolidays = CalendarFactory.instanceFor("FR", year).getPublicHolidaysForWeekNumber(weekNumber);
 
         var startDayOfWeek = TimeKeeperDateUtils.getFirstDayOfWeekFromWeekNumber(year, weekNumber);

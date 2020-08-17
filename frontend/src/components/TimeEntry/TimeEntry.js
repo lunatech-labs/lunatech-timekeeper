@@ -37,7 +37,7 @@ const TimeEntry = ({entry, onClick}) => {
   const size = computeSize(hours);
   return (
     <div className="tk_TaskCard" style={{height: `${size}px`}}
-      key={`badge-entry-${start && start.format('yyyy-mm-dd-hh-mm')}`} onClick={onClick}>
+      key={`badge-entry-${start && start.format('YYYY-MM-DD-HH-mm')}`} onClick={onClick}>
       <div>
         <Badge
           status={(entry && entry.comment) ? 'success' : 'error'}
