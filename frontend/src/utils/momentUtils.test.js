@@ -146,11 +146,17 @@ test('weekRangeOfDate with a specified firstDay', () => {
   // eslint-disable-next-line
     expect(result).toHaveLength(7);
 
+  // eslint-disable-next-line
   expect(result[0].id).toBe(23);
+  // eslint-disable-next-line
   expect(result[0].start.isSame(moment.utc('2020-06-04'))).toBe(true);
+  // eslint-disable-next-line
   expect(result[0].end.format()).toBe('2020-06-06T23:59:59Z'); // saturday
+  // eslint-disable-next-line
   expect(result[0].end.isSame(moment.utc('2020-06-06'),'year')).toBe(true);
+  // eslint-disable-next-line
   expect(result[0].end.isSame(moment.utc('2020-06-06'),'month')).toBe(true);
+  // eslint-disable-next-line
   expect(result[0].end.isSame(moment.utc('2020-06-06'),'day')).toBe(true);
 });
 
@@ -165,9 +171,12 @@ test('weekRangeOfDate with a specified firstDay as monday', () => {
 
   //expect(result).toBe([]);
 
+  // eslint-disable-next-line
   expect(result[0].id).toBe(23);
+  // eslint-disable-next-line
   expect(result[0].start.isSame(moment.utc('2020-06-01'))).toBe(true); // monday
   //expect(result[0].end.isSame(moment.utc("2020-06-07"))).toBe(true); // saturday
+  // eslint-disable-next-line
   expect(result[0].end.format()).toBe('2020-06-06T23:59:59Z'); // saturday
 });
 
@@ -175,12 +184,14 @@ test('weekRangeOfDate with a specified firstDay as monday', () => {
 test('totalHoursPerDay should return 0 for no entries', () =>{
   const emptyEntries=[];
   const result = totalHoursPerDay(emptyEntries);
+  // eslint-disable-next-line
   expect(result).toBe(0);
 });
 
 // eslint-disable-next-line
 test('totalHoursPerDay should return 8 for some entries', () =>{
   const emptyEntries=[];
+  const emptyUserEvent=[];
   emptyEntries.push({
     startDateTime: moment.utc('2020-08-04T09:00:00Z'),
     endDateTime: moment.utc('2020-08-04T11:00:00Z'),
@@ -197,13 +208,15 @@ test('totalHoursPerDay should return 8 for some entries', () =>{
     startDateTime: moment.utc('2020-08-04T17:00:00Z'),
     endDateTime: moment.utc('2020-08-04T19:00:00Z'),
   });
-  const result = totalHoursPerDay(emptyEntries);
+  const result = totalHoursPerDay(emptyUserEvent,'2020-08-04',emptyEntries);
+  // eslint-disable-next-line
   expect(result).toBe(8);
 });
 
 // eslint-disable-next-line
 test('totalHoursPerDay should return 3 hours for 2 entries that overlaps each other by one hour', () =>{
   const emptyEntries=[];
+  const emptyUserEvent=[];
   emptyEntries.push({
     startDateTime: moment.utc('2020-08-04T09:00:00Z'),
     endDateTime: moment.utc('2020-08-04T11:00:00Z'),
@@ -212,6 +225,7 @@ test('totalHoursPerDay should return 3 hours for 2 entries that overlaps each ot
     startDateTime: moment.utc('2020-08-04T10:00:00Z'),
     endDateTime: moment.utc('2020-08-04T11:00:00Z'),
   });
-  const result = totalHoursPerDay(emptyEntries);
+  const result = totalHoursPerDay(emptyUserEvent,'2020-08-04',emptyEntries);
+  // eslint-disable-next-line
   expect(result).toBe(3);
 });

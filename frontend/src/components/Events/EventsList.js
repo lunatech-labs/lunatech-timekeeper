@@ -19,7 +19,6 @@ import {useTimeKeeperAPI} from '../../utils/services';
 import {Alert, Card, List, Spin, Dropdown, Button, Menu} from 'antd';
 import CalendarOutlined from '@ant-design/icons/lib/icons/CalendarOutlined';
 import EventMemberTag from './EventMemberTag';
-import PropTypes from 'prop-types';
 import './EventsList.less';
 import moment from 'moment';
 import EventMembersPictures from './EventMembersPictures';
