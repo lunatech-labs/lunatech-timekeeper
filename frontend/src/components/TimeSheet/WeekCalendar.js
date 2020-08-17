@@ -185,16 +185,14 @@ const WeekCalendar = (props) => {
             }
           };
           const renderUserEvents = (userEvents) => {
-            if(userEvents && item){
-              if(!isWeekEnd(item.date) && !isPublicHoliday(item.date,publicHolidays)){
-                return userEvents.map(userEvent => {
-                  return userEvent.eventUserDaysResponse.map(userEventDay => {
-                    if(userEventDay.date === item.date.format('YYYY-MM-DD')){
-                      return <UserEvent userEvent={userEventDay}/>;
-                    }
-                  });
+            if(userEvents && item && !isWeekEnd(item.date) && !isPublicHoliday(item.date,publicHolidays)){
+              return userEvents.map(userEvent => {
+                return userEvent.eventUserDaysResponse.map(userEventDay => {
+                  if(userEventDay.date === item.date.format('YYYY-MM-DD')){
+                    return <UserEvent userEvent={userEventDay}/>;
+                  }
                 });
-              }
+              });
             }
           };
           const isToday = (day) => {
