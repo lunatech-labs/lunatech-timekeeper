@@ -68,9 +68,6 @@ public class UserEventResponse {
             if(event.startDateTime.isAfter(event.endDateTime)){
                 throw new IllegalArgumentException("StartDateTime must be before endDateTime");
             }
-            if(event.startDateTime.isEqual(event.endDateTime)){
-                throw new IllegalArgumentException("StartDateTime and EndDateTime must be different");
-            }
             userEventResponse.eventUserDaysResponse = createEventUserDayResponseList(event);
             userEventResponse.duration = Duration.between(event.startDateTime, event.endDateTime).toString();
         }
