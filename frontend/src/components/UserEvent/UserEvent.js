@@ -27,7 +27,6 @@ const computeSize = (nbHours) => {
   return minimumSize + (nbHours - 1) * 50;
 };
 const UserEvent = ({userEvent}) => {
-  if(userEvent){
     const start = moment(userEvent.startDateTime).utc();
     const end = moment(userEvent.endDateTime).utc();
     const date = start.clone();
@@ -49,7 +48,6 @@ const UserEvent = ({userEvent}) => {
         <p><ClockCircleOutlined/>{date.format('hh:mm')}</p>
       </div>
     );
-  }
 };
 UserEvent.propTypes = {
   userEvent: PropTypes.arrayOf(
