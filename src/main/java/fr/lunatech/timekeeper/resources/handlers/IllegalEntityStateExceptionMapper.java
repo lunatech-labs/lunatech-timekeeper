@@ -33,7 +33,7 @@ public class IllegalEntityStateExceptionMapper implements ExceptionMapper<Illega
 
     @Override
     public Response toResponse(IllegalEntityStateException e) {
-        logger.warn(String.format("IllegalEntityStateException %s ", e.getMessage()));
+        logger.warn(String.format("IllegalEntityStateException %s ", e.getMessage()), e);
         return Response
                 .status(Response.Status.BAD_REQUEST)
                 .type(MediaType.APPLICATION_JSON)
