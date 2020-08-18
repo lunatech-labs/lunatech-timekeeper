@@ -4,7 +4,6 @@ import fr.lunatech.timekeeper.models.time.UserEvent;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -120,4 +119,15 @@ class UserEventServiceTest {
         assertTrue(userEventService.getUserEventForMonthNumber(userEvent, 5));
     }
 
+    @Test
+    void shouldBeFalseForEventOutOfTheMonthDuration() {
+        var userEvent = new UserEvent();
+        userEvent.id = 1L;
+        userEvent.name = "Event name";
+        userEvent.description = "Event description";
+        userEvent.startDateTime = LocalDateTime.of(2020,02,1,9,0,0);
+        userEvent.endDateTime = LocalDateTime.of(2020,02,1,17,0,0);
+
+        assertFalse(userEventService.getUserEventForMonthNumber(userEvent, 3));
+    }
 }
