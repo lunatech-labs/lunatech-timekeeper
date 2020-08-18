@@ -32,7 +32,7 @@ public class RollbackExceptionMapper implements ExceptionMapper<RollbackExceptio
 
     @Override
     public Response toResponse(RollbackException e) {
-        logger.warn(e.getMessage());
+        logger.warn(e.getMessage(), e);
         return Response
                 .status(Response.Status.BAD_REQUEST)
                 .type(MediaType.APPLICATION_JSON)

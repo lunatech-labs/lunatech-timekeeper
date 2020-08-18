@@ -33,7 +33,7 @@ public class CreateResourceExceptionMapper implements ExceptionMapper<CreateReso
     @Override
     public Response toResponse(CreateResourceException e) {
         if(logger.isWarnEnabled()) {
-            logger.warn(String.format("CreateResourceException: %s", e.getMessage()));
+            logger.warn(String.format("CreateResourceException: %s", e.getMessage()), e);
         }
         // We could use also a CONFLICT but since we do not check the exact constraint name, we prefer to use a
         // more generic "Bad request" http response here.

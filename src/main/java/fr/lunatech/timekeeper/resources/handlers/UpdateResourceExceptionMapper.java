@@ -35,7 +35,7 @@ public class UpdateResourceExceptionMapper implements ExceptionMapper<UpdateReso
 
     @Override
     public Response toResponse(UpdateResourceException e) {
-        logger.warn(e.getMessage());
+        logger.warn(e.getMessage(), e);
         return Response
                 .status(Response.Status.BAD_REQUEST)
                 .type(MediaType.APPLICATION_JSON)
