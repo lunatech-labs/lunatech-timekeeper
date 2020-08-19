@@ -70,7 +70,7 @@ public class EventTemplateService {
         final EventTemplate eventTemplate = request.unbind(userService::findById, ctx);
         // by unbinding we also generate userEvent in db for each user
         // user event attributes will be inherited from eventTemplate (startTime, etc.)
-        if(checkIfEventExistsWithSameDates(
+        if(isEventExistsByNameAndDates(
                 eventTemplate.name,
                 eventTemplate.startDateTime,
                 eventTemplate.endDateTime, ctx)
@@ -84,18 +84,19 @@ public class EventTemplateService {
         }
     }
 
-    private Boolean checkIfEventExistsWithSameDates(String name, LocalDateTime startDateTime, LocalDateTime endDateTime, AuthenticationContext ctx) {
-        final var maybeEvent = findByEventName(name, ctx);
-        if (maybeEvent.isPresent()) {
-            final var mayBeStartDate = maybeEvent.get().startDateTime.toLocalDate();
-            final var mayBeEndDate = maybeEvent.get().endDateTime.toLocalDate();
-            if (startDateTime.toLocalDate().isEqual(mayBeStartDate)
-                    && endDateTime.toLocalDate().isEqual(mayBeEndDate)) {
-                return true;
-            }
+    private Boolean isEventExistsByNameAndDates(String name, LocalDateTime startDateTime, LocalDateTime endDateTime, AuthenticationContext ctx) {
+
+        final var filteredEvents = findByAllByEventName(name, ctx)
+                .stream()
+                .filter(foundEvent -> startDateTime.toLocalDate().isEqual(foundEvent.startDateTime.toLocalDate()) &&
+                        endDateTime.toLocalDate().isEqual(foundEvent.endDateTime.toLocalDate()))
+                .collect(Collectors.toList());
+
+        if (filteredEvents.isEmpty())
             return false;
-        }
-        return false;
+        else
+            return true;
+
     }
 
     @Transactional
@@ -121,11 +122,11 @@ public class EventTemplateService {
                 .filter(ctx::canAccess);
     }
 
-    private Optional<EventTemplate> findByEventName(String name, AuthenticationContext ctx) {
+    private List<EventTemplate> findByAllByEventName(String name, AuthenticationContext ctx) {
         return EventTemplate.<EventTemplate>find("name", name)
                 .stream()
-                .findAny()
-                .filter(ctx::canAccess);
+                .filter(ctx::canAccess)
+                .collect(Collectors.toList());
     }
 
     <R extends Collection<EventTemplateResponse>> R streamAll(

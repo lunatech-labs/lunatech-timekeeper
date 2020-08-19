@@ -19,6 +19,7 @@ package fr.lunatech.timekeeper.resources;
 import fr.lunatech.timekeeper.resources.openapi.EventResourceApi;
 import fr.lunatech.timekeeper.resources.providers.AuthenticationContextProvider;
 import fr.lunatech.timekeeper.services.EventTemplateService;
+import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
 import fr.lunatech.timekeeper.services.responses.EventTemplateResponse;
 import fr.lunatech.timekeeper.services.responses.UserResponse;
@@ -29,7 +30,6 @@ import org.eclipse.microprofile.metrics.annotation.Timed;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -78,7 +78,13 @@ public class EventResource implements EventResourceApi {
                                         .path(Long.toString(eventId))
                                         .build()
                         ).build()
-                ).orElseThrow(BadRequestException::new);
+                ).orElseThrow(() -> new IllegalEntityStateException(
+                                "Event with name: " + request.getName() + ", " +
+                                        "already exists with same Start: " + request.getStartDateTime().toLocalDate() + ", " +
+                                        "and End: " + request.getEndDateTime().toLocalDate() +
+                                        " dates."
+                        )
+                );
     }
 
     @RolesAllowed({"user", "admin"})
