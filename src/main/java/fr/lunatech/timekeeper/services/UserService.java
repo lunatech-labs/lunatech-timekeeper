@@ -42,7 +42,7 @@ public class UserService {
     OrganizationService organizationService;
 
     public Optional<UserResponse> findResponseById(Long id, AuthenticationContext ctx) {
-        return findById(id, ctx).map(UserResponse::bind);
+        return findUserById(id, ctx).map(UserResponse::bind);
     }
 
     public List<UserResponse> listAllResponses(AuthenticationContext ctx) {
@@ -74,7 +74,7 @@ public class UserService {
         return User.count();
     }
 
-    Optional<User> findById(Long id, AuthenticationContext ctx) {
+    Optional<User> findUserById(Long id, AuthenticationContext ctx) {
         return User.<User>findByIdOptional(id)
                 .filter(ctx::canAccess);
     }

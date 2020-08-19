@@ -17,7 +17,6 @@
 package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.User;
-import fr.lunatech.timekeeper.models.time.UserEvent;
 import fr.lunatech.timekeeper.services.responses.MonthResponse;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import fr.lunatech.timekeeper.timeutils.CalendarFactory;
@@ -43,7 +42,7 @@ public class MonthService {
 
     public MonthResponse getMonth(AuthenticationContext ctx, Integer year, Integer monthNumber) {
         Long userId = ctx.getUserId();
-        Optional<User> maybeUser = userService.findById(userId, ctx);
+        Optional<User> maybeUser = userService.findUserById(userId, ctx);
         if (maybeUser.isEmpty()) {
             throw new IllegalStateException("User not found, cannot load current month");
         }

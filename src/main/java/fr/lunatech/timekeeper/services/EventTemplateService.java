@@ -68,7 +68,7 @@ public class EventTemplateService {
     @Transactional
     public Optional<Long> create(EventTemplateRequest request, AuthenticationContext ctx) {
         logger.debug("Create a new event template with {}, {}", request, ctx);
-        final EventTemplate eventTemplate = request.unbind(userService::findById, ctx);
+        final EventTemplate eventTemplate = request.unbind(userService::findUserById, ctx);
         // by unbinding we also generate userEvent in db for each user
         // user event attributes will be inherited from eventTemplate (startTime, etc.)
         boolean checkEvent = validateEventCreation(
@@ -85,48 +85,55 @@ public class EventTemplateService {
     }
 
     @Transactional
-    public Optional<Long> update(Long id, EventTemplateRequest request, AuthenticationContext ctx){
-        logger.debug("Modify event template for for id={} with {}, {}", id, request, ctx);
+    public Optional<Long> update(Long eventId, EventTemplateRequest request, AuthenticationContext ctx) {
+        logger.debug("Modify event template for for id={} with {}, {}", eventId, request, ctx);
+
+        // Request coming from frontend
+        final var newName = request.getName();
+        final var newStartTime = request.getStartDateTime();
+        final var newEndTime = request.getEndDateTime();
+
         // early quit: eventTemplate doesn't exist
-        final Optional<EventTemplate> maybeEvent = findById(id,ctx);
-        if (maybeEvent.isEmpty()){
-            return Optional.empty();
-        }
+        final Optional<EventTemplate> maybeEvent = findEventById(eventId, ctx);
 
-        boolean checkEvent = validateEventUpdation(
-                maybeEvent.get().name,
-                maybeEvent.get().id,
-                maybeEvent.get().startDateTime,
-                maybeEvent.get().endDateTime, ctx);
+        return maybeEvent.map(event -> {
+            boolean checkEvent = validateEventUpdation(
+                    newName,
+                    event.id,
+                    newStartTime,
+                    newEndTime,
+                    ctx);
 
-        if (checkEvent) {
-            throw new UpdateResourceException("Update error");
-        }
-        // delete all userEvent associated to the previous state of this event template
-        deleteAttendees(maybeEvent.get());
+            if (checkEvent) {
+                throw new UpdateResourceException(
+                        "Event with name: " + request.getName() +
+                        ", already exists with same Start: " + request.getStartDateTime().toLocalDate() +
+                        "and End: " + request.getEndDateTime().toLocalDate() + " dates."
+                );
+            }
+            // delete all userEvent associated to the previous state of this event template
+            deleteAttendees(event);
 
-        // actually update the event. by side effect every userEvent associated will be created
-        EventTemplate eventTemplateUpdated = request.unbind(maybeEvent.get(),userService::findById, ctx);
-        eventTemplateUpdated.persistAndFlush();
+            // actually update the event. by side effect every userEvent associated will be created
+            EventTemplate eventTemplateUpdated = request.unbind(event, userService::findUserById, ctx);
+            eventTemplateUpdated.persistAndFlush();
 
-        return Optional.of(eventTemplateUpdated.id);
+            return eventTemplateUpdated.id;
+        });
     }
 
 
     private boolean validateEventUpdation(String name, Long eventId, LocalDateTime startDateTime, LocalDateTime endDateTime, AuthenticationContext ctx) {
         final var startDate = startDateTime.toLocalDate();
         final var endDate = endDateTime.toLocalDate();
-
         final var foundEvents = findAllEventsByName(name, ctx)
                 .stream()
-                .filter(template -> eventId != template.id)
-                .filter(eventTemplate ->
+                .filter(eventTemplate -> !eventTemplate.id.equals(eventId) &&
                         eventTemplate.startDateTime.toLocalDate().isEqual(startDate) &&
-                                eventTemplate.endDateTime.toLocalDate().isEqual(endDate)
-                )
-                .collect(Collectors.toList());
+                        eventTemplate.endDateTime.toLocalDate().isEqual(endDate))
+                .findAny();
 
-        return false;
+        return foundEvents.isPresent();
     }
 
     private boolean validateEventCreation(String name, LocalDateTime startDateTime, LocalDateTime endDateTime, AuthenticationContext ctx) {
@@ -137,13 +144,12 @@ public class EventTemplateService {
                 .stream()
                 .filter(eventTemplate -> startDate.isEqual(eventTemplate.startDateTime.toLocalDate()) &&
                         endDate.isEqual(eventTemplate.endDateTime.toLocalDate()))
-                .collect(Collectors.toList());
+                .findAny();
 
-        return !foundEvents.isEmpty();
+        return foundEvents.isPresent();
     }
 
-    private Optional<EventTemplate> findById(Long id, AuthenticationContext ctx) {
-        System.out.println("Find by Id:> " + id);
+    private Optional<EventTemplate> findEventById(Long id, AuthenticationContext ctx) {
         return EventTemplate.<EventTemplate>findByIdOptional(id)
                 .filter(ctx::canAccess);
     }
