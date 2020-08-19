@@ -47,7 +47,7 @@ public class MonthService {
             throw new IllegalStateException("User not found, cannot load current month");
         }
 
-        var userEvents = userEventService.getEventsByUserForMonthNumber(maybeUser.get().id, monthNumber);
+        var userEvents = userEventService.getEventsByUserForMonthNumber(maybeUser.get().id, monthNumber, year);
         if (monthNumber == null) {
             monthNumber = LocalDate.now().getMonthValue();
         }

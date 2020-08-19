@@ -14,29 +14,37 @@ public class UserEventService {
 
     private static final Logger logger = LoggerFactory.getLogger(EventTemplateService.class);
 
-    public List<UserEvent> getEventsByUserForWeekNumber(Long ownerId, Integer weekNumber){
+    public List<UserEvent> getEventsByUserForWeekNumber(Long ownerId, Integer weekNumber, Integer year){
         logger.debug("getEventsForUser {}", ownerId);
         return UserEvent.<UserEvent>stream("owner_id=?1", ownerId)
-                .filter(userEvent -> getUserEventForWeekNumber(userEvent, weekNumber))
+                .filter(userEvent -> isUserEventInWeekNumber(userEvent, weekNumber, year))
                 .collect(Collectors.toList());
     }
 
-    public List<UserEvent> getEventsByUserForMonthNumber(Long ownerId, Integer monthNumber){
+    public List<UserEvent> getEventsByUserForMonthNumber(Long ownerId, Integer monthNumber, Integer year){
         logger.debug("getEventsForUser {}", ownerId);
         return UserEvent.<UserEvent>stream("owner_id=?1", ownerId)
-                .filter(userEvent -> getUserEventForMonthNumber(userEvent, monthNumber))
+                .filter(userEvent -> isUserEventInMonthNumber(userEvent, monthNumber, year))
                 .collect(Collectors.toList());
     }
 
-    protected boolean getUserEventForWeekNumber(UserEvent userEvent, Integer weekNumber){
+    protected boolean isUserEventInWeekNumber(UserEvent userEvent, Integer weekNumber, Integer year){
         var startDateTimeWeek = TimeKeeperDateUtils.getWeekNumberFromDate(userEvent.startDateTime.toLocalDate());
         var endDateTimeWeek = TimeKeeperDateUtils.getWeekNumberFromDate(userEvent.endDateTime.toLocalDate());
-        return (startDateTimeWeek <= weekNumber && endDateTimeWeek >= weekNumber) || (startDateTimeWeek.equals(weekNumber) || endDateTimeWeek.equals(weekNumber));
+        return (validateYear(userEvent, year))
+                && ((startDateTimeWeek <= weekNumber && endDateTimeWeek >= weekNumber)
+                || (startDateTimeWeek.equals(weekNumber) || endDateTimeWeek.equals(weekNumber)));
     }
 
-    protected boolean getUserEventForMonthNumber(UserEvent userEvent, Integer monthNumber){
+    protected boolean isUserEventInMonthNumber(UserEvent userEvent, Integer monthNumber, Integer year){
         var startDateTimeMonth = userEvent.startDateTime.toLocalDate().getMonthValue();
         var endDateTimeMonth = userEvent.endDateTime.toLocalDate().getMonthValue();
-        return (startDateTimeMonth <= monthNumber && endDateTimeMonth >= monthNumber) || (startDateTimeMonth == monthNumber || endDateTimeMonth == monthNumber);
+        return (validateYear(userEvent, year))
+                && ((startDateTimeMonth <= monthNumber && endDateTimeMonth >= monthNumber)
+                || (startDateTimeMonth == monthNumber || endDateTimeMonth == monthNumber));
+    }
+
+    protected boolean validateYear(UserEvent userEvent, Integer year){
+        return userEvent.startDateTime.getYear() == year || userEvent.endDateTime.getYear() == year;
     }
 }
