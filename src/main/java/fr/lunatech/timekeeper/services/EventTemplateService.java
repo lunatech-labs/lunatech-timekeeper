@@ -66,35 +66,34 @@ public class EventTemplateService {
 
     @Transactional
     public Optional<Long> create(EventTemplateRequest request, AuthenticationContext ctx) {
-        logger.debug("Create a new event template with Request - " + request + " ,context - " + ctx);
+        logger.debug("Create a new event template with {}, {}", request, ctx);
         final EventTemplate eventTemplate = request.unbind(userService::findById, ctx);
         // by unbinding we also generate userEvent in db for each user
         // user event attributes will be inherited from eventTemplate (startTime, etc.)
-        Boolean checkSameEventExists = checkSameEventExists(
+        Boolean checkEvent = checkIfEventExistsWithSameNameAndDates(
                 eventTemplate.name,
                 eventTemplate.startDateTime,
                 eventTemplate.endDateTime, ctx);
-        if(checkSameEventExists.TRUE.equals(checkSameEventExists)) {
+
+        if (checkEvent.TRUE.equals(checkEvent)) {
             return Optional.empty();
-        } else {
-            eventTemplate.persistAndFlush();
-            return Optional.of(eventTemplate.id);
         }
+
+        eventTemplate.persistAndFlush();
+        return Optional.of(eventTemplate.id);
     }
 
-    private Boolean checkSameEventExists(String name, LocalDateTime startDateTime, LocalDateTime endDateTime, AuthenticationContext ctx) {
+    private Boolean checkIfEventExistsWithSameNameAndDates(String name, LocalDateTime startDateTime, LocalDateTime endDateTime, AuthenticationContext ctx) {
+        final var startDate = startDateTime.toLocalDate();
+        final var endDate = endDateTime.toLocalDate();
 
-        final var filteredEvents = findAllEventsByName(name, ctx)
+        final var foundEvents = findAllEventsByName(name, ctx)
                 .stream()
-                .filter(foundEvent -> startDateTime.toLocalDate().isEqual(foundEvent.startDateTime.toLocalDate()) &&
-                        endDateTime.toLocalDate().isEqual(foundEvent.endDateTime.toLocalDate()))
+                .filter(eventTemplate -> startDate.isEqual(eventTemplate.startDateTime.toLocalDate()) &&
+                        endDate.isEqual(eventTemplate.endDateTime.toLocalDate()))
                 .collect(Collectors.toList());
 
-        if (filteredEvents.isEmpty())
-            return false;
-        else
-            return true;
-
+        return !foundEvents.isEmpty();
     }
 
     @Transactional
@@ -106,7 +105,7 @@ public class EventTemplateService {
             return Optional.empty();
         }
 
-        Boolean checkSameEventExists = checkSameEventExists(
+        Boolean checkSameEventExists = checkIfEventExistsWithSameNameAndDates(
                 maybeEvent.get().name,
                 maybeEvent.get().startDateTime,
                 maybeEvent.get().endDateTime, ctx);
@@ -125,6 +124,7 @@ public class EventTemplateService {
     }
 
     private Optional<EventTemplate> findById(Long id, AuthenticationContext ctx) {
+        System.out.println("Find by Id:> " + id);
         return EventTemplate.<EventTemplate>findByIdOptional(id)
                 .filter(ctx::canAccess);
     }

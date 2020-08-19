@@ -70,7 +70,7 @@ public class EventResource implements EventResourceApi {
     @Counted(name = "countCreateEvent", description = "Counts how many times the user create an event on method 'createEvent'")
     @Timed(name = "timeCreateEvent", description = "Times how long it takes the user create an event on method 'createEvent'", unit = MetricUnits.MILLISECONDS)
     public Response createEvent(@Valid EventTemplateRequest request, UriInfo uriInfo) {
-
+        System.out.println("Create called");
         return eventTemplateService.create(request, authentication.context())
                 .map(eventId ->
                         Response.created(
