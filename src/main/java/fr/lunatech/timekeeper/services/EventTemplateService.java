@@ -70,21 +70,19 @@ public class EventTemplateService {
         final EventTemplate eventTemplate = request.unbind(userService::findById, ctx);
         // by unbinding we also generate userEvent in db for each user
         // user event attributes will be inherited from eventTemplate (startTime, etc.)
-        if(isEventExistsByNameAndDates(
+        Boolean checkSameEventExists = checkSameEventExists(
                 eventTemplate.name,
                 eventTemplate.startDateTime,
-                eventTemplate.endDateTime, ctx)
-        ) {
-            logger.debug("Event with name - " + request.getName() + " , already exists with same Start and End Date.");
+                eventTemplate.endDateTime, ctx);
+        if(checkSameEventExists.TRUE.equals(checkSameEventExists)) {
             return Optional.empty();
         } else {
-            logger.debug("Event with name - " + request.getName() + " , is getting created with id - " + eventTemplate.id);
             eventTemplate.persistAndFlush();
             return Optional.of(eventTemplate.id);
         }
     }
 
-    private Boolean isEventExistsByNameAndDates(String name, LocalDateTime startDateTime, LocalDateTime endDateTime, AuthenticationContext ctx) {
+    private Boolean checkSameEventExists(String name, LocalDateTime startDateTime, LocalDateTime endDateTime, AuthenticationContext ctx) {
 
         final var filteredEvents = findAllEventsByName(name, ctx)
                 .stream()
@@ -105,6 +103,15 @@ public class EventTemplateService {
         // early quit: eventTemplate doesn't exist
         final Optional<EventTemplate> maybeEvent = findById(id,ctx);
         if (maybeEvent.isEmpty()){
+            return Optional.empty();
+        }
+
+        Boolean checkSameEventExists = checkSameEventExists(
+                maybeEvent.get().name,
+                maybeEvent.get().startDateTime,
+                maybeEvent.get().endDateTime, ctx);
+
+        if (checkSameEventExists.TRUE.equals(checkSameEventExists)) {
             return Optional.empty();
         }
         // delete all userEvent associated to the previous state of this event template
