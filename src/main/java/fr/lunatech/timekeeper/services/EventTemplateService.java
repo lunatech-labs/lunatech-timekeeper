@@ -18,6 +18,7 @@ package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.time.EventTemplate;
 import fr.lunatech.timekeeper.models.time.UserEvent;
+import fr.lunatech.timekeeper.resources.exceptions.UpdateResourceException;
 import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
 import fr.lunatech.timekeeper.services.responses.EventTemplateResponse;
 import fr.lunatech.timekeeper.services.responses.UserResponse;
@@ -70,30 +71,17 @@ public class EventTemplateService {
         final EventTemplate eventTemplate = request.unbind(userService::findById, ctx);
         // by unbinding we also generate userEvent in db for each user
         // user event attributes will be inherited from eventTemplate (startTime, etc.)
-        Boolean checkEvent = checkIfEventExistsWithSameNameAndDates(
+        boolean checkEvent = validateEventCreation(
                 eventTemplate.name,
                 eventTemplate.startDateTime,
                 eventTemplate.endDateTime, ctx);
 
-        if (checkEvent.TRUE.equals(checkEvent)) {
+        if (checkEvent) {
             return Optional.empty();
         }
 
         eventTemplate.persistAndFlush();
         return Optional.of(eventTemplate.id);
-    }
-
-    private Boolean checkIfEventExistsWithSameNameAndDates(String name, LocalDateTime startDateTime, LocalDateTime endDateTime, AuthenticationContext ctx) {
-        final var startDate = startDateTime.toLocalDate();
-        final var endDate = endDateTime.toLocalDate();
-
-        final var foundEvents = findAllEventsByName(name, ctx)
-                .stream()
-                .filter(eventTemplate -> startDate.isEqual(eventTemplate.startDateTime.toLocalDate()) &&
-                        endDate.isEqual(eventTemplate.endDateTime.toLocalDate()))
-                .collect(Collectors.toList());
-
-        return !foundEvents.isEmpty();
     }
 
     @Transactional
@@ -105,13 +93,14 @@ public class EventTemplateService {
             return Optional.empty();
         }
 
-        Boolean checkSameEventExists = checkIfEventExistsWithSameNameAndDates(
+        boolean checkEvent = validateEventUpdation(
                 maybeEvent.get().name,
+                maybeEvent.get().id,
                 maybeEvent.get().startDateTime,
                 maybeEvent.get().endDateTime, ctx);
 
-        if (checkSameEventExists.TRUE.equals(checkSameEventExists)) {
-            return Optional.empty();
+        if (checkEvent) {
+            throw new UpdateResourceException("Update error");
         }
         // delete all userEvent associated to the previous state of this event template
         deleteAttendees(maybeEvent.get());
@@ -121,6 +110,36 @@ public class EventTemplateService {
         eventTemplateUpdated.persistAndFlush();
 
         return Optional.of(eventTemplateUpdated.id);
+    }
+
+
+    private boolean validateEventUpdation(String name, Long eventId, LocalDateTime startDateTime, LocalDateTime endDateTime, AuthenticationContext ctx) {
+        final var startDate = startDateTime.toLocalDate();
+        final var endDate = endDateTime.toLocalDate();
+
+        final var foundEvents = findAllEventsByName(name, ctx)
+                .stream()
+                .filter(template -> eventId != template.id)
+                .filter(eventTemplate ->
+                        eventTemplate.startDateTime.toLocalDate().isEqual(startDate) &&
+                                eventTemplate.endDateTime.toLocalDate().isEqual(endDate)
+                )
+                .collect(Collectors.toList());
+
+        return false;
+    }
+
+    private boolean validateEventCreation(String name, LocalDateTime startDateTime, LocalDateTime endDateTime, AuthenticationContext ctx) {
+        final var startDate = startDateTime.toLocalDate();
+        final var endDate = endDateTime.toLocalDate();
+
+        final var foundEvents = findAllEventsByName(name, ctx)
+                .stream()
+                .filter(eventTemplate -> startDate.isEqual(eventTemplate.startDateTime.toLocalDate()) &&
+                        endDate.isEqual(eventTemplate.endDateTime.toLocalDate()))
+                .collect(Collectors.toList());
+
+        return !foundEvents.isEmpty();
     }
 
     private Optional<EventTemplate> findById(Long id, AuthenticationContext ctx) {
