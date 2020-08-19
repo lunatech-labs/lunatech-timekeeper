@@ -34,7 +34,7 @@ public class CalendarNotFoundExceptionMapper implements ExceptionMapper<Calendar
     @Override
     public Response toResponse(CalendarNotFoundException e) {
         if(logger.isWarnEnabled()) {
-            logger.warn(String.format("CalendarNotFoundException: %s", e.getMessage()));
+            logger.warn(String.format("CalendarNotFoundException: %s", e.getMessage()), e);
         }
         // We could use also a CONFLICT but since we do not check the exact constraint name, we prefer to use a
         // more generic "Bad request" http response here.

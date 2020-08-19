@@ -35,7 +35,7 @@ public class ConflictOnVersionExceptionMapper implements ExceptionMapper<Conflic
 
     @Override
     public Response toResponse(ConflictOnVersionException e) {
-        logger.warn(e.getMessage());
+        logger.warn(e.getMessage(), e);
         return Response
                 .status(Response.Status.CONFLICT)
                 .type(MediaType.APPLICATION_JSON)
