@@ -86,7 +86,7 @@ public class EventTemplateService {
 
     private Boolean isEventExistsByNameAndDates(String name, LocalDateTime startDateTime, LocalDateTime endDateTime, AuthenticationContext ctx) {
 
-        final var filteredEvents = findByAllByEventName(name, ctx)
+        final var filteredEvents = findAllEventsByName(name, ctx)
                 .stream()
                 .filter(foundEvent -> startDateTime.toLocalDate().isEqual(foundEvent.startDateTime.toLocalDate()) &&
                         endDateTime.toLocalDate().isEqual(foundEvent.endDateTime.toLocalDate()))
@@ -122,7 +122,7 @@ public class EventTemplateService {
                 .filter(ctx::canAccess);
     }
 
-    private List<EventTemplate> findByAllByEventName(String name, AuthenticationContext ctx) {
+    private List<EventTemplate> findAllEventsByName(String name, AuthenticationContext ctx) {
         return EventTemplate.<EventTemplate>find("name", name)
                 .stream()
                 .filter(ctx::canAccess)
