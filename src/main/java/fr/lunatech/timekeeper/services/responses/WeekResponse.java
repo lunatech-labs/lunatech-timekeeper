@@ -18,6 +18,7 @@ package fr.lunatech.timekeeper.services.responses;
 
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.models.time.UserEvent;
+import fr.lunatech.timekeeper.services.UserEventService;
 import fr.lunatech.timekeeper.timeutils.PublicHoliday;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 import fr.lunatech.timekeeper.timeutils.Week;
@@ -41,15 +42,12 @@ public final class WeekResponse {
 
     public WeekResponse(
             @NotBlank LocalDate firstDayOfWeek,
-            @NotNull List<UserEvent> userEvents,
+            @NotNull List<UserEventResponse> userEvents,
             @NotNull List<TimeSheetResponse> sheets,
             @NotNull List<PublicHoliday> publicHolidays
     ) {
         this.firstDayOfWeek = firstDayOfWeek;
-        this.userEvents = userEvents
-                .stream()
-                .map(UserEventResponse::bind)
-                .collect(Collectors.toList());
+        this.userEvents = userEvents;
         this.sheets = sheets;
         this.publicHolidays = publicHolidays;
     }
@@ -59,7 +57,9 @@ public final class WeekResponse {
                                     List<PublicHoliday> publicHolidays) {
         return new WeekResponse(
                 week.firstDayOfWeek,
-                week.userEvents,
+                week.userEvents.stream()
+                        .map(UserEventResponse::bind)
+                        .collect(Collectors.toList()),
                 sheets.stream()
                         .map(TimeSheetResponse::bind)
                         .collect(Collectors.toList()),
