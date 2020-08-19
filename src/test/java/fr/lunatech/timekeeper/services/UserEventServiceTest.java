@@ -12,7 +12,7 @@ class UserEventServiceTest {
     private final UserEventService userEventService = new UserEventService();
 
     @Test
-    void shouldBeTrueForEventWithDurationUnderThanAWeekDuration() {
+    void shouldBeTrueForEventWithDurationUnderAWeekDuration() {
         var userEvent = new UserEvent();
         userEvent.id = 1L;
         userEvent.name = "Event name";
@@ -50,7 +50,7 @@ class UserEventServiceTest {
     }
 
     @Test
-    void shouldBeTrueForEventWithDurationUnderThanAMonthDuration() {
+    void shouldBeTrueForEventWithDurationUnderAMonthDuration() {
         var userEvent = new UserEvent();
         userEvent.id = 1L;
         userEvent.name = "Event name";
