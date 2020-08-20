@@ -123,7 +123,7 @@ const EventsList = () => {
   };
 
   const filterMenu = (
-    <Menu onClick={({key}) => setFilterText(key)}>
+    <Menu className="tk_Filter_Month" onClick={({key}) => setFilterText(key)}>
       <Menu.Item key="All">
                 All
       </Menu.Item>
