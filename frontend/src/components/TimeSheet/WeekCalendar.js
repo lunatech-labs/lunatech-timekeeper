@@ -189,7 +189,7 @@ const WeekCalendar = (props) => {
               return userEvents.map(userEvent => {
                 return userEvent.eventUserDaysResponse.map(userEventDay => {
                   if(userEventDay.date === item.date.format('YYYY-MM-DD')){
-                    return <UserEvent userEvent={userEventDay}/>;
+                    return userEventDay && <UserEvent userEvent={userEventDay}/>;
                   }
                 });
               });
