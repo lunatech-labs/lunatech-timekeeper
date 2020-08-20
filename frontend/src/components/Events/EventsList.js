@@ -64,6 +64,10 @@ const EventsList = () => {
     );
   }
 
+  const getEventsFiltered = () =>  eventsOrdered.filter(event => moment(event.startDateTime).format('MMMM') === filterText ||
+        moment(event.endDateTime).format('MMMM') === filterText ||
+        moment().month(filterText).isBetween(moment(event.startDateTime), moment(event.endDateTime)));
+
   // Sort events by startDateTime order (DESC) && filter with searchValue
   const eventsOrdered = _.orderBy(eventsResponse.data.filter(event => event.name.toLowerCase().includes(searchValue.toLowerCase())), (userEvent) => {
     return moment(userEvent.startDateTime).utc();
@@ -75,9 +79,7 @@ const EventsList = () => {
       case 'All':
         return eventsOrdered;
       default:
-        return eventsOrdered.filter(event => moment(event.startDateTime).format('MMMM') === filterText ||
-                moment(event.endDateTime).format('MMMM') === filterText ||
-                moment().month(filterText).isBetween(moment(event.startDateTime),moment(event.endDateTime)));
+        return getEventsFiltered();
     }
   };
 
@@ -127,42 +129,15 @@ const EventsList = () => {
       <Menu.Item key="All">
                 All
       </Menu.Item>
-      <Menu.Item key="January">
-                January
-      </Menu.Item>
-      <Menu.Item key="February">
-                February
-      </Menu.Item>
-      <Menu.Item key="March">
-                March
-      </Menu.Item>
-      <Menu.Item key="April">
-                April
-      </Menu.Item>
-      <Menu.Item key="May">
-                May
-      </Menu.Item>
-      <Menu.Item key="June">
-                June
-      </Menu.Item>
-      <Menu.Item key="July">
-                July
-      </Menu.Item>
-      <Menu.Item key="August">
-                August
-      </Menu.Item>
-      <Menu.Item key="September">
-                September
-      </Menu.Item>
-      <Menu.Item key="October">
-                October
-      </Menu.Item>
-      <Menu.Item key="November">
-                November
-      </Menu.Item>
-      <Menu.Item key="December">
-                December
-      </Menu.Item>
+      {
+        moment.months().map(month => {
+          return (
+            <Menu.Item key={month}>
+              {month}
+            </Menu.Item>
+          );
+        })
+      }
     </Menu>
   );
 
