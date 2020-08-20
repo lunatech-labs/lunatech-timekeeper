@@ -67,7 +67,7 @@ public class ProjectService {
     @Transactional
     public Long create(ProjectRequest request, AuthenticationContext ctx) {
         logger.debug("Create a new project with {}, {}", request, ctx);
-        final Project project = request.unbind(clientService::findById, userService::findUserById, ctx);
+        final Project project = request.unbind(clientService::findById, userService::findById, ctx);
         try {
             project.persistAndFlush();
         } catch (PersistenceException pe) {
@@ -114,7 +114,7 @@ public class ProjectService {
         // It has to be done before the project is unbind
         deleteOldMembers(project, request::notContains, ctx);
 
-        final Project updatedProject = request.unbind(maybeProject.get(), clientService::findById, userService::findUserById, ctx);
+        final Project updatedProject = request.unbind(maybeProject.get(), clientService::findById, userService::findById, ctx);
 
         // This code is for Quarkus Issue https://github.com/quarkusio/quarkus/issues/7193
         updatedProject.persistAndFlush();
@@ -132,7 +132,7 @@ public class ProjectService {
                 throw new ForbiddenException("The user can't join the project with id : " + project.id);
             }
         });
-        final Optional<User> maybeUser = userService.findUserById(userContext.getUserId(), userContext);
+        final Optional<User> maybeUser = userService.findById(userContext.getUserId(), userContext);
         if (maybeUser.isEmpty() || maybeProject.isEmpty()) {
             return Optional.empty();
         }

@@ -24,6 +24,7 @@ import fr.lunatech.timekeeper.services.responses.UserResponse;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import io.vavr.collection.Array;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.flywaydb.core.Flyway;
 import org.hamcrest.CoreMatchers;
@@ -35,15 +36,15 @@ import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
-import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.EventDef;
-import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.EventUsersDef;
+import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
-import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
-import static javax.ws.rs.core.Response.Status.OK;
+import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.*;
+import static javax.ws.rs.core.Response.Status.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -213,6 +214,38 @@ class EventResourceTest {
         getValidation(EventDef.uri, adminToken).body(is(timeKeeperTestUtils.listOfTasJson(expectedResponse))).statusCode(CoreMatchers.is(OK.getStatusCode()));
     }
 
+
+    @Test
+    void createDuplicatedEvent(){
+        //WITH: Unique EventName
+        final String eventName = generateRandomEventName();
+        //GIVEN: 2 user
+        final String adminToken = getAdminAccessToken();
+        create(adminToken);
+        create(getUserAccessToken());
+        //WHEN: an eventTemplate is created with the 1 attendee
+        final EventTemplateRequest newEventTemplate = generateTestEventRequest(eventName, 1L);
+        create(newEventTemplate,adminToken);
+
+        //WHEN: Create event for second time with same template request
+        postValidation(EventDef.uri, adminToken, newEventTemplate).statusCode(CoreMatchers.is(BAD_REQUEST.getStatusCode()));
+    }
+
+    @Test
+    void updateDuplicatedEvent(){
+        //WITH: Unique EventName
+        final String eventName = generateRandomEventName();
+        //GIVEN: 2 user
+        final String adminToken = getAdminAccessToken();
+        final UserResponse admin = create(adminToken);
+        create(getUserAccessToken());
+        //WHEN: an eventTemplate is created with the 1 attendee
+        final EventTemplateRequest newEventTemplate = generateTestEventRequest(eventName, 1L);
+        create(newEventTemplate,adminToken);
+
+        //WHEN: Update an event with same template request
+        putValidation(EventDef.uri, adminToken, newEventTemplate).statusCode(CoreMatchers.is(BAD_REQUEST.getStatusCode()));
+    }
 
     private EventTemplateRequest generateTestEventRequest(String eventName, Long... usersId){
         return new EventTemplateRequest(

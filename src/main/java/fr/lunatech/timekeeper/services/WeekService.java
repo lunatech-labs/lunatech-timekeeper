@@ -50,7 +50,7 @@ public class WeekService {
      */
     public WeekResponse getWeek(AuthenticationContext ctx, Integer year, Integer weekNumber) {
         Long userId = ctx.getUserId();
-        Optional<User> maybeUser = userService.findUserById(userId, ctx);
+        Optional<User> maybeUser = userService.findById(userId, ctx);
         if (maybeUser.isEmpty()) {
             throw new IllegalStateException("User not found, cannot load current week");
         }

@@ -68,11 +68,12 @@ public class EventTemplateService {
     @Transactional
     public Optional<Long> create(EventTemplateRequest request, AuthenticationContext ctx) {
         logger.debug("Create a new event template with {}, {}", request, ctx);
-        final EventTemplate eventTemplate = request.unbind(userService::findUserById, ctx);
+        final EventTemplate eventTemplate = request.unbind(userService::findById, ctx);
         // by unbinding we also generate userEvent in db for each user
         // user event attributes will be inherited from eventTemplate (startTime, etc.)
-        boolean checkEvent = validateEventCreation(
+        boolean checkEvent = validateEvent(
                 eventTemplate.name,
+                eventTemplate.id,
                 eventTemplate.startDateTime,
                 eventTemplate.endDateTime, ctx);
 
@@ -94,10 +95,10 @@ public class EventTemplateService {
         final var newEndTime = request.getEndDateTime();
 
         // early quit: eventTemplate doesn't exist
-        final Optional<EventTemplate> maybeEvent = findEventById(eventId, ctx);
+        final Optional<EventTemplate> maybeEvent = findById(eventId, ctx);
 
         return maybeEvent.map(event -> {
-            boolean checkEvent = validateEventUpdation(
+            boolean checkEvent = validateEvent(
                     newName,
                     event.id,
                     newStartTime,
@@ -115,7 +116,7 @@ public class EventTemplateService {
             deleteAttendees(event);
 
             // actually update the event. by side effect every userEvent associated will be created
-            EventTemplate eventTemplateUpdated = request.unbind(event, userService::findUserById, ctx);
+            EventTemplate eventTemplateUpdated = request.unbind(event, userService::findById, ctx);
             eventTemplateUpdated.persistAndFlush();
 
             return eventTemplateUpdated.id;
@@ -123,7 +124,7 @@ public class EventTemplateService {
     }
 
 
-    private boolean validateEventUpdation(String name, Long eventId, LocalDateTime startDateTime, LocalDateTime endDateTime, AuthenticationContext ctx) {
+    private boolean validateEvent(String name, Long eventId, LocalDateTime startDateTime, LocalDateTime endDateTime, AuthenticationContext ctx) {
         final var startDate = startDateTime.toLocalDate();
         final var endDate = endDateTime.toLocalDate();
         final var foundEvents = findAllEventsByName(name, ctx)
@@ -136,20 +137,7 @@ public class EventTemplateService {
         return foundEvents.isPresent();
     }
 
-    private boolean validateEventCreation(String name, LocalDateTime startDateTime, LocalDateTime endDateTime, AuthenticationContext ctx) {
-        final var startDate = startDateTime.toLocalDate();
-        final var endDate = endDateTime.toLocalDate();
-
-        final var foundEvents = findAllEventsByName(name, ctx)
-                .stream()
-                .filter(eventTemplate -> startDate.isEqual(eventTemplate.startDateTime.toLocalDate()) &&
-                        endDate.isEqual(eventTemplate.endDateTime.toLocalDate()))
-                .findAny();
-
-        return foundEvents.isPresent();
-    }
-
-    private Optional<EventTemplate> findEventById(Long id, AuthenticationContext ctx) {
+    private Optional<EventTemplate> findById(Long id, AuthenticationContext ctx) {
         return EventTemplate.<EventTemplate>findByIdOptional(id)
                 .filter(ctx::canAccess);
     }
