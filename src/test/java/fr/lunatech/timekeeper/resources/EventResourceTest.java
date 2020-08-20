@@ -236,7 +236,7 @@ class EventResourceTest {
     void updateDuplicatedEvent(){
         //WITH: Unique EventName
         final String eventName = generateRandomEventName();
-        //GIVEN: 2 user
+        //GIVEN: Admin user
         final String adminToken = getAdminAccessToken();
         create(adminToken);
         create(getUserAccessToken());
