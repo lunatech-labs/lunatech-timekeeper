@@ -30,15 +30,17 @@ import _ from 'lodash';
 import Pluralize from '../Pluralize/Pluralize';
 import Input from 'antd/lib/input';
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined';
+import DownOutlined from '@ant-design/icons/lib/icons/DownOutlined';
 
 const EventsList = () => {
   const [keycloak] = useKeycloak();
   const isAdmin = keycloak.hasRealmRole('admin');
   const eventsResponse = useTimeKeeperAPI('/api/events');
 
-  const [value, setValue] = useState('');
+  const [filterText, setFilterText] = useState('All');
+  const [searchValue, setSearchValue] = useState('');
 
-  const onSearch = searchText => setValue(searchText);
+  const onSearch = searchText => setSearchValue(searchText);
 
   if (eventsResponse.loading) {
     return (
@@ -62,10 +64,22 @@ const EventsList = () => {
     );
   }
 
-  // Sort events by startDateTime order (DESC)
-  const eventsOrdered = _.orderBy(eventsResponse.data.filter(event => event.name.toLowerCase().includes(value.toLowerCase())), (userEvent) => {
+  // Sort events by startDateTime order (DESC) && filter with searchValue
+  const eventsOrdered = _.orderBy(eventsResponse.data.filter(event => event.name.toLowerCase().includes(searchValue.toLowerCase())), (userEvent) => {
     return moment(userEvent.startDateTime).utc();
   },'desc');
+
+  // Filter events by month
+  const eventsFilter = () => {
+    switch (filterText) {
+      case 'All':
+        return eventsOrdered;
+      default:
+        return eventsOrdered.filter(event => moment(event.startDateTime).format('MMMM') === filterText ||
+                moment(event.endDateTime).format('MMMM') === filterText ||
+                moment().month(filterText).isBetween(moment(event.startDateTime),moment(event.endDateTime)));
+    }
+  };
 
   const menu = (item) => {
     return (
@@ -108,11 +122,67 @@ const EventsList = () => {
     return moment(date, 'YYYY-MM-DD-HH:mm:ss.SSS\'Z\'').utc().format('LLL');
   };
 
+  const filterMenu = (
+    <Menu onClick={({key}) => setFilterText(key)}>
+      <Menu.Item key="All">
+                All
+      </Menu.Item>
+      <Menu.Item key="January">
+                January
+      </Menu.Item>
+      <Menu.Item key="February">
+                February
+      </Menu.Item>
+      <Menu.Item key="March">
+                March
+      </Menu.Item>
+      <Menu.Item key="April">
+                April
+      </Menu.Item>
+      <Menu.Item key="May">
+                May
+      </Menu.Item>
+      <Menu.Item key="June">
+                June
+      </Menu.Item>
+      <Menu.Item key="July">
+                July
+      </Menu.Item>
+      <Menu.Item key="August">
+                August
+      </Menu.Item>
+      <Menu.Item key="September">
+                September
+      </Menu.Item>
+      <Menu.Item key="October">
+                October
+      </Menu.Item>
+      <Menu.Item key="November">
+                November
+      </Menu.Item>
+      <Menu.Item key="December">
+                December
+      </Menu.Item>
+    </Menu>
+  );
+
+  const filterComponent = (
+    <React.Fragment>
+      <p>Month :</p>
+      <Dropdown overlay={filterMenu}>
+        <Button type="link" className="ant-dropdown-link">
+          {filterText} <DownOutlined/>
+        </Button>
+      </Dropdown>
+    </React.Fragment>
+  );
+
   return(
     <div>
       <div className="tk_SubHeader">
-        <p><Pluralize label="event" size={eventsOrdered.length}/></p>
+        <p><Pluralize label="event" size={eventsFilter().length}/></p>
         <div className="tk_SubHeader_RightPart">
+          <div className="tk_SubHeader_Filters">{filterComponent}</div>
           <div className="tk_Search_Input">
             <AutoComplete onSearch={onSearch}>
               <Input data-cy="searchClientBox" size="large" placeholder="Search in events..." allowClear  prefix={<SearchOutlined />} />
@@ -120,11 +190,10 @@ const EventsList = () => {
           </div>
         </div>
       </div>
-
       <List
         id="tk_List"
         grid={{gutter: 32, column: 3}}
-        dataSource={eventsOrdered}
+        dataSource={eventsFilter()}
         renderItem={item => (
           <List.Item key={`event-list-${item.id}`}>
             <Card
