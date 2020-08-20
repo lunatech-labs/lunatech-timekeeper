@@ -126,7 +126,7 @@ public class EventTemplateService {
     private boolean validateEvent(String name, Long eventId, LocalDateTime startDateTime, LocalDateTime endDateTime, AuthenticationContext ctx) {
         final var startDate = startDateTime.toLocalDate();
         final var endDate = endDateTime.toLocalDate();
-        final var foundEvents = findAllEventsByName(name, ctx)
+        final var foundEvents = findByName(name, ctx)
                 .stream()
                 .filter(eventTemplate -> !eventTemplate.id.equals(eventId) &&
                         eventTemplate.startDateTime.toLocalDate().isEqual(startDate) &&
@@ -141,7 +141,7 @@ public class EventTemplateService {
                 .filter(ctx::canAccess);
     }
 
-    private List<EventTemplate> findAllEventsByName(String name, AuthenticationContext ctx) {
+    private List<EventTemplate> findByName(String name, AuthenticationContext ctx) {
         return EventTemplate.<EventTemplate>find("name", name)
                 .stream()
                 .filter(ctx::canAccess)
