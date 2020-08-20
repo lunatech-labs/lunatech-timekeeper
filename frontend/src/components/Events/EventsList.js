@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import {useTimeKeeperAPI} from '../../utils/services';
-import {Alert, Card, List, Spin, Dropdown, Button, Menu} from 'antd';
+import {Alert, Card, List, Spin, Dropdown, Button, Menu, AutoComplete} from 'antd';
 import CalendarOutlined from '@ant-design/icons/lib/icons/CalendarOutlined';
 import EventMemberTag from './EventMemberTag';
 import './EventsList.less';
@@ -27,11 +27,18 @@ import CopyOutlined from '@ant-design/icons/lib/icons/CopyOutlined';
 import {useKeycloak} from '@react-keycloak/web';
 import EditFilled from '@ant-design/icons/lib/icons/EditFilled';
 import _ from 'lodash';
+import Pluralize from '../Pluralize/Pluralize';
+import Input from 'antd/lib/input';
+import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined';
 
 const EventsList = () => {
   const [keycloak] = useKeycloak();
   const isAdmin = keycloak.hasRealmRole('admin');
   const eventsResponse = useTimeKeeperAPI('/api/events');
+
+  const [value, setValue] = useState('');
+
+  const onSearch = searchText => setValue(searchText);
 
   if (eventsResponse.loading) {
     return (
@@ -56,7 +63,7 @@ const EventsList = () => {
   }
 
   // Sort events by startDateTime order (DESC)
-  const eventsOrdered = _.orderBy(eventsResponse.data, (userEvent) => {
+  const eventsOrdered = _.orderBy(eventsResponse.data.filter(event => event.name.toLowerCase().includes(value.toLowerCase())), (userEvent) => {
     return moment(userEvent.startDateTime).utc();
   },'desc');
 
@@ -102,41 +109,54 @@ const EventsList = () => {
   };
 
   return(
-    <List
-      id="tk_List"
-      grid={{gutter: 32, column: 3}}
-      dataSource={eventsOrdered}
-      renderItem={item => (
-        <List.Item key={`event-list-${item.id}`}>
-          <Card
-            id="tk_CardEvent"
-            bordered={false}
-            title={item.name}
-            extra={[
-              <Dropdown key={`ant-dropdown-${item.id}`} overlay={dropdownCardAction(item, isAdmin)}>
-                <a className="ant-dropdown-link" onClick={e => e.preventDefault()}><EllipsisOutlined /></a>
-              </Dropdown>,
-            ]}
-          >
-            <div className="tk_EventCard_Body">
-              <p className="tk_CardEvent_Desc">{item.description}</p>
-              <div className="tk_CardEvent_Bottom">
-                <div className="tk_CardEvent_Date">
-                  <CalendarOutlined />
-                  <p>{formatDateEvent(item.startDateTime)}<br />{formatDateEvent(item.endDateTime)}</p>
-                </div>
-                <div className="tk_CardEvent_People">
-                  <div>
-                    <EventMembersPictures key={`event-member-picture-${item.id}`} membersIds={item.attendees.map(user => user.userId)} />
+    <div>
+      <div className="tk_SubHeader">
+        <p><Pluralize label="event" size={eventsOrdered.length}/></p>
+        <div className="tk_SubHeader_RightPart">
+          <div className="tk_Search_Input">
+            <AutoComplete onSearch={onSearch}>
+              <Input data-cy="searchClientBox" size="large" placeholder="Search in events..." allowClear  prefix={<SearchOutlined />} />
+            </AutoComplete>
+          </div>
+        </div>
+      </div>
+
+      <List
+        id="tk_List"
+        grid={{gutter: 32, column: 3}}
+        dataSource={eventsOrdered}
+        renderItem={item => (
+          <List.Item key={`event-list-${item.id}`}>
+            <Card
+              id="tk_CardEvent"
+              bordered={false}
+              title={item.name}
+              extra={[
+                <Dropdown key={`ant-dropdown-${item.id}`} overlay={dropdownCardAction(item, isAdmin)}>
+                  <a className="ant-dropdown-link" onClick={e => e.preventDefault()}><EllipsisOutlined /></a>
+                </Dropdown>,
+              ]}
+            >
+              <div className="tk_EventCard_Body">
+                <p className="tk_CardEvent_Desc">{item.description}</p>
+                <div className="tk_CardEvent_Bottom">
+                  <div className="tk_CardEvent_Date">
+                    <CalendarOutlined />
+                    <p>{formatDateEvent(item.startDateTime)}<br />{formatDateEvent(item.endDateTime)}</p>
                   </div>
-                  {displayMembersButton(item)}
+                  <div className="tk_CardEvent_People">
+                    <div>
+                      <EventMembersPictures key={`event-member-picture-${item.id}`} membersIds={item.attendees.map(user => user.userId)} />
+                    </div>
+                    {displayMembersButton(item)}
+                  </div>
                 </div>
               </div>
-            </div>
-          </Card>
-        </List.Item>
-      )}
-    />
+            </Card>
+          </List.Item>
+        )}
+      />
+    </div>
   );
 };
 export default EventsList;
