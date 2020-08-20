@@ -104,7 +104,6 @@ public class EventTemplateService {
                     newStartTime,
                     newEndTime,
                     ctx);
-
             if (checkEvent) {
                 throw new UpdateResourceException(
                         "Event with name: " + request.getName() +

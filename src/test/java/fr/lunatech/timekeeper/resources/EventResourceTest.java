@@ -56,6 +56,7 @@ class EventResourceTest {
 
     private static final LocalDateTime THE_24_TH_JUNE_2020_AT_9_AM = LocalDateTime.of(2020,6,24,9,0);
     private static final LocalDateTime THE_24_TH_JUNE_2020_AT_5_PM = LocalDateTime.of(2020,6,24,17,0);
+    private static final LocalDateTime THE_28_TH_JUNE_2020_AT_5_PM = LocalDateTime.of(2020,6,28,17,0);
     private static final String EVENT_NAME = "The test event";
     private static final String EVENT_DESCRIPTION = "It's a corporate event";
 
@@ -237,14 +238,25 @@ class EventResourceTest {
         final String eventName = generateRandomEventName();
         //GIVEN: 2 user
         final String adminToken = getAdminAccessToken();
-        final UserResponse admin = create(adminToken);
+        create(adminToken);
         create(getUserAccessToken());
         //WHEN: an eventTemplate is created with the 1 attendee
-        final EventTemplateRequest newEventTemplate = generateTestEventRequest(eventName, 1L);
-        create(newEventTemplate,adminToken);
+        final EventTemplateRequest firstEventTemplate = generateTestEventRequest(eventName, 1L);
+        create(firstEventTemplate, adminToken);
 
-        //WHEN: Update an event with same template request
-        putValidation(EventDef.uri, adminToken, newEventTemplate).statusCode(CoreMatchers.is(BAD_REQUEST.getStatusCode()));
+        final EventTemplateRequest secondEventTemplate = new EventTemplateRequest(
+                eventName,
+                EVENT_DESCRIPTION,
+                THE_24_TH_JUNE_2020_AT_9_AM,
+                THE_28_TH_JUNE_2020_AT_5_PM,
+                        Stream.of(1L)
+                        .map(EventTemplateRequest.UserEventRequest::new)
+                        .collect(Collectors.toList())
+        );
+        final Long secondEventId = create(secondEventTemplate, adminToken).getId();
+
+        //WHEN: Update an event with already existing event
+        putValidation(EventDef.uriPlusId(secondEventId), adminToken, firstEventTemplate).statusCode(CoreMatchers.is(BAD_REQUEST.getStatusCode()));
     }
 
     private EventTemplateRequest generateTestEventRequest(String eventName, Long... usersId){
