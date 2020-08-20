@@ -69,6 +69,7 @@ const UserTreeData = ({users, usersSelected, setUsersSelected}) => {
       <span style={{ marginLeft: 8 }}>
         {hasSelected !== 0 ? `${hasSelected} selected` : ''}
       </span>
+      <span id="tk_select_all_text">Select All</span>
       <Table
         columns={columns}
         rowSelection={{...rowSelection}}
