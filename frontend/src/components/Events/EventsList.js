@@ -64,9 +64,15 @@ const EventsList = () => {
     );
   }
 
-  const getEventsFiltered = () =>  eventsOrdered.filter(event => moment(event.startDateTime).format('MMMM') === filterText ||
-        moment(event.endDateTime).format('MMMM') === filterText ||
-        moment().month(filterText).isBetween(moment(event.startDateTime), moment(event.endDateTime)));
+  const getEventsFiltered = () =>  eventsOrdered.filter(event => {
+    const startDateTime = moment(event.startDateTime);
+    const endDateTime = moment(event.endDateTime);
+    return (
+      startDateTime.format('MMMM') === filterText ||
+      endDateTime.format('MMMM') === filterText ||
+      moment().month(filterText).isBetween(startDateTime, endDateTime)
+    );
+  });
 
   // Sort events by startDateTime order (DESC) && filter with searchValue
   const eventsOrdered = _.orderBy(eventsResponse.data.filter(event => event.name.toLowerCase().includes(searchValue.toLowerCase())), (userEvent) => {
