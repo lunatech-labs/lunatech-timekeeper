@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import {useTimeKeeperAPI} from '../../utils/services';
-import {Alert, Card, List, Spin, Dropdown, Button, Menu} from 'antd';
+import {Alert, Card, List, Spin, Dropdown, Button, Menu, AutoComplete} from 'antd';
 import CalendarOutlined from '@ant-design/icons/lib/icons/CalendarOutlined';
 import EventMemberTag from './EventMemberTag';
 import './EventsList.less';
@@ -27,11 +27,20 @@ import CopyOutlined from '@ant-design/icons/lib/icons/CopyOutlined';
 import {useKeycloak} from '@react-keycloak/web';
 import EditFilled from '@ant-design/icons/lib/icons/EditFilled';
 import _ from 'lodash';
+import Pluralize from '../Pluralize/Pluralize';
+import Input from 'antd/lib/input';
+import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined';
+import DownOutlined from '@ant-design/icons/lib/icons/DownOutlined';
 
 const EventsList = () => {
   const [keycloak] = useKeycloak();
   const isAdmin = keycloak.hasRealmRole('admin');
   const eventsResponse = useTimeKeeperAPI('/api/events');
+
+  const [filterText, setFilterText] = useState('All');
+  const [searchValue, setSearchValue] = useState('');
+
+  const onSearch = searchText => setSearchValue(searchText);
 
   if (eventsResponse.loading) {
     return (
@@ -55,10 +64,30 @@ const EventsList = () => {
     );
   }
 
-  // Sort events by startDateTime order (DESC)
-  const eventsOrdered = _.orderBy(eventsResponse.data, (userEvent) => {
+  const getEventsFiltered = () =>  eventsOrdered.filter(event => {
+    const startDateTime = moment(event.startDateTime);
+    const endDateTime = moment(event.endDateTime);
+    return (
+      startDateTime.format('MMMM') === filterText ||
+      endDateTime.format('MMMM') === filterText ||
+      moment().month(filterText).isBetween(startDateTime, endDateTime)
+    );
+  });
+
+  // Sort events by startDateTime order (DESC) && filter with searchValue
+  const eventsOrdered = _.orderBy(eventsResponse.data.filter(event => event.name.toLowerCase().includes(searchValue.toLowerCase())), (userEvent) => {
     return moment(userEvent.startDateTime).utc();
   },'desc');
+
+  // Filter events by month
+  const eventsFilter = () => {
+    switch (filterText) {
+      case 'All':
+        return eventsOrdered;
+      default:
+        return getEventsFiltered();
+    }
+  };
 
   const menu = (item) => {
     return (
@@ -101,42 +130,83 @@ const EventsList = () => {
     return moment(date, 'YYYY-MM-DD-HH:mm:ss.SSS\'Z\'').utc().format('LLL');
   };
 
+  const filterMenu = (
+    <Menu className="tk_Filter_Month" onClick={({key}) => setFilterText(key)}>
+      <Menu.Item key="All">
+                All
+      </Menu.Item>
+      {
+        moment.months().map(month => {
+          return (
+            <Menu.Item key={month}>
+              {month}
+            </Menu.Item>
+          );
+        })
+      }
+    </Menu>
+  );
+
+  const filterComponent = (
+    <React.Fragment>
+      <p>Month :</p>
+      <Dropdown overlay={filterMenu}>
+        <Button type="link" className="ant-dropdown-link">
+          {filterText} <DownOutlined/>
+        </Button>
+      </Dropdown>
+    </React.Fragment>
+  );
+
   return(
-    <List
-      id="tk_List"
-      grid={{gutter: 32, column: 3}}
-      dataSource={eventsOrdered}
-      renderItem={item => (
-        <List.Item key={`event-list-${item.id}`}>
-          <Card
-            id="tk_CardEvent"
-            bordered={false}
-            title={item.name}
-            extra={[
-              <Dropdown key={`ant-dropdown-${item.id}`} overlay={dropdownCardAction(item, isAdmin)}>
-                <a className="ant-dropdown-link" onClick={e => e.preventDefault()}><EllipsisOutlined /></a>
-              </Dropdown>,
-            ]}
-          >
-            <div className="tk_EventCard_Body">
-              <p className="tk_CardEvent_Desc">{item.description}</p>
-              <div className="tk_CardEvent_Bottom">
-                <div className="tk_CardEvent_Date">
-                  <CalendarOutlined />
-                  <p>{formatDateEvent(item.startDateTime)}<br />{formatDateEvent(item.endDateTime)}</p>
-                </div>
-                <div className="tk_CardEvent_People">
-                  <div>
-                    <EventMembersPictures key={`event-member-picture-${item.id}`} membersIds={item.attendees.map(user => user.userId)} />
+    <div>
+      <div className="tk_SubHeader">
+        <p><Pluralize label="event" size={eventsFilter().length}/></p>
+        <div className="tk_SubHeader_RightPart">
+          <div className="tk_SubHeader_Filters">{filterComponent}</div>
+          <div className="tk_Search_Input">
+            <AutoComplete onSearch={onSearch}>
+              <Input data-cy="searchClientBox" size="large" placeholder="Search in events..." allowClear  prefix={<SearchOutlined />} />
+            </AutoComplete>
+          </div>
+        </div>
+      </div>
+      <List
+        id="tk_List"
+        grid={{gutter: 32, column: 3}}
+        dataSource={eventsFilter()}
+        renderItem={item => (
+          <List.Item key={`event-list-${item.id}`}>
+            <Card
+              id="tk_CardEvent"
+              bordered={false}
+              title={item.name}
+              extra={[
+                <Dropdown key={`ant-dropdown-${item.id}`} overlay={dropdownCardAction(item, isAdmin)}>
+                  <a className="ant-dropdown-link" onClick={e => e.preventDefault()}><EllipsisOutlined /></a>
+                </Dropdown>,
+              ]}
+            >
+              <div className="tk_EventCard_Body">
+                <p className="tk_CardEvent_Desc">{item.description}</p>
+                <div className="tk_CardEvent_Bottom">
+                  <div className="tk_CardEvent_Date">
+                    <CalendarOutlined />
+                    <p>{formatDateEvent(item.startDateTime)}<br />{formatDateEvent(item.endDateTime)}</p>
                   </div>
-                  {displayMembersButton(item)}
+                  <div className="tk_CardEvent_People">
+                    <div>
+                      <EventMembersPictures key={`event-member-picture-${item.id}`} membersIds={item.attendees.map(user => user.userId)} />
+                    </div>
+                    {displayMembersButton(item)}
+                  </div>
                 </div>
               </div>
-            </div>
-          </Card>
-        </List.Item>
-      )}
-    />
+            </Card>
+          </List.Item>
+        )}
+      />
+    </div>
   );
 };
 export default EventsList;

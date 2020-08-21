@@ -18,17 +18,17 @@ import React, {useEffect, useState} from 'react';
 import {Table} from 'antd';
 import PropTypes from 'prop-types';
 import './UserTreeData.less';
-import TkUserAvatar from "../Users/TkUserAvatar";
+import TkUserAvatar from '../Users/TkUserAvatar';
 
 const UserTreeData = ({users, usersSelected, setUsersSelected}) => {
   const renderUser = (name, picture) => {
     return (
-        <div>
-          <TkUserAvatar name={name} picture={picture}/>
-          <span id="tk_User_Name">{name}</span>
-        </div>
+      <div>
+        <TkUserAvatar name={name} picture={picture}/>
+        <span id="tk_User_Name">{name}</span>
+      </div>
     );
-  }
+  };
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   useEffect(()=> {
