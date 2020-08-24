@@ -81,6 +81,10 @@ const EditTimeSheetForm = ({timeSheet}) => {
           </Radio.Group>
         </Form.Item>
 
+        <Form.Item label="Start date" name='startDate' rules={[{required: false}]}>
+          <DatePicker className="tk_InputDate"/>
+        </Form.Item>
+
         <Form.Item label="End date" name='expirationDate' rules={[{required: false}]}>
           <DatePicker className="tk_InputDate"/>
         </Form.Item>

@@ -48,6 +48,8 @@ const ShowTimeSheet = ({project, member}) => {
             <Row gutter={32}>
               <Col span={12}>
                 <p className="tk_Information"><ClockCircleOutlined/> TimeUnit: {timeSheet.timeUnit}</p>
+                <p className="tk_Information"><CalendarOutlined/> Start
+                  date: {timeSheet.startDate ? format(timeSheet.startDate) : '----/--/--'}</p>
                 <p className="tk_Information"><CalendarOutlined/> End
                   date: {timeSheet.expirationDate ? format(timeSheet.expirationDate) : '----/--/--'}</p>
               </Col>
