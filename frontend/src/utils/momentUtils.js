@@ -143,6 +143,9 @@ export const isWeekEnd = (date) => date.isoWeekday() === 6 || date.isoWeekday() 
 //Returns false if the date is saturday or sunday
 export const isNotWeekEnd = (date) => !isWeekEnd(date);
 
+//Returns false if the date is a public holiday
+export const isNotPublicHoliday = (date, publicHolidays) => !isPublicHoliday(date, publicHolidays);
+
 // Returns the number of hours between two dates
 export const computeNumberOfHours = (start, end) => {
   return moment.duration(end.diff(start)).asHours();
