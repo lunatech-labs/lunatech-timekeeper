@@ -22,6 +22,7 @@ import TitleSection from '../Title/TitleSection';
 import moment from 'moment';
 import {computeNumberOfHours} from '../../utils/momentUtils';
 import SelectHoursComponent from './SelectHoursComponent';
+import {isTimeSheetDisabled} from "../../utils/timesheetUtils";
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -162,7 +163,7 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, numb
         <Form.Item label="Select a project:" name="timeSheetId" rules={[{required: true}]}>
           <Select>
             <Option value={null}/>
-            {timeSheets.map(timeSheet => <Option key={`select-timesheet-${timeSheet.id}`}
+            {timeSheets.map(timeSheet => <Option disabled={isTimeSheetDisabled(timeSheet, numberOfHoursForDay, entryDuration)} key={`select-timesheet-${timeSheet.id}`}
               value={timeSheet.id}>{timeSheet.project.name}</Option>)}
           </Select>
         </Form.Item>
