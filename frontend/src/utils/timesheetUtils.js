@@ -15,12 +15,14 @@
  */
 
 // Returns true if all timeUnits are disabled for a timesheet
-export const isTimeSheetDisabled = (timeSheet, numberOfHoursForDay, entryDuration) => {
-    const timeUnit = timeSheet && timeSheet.timeUnit;
-    const hourDisabled = timeUnit && timeUnit !== 'HOURLY';
-    const halfDayDisabled = (timeUnit && timeUnit !== 'HOURLY' && timeUnit !== 'HALFDAY') ||
-        (numberOfHoursForDay && entryDuration ? (numberOfHoursForDay - entryDuration) > 4 : numberOfHoursForDay > 4);
-    const dayDisabled = numberOfHoursForDay && entryDuration ? (numberOfHoursForDay - entryDuration) > 0 : numberOfHoursForDay > 0;
+import {getHalfDayDuration} from './configUtils';
 
-    return hourDisabled && halfDayDisabled && dayDisabled;
-}
+export const isTimeSheetDisabled = (timeSheet, numberOfHoursForDay, entryDuration) => {
+  const timeUnit = timeSheet && timeSheet.timeUnit;
+  const hourDisabled = timeUnit && timeUnit !== 'HOURLY';
+  const halfDayDisabled = (timeUnit && timeUnit !== 'HOURLY' && timeUnit !== 'HALFDAY') ||
+        (numberOfHoursForDay && entryDuration ? (numberOfHoursForDay - entryDuration) > getHalfDayDuration() : numberOfHoursForDay > getHalfDayDuration());
+  const dayDisabled = numberOfHoursForDay && entryDuration ? (numberOfHoursForDay - entryDuration) > 0 : numberOfHoursForDay > 0;
+
+  return hourDisabled && halfDayDisabled && dayDisabled;
+};

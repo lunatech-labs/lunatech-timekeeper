@@ -22,7 +22,7 @@ import TitleSection from '../Title/TitleSection';
 import moment from 'moment';
 import {computeNumberOfHours} from '../../utils/momentUtils';
 import SelectHoursComponent from './SelectHoursComponent';
-import {isTimeSheetDisabled} from "../../utils/timesheetUtils";
+import {isTimeSheetDisabled} from '../../utils/timesheetUtils';
 
 const {Option} = Select;
 const {TextArea} = Input;

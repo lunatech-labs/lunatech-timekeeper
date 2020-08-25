@@ -21,7 +21,7 @@ import PropTypes from 'prop-types';
 import TitleSection from '../Title/TitleSection';
 import './AddEntryForm.less';
 import SelectHoursComponent from './SelectHoursComponent';
-import {isTimeSheetDisabled} from '../../utils/timesheetUtils'
+import {isTimeSheetDisabled} from '../../utils/timesheetUtils';
 
 const {Option} = Select;
 const {TextArea} = Input;
