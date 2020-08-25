@@ -19,6 +19,7 @@ package fr.lunatech.timekeeper.resources;
 import fr.lunatech.timekeeper.resources.openapi.EventResourceApi;
 import fr.lunatech.timekeeper.resources.providers.AuthenticationContextProvider;
 import fr.lunatech.timekeeper.services.EventTemplateService;
+import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
 import fr.lunatech.timekeeper.services.responses.EventTemplateResponse;
 import fr.lunatech.timekeeper.services.responses.UserResponse;
@@ -32,7 +33,6 @@ import javax.validation.Valid;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.net.URI;
 import java.util.List;
 
 public class EventResource implements EventResourceApi {
@@ -70,9 +70,18 @@ public class EventResource implements EventResourceApi {
     @Counted(name = "countCreateEvent", description = "Counts how many times the user create an event on method 'createEvent'")
     @Timed(name = "timeCreateEvent", description = "Times how long it takes the user create an event on method 'createEvent'", unit = MetricUnits.MILLISECONDS)
     public Response createEvent(@Valid EventTemplateRequest request, UriInfo uriInfo) {
-        Long eventTemplateId = eventTemplateService.create(request, authentication.context());
-        final URI uri = uriInfo.getAbsolutePathBuilder().path(Long.toString(eventTemplateId)).build();
-        return Response.created(uri).build();
+        return eventTemplateService.create(request, authentication.context())
+                .map(eventId ->
+                        Response.created(
+                                uriInfo.getAbsolutePathBuilder()
+                                        .path(Long.toString(eventId))
+                                        .build()
+                        ).build()
+                ).orElseThrow(() -> new IllegalEntityStateException(
+                        "Event with name: " + request.getName() +
+                                ", already exists with same Start: " + request.getStartDateTime().toLocalDate() +
+                                "and End: " + request.getEndDateTime().toLocalDate() + " dates.")
+                );
     }
 
     @RolesAllowed({"user", "admin"})

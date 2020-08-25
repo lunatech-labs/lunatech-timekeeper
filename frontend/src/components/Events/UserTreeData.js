@@ -15,13 +15,19 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {Avatar, Table} from 'antd';
+import {Table} from 'antd';
 import PropTypes from 'prop-types';
 import './UserTreeData.less';
+import TkUserAvatar from '../Users/TkUserAvatar';
 
 const UserTreeData = ({users, usersSelected, setUsersSelected}) => {
-  const renderAvatar = (pictureUrl) => {
-    return <Avatar src={pictureUrl}/>;
+  const renderUser = (name, picture) => {
+    return (
+      <div>
+        <TkUserAvatar name={name} picture={picture}/>
+        <span id="tk_User_Name">{name}</span>
+      </div>
+    );
   };
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -33,15 +39,10 @@ const UserTreeData = ({users, usersSelected, setUsersSelected}) => {
 
   const columns = [
     {
-      dataIndex: 'picture',
-      key: 'picture',
-      width: '10%',
-      render: pictureUrl => renderAvatar(pictureUrl)
-    },
-    {
       dataIndex: 'name',
       key: 'name',
-      width: '80%',
+      width: '100%',
+      render: name => users.filter(user => user.name === name).map(user => renderUser(user.name, user.picture))
     }
   ];
 
@@ -69,6 +70,7 @@ const UserTreeData = ({users, usersSelected, setUsersSelected}) => {
       <span style={{ marginLeft: 8 }}>
         {hasSelected !== 0 ? `${hasSelected} selected` : ''}
       </span>
+      <span id="tk_Select_All_Text">Select All</span>
       <Table
         columns={columns}
         rowSelection={{...rowSelection}}

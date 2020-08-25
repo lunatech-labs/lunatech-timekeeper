@@ -17,7 +17,6 @@
 package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.User;
-import fr.lunatech.timekeeper.models.time.UserEvent;
 import fr.lunatech.timekeeper.services.responses.MonthResponse;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import fr.lunatech.timekeeper.timeutils.CalendarFactory;
@@ -48,7 +47,7 @@ public class MonthService {
             throw new IllegalStateException("User not found, cannot load current month");
         }
 
-        var userEvents = userEventService.getEventsByUser(maybeUser.get().id);
+        var userEvents = userEventService.getEventsByUserForMonthNumber(maybeUser.get().id, monthNumber, year);
         if (monthNumber == null) {
             monthNumber = LocalDate.now().getMonthValue();
         }

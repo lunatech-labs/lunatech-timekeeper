@@ -35,14 +35,11 @@ public final class MonthResponse {
     private final List<PublicHoliday> publicHolidays;
 
     public MonthResponse(
-            @NotNull List<UserEvent> userEvents,
+            @NotNull List<UserEventResponse> userEvents,
             @NotNull List<TimeSheetResponse> sheets,
             @NotNull List<PublicHoliday> publicHolidays
     ) {
-        this.userEvents = userEvents
-                .stream()
-                .map(UserEventResponse::bind)
-                .collect(Collectors.toList());
+        this.userEvents = userEvents;
         this.sheets = sheets;
         this.publicHolidays = publicHolidays;
     }
@@ -51,7 +48,9 @@ public final class MonthResponse {
                                      List<TimeSheet> sheets,
                                      List<PublicHoliday> publicHolidays) {
         return new MonthResponse(
-                week.userEvents,
+                week.userEvents.stream()
+                        .map(UserEventResponse::bind)
+                        .collect(Collectors.toList()),
                 sheets.stream()
                         .map(TimeSheetResponse::bind)
                         .collect(Collectors.toList()),

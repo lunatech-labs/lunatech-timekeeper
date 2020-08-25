@@ -27,29 +27,27 @@ const computeSize = (nbHours) => {
   return minimumSize + (nbHours - 1) * 50;
 };
 const UserEvent = ({userEvent}) => {
-  if(userEvent){
-    const start = moment(userEvent.startDateTime).utc();
-    const end = moment(userEvent.endDateTime).utc();
-    const date = start.clone();
-    const hours = computeNumberOfHours(start, end);
-    date.set({
-      hour: hours
-    });
-    const size = computeSize(hours);
-    return (
-      <div className="tk_UserEvent" style={{height: `${size}px`}}
-        key={`badge-entry-${start && start.format('yyyy-mm-dd-hh-mm')}`}>
-        <div>
-          <Badge
-            status={(userEvent && userEvent.name) ? 'success' : 'error'}
-            text={(userEvent && userEvent.name) ? `${userEvent.name}` : 'Nothing to render'}
-          />
-          <p>{(userEvent && userEvent.description && userEvent.description) ? userEvent.description : ''}</p>
-        </div>
-        <p><ClockCircleOutlined/>{date.format('hh:mm')}</p>
+  const start = moment(userEvent.startDateTime).utc();
+  const end = moment(userEvent.endDateTime).utc();
+  const date = start.clone();
+  const hours = computeNumberOfHours(start, end);
+  date.set({
+    hour: hours
+  });
+  const size = computeSize(hours);
+  return (
+    <div className="tk_UserEvent" style={{height: `${size}px`}}
+      key={`badge-entry-${start && start.format('yyyy-mm-dd-hh-mm')}`}>
+      <div>
+        <Badge
+          status={(userEvent && userEvent.name) ? 'success' : 'error'}
+          text={(userEvent && userEvent.name) ? `${userEvent.name}` : 'Nothing to render'}
+        />
+        <p>{(userEvent && userEvent.description && userEvent.description) ? userEvent.description : ''}</p>
       </div>
-    );
-  }
+      <p><ClockCircleOutlined/>{date.format('hh:mm')}</p>
+    </div>
+  );
 };
 UserEvent.propTypes = {
   userEvent: PropTypes.arrayOf(

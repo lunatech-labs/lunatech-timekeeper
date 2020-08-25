@@ -98,6 +98,10 @@ public interface EventResourceApi {
                     headers = {
                             @Header(name = LOCATION, description = "New event url", schema = @Schema(type = SchemaType.STRING))
                     }
+            ),
+            @APIResponse(
+                    responseCode = "400",
+                    description = "Bad Request. Event name with same start & end dates already exists."
             )
     })
     Response createEvent(@RequestBody EventTemplateRequest request, @Context UriInfo uriInfo);
