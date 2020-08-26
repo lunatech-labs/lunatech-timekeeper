@@ -17,6 +17,7 @@
 // Returns true if all timeUnits are disabled for a timesheet
 import {getHalfDayDuration} from './configUtils';
 
+// Returns true if all units are disabled, entryDuration is optional and is present only on timeEntry edition
 export const isTimeSheetDisabled = (timeSheet, numberOfHoursForDay, entryDuration) => {
   const timeUnit = timeSheet && timeSheet.timeUnit;
   const hourDisabled = timeUnit && timeUnit !== 'HOURLY';
