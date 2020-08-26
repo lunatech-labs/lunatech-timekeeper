@@ -65,6 +65,8 @@ class TimeSheetResourceTest {
         flyway.migrate();
     }
 
+    final private LocalDate START_DATE = LocalDate.now();
+
     @Test
     void shouldFindTimeSheetById() {
         // GIVEN : a project with 2 member
@@ -112,7 +114,8 @@ class TimeSheetResourceTest {
                 true,
                 newEndDate,
                 60,
-                TimeUnit.DAY
+                TimeUnit.DAY,
+                START_DATE
         );
         putValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken, timeKeeperTestUtils.toJson(updatedTimeSheet)).statusCode(NO_CONTENT.getStatusCode());
 

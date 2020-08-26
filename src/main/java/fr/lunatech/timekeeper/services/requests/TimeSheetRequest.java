@@ -47,12 +47,16 @@ public class TimeSheetRequest {
     @Null
     public TimeUnit durationUnit; // DAYS
 
-    public TimeSheetRequest( TimeUnit timeUnit, Boolean defaultIsBillable, @Null LocalDate expirationDate, @Null Integer maxDuration, @Null TimeUnit durationUnit) {
+    @Null
+    public LocalDate startDate;
+
+    public TimeSheetRequest( TimeUnit timeUnit, Boolean defaultIsBillable, @Null LocalDate expirationDate, @Null Integer maxDuration, @Null TimeUnit durationUnit, @Null LocalDate startDate) {
         this.timeUnit = timeUnit;
         this.defaultIsBillable = defaultIsBillable;
         this.expirationDate = expirationDate;
         this.maxDuration = maxDuration;
         this.durationUnit = durationUnit;
+        this.startDate = startDate;
     }
 
     public TimeSheet unbind(@NotNull TimeSheet timeSheet){
@@ -61,7 +65,12 @@ public class TimeSheetRequest {
         timeSheet.expirationDate = getExpirationDate();
         timeSheet.maxDuration = getMaxDuration();
         timeSheet.durationUnit = getDurationUnit();
+        timeSheet.startDate = getStartDate();
         return timeSheet;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
     public TimeSheet unbind() {
@@ -96,6 +105,7 @@ public class TimeSheetRequest {
                 ", expirationDate=" + expirationDate +
                 ", maxDuration=" + maxDuration +
                 ", durationUnit=" + durationUnit +
+                ", startDate=" + startDate +
                 '}';
     }
 }

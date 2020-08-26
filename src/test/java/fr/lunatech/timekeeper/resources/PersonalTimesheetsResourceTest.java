@@ -66,6 +66,8 @@ class PersonalTimesheetsResourceTest {
         flyway.migrate();
     }
 
+    private final LocalDate START_DATE = LocalDate.now();
+
     @Test
     void shouldReturnEmptyWeekResponseIfUserNotMemberOfProject() {
         final String adminToken = getAdminAccessToken();
@@ -261,7 +263,8 @@ class PersonalTimesheetsResourceTest {
                 true,
                 null,
                 10,
-                TimeUnit.DAY
+                TimeUnit.DAY,
+                START_DATE
         );
         String commentDay = "I worked on Disney content API for 8h";
         LocalDateTime startDay1 = LocalDateTime.of(2020, 6, 18, 10, 0);
