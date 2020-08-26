@@ -64,7 +64,7 @@ public class TimeSheet extends PanacheEntityBase {
     @OneToMany(mappedBy = "timeSheet")
     public List<TimeEntry> entries;
 
-    @Null
+    @NotNull
     public LocalDate startDate;
 
     public TimeSheet() {}
@@ -77,7 +77,7 @@ public class TimeSheet extends PanacheEntityBase {
                      @Null Integer maxDuration,
                      @Null TimeUnit durationUnit,
                      List<TimeEntry> entries,
-                     @Null LocalDate startDate) {
+                     @NotNull LocalDate startDate) {
         this.project = project;
         this.owner = owner;
         this.timeUnit = timeUnit;
