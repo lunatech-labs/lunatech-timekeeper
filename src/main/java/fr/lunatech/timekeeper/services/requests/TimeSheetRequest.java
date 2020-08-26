@@ -47,10 +47,10 @@ public class TimeSheetRequest {
     @Null
     public TimeUnit durationUnit; // DAYS
 
-    @Null
+    @NotNull
     public LocalDate startDate;
 
-    public TimeSheetRequest( TimeUnit timeUnit, Boolean defaultIsBillable, @Null LocalDate expirationDate, @Null Integer maxDuration, @Null TimeUnit durationUnit, @Null LocalDate startDate) {
+    public TimeSheetRequest( TimeUnit timeUnit, Boolean defaultIsBillable, @Null LocalDate expirationDate, @Null Integer maxDuration, @Null TimeUnit durationUnit, @NotNull LocalDate startDate) {
         this.timeUnit = timeUnit;
         this.defaultIsBillable = defaultIsBillable;
         this.expirationDate = expirationDate;
