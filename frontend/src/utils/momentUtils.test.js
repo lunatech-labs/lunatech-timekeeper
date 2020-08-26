@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2020 Lunatech Labs
  *
@@ -14,7 +15,14 @@
  * limitations under the License.
  */
 
-import {renderRangeWithYear, renderRange, weekRangeOfDate, totalHoursPerDay} from './momentUtils';
+import {
+  renderRangeWithYear,
+  renderRange,
+  weekRangeOfDate,
+  totalHoursPerDay,
+  isPublicHoliday,
+  isNotPublicHoliday
+} from './momentUtils';
 import moment from 'moment';
 
 // eslint-disable-next-line
@@ -228,4 +236,60 @@ test('totalHoursPerDay should return 3 hours for 2 entries that overlaps each ot
   const result = totalHoursPerDay(emptyUserEvent,'2020-08-04',emptyEntries);
   // eslint-disable-next-line
   expect(result).toBe(3);
+});
+
+// eslint-disable-next-line
+test('isPublicHoliday should return true for 14th July', () =>{
+  const publicHolidays = [];
+  publicHolidays.push({
+    date:"2020-07-14",
+    localName: "",
+    name: "",
+    countryCode: "",
+  })
+  const result = isPublicHoliday(moment.utc('2020-07-14'),publicHolidays);
+  // eslint-disable-next-line
+  expect(result).toBe(true);
+});
+
+// eslint-disable-next-line
+test('isPublicHoliday should return false for 15th July', () =>{
+  const publicHolidays = [];
+  publicHolidays.push({
+    date:"2020-07-14",
+    localName: "",
+    name: "",
+    countryCode: "",
+  })
+  const result = isPublicHoliday(moment.utc('2020-07-15'),publicHolidays);
+  // eslint-disable-next-line
+  expect(result).toBe(false);
+});
+
+// eslint-disable-next-line
+test('isNotPublicHoliday should return false for 14th July', () =>{
+  const publicHolidays = [];
+  publicHolidays.push({
+    date:"2020-07-14",
+    localName: "",
+    name: "",
+    countryCode: "",
+  })
+  const result = isNotPublicHoliday(moment.utc('2020-07-14'),publicHolidays);
+  // eslint-disable-next-line
+  expect(result).toBe(false);
+});
+
+// eslint-disable-next-line
+test('isNotPublicHoliday should return true for 15th July', () =>{
+  const publicHolidays = [];
+  publicHolidays.push({
+    date:"2020-07-14",
+    localName: "",
+    name: "",
+    countryCode: "",
+  })
+  const result = isNotPublicHoliday(moment.utc('2020-07-15'),publicHolidays);
+  // eslint-disable-next-line
+  expect(result).toBe(true);
 });
