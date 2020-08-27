@@ -17,13 +17,11 @@
 package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
-import fr.lunatech.timekeeper.services.TimeSheetService;
 import fr.lunatech.timekeeper.services.requests.ClientRequest;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.requests.TimeSheetRequest;
 import fr.lunatech.timekeeper.services.responses.ClientResponse;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
-import fr.lunatech.timekeeper.services.responses.UserEventResponse;
 import fr.lunatech.timekeeper.services.responses.UserResponse;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -50,7 +48,6 @@ import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @QuarkusTest
