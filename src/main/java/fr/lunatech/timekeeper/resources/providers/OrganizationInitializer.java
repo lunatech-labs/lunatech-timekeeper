@@ -20,6 +20,8 @@ import fr.lunatech.timekeeper.services.OrganizationService;
 import fr.lunatech.timekeeper.services.requests.OrganizationRequest;
 import io.quarkus.runtime.StartupEvent;
 import org.eclipse.microprofile.config.Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -27,6 +29,7 @@ import javax.inject.Inject;
 
 @ApplicationScoped
 public class OrganizationInitializer {
+    private static Logger logger = LoggerFactory.getLogger(OrganizationInitializer.class);
 
     @Inject
     OrganizationService organizationService;
@@ -44,7 +47,10 @@ public class OrganizationInitializer {
             if (propertyName.startsWith(CONFIG_PREFIX)) {
                 final var organizationName = config.getValue(propertyName, String.class);
                 final var organizationTokenName = propertyName.replace(CONFIG_PREFIX, "").replace("\"", "");
-                organizationService.createIfTokenNameNotFound(new OrganizationRequest(organizationName, organizationTokenName));
+                final var organizationId = organizationService.createIfTokenNameNotFound(new OrganizationRequest(organizationName, organizationTokenName));
+                if (logger.isDebugEnabled()) {
+                    logger.debug(String.format("Created organizationName=%s organizationId=%d", organizationName, organizationId));
+                }
             }
         });
     }

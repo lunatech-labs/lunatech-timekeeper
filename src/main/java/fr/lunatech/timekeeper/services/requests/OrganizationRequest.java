@@ -35,14 +35,14 @@ public class OrganizationRequest {
         this.tokenName = tokenName;
     }
 
-    public Organization unbind(@NotNull Organization organization, @NotNull AuthenticationContext ctx) {
+    public Organization unbind(@NotNull Organization organization) {
         organization.name = getName();
         organization.tokenName = getTokenName();
         return organization;
     }
 
     public Organization unbind(@NotNull AuthenticationContext ctx) {
-        return unbind(new Organization(), ctx);
+        return unbind(new Organization());
     }
 
     public String getName() {

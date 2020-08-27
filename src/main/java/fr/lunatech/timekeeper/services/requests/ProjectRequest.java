@@ -84,7 +84,7 @@ public final class ProjectRequest {
         project.billable = isBillable();
         project.description = getDescription();
         project.client = getClientId()
-                .flatMap(clientId -> findClient.apply(clientId, ctx))
+                .flatMap(cid -> findClient.apply(cid, ctx))
                 .orElse(null);
         project.users = getUsers()
                 .stream()
