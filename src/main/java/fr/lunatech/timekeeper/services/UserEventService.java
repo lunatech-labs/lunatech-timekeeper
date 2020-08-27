@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class UserEventService {
 
-    private static final Logger logger = LoggerFactory.getLogger(EventTemplateService.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserEventService.class);
 
     public List<UserEventResponse> getEventsByUserForWeekNumber(Long ownerId, Integer weekNumber, Integer year){
         return getEventsByUser(ownerId,weekNumber,year,TimeKeeperDateUtils::getWeekNumberFromDate);
