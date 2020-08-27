@@ -80,7 +80,8 @@ const ShowTimeSheet = ({project, member}) => {
       maxDuration: PropTypes.number,
       durationUnit: PropTypes.string,
       timeUnit: PropTypes.string,
-      leftOver: PropTypes.number
+      leftOver: PropTypes.number,
+      startDate: PropTypes.string
     })
   };
 

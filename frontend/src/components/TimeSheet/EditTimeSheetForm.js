@@ -130,7 +130,8 @@ EditTimeSheetForm.propTypes = {
     durationUnit: PropTypes.string,
     project: PropTypes.shape({
       id: PropTypes.number.isRequired
-    })
+    }),
+    startDate: PropTypes.string
   })
 };
 

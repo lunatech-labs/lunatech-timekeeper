@@ -242,11 +242,11 @@ test('totalHoursPerDay should return 3 hours for 2 entries that overlaps each ot
 test('isPublicHoliday should return true for 14th July', () =>{
   const publicHolidays = [];
   publicHolidays.push({
-    date:"2020-07-14",
-    localName: "",
-    name: "",
-    countryCode: "",
-  })
+    date:'2020-07-14',
+    localName: '',
+    name: '',
+    countryCode: '',
+  });
   const result = isPublicHoliday(moment.utc('2020-07-14'),publicHolidays);
   // eslint-disable-next-line
   expect(result).toBe(true);
@@ -256,11 +256,11 @@ test('isPublicHoliday should return true for 14th July', () =>{
 test('isPublicHoliday should return false for 15th July', () =>{
   const publicHolidays = [];
   publicHolidays.push({
-    date:"2020-07-14",
-    localName: "",
-    name: "",
-    countryCode: "",
-  })
+    date:'2020-07-14',
+    localName: '',
+    name: '',
+    countryCode: '',
+  });
   const result = isPublicHoliday(moment.utc('2020-07-15'),publicHolidays);
   // eslint-disable-next-line
   expect(result).toBe(false);
@@ -270,11 +270,11 @@ test('isPublicHoliday should return false for 15th July', () =>{
 test('isNotPublicHoliday should return false for 14th July', () =>{
   const publicHolidays = [];
   publicHolidays.push({
-    date:"2020-07-14",
-    localName: "",
-    name: "",
-    countryCode: "",
-  })
+    date:'2020-07-14',
+    localName: '',
+    name: '',
+    countryCode: '',
+  });
   const result = isNotPublicHoliday(moment.utc('2020-07-14'),publicHolidays);
   // eslint-disable-next-line
   expect(result).toBe(false);
@@ -284,11 +284,11 @@ test('isNotPublicHoliday should return false for 14th July', () =>{
 test('isNotPublicHoliday should return true for 15th July', () =>{
   const publicHolidays = [];
   publicHolidays.push({
-    date:"2020-07-14",
-    localName: "",
-    name: "",
-    countryCode: "",
-  })
+    date:'2020-07-14',
+    localName: '',
+    name: '',
+    countryCode: '',
+  });
   const result = isNotPublicHoliday(moment.utc('2020-07-15'),publicHolidays);
   // eslint-disable-next-line
   expect(result).toBe(true);
