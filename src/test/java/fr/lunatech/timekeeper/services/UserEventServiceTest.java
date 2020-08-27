@@ -9,10 +9,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserEventServiceTest {
 
-    UserEventService userEventService = new UserEventService();
-
     @Test
     void shouldBeTrueForEventWithDurationUnderAWeekDuration() {
+        UserEventService userEventService = new UserEventService();
         var userEvent = new UserEvent();
         userEvent.id = 1L;
         userEvent.name = "Event name";
@@ -25,6 +24,7 @@ class UserEventServiceTest {
 
     @Test
     void shouldBeTrueForEventWithDurationUpperThanAWeekDuration() {
+        UserEventService userEventService = new UserEventService();
         var userEvent = new UserEvent();
         userEvent.id = 1L;
         userEvent.name = "Event name";
@@ -39,6 +39,7 @@ class UserEventServiceTest {
 
     @Test
     void shouldBeFalseForEventNotIncludedInWeekDuration() {
+        UserEventService userEventService = new UserEventService();
         var userEvent = new UserEvent();
         userEvent.id = 1L;
         userEvent.name = "Event name";
@@ -51,6 +52,7 @@ class UserEventServiceTest {
 
     @Test
     void shouldBeTrueForEventWithDurationUnderAMonthDuration() {
+        UserEventService userEventService = new UserEventService();
         var userEvent = new UserEvent();
         userEvent.id = 1L;
         userEvent.name = "Event name";
@@ -63,6 +65,7 @@ class UserEventServiceTest {
 
     @Test
     void shouldBeTrueForEventWithDurationUpperThanAMonthDuration() {
+        UserEventService userEventService = new UserEventService();
         var userEvent = new UserEvent();
         userEvent.id = 1L;
         userEvent.name = "Event name";
@@ -78,6 +81,7 @@ class UserEventServiceTest {
 
     @Test
     void shouldBeFalseForEventNotIncludedInTheMonthDuration() {
+        UserEventService userEventService = new UserEventService();
         var userEvent = new UserEvent();
         userEvent.id = 1L;
         userEvent.name = "Event name";
@@ -90,6 +94,7 @@ class UserEventServiceTest {
 
     @Test
     void shouldBeFalseForEventInTheWrongYear() {
+        UserEventService userEventService = new UserEventService();
         var userEvent = new UserEvent();
         userEvent.id = 1L;
         userEvent.name = "Event name";
@@ -104,6 +109,7 @@ class UserEventServiceTest {
 
     @Test
     void shouldBeTrueForEventInTheRightYear() {
+        UserEventService userEventService = new UserEventService();
         var userEvent = new UserEvent();
         userEvent.id = 1L;
         userEvent.name = "Event name";
