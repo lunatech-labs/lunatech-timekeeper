@@ -61,6 +61,7 @@ const EditTimeSheetForm = ({timeSheet}) => {
     return {
       'timeUnit': timeSheet.timeUnit,
       'defaultIsBillable': timeSheet.defaultIsBillable,
+      'startDate': timeSheet.startDate ? moment(timeSheet.startDate, 'YYYY-MM-DD').utc(true) : null,
       'expirationDate': timeSheet.expirationDate ? moment(timeSheet.expirationDate, 'YYYY-MM-DD').utc(true) : null,
       'maxDuration': timeSheet.maxDuration,
       'durationUnit': timeSheet.durationUnit
@@ -79,6 +80,10 @@ const EditTimeSheetForm = ({timeSheet}) => {
             <Radio value="HALFDAY">Half-day</Radio>
             <Radio value="HOURLY">Hours</Radio>
           </Radio.Group>
+        </Form.Item>
+
+        <Form.Item label="Start date" name='startDate' rules={[{required: true}]}>
+          <DatePicker className="tk_InputDate"/>
         </Form.Item>
 
         <Form.Item label="End date" name='expirationDate' rules={[{required: false}]}>
@@ -125,7 +130,8 @@ EditTimeSheetForm.propTypes = {
     durationUnit: PropTypes.string,
     project: PropTypes.shape({
       id: PropTypes.number.isRequired
-    })
+    }),
+    startDate: PropTypes.string
   })
 };
 

@@ -30,8 +30,8 @@ import io.quarkus.test.junit.QuarkusTest;
 import org.flywaydb.core.Flyway;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 import javax.inject.Inject;
 import java.time.LocalDate;
@@ -53,7 +53,7 @@ import static org.hamcrest.core.Is.is;
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
 @QuarkusTestResource(KeycloakTestResource.class)
-@DisabledIfEnvironmentVariable(named = "ENV", matches = "fast-test-only")
+@Tag("integration")
 class TimeSheetResourceTest {
 
     @Inject
@@ -75,8 +75,8 @@ class TimeSheetResourceTest {
         // GIVEN : a project with 2 member
         final String adminToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
-        var sam = create(adminToken);
-        var jimmy = create(jimmyToken);
+        final var sam = create(adminToken);
+        final var jimmy = create(jimmyToken);
         final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
         ProjectRequest.ProjectUserRequest samProjectRequest = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
         ProjectRequest.ProjectUserRequest jimmyProjectRequest = new ProjectRequest.ProjectUserRequest(jimmy.getId(), false);
@@ -98,7 +98,7 @@ class TimeSheetResourceTest {
     void shouldUpdateTimeSheetById() {
         // GIVEN : a project with 2 member
         final String adminToken = getAdminAccessToken();
-        var sam = create(adminToken);
+        final var sam = create(adminToken);
         final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
         ProjectRequest.ProjectUserRequest samProjectRequest = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
         List<ProjectRequest.ProjectUserRequest> newUsers = List.of(samProjectRequest);
@@ -145,4 +145,84 @@ class TimeSheetResourceTest {
 
     }
 
+    @Test
+    void shouldUpdateTimeSheetWithNoEndDateTime() {
+        // GIVEN : a project with 2 member
+        final String adminToken = getAdminAccessToken();
+        final var sam = create(adminToken);
+        final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
+        ProjectRequest.ProjectUserRequest samProjectRequest = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
+        List<ProjectRequest.ProjectUserRequest> newUsers = List.of(samProjectRequest);
+        Long timeSheetId = 1L;
+
+        // WHEN : the project is created, a time sheet is generated for all user
+        final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers, 1L), adminToken);
+        // verify first version
+        final var expectedTimeSheetSam = new TimeSheetResponse(timeSheetId,
+                project,
+                sam.getId(),
+                TimeUnit.HOURLY,
+                true,
+                null,
+                null,
+                TimeUnit.DAY.toString(),
+                Collections.emptyList(),
+                null,
+                START_DATE);
+        getValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken)
+                .body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)))
+                .statusCode(CoreMatchers.is(OK.getStatusCode()));
+
+        // WHEN : AND the timesheet is updated (adding a end date a maxDuration and changing units)
+        TimeSheetRequest updatedTimeSheet = new TimeSheetRequest(
+                TimeUnit.DAY,
+                true,
+                null,
+                60,
+                TimeUnit.DAY,
+                START_DATE
+        );
+        putValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken, timeKeeperTestUtils.toJson(updatedTimeSheet)).statusCode(NO_CONTENT.getStatusCode());
+    }
+
+    @Test
+    void shouldNotUpdateTimeSheetWithStartDateBeforeEndDate() {
+        // GIVEN : a project with 2 member
+        final String adminToken = getAdminAccessToken();
+        final var sam = create(adminToken);
+        final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
+        ProjectRequest.ProjectUserRequest samProjectRequest = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
+        List<ProjectRequest.ProjectUserRequest> newUsers = List.of(samProjectRequest);
+        Long timeSheetId = 1L;
+
+        // WHEN : the project is created, a time sheet is generated for all user
+        final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers, 1L), adminToken);
+        // verify first version
+        final var expectedTimeSheetSam = new TimeSheetResponse(timeSheetId,
+                project,
+                sam.getId(),
+                TimeUnit.HOURLY,
+                true,
+                null,
+                null,
+                TimeUnit.DAY.toString(),
+                Collections.emptyList(),
+                null,
+                START_DATE);
+        getValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken)
+                .body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)))
+                .statusCode(CoreMatchers.is(OK.getStatusCode()));
+
+        // WHEN : AND the timesheet is updated (adding a end date a maxDuration and changing units)
+        LocalDate newEndDate = LocalDate.now().minusMonths(2L);
+        TimeSheetRequest updatedTimeSheet = new TimeSheetRequest(
+                TimeUnit.DAY,
+                true,
+                newEndDate,
+                60,
+                TimeUnit.DAY,
+                START_DATE
+        );
+        putValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken, timeKeeperTestUtils.toJson(updatedTimeSheet)).statusCode(500);
+    }
 }

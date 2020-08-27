@@ -17,8 +17,6 @@
 package fr.lunatech.timekeeper.services.responses;
 
 import fr.lunatech.timekeeper.models.time.TimeSheet;
-import fr.lunatech.timekeeper.models.time.UserEvent;
-import fr.lunatech.timekeeper.services.UserEventService;
 import fr.lunatech.timekeeper.timeutils.PublicHoliday;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 import fr.lunatech.timekeeper.timeutils.Week;
