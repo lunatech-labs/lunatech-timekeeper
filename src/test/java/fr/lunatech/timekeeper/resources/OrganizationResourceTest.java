@@ -26,8 +26,8 @@ import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 import javax.inject.Inject;
 
@@ -43,7 +43,7 @@ import static org.hamcrest.CoreMatchers.is;
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
 @QuarkusTestResource(KeycloakTestResource.class)
-@DisabledIfEnvironmentVariable(named = "ENV", matches = "fast-test-only")
+@Tag("integration")
 class OrganizationResourceTest {
 
     @Inject
