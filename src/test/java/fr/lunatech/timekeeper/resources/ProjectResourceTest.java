@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -68,6 +69,8 @@ class ProjectResourceTest {
         flyway.clean();
         flyway.migrate();
     }
+
+    final LocalDate START_DATE = LocalDate.now();
 
     @Test
     void shouldCreateProjectWhenAdminProfile() {
@@ -416,8 +419,8 @@ class ProjectResourceTest {
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers, 1L), adminToken);
 
         // THEN
-        final var expectedTimeSheetSam = new TimeSheetResponse(1L, project, sam.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
+        final var expectedTimeSheetSam = new TimeSheetResponse(1L, project, sam.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null, START_DATE);
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null, START_DATE);
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), sam.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam))).statusCode(is(OK.getStatusCode()));
@@ -456,7 +459,7 @@ class ProjectResourceTest {
         // WHEN creating the project, timesheets for all members are generated
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers, 1L), adminToken);
 
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null, START_DATE);
 
         // THEN : I can see the timeSheet by project by member
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
@@ -503,8 +506,8 @@ class ProjectResourceTest {
         update(updatedProjectWithTwoUsers, ProjectDef.uriPlusId(project.getId()), adminToken);
 
         // THEN
-        final var expectedTimeSheetSam = new TimeSheetResponse(1L, expectedProject, sam.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, expectedProject, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
+        final var expectedTimeSheetSam = new TimeSheetResponse(1L, expectedProject, sam.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null, START_DATE);
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, expectedProject, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null, START_DATE);
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), sam.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam))).statusCode(is(OK.getStatusCode()));
@@ -550,8 +553,8 @@ class ProjectResourceTest {
                 .body(is(timeKeeperTestUtils.toJson(expectedProject)))
                 .statusCode(is(OK.getStatusCode()));
         // THEN
-        final var expectedTimeSheetSam = new TimeSheetResponse(1L, expectedProject, sam.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, expectedProject, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
+        final var expectedTimeSheetSam = new TimeSheetResponse(1L, expectedProject, sam.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null, START_DATE);
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, expectedProject, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null, START_DATE);
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), sam.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam))).statusCode(is(OK.getStatusCode()));
@@ -602,7 +605,7 @@ class ProjectResourceTest {
         update(updatedProjectWithTwoUsers, ProjectDef.uriPlusId(project.getId()), adminToken);
 
         // THEN
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(1L, expectedProject, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null);
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(1L, expectedProject, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null, START_DATE);
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
     }

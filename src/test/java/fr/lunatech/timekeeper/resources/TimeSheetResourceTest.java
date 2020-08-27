@@ -20,7 +20,9 @@ import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
 import fr.lunatech.timekeeper.services.requests.ClientRequest;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.requests.TimeSheetRequest;
+import fr.lunatech.timekeeper.services.responses.ClientResponse;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
+import fr.lunatech.timekeeper.services.responses.UserResponse;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
@@ -44,6 +46,7 @@ import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValid
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.putValidation;
 import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 import static javax.ws.rs.core.Response.Status.OK;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 
@@ -65,6 +68,8 @@ class TimeSheetResourceTest {
         flyway.migrate();
     }
 
+    final private LocalDate START_DATE = LocalDate.now();
+
     @Test
     void shouldFindTimeSheetById() {
         // GIVEN : a project with 2 member
@@ -81,8 +86,8 @@ class TimeSheetResourceTest {
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers, 1L), adminToken);
 
 
-        final var expectedTimeSheetSam = new TimeSheetResponse(1L, project, sam.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null);
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null);
+        final var expectedTimeSheetSam = new TimeSheetResponse(1L, project, sam.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null, START_DATE);
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null, START_DATE);
 
         // THEN
         getValidation(TimeSheetDef.uriPlusId(1L), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam))).statusCode(CoreMatchers.is(OK.getStatusCode()));
@@ -102,7 +107,7 @@ class TimeSheetResourceTest {
         // WHEN : the project is created, a time sheet is generated for all user
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers, 1L), adminToken);
         // verify first version
-        final var expectedTimeSheetSam = new TimeSheetResponse(timeSheetId, project, sam.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null);
+        final var expectedTimeSheetSam = new TimeSheetResponse(timeSheetId, project, sam.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null, START_DATE);
         getValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam))).statusCode(CoreMatchers.is(OK.getStatusCode()));
 
         // WHEN : AND the timesheet is updated (adding a end date a maxDuration and changing units)
@@ -112,13 +117,32 @@ class TimeSheetResourceTest {
                 true,
                 newEndDate,
                 60,
-                TimeUnit.DAY
+                TimeUnit.DAY,
+                START_DATE
         );
         putValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken, timeKeeperTestUtils.toJson(updatedTimeSheet)).statusCode(NO_CONTENT.getStatusCode());
 
         // THEN get the updated version
-        final var expectedUpdatedTimeSheetSam = new TimeSheetResponse(timeSheetId, project, sam.getId(), TimeUnit.DAY, true, newEndDate, 60, TimeUnit.DAY.toString(), Collections.emptyList(), 60L);
+        final var expectedUpdatedTimeSheetSam = new TimeSheetResponse(timeSheetId, project, sam.getId(), TimeUnit.DAY, true, newEndDate, 60, TimeUnit.DAY.toString(), Collections.emptyList(), 60L, START_DATE);
         getValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken).body(is(timeKeeperTestUtils.toJson(expectedUpdatedTimeSheetSam))).statusCode(CoreMatchers.is(OK.getStatusCode()));
+    }
+
+    @Test
+    void shouldHaveDefaultStartDateDuringCreation() {
+        // GIVEN : a project with 1 member
+        final String adminToken = getAdminAccessToken();
+        final UserResponse sam = create(adminToken);
+        final ClientResponse clientResponse = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
+
+        ProjectRequest.ProjectUserRequest samProjectRequest = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
+        List<ProjectRequest.ProjectUserRequest> newUsers = List.of(samProjectRequest);
+        Long timeSheetId = 1L;
+
+        // WHEN : the project is created, a time sheet will have default start which should date of creation
+        create(new ProjectRequest("Some Project", true, "some description", clientResponse.getId(), true, newUsers, 1L), adminToken);
+
+        assertThat(getValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken).extract().body().as(TimeSheetResponse.class).startDate, is(START_DATE));
+
     }
 
 }

@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -53,8 +54,10 @@ public class TimeSheetService {
 
     @Transactional
     Long createDefaultTimeSheet(Project project, User owner, AuthenticationContext ctx) {
-        TimeSheet timeSheet = new TimeSheet(project, owner, TimeUnit.HOURLY, project.getBillable(), null, null, TimeUnit.DAY, Collections.emptyList());
-        logger.debug("Create a default timesheet with {}", timeSheet);
+        // By default, the start date must be the date of creation
+        final LocalDate startDate = LocalDate.now();
+        TimeSheet timeSheet = new TimeSheet(project, owner, TimeUnit.HOURLY, project.getBillable(), null, null, TimeUnit.DAY, Collections.emptyList(), startDate);
+        logger.debug("Create a default timesheet with {}, {}", timeSheet, ctx);
         try {
             timeSheet.persistAndFlush();
         } catch (PersistenceException pe) {
