@@ -65,9 +65,6 @@ class TimeSheetResourceTest {
     @Inject
     TimeKeeperTestUtils timeKeeperTestUtils;
 
-    @Inject
-    TimeSheetService timeSheetService;
-
     @AfterEach
     void cleanDB() {
         flyway.clean();
