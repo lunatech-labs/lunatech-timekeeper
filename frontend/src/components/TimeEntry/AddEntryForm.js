@@ -140,7 +140,7 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel, numberOfHour
         <Form.Item label="Select a project:" name="timeSheetId" rules={[{required: true}]}>
           <Select>
             <Option value={null}/>
-            {timeSheets.map(timeSheet => <Option disabled={isTimeSheetDisabled(timeSheet, numberOfHoursForDay)} key={`select-timesheet-${timeSheet.id}`}
+            {timeSheets.map(timeSheet => <Option disabled={isTimeSheetDisabled(timeSheet, date, numberOfHoursForDay)} key={`select-timesheet-${timeSheet.id}`}
               value={timeSheet.id}>{timeSheet.project.name}</Option>)}
           </Select>
         </Form.Item>

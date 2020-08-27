@@ -14,16 +14,42 @@
  * limitations under the License.
  */
 
-// Returns true if all timeUnits are disabled for a timesheet
 import {getHalfDayDuration} from './configUtils';
+import moment from 'moment';
+
+
+export const isTimeSheetDisabled = (timeSheet, date, numberOfHoursForDay, entryDuration) => {
+  return isTimeUnitDisabled(timeSheet, numberOfHoursForDay, entryDuration) && isDateOutOfTimeSheetRange(timeSheet, date);
+};
 
 // Returns true if all units are disabled, entryDuration is optional and is present only on timeEntry edition
-export const isTimeSheetDisabled = (timeSheet, numberOfHoursForDay, entryDuration) => {
+const isTimeUnitDisabled = (timeSheet, numberOfHoursForDay, entryDuration) => {
   const timeUnit = timeSheet && timeSheet.timeUnit;
   const hourDisabled = timeUnit && timeUnit !== 'HOURLY';
   const halfDayDisabled = (timeUnit && timeUnit !== 'HOURLY' && timeUnit !== 'HALFDAY') ||
-        (numberOfHoursForDay && entryDuration ? (numberOfHoursForDay - entryDuration) > getHalfDayDuration() : numberOfHoursForDay > getHalfDayDuration());
+      (numberOfHoursForDay && entryDuration ? (numberOfHoursForDay - entryDuration) > getHalfDayDuration() : numberOfHoursForDay > getHalfDayDuration());
   const dayDisabled = numberOfHoursForDay && entryDuration ? (numberOfHoursForDay - entryDuration) > 0 : numberOfHoursForDay > 0;
 
   return hourDisabled && halfDayDisabled && dayDisabled;
-};
+}
+
+// Returns true if the date is not in timesheets date range
+const isDateOutOfTimeSheetRange = (timeSheet, date) => {
+  if(timeSheet.expirationDate){
+    return isDateOutOfTimeSheetRangeWithEndDate(timeSheet, date);
+  }
+  return isDateOutOfTimeSheetRangeWithOutEndDate(timeSheet, date);
+}
+
+// Returns true if the date is before the startDate with no endDate
+const isDateOutOfTimeSheetRangeWithOutEndDate = (timeSheet, date) => {
+  const startDate = moment(timeSheet.startDate).utc();
+  return !(date.isAfter(startDate) || date.isSame(startDate));
+}
+
+// Returns true if the date is before the startDate or after the endDate
+const isDateOutOfTimeSheetRangeWithEndDate = (timeSheet, date) => {
+  const startDate = moment(timeSheet.startDate).utc();
+  const endDate = moment(timeSheet.expirationDate).utc();
+  return !date.isBetween(startDate, endDate,undefined, []);
+}

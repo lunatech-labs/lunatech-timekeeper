@@ -15,6 +15,7 @@
  */
 
 import {isTimeSheetDisabled} from './timesheetUtils';
+import moment from 'moment';
 
 // eslint-disable-next-line
 test('isTimeSheetDisabled return false for a daily timesheet on an empty day on timeEntry creation', () => {
@@ -22,14 +23,15 @@ test('isTimeSheetDisabled return false for a daily timesheet on an empty day on 
     id: 1,
     timeUnit: 'DAY',
     defaultIsBillable: false,
-    expirationDate: '',
+    startDate: '2020-03-16',
+    expirationDate: '2020-04-16',
     maxDuration: 10,
     durationUnit: 'DAY',
     project: {
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,0);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15').utc(), 0);
 
   // eslint-disable-next-line
     expect(result).toBe(false);
@@ -41,14 +43,15 @@ test('isTimeSheetDisabled return true for a daily timesheet on a not empty day o
     id: 1,
     timeUnit: 'DAY',
     defaultIsBillable: false,
-    expirationDate: '',
+    startDate: '2020-03-16',
+    expirationDate: '2020-04-16',
     maxDuration: 10,
     durationUnit: 'DAY',
     project: {
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,1);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15'),1);
 
   // eslint-disable-next-line
     expect(result).toBe(true);
@@ -60,14 +63,15 @@ test('isTimeSheetDisabled return false for a daily timesheet on an empty day on 
     id: 1,
     timeUnit: 'DAY',
     defaultIsBillable: false,
-    expirationDate: '',
+    startDate: '2020-03-16',
+    expirationDate: '2020-04-16',
     maxDuration: 10,
     durationUnit: 'DAY',
     project: {
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,0, 4);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15'),0, 4);
 
   // eslint-disable-next-line
     expect(result).toBe(false);
@@ -79,14 +83,15 @@ test('isTimeSheetDisabled return true for a daily timesheet on a not empty day o
     id: 1,
     timeUnit: 'DAY',
     defaultIsBillable: false,
-    expirationDate: '',
+    startDate: '2020-03-16',
+    expirationDate: '2020-04-16',
     maxDuration: 10,
     durationUnit: 'DAY',
     project: {
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,4, 1);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15'),4, 1);
 
   // eslint-disable-next-line
     expect(result).toBe(true);
@@ -98,14 +103,15 @@ test('isTimeSheetDisabled return false for an halfday timesheet on an empty day 
     id: 1,
     timeUnit: 'HALFDAY',
     defaultIsBillable: false,
-    expirationDate: '',
+    startDate: '2020-03-16',
+    expirationDate: '2020-04-16',
     maxDuration: 10,
     durationUnit: 'HALFDAY',
     project: {
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,0);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15'),0);
 
   // eslint-disable-next-line
     expect(result).toBe(false);
@@ -117,14 +123,15 @@ test('isTimeSheetDisabled return true for an halfday timesheet with 5 hours on a
     id: 1,
     timeUnit: 'HALFDAY',
     defaultIsBillable: false,
-    expirationDate: '',
+    estartDate: '2020-03-16',
+    expirationDate: '2020-04-16',
     maxDuration: 10,
     durationUnit: 'HALFDAY',
     project: {
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,5);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15'),5);
 
   // eslint-disable-next-line
     expect(result).toBe(true);
@@ -136,14 +143,15 @@ test('isTimeSheetDisabled return false for an halfday timesheet on an empty day 
     id: 1,
     timeUnit: 'HALFDAY',
     defaultIsBillable: false,
-    expirationDate: '',
+    startDate: '2020-03-16',
+    expirationDate: '2020-04-16',
     maxDuration: 10,
     durationUnit: 'HALFDAY',
     project: {
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,0, 4);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15'),0, 4);
 
   // eslint-disable-next-line
     expect(result).toBe(false);
@@ -155,15 +163,156 @@ test('isTimeSheetDisabled return true for an halfday timesheet on a not empty da
     id: 1,
     timeUnit: 'HALFDAY',
     defaultIsBillable: false,
-    expirationDate: '',
+    startDate: '2020-03-16',
+    expirationDate: '2020-04-16',
     maxDuration: 10,
     durationUnit: 'HALFDAY',
     project: {
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,6, 1);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15'),6, 1);
 
   // eslint-disable-next-line
     expect(result).toBe(true);
+});
+
+// eslint-disable-next-line
+test('isTimeSheetDisabled return true for a date outside of timesheet range', () => {
+  const timesheetDay = {
+    id: 1,
+    timeUnit: 'HALFDAY',
+    defaultIsBillable: false,
+    startDate: '2020-03-16',
+    expirationDate: '2020-04-16',
+    maxDuration: 10,
+    durationUnit: 'HALFDAY',
+    project: {
+      id: 1
+    }
+  };
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15').utc(), 5);
+
+  // eslint-disable-next-line
+  expect(result).toBe(true);
+});
+
+// eslint-disable-next-line
+test('isTimeSheetDisabled return false for a date the first day of timesheet range', () => {
+  const timesheetDay = {
+    id: 1,
+    timeUnit: 'HALFDAY',
+    defaultIsBillable: false,
+    startDate: '2020-03-16',
+    expirationDate: '2020-04-16',
+    maxDuration: 10,
+    durationUnit: 'HALFDAY',
+    project: {
+      id: 1
+    }
+  };
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-16').utc(), 0);
+
+  // eslint-disable-next-line
+  expect(result).toBe(false);
+});
+
+// eslint-disable-next-line
+test('isTimeSheetDisabled return false for a date in timesheet range', () => {
+  const timesheetDay = {
+    id: 1,
+    timeUnit: 'HALFDAY',
+    defaultIsBillable: false,
+    startDate: '2020-03-16',
+    expirationDate: '2020-04-16',
+    maxDuration: 10,
+    durationUnit: 'HALFDAY',
+    project: {
+      id: 1
+    }
+  };
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-26').utc(), 0);
+
+  // eslint-disable-next-line
+  expect(result).toBe(false);
+});
+
+// eslint-disable-next-line
+test('isTimeSheetDisabled return false for a date the last day of timesheet range', () => {
+  const timesheetDay = {
+    id: 1,
+    timeUnit: 'HALFDAY',
+    defaultIsBillable: false,
+    startDate: '2020-03-16',
+    expirationDate: '2020-04-16',
+    maxDuration: 10,
+    durationUnit: 'HALFDAY',
+    project: {
+      id: 1
+    }
+  };
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-04-16').utc(), 0);
+
+  // eslint-disable-next-line
+  expect(result).toBe(false);
+});
+
+// eslint-disable-next-line
+test('isTimeSheetDisabled return false for a date equals to the startDate with no endDate', () => {
+  const timesheetDay = {
+    id: 1,
+    timeUnit: 'HALFDAY',
+    defaultIsBillable: false,
+    startDate: '2020-03-16',
+    expirationDate: null,
+    maxDuration: 10,
+    durationUnit: 'HALFDAY',
+    project: {
+      id: 1
+    }
+  };
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-16').utc(), 0);
+
+  // eslint-disable-next-line
+  expect(result).toBe(false);
+});
+
+// eslint-disable-next-line
+test('isTimeSheetDisabled return false for a date after the startDate with no endDate', () => {
+  const timesheetDay = {
+    id: 1,
+    timeUnit: 'HALFDAY',
+    defaultIsBillable: false,
+    startDate: '2020-03-16',
+    expirationDate: null,
+    maxDuration: 10,
+    durationUnit: 'HALFDAY',
+    project: {
+      id: 1
+    }
+  };
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-19').utc(), 0);
+
+  // eslint-disable-next-line
+  expect(result).toBe(false);
+});
+
+// eslint-disable-next-line
+test('isTimeSheetDisabled return true for a date before the startDate with no endDate', () => {
+  const timesheetDay = {
+    id: 1,
+    timeUnit: 'HALFDAY',
+    defaultIsBillable: false,
+    startDate: '2020-03-16',
+    expirationDate: null,
+    maxDuration: 10,
+    durationUnit: 'HALFDAY',
+    project: {
+      id: 1
+    }
+  };
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15').utc(), 5);
+
+  // eslint-disable-next-line
+  expect(result).toBe(true);
 });
