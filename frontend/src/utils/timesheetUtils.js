@@ -17,7 +17,7 @@
 import {getHalfDayDuration} from './configUtils';
 import moment from 'moment';
 
-
+// Check if the timeUnits are disabled or if the date is outOfRange and return true if one is true
 export const isTimeSheetDisabled = (timeSheet, date, numberOfHoursForDay, entryDuration) => {
   return isTimeUnitDisabled(timeSheet, numberOfHoursForDay, entryDuration) || isDateOutOfTimeSheetRange(timeSheet, date);
 };
