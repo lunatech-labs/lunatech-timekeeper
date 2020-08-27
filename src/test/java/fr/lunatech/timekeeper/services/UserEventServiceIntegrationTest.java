@@ -10,7 +10,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
+import org.junit.jupiter.api.Tag;
 
 import javax.inject.Inject;
 import java.time.LocalDateTime;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
 @QuarkusTestResource(KeycloakTestResource.class)
-@DisabledIfEnvironmentVariable(named = "ENV", matches = "fast-test-only")
+@Tag("integration")
 class UserEventServiceIntegrationTest {
 
     private static final LocalDateTime THE_24_TH_JUNE_2020_AT_9_AM = LocalDateTime.of(2020,6,24,9,0);
