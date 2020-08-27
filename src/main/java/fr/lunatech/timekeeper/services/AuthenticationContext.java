@@ -84,20 +84,14 @@ public final class AuthenticationContext {
     protected final boolean canAccess(@NotNull Project project) {
         if (!canAccess(project.organization)) {
             return false;
-        } else if (isAdmin()) {
-            return true;
-        } else if (isSuperAdmin()) {
-            return true;
-        } else if (project.publicAccess) {
+        } else if (isAdmin() || isSuperAdmin() || project.publicAccess) {
             return true;
         } else {
             if (project.users == null || project.users.isEmpty()) {
                 return false;
             }
             return project.users.stream()
-                    .filter(projectUser -> projectUser.user.id.equals(userId))
-                    .findFirst()
-                    .isPresent();
+                    .anyMatch(projectUser -> projectUser.user.id.equals(userId));
         }
     }
 

@@ -7,44 +7,37 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class UserEventService {
 
-    private static final Logger logger = LoggerFactory.getLogger(EventTemplateService.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserEventService.class);
 
     public List<UserEventResponse> getEventsByUserForWeekNumber(Long ownerId, Integer weekNumber, Integer year){
-        logger.debug("getEventsForUser {}", ownerId);
-        return UserEvent.<UserEvent>stream("owner_id=?1", ownerId)
-                .filter(userEvent -> isUserEventInWeekNumber(userEvent, weekNumber, year))
-                .map(UserEventResponse::bind)
-                .collect(Collectors.toList());
+        return getEventsByUser(ownerId,weekNumber,year,TimeKeeperDateUtils::getWeekNumberFromDate);
     }
 
     public List<UserEventResponse> getEventsByUserForMonthNumber(Long ownerId, Integer monthNumber, Integer year){
+        return getEventsByUser(ownerId,monthNumber,year,TimeKeeperDateUtils::getMonthNumberFromDate);
+    }
+
+    protected List<UserEventResponse> getEventsByUser(Long ownerId, Integer monthNumber, Integer year, ToIntFunction<LocalDate> getWeekOfMonthNumberFromDate){
         logger.debug("getEventsForUser {}", ownerId);
         return UserEvent.<UserEvent>stream("owner_id=?1", ownerId)
-                .filter(userEvent -> isUserEventInMonthNumber(userEvent, monthNumber, year))
+                .filter(userEvent -> isUserEventInWeekOrMonthNumber(userEvent, monthNumber, year, getWeekOfMonthNumberFromDate))
                 .map(UserEventResponse::bind)
                 .collect(Collectors.toList());
     }
-
-    protected boolean isUserEventInWeekNumber(UserEvent userEvent, Integer weekNumber, Integer year){
-        var startDateTimeWeek = TimeKeeperDateUtils.getWeekNumberFromDate(userEvent.startDateTime.toLocalDate());
-        var endDateTimeWeek = TimeKeeperDateUtils.getWeekNumberFromDate(userEvent.endDateTime.toLocalDate());
+    protected boolean isUserEventInWeekOrMonthNumber(UserEvent userEvent, Integer weekOrMonthNumber, Integer year, ToIntFunction<LocalDate> getWeekOfMonthNumberFromDate){
+        var startDateTimeNumber = getWeekOfMonthNumberFromDate.applyAsInt(userEvent.startDateTime.toLocalDate());
+        var endDateTimeNumber = getWeekOfMonthNumberFromDate.applyAsInt(userEvent.endDateTime.toLocalDate());
         return (validateYear(userEvent, year))
-                && ((startDateTimeWeek <= weekNumber && endDateTimeWeek >= weekNumber)
-                || (startDateTimeWeek.equals(weekNumber) || endDateTimeWeek.equals(weekNumber)));
-    }
-
-    protected boolean isUserEventInMonthNumber(UserEvent userEvent, Integer monthNumber, Integer year){
-        var startDateTimeMonth = userEvent.startDateTime.toLocalDate().getMonthValue();
-        var endDateTimeMonth = userEvent.endDateTime.toLocalDate().getMonthValue();
-        return (validateYear(userEvent, year))
-                && ((startDateTimeMonth <= monthNumber && endDateTimeMonth >= monthNumber)
-                || (startDateTimeMonth == monthNumber || endDateTimeMonth == monthNumber));
+                && ((startDateTimeNumber <= weekOrMonthNumber && endDateTimeNumber >= weekOrMonthNumber)
+                || (startDateTimeNumber == weekOrMonthNumber || endDateTimeNumber == weekOrMonthNumber));
     }
 
     protected boolean validateYear(UserEvent userEvent, Integer year){
