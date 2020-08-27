@@ -25,10 +25,10 @@ export const renderRangeWithYear = (start, end) => {
   const panelFormat = 'DD MMM';
 
   if(!start){
-    return "invalid startDate";
+    return 'invalid startDate';
   }
   if(!end){
-    return "invalid endDate";
+    return 'invalid endDate';
   }
 
   if(start.isAfter(end)){
@@ -54,10 +54,10 @@ export const renderRangeWithYear = (start, end) => {
 export const renderRange = (start, end) => {
   const panelFormat = 'DD MMM';
   if(!start){
-    return "invalid startDate";
+    return 'invalid startDate';
   }
   if(!end){
-    return "invalid endDate";
+    return 'invalid endDate';
   }
 
   if(start.isSame(end)){
@@ -86,13 +86,41 @@ export const weekRangeOfDate = (firstDay, numberOfWeek) => {
   });
 };
 
-export const totalHoursPerDay = (timeEntries) => _.sumBy(timeEntries, function(entry){
-  const start = moment.utc(entry.startDateTime);
-  const end = moment.utc(entry.endDateTime);
-  const duration = moment.duration(end.diff(start));
-  return duration.asHours();
-});
+// Compute userEvents Duration Per Day
+const userEventsDurationPerDay = (userEvents, date) => {
+  return _.sumBy(userEvents, function(userEvent){
+    if(userEvent.eventUserDaysResponse) {
+      return [...Array(userEvent.eventUserDaysResponse.length).keys()]
+        .filter(i => date.format('YYYY-MM-DD') === userEvent.eventUserDaysResponse[i].date)
+        .map(i => {
+          const start = moment(userEvent.eventUserDaysResponse[i].startDateTime).utc();
+          const end = moment(userEvent.eventUserDaysResponse[i].endDateTime).utc();
+          const duration = moment.duration(end.diff(start));
+          return duration.asHours();
+        });
+    }
+  });
+};
 
+// Compute timeEntries Duration Per Day
+const timeEntriesDuration = (timeEntries) => {
+  if(timeEntries){
+    return _.sumBy(timeEntries, function(entry){
+      const start = moment(entry.startDateTime).utc();
+      const end = moment(entry.endDateTime).utc();
+      const duration = moment.duration(end.diff(start));
+      return duration.asHours();
+    });
+  }
+  return 0;
+};
+
+// Compute number of Hours Per Day timeEntries and userEvents
+export const totalHoursPerDay = (userEvents, date, timeEntries) => {
+  return Number(timeEntriesDuration(timeEntries)) + Number(userEventsDurationPerDay(userEvents, date));
+};
+
+// Returns true if the date is a publicHolidays
 export const isPublicHoliday = (date, publicHolidays) => {
   if(date) {
     const res = _.find(publicHolidays, function(d){
@@ -114,6 +142,9 @@ export const isWeekEnd = (date) => date.isoWeekday() === 6 || date.isoWeekday() 
 
 //Returns false if the date is saturday or sunday
 export const isNotWeekEnd = (date) => !isWeekEnd(date);
+
+//Returns false if the date is a public holiday
+export const isNotPublicHoliday = (date, publicHolidays) => !isPublicHoliday(date, publicHolidays);
 
 // Returns the number of hours between two dates
 export const computeNumberOfHours = (start, end) => {

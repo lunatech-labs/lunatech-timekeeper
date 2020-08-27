@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -53,8 +54,10 @@ public class TimeSheetService {
 
     @Transactional
     Long createDefaultTimeSheet(Project project, User owner, AuthenticationContext ctx) {
-        TimeSheet timeSheet = new TimeSheet(project, owner, TimeUnit.HOURLY, project.getBillable(), null, null, TimeUnit.DAY, Collections.emptyList());
-        logger.debug("Create a default timesheet with {}", timeSheet);
+        // By default, the start date must be the date of creation
+        final LocalDate startDate = LocalDate.now();
+        TimeSheet timeSheet = new TimeSheet(project, owner, TimeUnit.HOURLY, project.getBillable(), null, null, TimeUnit.DAY, Collections.emptyList(), startDate);
+        logger.debug("Create a default timesheet with {}, {}", timeSheet, ctx);
         try {
             timeSheet.persistAndFlush();
         } catch (PersistenceException pe) {
@@ -66,9 +69,12 @@ public class TimeSheetService {
     @Transactional
     public Optional<Long> update(Long id, TimeSheetRequest request, AuthenticationContext ctx) {
         logger.info("Modify timesheet for id={} with {}, {}", id, request, ctx);
-        return findById(id, ctx)
-                .map(request::unbind)
-                .map(timeSheet -> timeSheet.id);
+        if(isStartDateBeforeEndDate(request)){
+            return findById(id, ctx)
+                    .map(request::unbind)
+                    .map(timeSheet -> timeSheet.id);
+        }
+        throw new IllegalArgumentException("StartDate must be before endDate");
     }
 
     public List<TimeSheetResponse> findAllActivesForUser(AuthenticationContext ctx) {
@@ -97,5 +103,13 @@ public class TimeSheetService {
     Optional<TimeSheet> findById(Long id, AuthenticationContext ctx) {
         return TimeSheet.<TimeSheet>findByIdOptional(id)
                 .filter(ctx::canAccess);
+    }
+
+    //return true if startDate is before endDate or if there is no endDate
+    private boolean isStartDateBeforeEndDate(TimeSheetRequest request) {
+        if(Optional.ofNullable(request.expirationDate).isPresent()){
+            return request.startDate.isBefore(request.expirationDate);
+        }
+        return true;
     }
 }

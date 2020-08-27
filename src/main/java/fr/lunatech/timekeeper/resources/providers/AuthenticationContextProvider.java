@@ -29,6 +29,7 @@ import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.MalformedClaimException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -54,7 +55,9 @@ public class AuthenticationContextProvider {
             final var authenticationRequest = getAuthenticationRequest((OidcJwtCallerPrincipal) identity.getPrincipal());
 
             try {
-                return userService.authenticate(authenticationRequest);
+                final AuthenticationContext authenticationContext = userService.authenticate(authenticationRequest);
+                MDC.put("authenticationContext.userId", authenticationContext.getUserId().toString());
+                return authenticationContext;
             } catch (IllegalEntityStateException e) {
                 throw new ForbiddenException(e.getMessage(), e);
             }

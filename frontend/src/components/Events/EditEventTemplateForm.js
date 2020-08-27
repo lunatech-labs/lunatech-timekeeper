@@ -196,7 +196,7 @@ const EditEventTemplateForm = () => {
                     showTime={{
                       hideDisabledOptions: true
                     }}
-                    format="YYYY-MM-DD h:mm"
+                    format="YYYY-MM-DD HH:mm"
                     className="tk_RangePicker"
                   />
                 </Form.Item>

@@ -19,6 +19,7 @@ package fr.lunatech.timekeeper.services;
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.EventTemplate;
 import fr.lunatech.timekeeper.models.time.UserEvent;
+import fr.lunatech.timekeeper.resources.exceptions.UpdateResourceException;
 import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
 import fr.lunatech.timekeeper.services.responses.EventTemplateResponse;
@@ -93,44 +94,93 @@ public class EventTemplateService {
     }
 
     @Transactional
-    public Long create (EventTemplateRequest request, AuthenticationContext ctx){
+    public Optional<Long> create(EventTemplateRequest request, AuthenticationContext ctx) {
         logger.debug("Create a new event template with {}, {}", request, ctx);
 
         // check that all attendees can join
         checkAttendeesAvailability(request, ctx);
 
-        EventTemplate eventTemplate = request.unbind(userService::findById, ctx);
+        final EventTemplate eventTemplate = request.unbind(userService::findById, ctx);
         // by unbinding we also generate userEvent in db for each user
         // user event attributes will be inherited from eventTemplate (startTime, etc.)
+        boolean checkEvent = validateEvent(
+                eventTemplate.name,
+                eventTemplate.id,
+                eventTemplate.startDateTime,
+                eventTemplate.endDateTime, ctx);
+
+        if (checkEvent) {
+            return Optional.empty();
+        }
+
         eventTemplate.persistAndFlush();
-        return eventTemplate.id;
+        return Optional.of(eventTemplate.id);
     }
 
     @Transactional
-    public Optional<Long> update(Long id, EventTemplateRequest request, AuthenticationContext ctx){
-        logger.debug("Modify event template for for id={} with {}, {}", id, request, ctx);
+    public Optional<Long> update(Long eventId, EventTemplateRequest request, AuthenticationContext ctx) {
+        logger.debug("Modify event template for for id={} with {}, {}", eventId, request, ctx);
 
         // check that all attendees can join
         checkAttendeesAvailability(request, ctx);
 
+        // Request coming from frontend
+        final var newName = request.getName();
+        final var newStartTime = request.getStartDateTime();
+        final var newEndTime = request.getEndDateTime();
+
         // early quit: eventTemplate doesn't exist
-        final Optional<EventTemplate> maybeEvent = findById(id,ctx);
-        if (maybeEvent.isEmpty()){
-            return Optional.empty();
-        }
-        // delete all userEvent associated to the previous state of this event template
-        deleteAttendees(maybeEvent.get());
+        final Optional<EventTemplate> maybeEvent = findById(eventId, ctx);
 
-        // actually update the event. by side effect every userEvent associated will be created
-        EventTemplate eventTemplateUpdated = request.unbind(maybeEvent.get(),userService::findById, ctx);
-        eventTemplateUpdated.persistAndFlush();
+        return maybeEvent.map(event -> {
+            boolean checkEvent = validateEvent(
+                    newName,
+                    event.id,
+                    newStartTime,
+                    newEndTime,
+                    ctx);
+            if (checkEvent) {
+                throw new UpdateResourceException(
+                        "Event with name: " + request.getName() +
+                        ", already exists with same Start: " + request.getStartDateTime().toLocalDate() +
+                        "and End: " + request.getEndDateTime().toLocalDate() + " dates."
+                );
+            }
+            // delete all userEvent associated to the previous state of this event template
+            deleteAttendees(event);
 
-        return Optional.of(eventTemplateUpdated.id);
+            // actually update the event. by side effect every userEvent associated will be created
+            EventTemplate eventTemplateUpdated = request.unbind(event, userService::findById, ctx);
+            eventTemplateUpdated.persistAndFlush();
+
+            return eventTemplateUpdated.id;
+        });
+    }
+
+
+    private boolean validateEvent(String name, Long eventId, LocalDateTime startDateTime, LocalDateTime endDateTime, AuthenticationContext ctx) {
+        final var startDate = startDateTime.toLocalDate();
+        final var endDate = endDateTime.toLocalDate();
+        final var foundEvents = findByName(name, ctx)
+                .stream()
+                .filter(eventTemplate -> !eventTemplate.id.equals(eventId) &&
+                        eventTemplate.startDateTime.toLocalDate().isEqual(startDate) &&
+                        eventTemplate.endDateTime.toLocalDate().isEqual(endDate))
+                .findAny();
+
+        return foundEvents.isPresent();
     }
 
     private Optional<EventTemplate> findById(Long id, AuthenticationContext ctx) {
         return EventTemplate.<EventTemplate>findByIdOptional(id)
                 .filter(ctx::canAccess);
+    }
+
+    private List<EventTemplate> findByName(String name, AuthenticationContext ctx) {
+        return EventTemplate.<EventTemplate>find("name", name)
+                .stream()
+                .filter(ctx::canAccess)
+                .collect(Collectors.toList());
     }
 
     <R extends Collection<EventTemplateResponse>> R streamAll(

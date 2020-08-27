@@ -93,6 +93,15 @@ public class TimeKeeperDateUtils {
         return date.get(woy);
     }
 
+    /**
+     * Returns the monthNumber between 1 to 12 from LocalDate
+     * @param date
+     * @return a monthNumber as Integer
+     */
+    public static Integer getMonthNumberFromDate(final LocalDate date) {
+        return date.getMonthValue();
+    }
+
     public static Boolean isSameWeekAndYear(final LocalDate date1, final LocalDate date2) {
         boolean isSameWeek = getWeekNumberFromDate(date1).equals(getWeekNumberFromDate(date2));
         boolean isSameYear = date1.getYear() == date2.getYear();

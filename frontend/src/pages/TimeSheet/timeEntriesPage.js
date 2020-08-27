@@ -28,7 +28,7 @@ import TimeEntryForm from '../../components/TimeEntry/TimeEntryForm';
 import UserTimeSheetList from '../../components/TimeSheet/UserTimeSheetList';
 import MonthCalendar from '../../components/TimeSheet/MonthCalendar';
 import CalendarSelectionMode from '../../components/TimeSheet/CalendarSelectionMode';
-import {getIsoMonth, isNotWeekEnd} from '../../utils/momentUtils';
+import {getIsoMonth, isNotPublicHoliday, isNotWeekEnd} from '../../utils/momentUtils';
 
 //https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-an-array-of-objects/34890276#34890276
 const groupBy = function (xs, key) {
@@ -124,6 +124,9 @@ const TimeEntriesPage = () => {
   const publicHolidays = calendarMode === 'week' ?
     (weekData.data && !weekData.loading ? weekData.data.publicHolidays : []) : (monthData.data && !monthData.loading ? monthData.data.publicHolidays : []);
 
+  const userEvents = calendarMode === 'week' ?
+    (weekData.data && !weekData.loading ? weekData.data.userEvents : []) : (monthData.data && !monthData.loading ? monthData.data.userEvents : []);
+
   const datas = {
     firstDayOfWeek: weekData.data ? moment.utc(weekData.data.firstDayOfWeek) : today(),
     days: days
@@ -148,7 +151,7 @@ const TimeEntriesPage = () => {
   };
 
   const onClickCard = (e, m) => {
-    if(isNotWeekEnd(m)){
+    if(isNotWeekEnd(m) && isNotPublicHoliday(m, publicHolidays)){
       setTaskMoment(m);
       setViewMode();
       openModal();
@@ -177,7 +180,8 @@ const TimeEntriesPage = () => {
     if (selectedEntryId && mode === 'edit') {
       return <TimeEntryForm selectedEntryId={selectedEntryId} setMode={setMode}
         entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment}
-        form={form} mode={mode} onSuccess={() => {
+        userEvents={userEvents} form={form} mode={mode}
+        onSuccess={() => {
           closeModal();
           weekData.run();
           monthData.run();
@@ -186,7 +190,8 @@ const TimeEntriesPage = () => {
       />;
     }
     return <TimeEntryForm setMode={setMode} entries={entriesOfSelectedDay.map(entries => entries.data)}
-      currentDay={taskMoment} form={form} mode={mode} onSuccess={() => {
+      userEvents={userEvents} currentDay={taskMoment} form={form} mode={mode}
+      onSuccess={() => {
         closeModal();
         weekData.run();
         monthData.run();
@@ -232,6 +237,7 @@ const TimeEntriesPage = () => {
             }}
             days={datas.days}
             publicHolidays={publicHolidays}
+            userEvents={userEvents}
             warningCardPredicate={hasWarnNoEntryInPastDay}
           /> :
           <MonthCalendar
@@ -250,6 +256,7 @@ const TimeEntriesPage = () => {
               setPrefixMonthUrl(`${date.year()}/month?monthNumber=${getIsoMonth(date)}`);
             }}
             publicHolidays={publicHolidays}
+            userEvents={userEvents}
           />
       }
     </MainPage>

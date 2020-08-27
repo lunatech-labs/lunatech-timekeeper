@@ -23,7 +23,7 @@ import './MonthCalendar.less';
 import {isPublicHoliday, isWeekEnd, totalHoursPerDay} from '../../utils/momentUtils';
 import en_GB from 'antd/lib/locale-provider/en_GB';
 import 'moment/locale/en-gb';
-import _ from 'lodash'; // important!
+import _ from 'lodash';
 
 const {Option} = Select;
 
@@ -102,6 +102,7 @@ MonthNavigator.propTypes = {
 
 const MonthCalendar = (props) => {
   const publicHolidays = props.publicHolidays;
+  const userEvents = props.userEvents;
 
   const isDisabled = (dateAsMoment) => {
     if(_.isObjectLike(dateAsMoment)) {
@@ -118,9 +119,19 @@ const MonthCalendar = (props) => {
   };
 
   const findData = (date) => props.days.find(day => day.date.isSame(moment(date).utc(), 'day'));
+  const renderUserEvents = (userEvents, item) => {
+    if(userEvents && item){
+      return userEvents.map(userEvent => {
+        return userEvent.eventUserDaysResponse.map(userEventDay => {
+          if(item.format('YYYY-MM-DD') === userEventDay.date){
+            return <Tag className="tk_Tag_UserEvent">{userEventDay.name}</Tag>;
+          }
+        });
+      });
+    }
+  };
 
   const MonthCardComponent = ({item}) => {
-
     let associatedData =  findData(item);
     const className = !(props.disabledWeekEnd && (isWeekEnd(item) || isPublicHoliday(item) ) ) && (props.warningCardPredicate && props.warningCardPredicate(item, associatedData && associatedData.data)) ?
       'tk_CardMonthCalendar_Body_With_Warn' : '';
@@ -144,6 +155,7 @@ const MonthCalendar = (props) => {
           }}>
         </Button>
         {associatedData && associatedData.data && props.dateCellRender(associatedData.data, associatedData.date, associatedData.disabled)}
+        {renderUserEvents(userEvents, item)}
       </div>;
     }
 
@@ -208,6 +220,27 @@ MonthCalendar.propTypes = {
       localName: PropTypes.string,
       name: PropTypes.string,
       countryCode: PropTypes.string
+    })
+  ),
+  userEvents: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      date: PropTypes.string,
+      name: PropTypes.string,
+      description: PropTypes.string,
+      eventUserDaysResponse: PropTypes.arrayOf(
+        PropTypes.shape({
+          name: PropTypes.string,
+          description: PropTypes.string,
+          startDateTime: PropTypes.string,
+          endDateTime: PropTypes.string,
+          date: PropTypes.string
+        })
+      ),
+      eventType: PropTypes.string,
+      startDateTime: PropTypes.string,
+      endDateTime: PropTypes.string,
+      duration: PropTypes.string
     })
   )
 };

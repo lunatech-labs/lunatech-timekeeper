@@ -29,6 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TimeSheetResponseTest {
 
+    final LocalDate START_DATE = LocalDate.now();
+
     @Test
     void shouldFilterSixWeeksTo_EmptyListIfTimeSheetResponseHasNoEntries(){
         TimeSheetResponse tested = new TimeSheetResponse(
@@ -41,7 +43,8 @@ class TimeSheetResponseTest {
                 -1,
                 "toto",
                 Collections.emptyList(),
-                3L
+                3L,
+                START_DATE
         );
         assertTrue(tested.filterToSixWeeksRange(2020,2).entries.isEmpty());
     }
@@ -79,7 +82,8 @@ class TimeSheetResponseTest {
                 -1,
                 "toto",
                 initialDates,
-                3L
+                3L,
+                START_DATE
         );
         assertEquals(expectedList, tested.filterToSixWeeksRange(2020,7).entries);
     }
@@ -128,7 +132,8 @@ class TimeSheetResponseTest {
                 -1,
                 "toto",
                 initialDates,
-                3L
+                3L,
+                START_DATE
         );
         assertEquals(expectedList, tested.filterToSixWeeksRange(2020,1).entries);
     }
