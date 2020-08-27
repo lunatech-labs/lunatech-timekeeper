@@ -137,22 +137,34 @@ Try to reuse Jira ID as part of branch :
 
 This command configures pre-commit hook and validation.
 
+# Unit tests and Integration tests
+
+## Unit tests
+This project has two different types of tests. Unit tests and Integration tests.
+Unit tests are just plain simple and fast tests, that you should execute with the following command:
+
+    `mvn test`.
+
+## Integration tests
+
+Integration tests are QuarkusTest. Those tests relies on a Docker instance that is bootstrapped for test only automatically.
+
+    `mvn integration-test`
+
 # Sonarsource
 
-Use mvn with profile "sonar"
+This project is instrumented on the Lunatech Labs Sonarcloud.io instance.
+Pre-requisites : any Lunatech employee with a valid Github account can create and request a SonarCloud auth token [here](https://sonarcloud.io/account/security/)
+
+Create a Token, and set it on your local environment 
+
+    export SONAR_TOKEN=ef24g.....
+
+Then, use mvn with profile "sonar"
 
     ./mvnw -P sonar clean verify sonar:sonar
 
 Tests coverage are generated as XML file, as described [on sonarqube-scanner-maven](https://github.com/SonarSource/sonar-scanning-examples/tree/master/sonarqube-scanner-maven/maven-basic) sample project
-    
-# Fast tests : how to execute only H2 Test
-
-The integration suite is a bit slow with Docker + Keycloak. When you want to execute simple tests, please set ENV=fast-test-only
-
-    export ENV=fast-test-only
-    ./mvnw test
-    
-You can annotate a test with @DisabledIfEnvironmentVariable if your test is slow
-
-    @DisabledIfEnvironmentVariable(named = "ENV", matches = "fast-test-only")        
-
+   
+---
+End of README

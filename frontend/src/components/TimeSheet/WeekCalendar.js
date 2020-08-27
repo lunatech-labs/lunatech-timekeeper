@@ -33,7 +33,7 @@ import {
   renderRangeWithYear,
   weekRangeOfDate,
   totalHoursPerDay,
-  isPublicHoliday,
+  isPublicHoliday, isNotWeekEnd, isNotPublicHoliday,
 } from '../../utils/momentUtils';
 import moment from 'moment';
 import _ from 'lodash';
@@ -185,7 +185,7 @@ const WeekCalendar = (props) => {
             }
           };
           const renderUserEvents = (userEvents) => {
-            if(userEvents && item && !isWeekEnd(item.date) && !isPublicHoliday(item.date,publicHolidays)){
+            if(userEvents && item && isNotWeekEnd(item.date) && isNotPublicHoliday(item.date,publicHolidays)){
               return userEvents.map(userEvent => {
                 return userEvent.eventUserDaysResponse.map(userEventDay => {
                   if(userEventDay.date === item.date.format('YYYY-MM-DD')){
