@@ -23,7 +23,7 @@ export const isTimeSheetDisabled = (timeSheet, date, numberOfHoursForDay, entryD
 };
 
 // Returns true if all units are disabled, entryDuration is optional and is present only on timeEntry edition
-export const isTimeUnitDisabled = (timeSheet, numberOfHoursForDay, entryDuration) => {
+const isTimeUnitDisabled = (timeSheet, numberOfHoursForDay, entryDuration) => {
   const timeUnit = timeSheet && timeSheet.timeUnit;
   const hourDisabled = timeUnit && timeUnit !== 'HOURLY';
   const halfDayDisabled = (timeUnit && timeUnit !== 'HOURLY' && timeUnit !== 'HALFDAY') ||
@@ -34,7 +34,7 @@ export const isTimeUnitDisabled = (timeSheet, numberOfHoursForDay, entryDuration
 }
 
 // Returns true if the date is not in timesheets date range
-export const isDateOutOfTimeSheetRange = (timeSheet, date) => {
+const isDateOutOfTimeSheetRange = (timeSheet, date) => {
   if(timeSheet.expirationDate){
     return isDateOutOfTimeSheetRangeWithEndDate(timeSheet, date);
   }
@@ -44,23 +44,14 @@ export const isDateOutOfTimeSheetRange = (timeSheet, date) => {
 // Returns true if the date is before the startDate with no endDate
 const isDateOutOfTimeSheetRangeWithOutEndDate = (timeSheet, date) => {
   const startDate = moment(timeSheet.startDate);
-  const dateFormatted = moment(date.format('DD-MM-YYYY'));
-  console.log("Startdate " + startDate.format('YYYY-MM-DD'))
-  console.log("date " +dateFormatted.format('YYYY-MM-DD'))
-  console.log("date " +date)
-  console.log(!(date.isAfter(startDate) || date.isSame(startDate)))
-  return !(date.isAfter(startDate) || date.isSame(startDate));
+  const dateFormatted = moment(date.format('YYYY-MM-DD'));
+  return !(dateFormatted.isAfter(startDate) || dateFormatted.isSame(startDate));
 }
 
 // Returns true if the date is before the startDate or after the endDate
 const isDateOutOfTimeSheetRangeWithEndDate = (timeSheet, date) => {
-  console.log(timeSheet)
   const startDate = moment(timeSheet.startDate);
   const endDate = moment(timeSheet.expirationDate);
   const dateFormatted = moment(date.format('YYYY-MM-DD'));
-  console.log("Startdate " + startDate.format('YYYY-MM-DD'))
-  console.log("date " +dateFormatted.format('YYYY-MM-DD'))
-  console.log("enddate " +endDate.format('YYYY-MM-DD'))
-  console.log(!dateFormatted.isBetween(startDate, endDate,undefined, []))
   return !dateFormatted.isBetween(startDate, endDate,undefined, []);
 }
