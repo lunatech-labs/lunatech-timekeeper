@@ -53,8 +53,20 @@ public class TimeSheetResponse {
 
     public final Long leftOver;
 
-    public TimeSheetResponse(Long id, ProjectResponse project, Long ownerId, TimeUnit timeUnit,
-                             Boolean defaultIsBillable, LocalDate expirationDate, Integer maxDuration, String durationUnit, List<TimeEntryResponse> entries, Long leftOver) {
+    public final LocalDate startDate;
+
+    public TimeSheetResponse(Long id,
+                             ProjectResponse project,
+                             Long ownerId,
+                             TimeUnit timeUnit,
+                             Boolean defaultIsBillable,
+                             LocalDate expirationDate,
+                             Integer maxDuration,
+                             String durationUnit,
+                             List<TimeEntryResponse> entries,
+                             Long leftOver,
+                             LocalDate startDate
+    ) {
         this.id = id;
         this.project = project;
         this.ownerId = ownerId;
@@ -65,6 +77,7 @@ public class TimeSheetResponse {
         this.durationUnit = durationUnit;
         this.entries = entries;
         this.leftOver = leftOver;
+        this.startDate = startDate;
     }
 
     public static TimeSheetResponse bind(@NotNull TimeSheet sheet) {
@@ -79,7 +92,8 @@ public class TimeSheetResponse {
                 sheet.durationUnit.name(),
                 sheet.entries.stream().map(TimeSheetResponse.TimeEntryResponse::bind)
                         .collect(Collectors.toList()),
-                TimeSheetUtils.computeLeftOver(sheet)
+                TimeSheetUtils.computeLeftOver(sheet),
+                sheet.startDate
         );
     }
 
@@ -145,7 +159,9 @@ public class TimeSheetResponse {
                 this.maxDuration,
                 this.durationUnit,
                 restrictedEntries,
-                this.leftOver);
+                this.leftOver,
+                this.startDate
+        );
     }
 
     public final TimeSheetResponse filterTimeEntriesForWeek(LocalDate startDayOfWeek){
@@ -163,7 +179,9 @@ public class TimeSheetResponse {
                 this.maxDuration,
                 this.durationUnit,
                 restrictedEntries,
-                this.leftOver);
+                this.leftOver,
+                this.startDate
+        );
     }
 
     @Override
@@ -179,6 +197,7 @@ public class TimeSheetResponse {
                 ", durationUnit='" + durationUnit + '\'' +
                 ", entries=" + entries +
                 ", leftOver=" + leftOver +
+                ", startDate=" + startDate +
                 '}';
     }
 }

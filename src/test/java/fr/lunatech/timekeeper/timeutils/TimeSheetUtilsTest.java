@@ -21,6 +21,7 @@ import fr.lunatech.timekeeper.models.time.TimeSheet;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,6 +33,8 @@ import static org.hamcrest.Matchers.nullValue;
 
 @DisabledIfEnvironmentVariable(named = "ENV", matches = "fast-test-only")
 class TimeSheetUtilsTest {
+
+    private final LocalDate START_DATE = LocalDate.now();
 
     @Test
     void shouldComputeLeftOver_nominal() {
@@ -46,7 +49,8 @@ class TimeSheetUtilsTest {
                 null,
                 10,
                 TimeUnit.DAY,
-                generateTestEntries(8,8L)
+                generateTestEntries(8,8L),
+                START_DATE
         );
 
         //THEN: only 2 hours left
@@ -66,7 +70,8 @@ class TimeSheetUtilsTest {
                 null,
                 10,
                 TimeUnit.DAY,
-                null
+                null,
+                START_DATE
         );
 
         //THEN: 10 days left
@@ -86,7 +91,8 @@ class TimeSheetUtilsTest {
                 null,
                 4,
                 TimeUnit.HALFDAY,
-                generateTestEntries(1,8L)
+                generateTestEntries(1,8L),
+                START_DATE
         );
 
         //THEN: only 2 half day (1 day)
@@ -106,7 +112,8 @@ class TimeSheetUtilsTest {
                 null,
                 4,
                 TimeUnit.HALFDAY,
-                generateTestEntries(3,4L)
+                generateTestEntries(3,4L),
+                START_DATE
         );
 
         //THEN: only 1 half day left (rounded to 0 day)
@@ -126,7 +133,8 @@ class TimeSheetUtilsTest {
                 null,
                 20,
                 TimeUnit.HOURLY,
-                generateTestEntries(1,8L)
+                generateTestEntries(1,8L),
+                START_DATE
         );
 
         //THEN: only 12 hours left (1,5 day -> rounded 1 day)
@@ -146,7 +154,8 @@ class TimeSheetUtilsTest {
                 null,
                 8,
                 TimeUnit.HOURLY,
-                generateTestEntries(1,1L)
+                generateTestEntries(1,1L),
+                START_DATE
         );
 
         //THEN: only 7 hours left (rounded 0 day)
@@ -166,7 +175,8 @@ class TimeSheetUtilsTest {
                 null,
                 2,
                 TimeUnit.DAY,
-                generateTestEntries(4,8L)
+                generateTestEntries(4,8L),
+                START_DATE
         );
 
         //THEN: the result is negative
@@ -189,7 +199,8 @@ class TimeSheetUtilsTest {
                 null,
                 8,
                 TimeUnit.HOURLY,
-                Collections.singletonList(timeEntry)
+                Collections.singletonList(timeEntry),
+                START_DATE
         );
 
         //THEN: only 0 hours left (rounded 0 day)
@@ -209,7 +220,8 @@ class TimeSheetUtilsTest {
                 null,
                 null,
                 TimeUnit.HOURLY,
-                generateTestEntries(1,1L)
+                generateTestEntries(1,1L),
+                START_DATE
         );
 
         //THEN: no calculation are made
@@ -229,7 +241,8 @@ class TimeSheetUtilsTest {
                 null,
                 -2,
                 TimeUnit.HOURLY,
-                generateTestEntries(1,1L)
+                generateTestEntries(1,1L),
+                START_DATE
         );
 
         //THEN: no calculation are made
@@ -249,7 +262,8 @@ class TimeSheetUtilsTest {
                 null,
                 4,
                 null,
-                generateTestEntries(1,8L)
+                generateTestEntries(1,8L),
+                START_DATE
         );
 
         //THEN: limit is consider by day, therefor 3 is returned
