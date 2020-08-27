@@ -54,7 +54,6 @@ class OrganizationResourceTest {
 
     @AfterEach
     void cleanDB() {
-
         flyway.clean();
         flyway.migrate();
     }
