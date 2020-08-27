@@ -18,8 +18,8 @@ package fr.lunatech.timekeeper.timeutils;
 
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,7 +31,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
-@DisabledIfEnvironmentVariable(named = "ENV", matches = "fast-test-only")
 class TimeSheetUtilsTest {
 
     private final LocalDate START_DATE = LocalDate.now();
