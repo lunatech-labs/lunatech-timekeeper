@@ -34,6 +34,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -208,10 +209,13 @@ public class EventTemplateService {
     }
 
     Stream<UserEvent> findUserEventByUserIdAndStartDate(long userId, LocalDateTime startDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String dateAsString = formatter.format(startDate);
+
         return UserEvent
                 .<UserEvent>find(
-                        "owner_id = :id AND date(startDateTime) = :date",
-                        Parameters.with("id", userId).and("date", startDate)
+                        "owner_id = :id AND PARSEDATETIME(FORMATDATETIME(startDateTime, 'yyyy-MM-dd HH:mm:ss'), 'yyyy-MM-dd HH:mm:ss') = :dateAsString",
+                        Parameters.with("id", userId).and("dateAsString", dateAsString)
                 )
                 .stream();
     }

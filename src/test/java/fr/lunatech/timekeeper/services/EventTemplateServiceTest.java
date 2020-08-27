@@ -10,11 +10,7 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.flywaydb.core.Flyway;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
+import org.junit.jupiter.api.*;
 
 import javax.inject.Inject;
 import java.time.LocalDateTime;
@@ -22,11 +18,13 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
+import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
+
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
 @QuarkusTestResource(KeycloakTestResource.class)
-@DisabledIfEnvironmentVariable(named = "ENV", matches = "fast-test-only")
-@Disabled // Test is disabled because H2 does not support `date()` function. Re-enable once event will store date only (not date and time).
+@Tag("integration")
 class EventTemplateServiceTest {
 
     @Inject
@@ -45,8 +43,10 @@ class EventTemplateServiceTest {
 
     @Test
     void create_should_create_an_user_event() {
+        final String samToken = getAdminAccessToken();
+        var sam = create(samToken);
 
-        EventTemplateRequest.UserEventRequest userEventRequest = new EventTemplateRequest.UserEventRequest(1L);
+        EventTemplateRequest.UserEventRequest userEventRequest = new EventTemplateRequest.UserEventRequest(sam.getId());
 
         EventTemplateRequest eventTemplateRequest = new EventTemplateRequest(
                 "request1",
@@ -65,7 +65,7 @@ class EventTemplateServiceTest {
         organization.clients = Collections.emptyList();
 
         AuthenticationContext ctx = new AuthenticationContext(
-                userEventRequest.getUserId(),
+                sam.getId(),
                 organization,
                 Collections.emptyList()
         );
@@ -80,14 +80,16 @@ class EventTemplateServiceTest {
 
     @Test
     void create_should_throw_an_exception_if_one_attendee_cannot_join() {
+        final String samToken = getAdminAccessToken();
+        var sam = create(samToken);
 
-        EventTemplateRequest.UserEventRequest userEventRequest = new EventTemplateRequest.UserEventRequest(1L);
+        EventTemplateRequest.UserEventRequest userEventRequest = new EventTemplateRequest.UserEventRequest(sam.getId());
 
         EventTemplateRequest eventTemplateRequest = new EventTemplateRequest(
                 "request1",
                 "description1",
                 START_DAY,
-                START_DAY.plusHours(10),
+                START_DAY.plusHours(8),
                 Lists.newArrayList(userEventRequest)
         );
 
@@ -100,12 +102,12 @@ class EventTemplateServiceTest {
         organization.clients = Collections.emptyList();
 
         AuthenticationContext ctx = new AuthenticationContext(
-                userEventRequest.getUserId(),
+               sam.getId(),
                 organization,
                 Collections.emptyList()
         );
 
-        // Insert a first event of 10 hours
+        // Insert a first event of 8 hours
         eventTemplateService.create(eventTemplateRequest, ctx);
 
         // Assert that we cannot add a second event of 10 because the limit of 8 hours is already reached
