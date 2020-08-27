@@ -31,7 +31,7 @@ test('isTimeSheetDisabled return false for a daily timesheet on an empty day on 
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-16').utc(), 0);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-16'), 0);
 
   // eslint-disable-next-line
     expect(result).toBe(false);
@@ -191,7 +191,7 @@ test('isTimeSheetDisabled return true for a date outside of timesheet range', ()
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15').utc(), 5);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15'), 5);
 
   // eslint-disable-next-line
   expect(result).toBe(true);
@@ -211,7 +211,7 @@ test('isTimeSheetDisabled return false for a date the first day of timesheet ran
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-16').utc(), 0);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-16'), 0);
 
   // eslint-disable-next-line
   expect(result).toBe(false);
@@ -231,7 +231,7 @@ test('isTimeSheetDisabled return false for a date in timesheet range', () => {
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-26').utc(), 0);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-26'), 0);
 
   // eslint-disable-next-line
   expect(result).toBe(false);
@@ -251,7 +251,7 @@ test('isTimeSheetDisabled return false for a date the last day of timesheet rang
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,moment('2020-04-16').utc(), 0);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-04-16'), 0);
 
   // eslint-disable-next-line
   expect(result).toBe(false);
@@ -271,7 +271,7 @@ test('isTimeSheetDisabled return false for a date equals to the startDate with n
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-16').utc(), 0);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-16'), 0);
 
   // eslint-disable-next-line
   expect(result).toBe(false);
@@ -291,7 +291,7 @@ test('isTimeSheetDisabled return false for a date after the startDate with no en
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-19').utc(), 0);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-19'), 0);
 
   // eslint-disable-next-line
   expect(result).toBe(false);
@@ -311,7 +311,7 @@ test('isTimeSheetDisabled return true for a date before the startDate with no en
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15').utc(), 5);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15'), 5);
 
   // eslint-disable-next-line
   expect(result).toBe(true);
