@@ -75,8 +75,8 @@ class TimeSheetResourceTest {
         // GIVEN : a project with 2 member
         final String adminToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
-        var sam = create(adminToken);
-        var jimmy = create(jimmyToken);
+        final var sam = create(adminToken);
+        final var jimmy = create(jimmyToken);
         final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
         ProjectRequest.ProjectUserRequest samProjectRequest = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
         ProjectRequest.ProjectUserRequest jimmyProjectRequest = new ProjectRequest.ProjectUserRequest(jimmy.getId(), false);
@@ -98,7 +98,7 @@ class TimeSheetResourceTest {
     void shouldUpdateTimeSheetById() {
         // GIVEN : a project with 2 member
         final String adminToken = getAdminAccessToken();
-        var sam = create(adminToken);
+        final var sam = create(adminToken);
         final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
         ProjectRequest.ProjectUserRequest samProjectRequest = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
         List<ProjectRequest.ProjectUserRequest> newUsers = List.of(samProjectRequest);
@@ -149,7 +149,7 @@ class TimeSheetResourceTest {
     void shouldUpdateTimeSheetWithNoEndDateTime() {
         // GIVEN : a project with 2 member
         final String adminToken = getAdminAccessToken();
-        var sam = create(adminToken);
+        final var sam = create(adminToken);
         final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
         ProjectRequest.ProjectUserRequest samProjectRequest = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
         List<ProjectRequest.ProjectUserRequest> newUsers = List.of(samProjectRequest);
@@ -189,7 +189,7 @@ class TimeSheetResourceTest {
     void shouldNotUpdateTimeSheetWithStartDateBeforeEndDate() {
         // GIVEN : a project with 2 member
         final String adminToken = getAdminAccessToken();
-        var sam = create(adminToken);
+        final var sam = create(adminToken);
         final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
         ProjectRequest.ProjectUserRequest samProjectRequest = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
         List<ProjectRequest.ProjectUserRequest> newUsers = List.of(samProjectRequest);
