@@ -26,7 +26,7 @@ import EditTimeSheetForm from './EditTimeSheetForm';
 import ProjectClientHeader from '../Projects/ProjectClientHeader';
 
 const moment = require('moment');
-const format = (s) => moment(s, 'YYYY-MM-DD').format('YYYY/MM/DD');
+const format = (s) => moment(s, 'YYYY-MM-DD').format('DD/MM/YYYY');
 const ShowTimeSheet = ({project, member}) => {
   const {data, error, loading} = useTimeKeeperAPI(`/api/projects/${project.id}/users/${member.id}`);
   const [selectedTimeSheet, setSelectedTimeSheet] = useState();
@@ -49,9 +49,9 @@ const ShowTimeSheet = ({project, member}) => {
               <Col span={12}>
                 <p className="tk_Information"><ClockCircleOutlined/> TimeUnit: {timeSheet.timeUnit}</p>
                 <p className="tk_Information"><CalendarOutlined/> Start
-                  date: {timeSheet.startDate ? format(timeSheet.startDate) : '----/--/--'}</p>
+                  date: {timeSheet.startDate ? format(timeSheet.startDate) : '--/--/----'}</p>
                 <p className="tk_Information"><CalendarOutlined/> End
-                  date: {timeSheet.expirationDate ? format(timeSheet.expirationDate) : '----/--/--'}</p>
+                  date: {timeSheet.expirationDate ? format(timeSheet.expirationDate) : '--/--/----'}</p>
               </Col>
               <Col span={12}>
                 <p className="tk_Information"><CalendarOutlined/> Number of days: {timeSheet.maxDuration}

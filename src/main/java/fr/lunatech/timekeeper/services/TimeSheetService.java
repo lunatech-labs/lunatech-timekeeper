@@ -69,9 +69,12 @@ public class TimeSheetService {
     @Transactional
     public Optional<Long> update(Long id, TimeSheetRequest request, AuthenticationContext ctx) {
         logger.info("Modify timesheet for id={} with {}, {}", id, request, ctx);
-        return findById(id, ctx)
-                .map(request::unbind)
-                .map(timeSheet -> timeSheet.id);
+        if(isStartDateBeforeEndDate(request)){
+            return findById(id, ctx)
+                    .map(request::unbind)
+                    .map(timeSheet -> timeSheet.id);
+        }
+        throw new IllegalArgumentException("StartDate must be before endDate");
     }
 
     public List<TimeSheetResponse> findAllActivesForUser(AuthenticationContext ctx) {
@@ -100,5 +103,13 @@ public class TimeSheetService {
     Optional<TimeSheet> findById(Long id, AuthenticationContext ctx) {
         return TimeSheet.<TimeSheet>findByIdOptional(id)
                 .filter(ctx::canAccess);
+    }
+
+    //return true if startDate is before endDate or if there is no endDate
+    private boolean isStartDateBeforeEndDate(TimeSheetRequest request) {
+        if(Optional.ofNullable(request.expirationDate).isPresent()){
+            return request.startDate.isBefore(request.expirationDate);
+        }
+        return true;
     }
 }

@@ -61,6 +61,7 @@ const EditTimeSheetForm = ({timeSheet}) => {
     return {
       'timeUnit': timeSheet.timeUnit,
       'defaultIsBillable': timeSheet.defaultIsBillable,
+      'startDate': timeSheet.startDate ? moment(timeSheet.startDate, 'YYYY-MM-DD').utc(true) : null,
       'expirationDate': timeSheet.expirationDate ? moment(timeSheet.expirationDate, 'YYYY-MM-DD').utc(true) : null,
       'maxDuration': timeSheet.maxDuration,
       'durationUnit': timeSheet.durationUnit
@@ -81,7 +82,7 @@ const EditTimeSheetForm = ({timeSheet}) => {
           </Radio.Group>
         </Form.Item>
 
-        <Form.Item label="Start date" name='startDate' rules={[{required: false}]}>
+        <Form.Item label="Start date" name='startDate' rules={[{required: true}]}>
           <DatePicker className="tk_InputDate"/>
         </Form.Item>
 
