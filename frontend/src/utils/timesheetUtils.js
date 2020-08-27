@@ -19,7 +19,7 @@ import moment from 'moment';
 
 
 export const isTimeSheetDisabled = (timeSheet, date, numberOfHoursForDay, entryDuration) => {
-  return isTimeUnitDisabled(timeSheet, numberOfHoursForDay, entryDuration) && isDateOutOfTimeSheetRange(timeSheet, date);
+  return isTimeUnitDisabled(timeSheet, numberOfHoursForDay, entryDuration) || isDateOutOfTimeSheetRange(timeSheet, date);
 };
 
 // Returns true if all units are disabled, entryDuration is optional and is present only on timeEntry edition
@@ -36,20 +36,29 @@ const isTimeUnitDisabled = (timeSheet, numberOfHoursForDay, entryDuration) => {
 // Returns true if the date is not in timesheets date range
 const isDateOutOfTimeSheetRange = (timeSheet, date) => {
   if(timeSheet.expirationDate){
+    // console.log(isDateOutOfTimeSheetRangeWithEndDate(timeSheet, date))
     return isDateOutOfTimeSheetRangeWithEndDate(timeSheet, date);
   }
+  // console.log(isDateOutOfTimeSheetRangeWithOutEndDate(timeSheet, date))
   return isDateOutOfTimeSheetRangeWithOutEndDate(timeSheet, date);
 }
 
 // Returns true if the date is before the startDate with no endDate
 const isDateOutOfTimeSheetRangeWithOutEndDate = (timeSheet, date) => {
   const startDate = moment(timeSheet.startDate).utc();
-  return !(date.isAfter(startDate) || date.isSame(startDate));
+  const dateFormatted = moment(date.format('DD-MM-YYYY')).utc();
+  return !(dateFormatted.isAfter(startDate) || dateFormatted.isSame(startDate));
 }
 
 // Returns true if the date is before the startDate or after the endDate
 const isDateOutOfTimeSheetRangeWithEndDate = (timeSheet, date) => {
+  console.log(timeSheet)
   const startDate = moment(timeSheet.startDate).utc();
   const endDate = moment(timeSheet.expirationDate).utc();
-  return !date.isBetween(startDate, endDate,undefined, []);
+  const dateFormatted = moment(date.format('YYYY-MM-DD')).utc();
+  console.log(startDate)
+  console.log(dateFormatted)
+  console.log(endDate)
+  console.log(dateFormatted.isBetween(startDate, endDate,undefined, []))
+  return !dateFormatted.isBetween(startDate, endDate,undefined, []);
 }

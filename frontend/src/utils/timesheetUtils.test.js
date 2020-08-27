@@ -31,7 +31,7 @@ test('isTimeSheetDisabled return false for a daily timesheet on an empty day on 
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15').utc(), 0);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-16').utc(), 0);
 
   // eslint-disable-next-line
     expect(result).toBe(false);
@@ -51,7 +51,7 @@ test('isTimeSheetDisabled return true for a daily timesheet on a not empty day o
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15'),1);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-16'),1);
 
   // eslint-disable-next-line
     expect(result).toBe(true);
@@ -71,7 +71,7 @@ test('isTimeSheetDisabled return false for a daily timesheet on an empty day on 
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15'),0, 4);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-16'),0, 4);
 
   // eslint-disable-next-line
     expect(result).toBe(false);
@@ -91,7 +91,7 @@ test('isTimeSheetDisabled return true for a daily timesheet on a not empty day o
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15'),4, 1);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-16'),4, 1);
 
   // eslint-disable-next-line
     expect(result).toBe(true);
@@ -111,7 +111,7 @@ test('isTimeSheetDisabled return false for an halfday timesheet on an empty day 
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15'),0);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-16'),0);
 
   // eslint-disable-next-line
     expect(result).toBe(false);
@@ -131,7 +131,7 @@ test('isTimeSheetDisabled return true for an halfday timesheet with 5 hours on a
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15'),5);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-16'),5);
 
   // eslint-disable-next-line
     expect(result).toBe(true);
@@ -151,7 +151,7 @@ test('isTimeSheetDisabled return false for an halfday timesheet on an empty day 
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15'),0, 4);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-16'),0, 4);
 
   // eslint-disable-next-line
     expect(result).toBe(false);
@@ -171,7 +171,7 @@ test('isTimeSheetDisabled return true for an halfday timesheet on a not empty da
       id: 1
     }
   };
-  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-15'),6, 1);
+  const result = isTimeSheetDisabled(timesheetDay,moment('2020-03-16'),6, 1);
 
   // eslint-disable-next-line
     expect(result).toBe(true);
