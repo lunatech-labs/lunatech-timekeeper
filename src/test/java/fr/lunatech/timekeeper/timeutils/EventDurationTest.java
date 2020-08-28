@@ -33,13 +33,17 @@ class EventDurationTest {
 
     @Test
     void shouldReturnTheCorrectDurationForValidStartAndEndDate() {
-        // todo
+        LocalDateTime after = LocalDateTime.of(2020, 8,27,9,0,0);
+        LocalDateTime before = LocalDateTime.of(2020, 8,27,17,0,0);
+        assertEquals(8, EventDuration.durationInHours(after,before));
 
     }
 
     @Test
     void shouldComputeDurationIfEndDateIsTwoDaysAfterStartDate() {
-       // todo
+        LocalDateTime after = LocalDateTime.of(2020, 8,27,9,0,0);
+        LocalDateTime before = LocalDateTime.of(2020, 8,29,9,0,0);
+        assertEquals(15, EventDuration.durationInHours(after,before));
     }
 
 
