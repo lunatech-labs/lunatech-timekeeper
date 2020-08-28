@@ -17,7 +17,6 @@
 package fr.lunatech.timekeeper.services.requests;
 
 import fr.lunatech.timekeeper.models.Organization;
-import fr.lunatech.timekeeper.services.AuthenticationContext;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -41,7 +40,7 @@ public class OrganizationRequest {
         return organization;
     }
 
-    public Organization unbind(@NotNull AuthenticationContext ctx) {
+    public Organization unbind() {
         return unbind(new Organization());
     }
 

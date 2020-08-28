@@ -59,7 +59,7 @@ public class OrganizationService {
         if(logger.isDebugEnabled()) {
             logger.debug("Create a new organization with {}, {}", request, ofNullable(ctx).map(AuthenticationContext::toString).orElse("No context"));
         }
-        final Organization organization = request.unbind(ctx);
+        final Organization organization = request.unbind();
         organization.persist();
         return organization.id;
     }
