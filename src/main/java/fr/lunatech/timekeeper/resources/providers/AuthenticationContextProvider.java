@@ -83,7 +83,7 @@ public class AuthenticationContextProvider {
     }
 
     private List<Profile> getProfiles(OidcJwtCallerPrincipal jwtCallerPrincipal, JwtClaims jwtClaims) {
-        JsonObject realmAccess = null;
+        JsonObject realmAccess;
         try {
             realmAccess = jwtClaims.getClaimValue("realm_access", JsonObject.class);
         } catch (MalformedClaimException e) {
@@ -98,7 +98,7 @@ public class AuthenticationContextProvider {
                         .getJsonArray("roles")
                         .stream()
                         .map(Object::toString)
-                        .map(s -> s.replaceAll("\"", ""))
+                        .map(s -> s.replace("\"", ""))
                         .map(Profile::getByName)
                         .filter(Optional::isPresent)
                         .map(Optional::get)
