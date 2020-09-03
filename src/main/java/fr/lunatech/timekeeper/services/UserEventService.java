@@ -67,7 +67,8 @@ public class UserEventService {
 
         // Here we delete any userEvent that was previously created with this template.
         // If you remove a user from a template, it will delete the associated userEvent
-        UserEvent.<UserEvent>stream("eventtemplate_id=?1",eventTemplate.id).forEach(PanacheEntityBase::delete);
+        UserEvent.<UserEvent>stream("eventtemplate_id=?1",eventTemplate.id) // NOSONAR
+                .forEach(PanacheEntityBase::delete);
 
         long updated = 0;
         for (var userEventRequest : userEventRequests) {

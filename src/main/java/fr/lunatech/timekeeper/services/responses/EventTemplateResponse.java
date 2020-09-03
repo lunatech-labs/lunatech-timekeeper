@@ -17,22 +17,13 @@
 package fr.lunatech.timekeeper.services.responses;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.google.common.collect.Lists;
-import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.EventTemplate;
-import fr.lunatech.timekeeper.services.AuthenticationContext;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateFormat;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.LongFunction;
-import java.util.stream.Collectors;
 
 public class EventTemplateResponse {
 
