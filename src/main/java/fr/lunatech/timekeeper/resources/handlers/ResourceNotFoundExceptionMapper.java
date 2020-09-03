@@ -33,7 +33,9 @@ public class ResourceNotFoundExceptionMapper implements ExceptionMapper<NotFound
 
     @Override
     public Response toResponse(NotFoundException e) {
-        logger.warn(String.format("Resource not found message=%s", e.getMessage()), e);
+        if(logger.isWarnEnabled()) {
+            logger.warn(String.format("Resource not found message=%s", e.getMessage()), e);
+        }
         return Response
                 .status(Response.Status.NOT_FOUND)
                 .type(MediaType.APPLICATION_JSON)

@@ -46,7 +46,9 @@ public class ForbiddenExceptionMapper implements ExceptionMapper<ForbiddenExcept
                     )
                     .build();
         } else {
-            logger.warn(String.format("ForbiddenException %s ", e.getMessage()), e);
+            if(logger.isWarnEnabled()) {
+                logger.warn(String.format("ForbiddenException %s ", e.getMessage()), e);
+            }
             return Response
                     .status(Response.Status.FORBIDDEN)
                     .type(MediaType.APPLICATION_JSON)

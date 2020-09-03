@@ -46,6 +46,7 @@ public class TimeSheet extends PanacheEntityBase {
     @Enumerated(EnumType.STRING)
     public TimeUnit timeUnit;
 
+    @NotNull
     public Boolean defaultIsBillable;
 
     // 1---------------
