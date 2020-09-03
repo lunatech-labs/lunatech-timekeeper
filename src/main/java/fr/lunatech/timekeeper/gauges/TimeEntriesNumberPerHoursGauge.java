@@ -3,7 +3,6 @@ package fr.lunatech.timekeeper.gauges;
 import io.quarkus.runtime.StartupEvent;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Gauge;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 
@@ -65,5 +64,6 @@ public class TimeEntriesNumberPerHoursGauge {
     }
 
     void init(@Observes StartupEvent event) {
+        // keep this method as it is required by Quarkus
     }
 }

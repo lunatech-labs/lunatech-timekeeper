@@ -91,7 +91,6 @@ class UserResourceTest {
 
     @Test
     void shouldAddJimmyAsMemberOfAProjectAndRetriveThisProjectInUserRequest() {
-
         final String samToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
 
