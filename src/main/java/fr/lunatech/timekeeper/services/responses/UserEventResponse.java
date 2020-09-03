@@ -64,12 +64,8 @@ public class UserEventResponse {
      */
     private static UserEventResponse checkParameters(UserEvent event, UserEventResponse userEventResponse) {
         if(event.startDateTime != null && event.endDateTime != null){
-            userEventResponse.eventUserDaysResponse = createEventUserDayResponseList(event);
-            if(event.startDateTime.isAfter(event.endDateTime)){
-                userEventResponse.duration = "";
-            }else{
+                userEventResponse.eventUserDaysResponse = createEventUserDayResponseList(event);
                 userEventResponse.duration = Duration.between(event.startDateTime, event.endDateTime).toString();
-            }
         }
         if (event.startDateTime != null) {
             userEventResponse.startDateTime = TimeKeeperDateUtils.formatToString(event.startDateTime);

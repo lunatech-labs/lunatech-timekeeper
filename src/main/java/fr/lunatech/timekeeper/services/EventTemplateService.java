@@ -70,7 +70,7 @@ public class EventTemplateService {
         logger.debug("Create a new event template with {}, {}", request, ctx);
         final EventTemplate eventTemplate = request.unbind(ctx);
 
-        eventTemplate.validate();
+        eventTemplate.isValid();
 
         // by unbinding we also generate userEvent in db for each user
         // user event attributes will be inherited from eventTemplate (startTime, etc.)
