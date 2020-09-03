@@ -52,12 +52,6 @@ public class UserEventService {
         return userEvent.startDateTime.getYear() == year || userEvent.endDateTime.getYear() == year;
     }
 
-    protected List<UserEventResponse> listAllFromEventTemplateId(final Long eventTemplateId) {
-        return UserEvent.<UserEvent>stream("eventtemplate_id=?1", eventTemplateId) //NOSONAR
-                .map(UserEventResponse::bind)
-                .collect(Collectors.toList());
-    }
-
     public Long createOrUpdateFromEventTemplate(EventTemplate eventTemplate,
                                                 List<EventTemplateRequest.UserEventRequest> userEventRequests,
                                                 AuthenticationContext ctx) {
