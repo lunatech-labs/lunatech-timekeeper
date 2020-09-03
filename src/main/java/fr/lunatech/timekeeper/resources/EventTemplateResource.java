@@ -78,9 +78,9 @@ public class EventTemplateResource implements EventTemplateResourceApi {
                                         .build()
                         ).build()
                 ).orElseThrow(() -> new IllegalEntityStateException(
-                        "Event with name: " + request.getName() +
-                                ", already exists with same Start: " + request.getStartDateTime().toLocalDate() +
-                                "and End: " + request.getEndDateTime().toLocalDate() + " dates.")
+                        "An event template with the same name, same start day and same end day already exists. Event name=[" + request.getName() +
+                                "], start day date=" + request.getStartDateTime().toLocalDate() +
+                                " end day date=" + request.getEndDateTime().toLocalDate())
                 );
     }
 

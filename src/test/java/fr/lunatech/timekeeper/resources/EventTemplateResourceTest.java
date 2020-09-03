@@ -19,6 +19,7 @@ package fr.lunatech.timekeeper.resources;
 import fr.lunatech.timekeeper.models.Profile;
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.EventType;
+import fr.lunatech.timekeeper.resources.utils.HttpTestRuntimeException;
 import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
 import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
 import fr.lunatech.timekeeper.services.responses.EventTemplateResponse;
@@ -57,11 +58,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 @QuarkusTestResource(H2DatabaseTestResource.class)
 @QuarkusTestResource(KeycloakTestResource.class)
 @Tag("integration")
-class EventResourceTest {
+class EventTemplateResourceTest {
 
+    private static final LocalDateTime THE_24_TH_JUNE_2020_AT_8_AM = LocalDateTime.of(2020,6,24,8,0);
     private static final LocalDateTime THE_24_TH_JUNE_2020_AT_9_AM = LocalDateTime.of(2020,6,24,9,0);
     private static final LocalDateTime THE_24_TH_JUNE_2020_AT_5_PM = LocalDateTime.of(2020,6,24,17,0);
     private static final LocalDateTime THE_28_TH_JUNE_2020_AT_5_PM = LocalDateTime.of(2020,6,28,17,0);
+    private static final LocalDateTime THE_28_TH_JUNE_2020_AT_2_PM = LocalDateTime.of(2020,6,28,14,0);
     private static final String EVENT_NAME = "The test event";
     private static final String EVENT_DESCRIPTION = "It's a corporate event";
 
@@ -75,6 +78,42 @@ class EventResourceTest {
     void cleanUp() {
         flyway.clean();
         flyway.migrate();
+    }
+
+    @Test
+    void shouldNotCreateEventWithSameNameAndSameDates(){
+        //WITH: Unique EventName
+        final String eventName = generateRandomEventName();
+
+        //GIVEN: 2 user
+        final String samToken = getAdminAccessToken();
+        var sam = create(samToken);
+        create(getUserAccessToken());
+
+        //WHEN: an eventTemplateRequest is created with SAM as an attendee
+        var newEventTemplate = new EventTemplateRequest(
+                eventName,
+                EVENT_DESCRIPTION,
+                THE_24_TH_JUNE_2020_AT_9_AM,
+                THE_28_TH_JUNE_2020_AT_2_PM,
+                Collections.emptyList()
+        );
+        create(newEventTemplate, samToken);
+
+        //THEN: if we try to create an event with same name, same date, it should NOT work
+        var anotherEventTemplate = new EventTemplateRequest(
+                eventName,
+                EVENT_DESCRIPTION,
+                THE_24_TH_JUNE_2020_AT_8_AM,
+                THE_28_TH_JUNE_2020_AT_5_PM,
+                Collections.emptyList()
+        );
+        try {
+            create(anotherEventTemplate, samToken);
+        } catch (HttpTestRuntimeException httpError) {
+            assertEquals("application/json", httpError.getMimeType());
+            assertEquals(400, httpError.getHttpStatus());
+        }
     }
 
     @Test
@@ -216,15 +255,6 @@ class EventResourceTest {
         );
         update(updatedRequest,EventDef.uriPlusId(1L),adminToken);
         //THEN the userEvent list contains this new attendee (Jimmy)
-        UserResponse expectedResult = new UserResponse(
-                jimmy.getId(),
-                jimmy.getName(),
-                jimmy.getEmail(),
-                jimmy.getPicture(),
-                jimmy.getProfiles(),
-                Collections.EMPTY_LIST
-        );
-
         EventTemplateResponse expectedResponse = new EventTemplateResponse(
                 1L,
                 eventName,
