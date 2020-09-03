@@ -22,7 +22,6 @@ import fr.lunatech.timekeeper.resources.exceptions.UpdateResourceException;
 import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
 import fr.lunatech.timekeeper.services.responses.EventTemplateResponse;
 import fr.lunatech.timekeeper.services.responses.UserResponse;
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,8 +37,6 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static javax.transaction.Transactional.TxType.MANDATORY;
-
 @ApplicationScoped
 public class EventTemplateService {
 
@@ -48,18 +45,21 @@ public class EventTemplateService {
     @Inject
     UserService userService;
 
+    @Inject
+    UserEventService userEventService;
+
     public Optional<EventTemplateResponse> getById(Long id, AuthenticationContext context) {
-        return EventTemplate.<EventTemplate>findByIdOptional(id)
+        return EventTemplate.<EventTemplate>findByIdOptional(id) //NOSONAR
                 .filter(context::canAccess)
                 .map(EventTemplateResponse::bind);
     }
 
-    public List<EventTemplateResponse> listAllResponses(AuthenticationContext ctx){
-        return streamAll(ctx,EventTemplateResponse::bind, Collectors.toList());
+    public List<EventTemplateResponse> listAll(AuthenticationContext ctx) {
+        return streamAll(ctx, EventTemplateResponse::bind, Collectors.toList());
     }
 
-    public List<UserResponse> getAttendees(Long eventId){
-        Stream<UserEvent> stream = UserEvent.stream("eventtemplate_id=?1", eventId);
+    public List<UserResponse> getAttendees(Long eventId) {
+        Stream<UserEvent> stream = UserEvent.stream("eventtemplate_id=?1", eventId); //NOSONAR
         return stream.map(userEvent -> userEvent.owner)
                 .map(UserResponse::bind)
                 .collect(Collectors.toList());
@@ -68,20 +68,30 @@ public class EventTemplateService {
     @Transactional
     public Optional<Long> create(EventTemplateRequest request, AuthenticationContext ctx) {
         logger.debug("Create a new event template with {}, {}", request, ctx);
-        final EventTemplate eventTemplate = request.unbind(userService::findById, ctx);
+        final EventTemplate eventTemplate = request.unbind(ctx);
+
+        eventTemplate.validate();
+
         // by unbinding we also generate userEvent in db for each user
         // user event attributes will be inherited from eventTemplate (startTime, etc.)
-        boolean checkEvent = validateEvent(
+        checkThatNoOtherEventSameNameSameDateAlreadyExists(
                 eventTemplate.name,
                 eventTemplate.id,
                 eventTemplate.startDateTime,
                 eventTemplate.endDateTime, ctx);
 
-        if (checkEvent) {
-            return Optional.empty();
-        }
-
         eventTemplate.persistAndFlush();
+
+        // Create a userEvent for each attendee using the userEventService
+        if (!request.getAttendees().isEmpty()) {
+            logger.debug("Create specific userEvents from this eventTemplate {} ",eventTemplate.id);
+            findById(eventTemplate.id, ctx).ifPresent(eventTemplate1 -> {
+                var created = userEventService.createOrUpdateFromEventTemplate(eventTemplate1, request.getAttendees(), ctx);
+                logger.debug("Created {} userEvents from template", created);
+            });
+        } else {
+            logger.debug("No attendees was specified for this eventTemplate");
+        }
         return Optional.of(eventTemplate.id);
     }
 
@@ -98,32 +108,31 @@ public class EventTemplateService {
         final Optional<EventTemplate> maybeEvent = findById(eventId, ctx);
 
         return maybeEvent.map(event -> {
-            boolean checkEvent = validateEvent(
+            checkThatNoOtherEventSameNameSameDateAlreadyExists(
                     newName,
                     event.id,
                     newStartTime,
                     newEndTime,
                     ctx);
-            if (checkEvent) {
-                throw new UpdateResourceException(
-                        "Event with name: " + request.getName() +
-                        ", already exists with same Start: " + request.getStartDateTime().toLocalDate() +
-                        "and End: " + request.getEndDateTime().toLocalDate() + " dates."
-                );
-            }
-            // delete all userEvent associated to the previous state of this event template
-            deleteAttendees(event);
 
-            // actually update the event. by side effect every userEvent associated will be created
-            EventTemplate eventTemplateUpdated = request.unbind(event, userService::findById, ctx);
+            // actually update the event
+            EventTemplate eventTemplateUpdated = request.unbind(event, ctx);
             eventTemplateUpdated.persistAndFlush();
+            logger.debug("Updated eventTemplate id={}", eventTemplateUpdated.id);
+
+            // Create userEvent for each attendee using the userEventService
+            // Please note that we will also delete and recreate all userEvents for each attendee.
+            findById(eventTemplateUpdated.id, ctx).ifPresent(eventTemplate1 -> {
+                var created = userEventService.createOrUpdateFromEventTemplate(eventTemplate1, request.getAttendees(), ctx);
+                logger.debug("Updated {} userEvents from template", created);
+            });
+
 
             return eventTemplateUpdated.id;
         });
     }
 
-
-    private boolean validateEvent(String name, Long eventId, LocalDateTime startDateTime, LocalDateTime endDateTime, AuthenticationContext ctx) {
+    protected void checkThatNoOtherEventSameNameSameDateAlreadyExists(String name, Long eventId, LocalDateTime startDateTime, LocalDateTime endDateTime, AuthenticationContext ctx) {
         final var startDate = startDateTime.toLocalDate();
         final var endDate = endDateTime.toLocalDate();
         final var foundEvents = findByName(name, ctx)
@@ -133,16 +142,22 @@ public class EventTemplateService {
                         eventTemplate.endDateTime.toLocalDate().isEqual(endDate))
                 .findAny();
 
-        return foundEvents.isPresent();
+        if (foundEvents.isPresent()) {
+            throw new UpdateResourceException(
+                    "Event with name: " + name +
+                            ", already exists with same start " + startDateTime.toLocalDate() +
+                            " and end " + endDateTime.toLocalDate() + " dates."
+            );
+        }
     }
 
     private Optional<EventTemplate> findById(Long id, AuthenticationContext ctx) {
-        return EventTemplate.<EventTemplate>findByIdOptional(id)
+        return EventTemplate.<EventTemplate>findByIdOptional(id) //NOSONAR
                 .filter(ctx::canAccess);
     }
 
     private List<EventTemplate> findByName(String name, AuthenticationContext ctx) {
-        return EventTemplate.<EventTemplate>find("name", name)
+        return EventTemplate.<EventTemplate>find("name", name) //NOSONAR
                 .stream()
                 .filter(ctx::canAccess)
                 .collect(Collectors.toList());
@@ -159,12 +174,5 @@ public class EventTemplateService {
                     .map(bind)
                     .collect(collector);
         }
-    }
-
-    // docs : https://quarkus.io/guides/transaction
-    @Transactional(MANDATORY)
-    private void deleteAttendees(EventTemplate event) {
-        event.attendees
-                .forEach(PanacheEntityBase::delete);
     }
 }

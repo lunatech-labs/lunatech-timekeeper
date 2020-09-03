@@ -272,7 +272,7 @@ class TimeSheetUtilsTest {
     private List<TimeEntry> generateTestEntries (int numberOfEntry, long hourPerEntry){
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime nowPlusSomeHours = now.plusHours(hourPerEntry);
-        List<TimeEntry> entries = new ArrayList();
+        List<TimeEntry> entries = new ArrayList<>();
         for (int i = 0 ; i<numberOfEntry;i++) {
             TimeEntry entry = new TimeEntry();
             entry.startDateTime = now;

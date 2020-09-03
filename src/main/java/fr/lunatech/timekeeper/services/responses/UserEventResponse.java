@@ -37,7 +37,6 @@ public class UserEventResponse {
     private String duration;
 
     private UserEventResponse() {
-
     }
 
     public static UserEventResponse bind(UserEvent event) {
@@ -46,7 +45,7 @@ public class UserEventResponse {
 
     /**
      * Factory method
-     * @param event
+     * @param event is the template event
      * @return a new UserEventResponse initialized
      */
     protected static UserEventResponse createFromUserEvent(UserEvent event) {
@@ -65,11 +64,12 @@ public class UserEventResponse {
      */
     private static UserEventResponse checkParameters(UserEvent event, UserEventResponse userEventResponse) {
         if(event.startDateTime != null && event.endDateTime != null){
-            if(event.startDateTime.isAfter(event.endDateTime)){
-                throw new IllegalArgumentException("StartDateTime must be before endDateTime");
-            }
             userEventResponse.eventUserDaysResponse = createEventUserDayResponseList(event);
-            userEventResponse.duration = Duration.between(event.startDateTime, event.endDateTime).toString();
+            if(event.startDateTime.isAfter(event.endDateTime)){
+                userEventResponse.duration = "";
+            }else{
+                userEventResponse.duration = Duration.between(event.startDateTime, event.endDateTime).toString();
+            }
         }
         if (event.startDateTime != null) {
             userEventResponse.startDateTime = TimeKeeperDateUtils.formatToString(event.startDateTime);

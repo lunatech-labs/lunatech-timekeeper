@@ -35,7 +35,7 @@ public class ResourceValidation {
     }
 
     public static <T> ValidatableResponse getValidation(String uri, String token) {
-        return InternalResourceUtils.<T>resourceValidation(GET, uri, token);
+        return InternalResourceUtils.<T>resourceValidation(uri, token);
     }
 
 }

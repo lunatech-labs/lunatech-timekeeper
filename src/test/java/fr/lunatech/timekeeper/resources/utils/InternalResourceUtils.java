@@ -36,6 +36,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 /**
  * InternalResourceUtils provided abstract implementations of resource interaction
+ * @author Fabrice Sznajderman - Lunatech
  */
 final class InternalResourceUtils {
 
@@ -154,7 +155,7 @@ final class InternalResourceUtils {
      * @param m      HttpMethod
      * @param uri    uri
      * @param token  security token
-     * @return
+     * @return  a ValidatableResponse
      */
     static <T> ValidatableResponse resourceValidation(VerbDefinition m, String uri, String token, T body) {
         return resourceValidation(m, uri, token, Option.some(body));
@@ -163,24 +164,22 @@ final class InternalResourceUtils {
     /**
      * Allows the caller to specify as parameter the statusCode
      *
-     * @param m      HttpMethod
      * @param uri    uri
      * @param token  security token
-     * @return
+     * @return a ValidatableResponse
      */
-    static ValidatableResponse resourceValidation(VerbDefinition m, String uri, String token) {
-        return resourceValidation(m, uri, token, Option.none());
+    static ValidatableResponse resourceValidation(String uri, String token) {
+        return resourceValidation(VerbDefinition.GET, uri, token, Option.none());
     }
 
-
     private static <T> ValidatableResponse resourceValidation(VerbDefinition m, String uri, String token, Option<T> body) {
-
         var root = given()
                 .auth().preemptive().oauth2(token)
                 .when()
+                //.accept(APPLICATION_JSON)
                 .contentType(APPLICATION_JSON);
 
-        body.map(b -> root.body(b));
+        body.map(root::body);
 
         var resp = computeVerb(m, uri, root);
         return resp.then();
