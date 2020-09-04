@@ -46,21 +46,22 @@ const EditEventTemplateForm = () => {
     strict: true,
     sensitive: true
   });
+  const currentEventId = eventIdSlug.params.id;
 
   const eventsResponse = useTimeKeeperAPI('/api/events/');
   const usersResponse = useTimeKeeperAPI('/api/users/');
 
   useEffect(() => {
     if(eventsResponse.data){
-      const event = eventsResponse.data.find(event => event.id.toString() === eventIdSlug.params.id);
+      const event = eventsResponse.data.find(event => event.id.toString() === currentEventId);
       const usersId = event.attendees.map(user => user.userId);
       setUsersSelected(usersId.map(id => {
         return {'userId': id};
       }));
     }
-  }, [eventsResponse.data]);
+  }, [eventsResponse.data, currentEventId]);
 
-  const timeKeeperAPIPut = useTimeKeeperAPIPut('/api/events/' + eventIdSlug.params.id, (form=>form), setEventTemplateUpdated, formDataToEventRequest);
+  const timeKeeperAPIPut = useTimeKeeperAPIPut('/api/events/' + currentEventId, (form=>form), setEventTemplateUpdated, formDataToEventRequest);
 
   const [form] = Form.useForm();
 
@@ -120,7 +121,7 @@ const EditEventTemplateForm = () => {
   }
 
   if(usersResponse.data && eventsResponse.data){
-    const event = eventsResponse.data.find(event => event.id.toString() === eventIdSlug.params.id);
+    const event = eventsResponse.data.find(event => event.id.toString() === currentEventId);
     if(event){
       const initialValues = {
         name: event.name,
