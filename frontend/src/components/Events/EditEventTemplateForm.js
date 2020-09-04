@@ -79,23 +79,6 @@ const EditEventTemplateForm = () => {
     );
   }
 
-  if (timeKeeperAPIPut.error) {
-    const {response} = timeKeeperAPIPut.error;
-    const {status, url} = response;
-    const errMsg = `Server error HTTP Code:${status}  for url: ${url}`;
-    return (
-      <React.Fragment>
-        <Alert
-          message="Unable to update the new Event"
-          description={errMsg}
-          type="error"
-          closable
-          style={{marginBottom: 10}}
-        />
-      </React.Fragment>
-    );
-  }
-
   const disabledDate = (current) => {
     // Can not select days before today and today
     return current && current < moment().endOf('day');
@@ -153,6 +136,14 @@ const EditEventTemplateForm = () => {
           onFinish={timeKeeperAPIPut.run}
           form={form}
         >
+          {timeKeeperAPIPut.error &&
+          <Alert
+            message="Unable to save the new Event"
+            description={timeKeeperAPIPut.error.data.message}
+            type="error"
+            closable
+            style={{marginBottom: 10}}
+          />}
           <div className="tk_CardLg">
             <Row gutter={16}>
               <Col className="gutter-row" span={12}>
