@@ -80,7 +80,7 @@ public class EventResource implements EventResourceApi {
                 ).orElseThrow(() -> new IllegalEntityStateException(
                         "Event with name: " + request.getName() +
                                 ", already exists with same Start: " + request.getStartDateTime().toLocalDate() +
-                                "and End: " + request.getEndDateTime().toLocalDate() + " dates.")
+                                " and End: " + request.getEndDateTime().toLocalDate() + " dates.")
                 );
     }
 
