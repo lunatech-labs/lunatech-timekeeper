@@ -20,7 +20,6 @@ import fr.lunatech.timekeeper.gauges.TimeEntriesNumberPerHoursGauge;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.services.requests.TimeEntryRequest;
-import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 import io.quarkus.security.ForbiddenException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +61,7 @@ public class TimeEntryService {
         logger.debug("Modify timeEntry for id={} with {}, {}", timeSheetId, request, ctx);
         Optional<TimeEntry> timeEntryOptional = findById(timeEntryId, ctx);
         timeEntryOptional.ifPresent(timeEntry -> {
-            int oldNumberOfHours = TimeKeeperDateUtils.numberOfHoursBetween(timeEntry.startDateTime, timeEntry.endDateTime).intValue();
+            int oldNumberOfHours = timeEntry.numberOfHours;
             if (oldNumberOfHours != request.getNumberHours()) {
                 timeEntriesNumberPerHoursGauge.decrementGauges(oldNumberOfHours);
                 timeEntriesNumberPerHoursGauge.incrementGauges(request.getNumberHours());
@@ -74,7 +73,7 @@ public class TimeEntryService {
     }
 
     Optional<TimeEntry> findById(Long id, AuthenticationContext ctx) {
-        return TimeEntry.<TimeEntry>findByIdOptional(id)
+        return TimeEntry.<TimeEntry>findByIdOptional(id) //NOSONAR
                 .filter(ctx::canAccess);
     }
 }

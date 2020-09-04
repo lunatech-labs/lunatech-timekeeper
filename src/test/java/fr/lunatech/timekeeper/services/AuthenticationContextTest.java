@@ -23,6 +23,7 @@ import fr.lunatech.timekeeper.models.time.TimeSheet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -231,8 +232,8 @@ class AuthenticationContextTest {
 
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.id=999L;
-        timeEntry.startDateTime= LocalDateTime.now();
-        timeEntry.endDateTime= LocalDateTime.now();
+        timeEntry.startDate= LocalDate.now();
+        timeEntry.numberOfHours=8;
         timeEntry.timeSheet = timeSheet;
         timeEntry.comment = "??";
 
@@ -708,8 +709,8 @@ class AuthenticationContextTest {
 
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.id=999L;
-        timeEntry.startDateTime= LocalDateTime.now();
-        timeEntry.endDateTime= LocalDateTime.now();
+        timeEntry.startDate= LocalDate.now();
+        timeEntry.numberOfHours = 8;
         timeEntry.timeSheet = timeSheet;
         timeEntry.comment = "??";
 
@@ -753,8 +754,8 @@ class AuthenticationContextTest {
 
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.id=999L;
-        timeEntry.startDateTime= LocalDateTime.now();
-        timeEntry.endDateTime= LocalDateTime.now();
+        timeEntry.startDate= LocalDate.now();
+        timeEntry.numberOfHours = 8;
         timeEntry.timeSheet = timeSheet;
         timeEntry.comment = "??";
 
@@ -797,8 +798,8 @@ class AuthenticationContextTest {
 
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.id=999L;
-        timeEntry.startDateTime= LocalDateTime.now();
-        timeEntry.endDateTime= LocalDateTime.now();
+        timeEntry.startDate= LocalDate.now();
+        timeEntry.numberOfHours = 8;
         timeEntry.timeSheet = timeSheet;
         timeEntry.comment = "??";
 
@@ -841,8 +842,8 @@ class AuthenticationContextTest {
 
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.id=999L;
-        timeEntry.startDateTime= LocalDateTime.now();
-        timeEntry.endDateTime= LocalDateTime.now();
+        timeEntry.startDate= LocalDate.now();
+        timeEntry.numberOfHours = 8;
         timeEntry.timeSheet = timeSheet;
         timeEntry.comment = "??";
 

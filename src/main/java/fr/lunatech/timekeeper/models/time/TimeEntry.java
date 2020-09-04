@@ -20,6 +20,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -37,9 +38,9 @@ public class TimeEntry extends PanacheEntityBase {
     public TimeSheet timeSheet;
 
     @NotNull
-    public LocalDateTime startDateTime;
+    public LocalDate startDate;
 
     @NotNull
-    public LocalDateTime endDateTime;
+    public Integer numberOfHours;
 
 }

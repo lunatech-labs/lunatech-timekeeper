@@ -26,7 +26,6 @@ import fr.lunatech.timekeeper.timeutils.TimeUnit;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -106,31 +105,30 @@ public class TimeSheetResponse {
         public final String comment;
 
         @NotNull
-        @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_TIME_PATTERN)
-        public final LocalDateTime startDateTime;
+        @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_PATTERN)
+        public final LocalDate day;
 
         @NotNull
-        @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_TIME_PATTERN)
-        public final LocalDateTime endDateTime;
+        public final Integer numberOfHours;
 
         public TimeEntryResponse(
                 @NotNull Long id,
                 @NotNull String comment,
-                @NotNull LocalDateTime startDateTime,
-                @NotNull LocalDateTime endDateTime
+                @NotNull LocalDate day,
+                @NotNull Integer numberOfHours
         ) {
             this.id = id;
             this.comment = comment;
-            this.startDateTime = startDateTime;
-            this.endDateTime = endDateTime;
+            this.day = day;
+            this.numberOfHours = numberOfHours;
         }
 
         public static TimeSheetResponse.TimeEntryResponse bind(@NotNull TimeEntry timeEntry) {
             return new TimeSheetResponse.TimeEntryResponse(
                     timeEntry.id,
                     timeEntry.comment,
-                    timeEntry.startDateTime,
-                    timeEntry.endDateTime
+                    timeEntry.startDate,
+                    timeEntry.numberOfHours
             );
         }
 
@@ -145,8 +143,7 @@ public class TimeSheetResponse {
         List<TimeEntryResponse> restrictedEntries = this.entries
                 .stream()
                 .filter(timeEntryResponse -> {
-                    LocalDateTime startDateTime = timeEntryResponse.startDateTime;
-                    return isValidDate.test(startDateTime.toLocalDate());
+                    return isValidDate.test(timeEntryResponse.day);
                 })
                 .collect(Collectors.toList());
 
@@ -167,7 +164,7 @@ public class TimeSheetResponse {
     public final TimeSheetResponse filterTimeEntriesForWeek(LocalDate startDayOfWeek){
         List<TimeEntryResponse> restrictedEntries = this.entries
                 .stream()
-                .filter(timeEntryResponse -> TimeKeeperDateUtils.isSameWeekAndYear(timeEntryResponse.startDateTime.toLocalDate(), startDayOfWeek))
+                .filter(timeEntryResponse -> TimeKeeperDateUtils.isSameWeekAndYear(timeEntryResponse.day, startDayOfWeek))
                 .collect(Collectors.toList());
 
         return new TimeSheetResponse(this.id,

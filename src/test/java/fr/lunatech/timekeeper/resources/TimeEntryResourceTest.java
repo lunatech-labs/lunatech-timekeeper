@@ -88,13 +88,13 @@ class TimeEntryResourceTest {
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null, START_DATE);
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
-        LocalDateTime startDateTime = LocalDateTime.of(2020, 1, 1, 9, 0);
-        TimeEntryRequest today = new TimeEntryRequest("Today, I did this test", startDateTime, 8);
+        LocalDate startDate = LocalDate.of(2020, 1, 1);
+        TimeEntryRequest today = new TimeEntryRequest("Today, I did this test", startDate, 8);
 
         create(2L, today, jimmyToken);
 
         // THEN
-        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "Today, I did this test", startDateTime, startDateTime.withHour(17).withMinute(0));
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "Today, I did this test", startDate, 8);
 
         final var expectedTimeSheetJimmy2 = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(),
                 List.of(expectedTimeEntry), null, START_DATE);
@@ -120,13 +120,13 @@ class TimeEntryResourceTest {
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null, START_DATE);
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
-        LocalDateTime startDateTime = LocalDateTime.of(2020, 1, 1, 9, 0);
-        TimeEntryRequest morning = new TimeEntryRequest("This morning, I did this test", LocalDateTime.of(2020, 1, 1, 9, 0), 4);
+        LocalDate startDate = LocalDate.of(2020, 1, 1);
+        TimeEntryRequest morning = new TimeEntryRequest("This morning, I did this test", LocalDate.of(2020, 1, 1), 4);
 
         create(2L, morning, jimmyToken);
 
         // THEN
-        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This morning, I did this test", startDateTime, startDateTime.withHour(13).withMinute(0));
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This morning, I did this test", startDate, 4);
 
         final var expectedTimeSheetJimmy2 = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(),
                 List.of(expectedTimeEntry), null, START_DATE);
@@ -152,14 +152,13 @@ class TimeEntryResourceTest {
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null, START_DATE);
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
-        LocalDateTime start = LocalDateTime.of(2020, 1, 1, 10, 0);
-        LocalDateTime end = LocalDateTime.of(2020, 1, 1, 11, 0);
+        LocalDate start = LocalDate.of(2020, 1, 1);
         TimeEntryRequest hour = new TimeEntryRequest("This hour, I did this test", start, 1);
 
         create(2L, hour, jimmyToken);
 
         // THEN
-        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This hour, I did this test", start, end);
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This hour, I did this test", start, 1);
         final var expectedTimeSheetJimmy2 = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(),
                 List.of(expectedTimeEntry), null, START_DATE);
 
@@ -184,7 +183,7 @@ class TimeEntryResourceTest {
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null, START_DATE);
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
-        LocalDateTime start = LocalDateTime.of(2020, 1, 1, 11, 0);
+        LocalDate start = LocalDate.of(2020, 1, 1);
 
         TimeEntryRequest hour = new TimeEntryRequest("This hour, I did this test", start, -1);
 
@@ -215,8 +214,8 @@ class TimeEntryResourceTest {
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null, START_DATE);
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
-        LocalDateTime startDateTime = LocalDateTime.of(2020, 1, 1, 9, 0);
-        TimeEntryRequest today = new TimeEntryRequest("Today, I did this test", startDateTime, 8);
+        LocalDate startDate = LocalDate.of(2020, 1, 1);
+        TimeEntryRequest today = new TimeEntryRequest("Today, I did this test", startDate, 8);
 
         // THEN
         postValidation(TimeEntryDef.uriWithArgs(2L), merryToken, today).statusCode(is(FORBIDDEN.getStatusCode()));
@@ -239,16 +238,16 @@ class TimeEntryResourceTest {
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null, START_DATE);
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
-        LocalDateTime startDateTime = LocalDateTime.of(2020, 1, 1, 9, 0);
-        TimeEntryRequest today = new TimeEntryRequest("Today, I did this test", startDateTime, 8);
+        LocalDate startDate = LocalDate.of(2020, 1, 1);
+        TimeEntryRequest today = new TimeEntryRequest("Today, I did this test", startDate, 8);
 
         var location = create(2L, today, jimmyToken);
 
-        TimeEntryRequest updatedToday = new TimeEntryRequest("Today, I updated this entry", startDateTime, 8);
+        TimeEntryRequest updatedToday = new TimeEntryRequest("Today, I updated this entry", startDate, 8);
         update(updatedToday, location, jimmyToken);
 
         // THEN
-        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "Today, I updated this entry", startDateTime, startDateTime.withHour(17).withMinute(0));
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "Today, I updated this entry", startDate, 8);
 
         final var expectedTimeSheetJimmy2 = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(),
                 List.of(expectedTimeEntry), null, START_DATE);
@@ -274,16 +273,16 @@ class TimeEntryResourceTest {
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null, START_DATE);
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
-        LocalDateTime startDateTime = LocalDateTime.of(2020, 1, 1, 9, 0);
-        TimeEntryRequest morning = new TimeEntryRequest("This morning, I did this test", LocalDateTime.of(2020, 1, 1, 9, 0), 4);
+        LocalDate startDate= LocalDate.of(2020, 1, 1);
+        TimeEntryRequest morning = new TimeEntryRequest("This morning, I did this test", LocalDate.of(2020, 1, 1), 4);
 
         var location = create(2L, morning, jimmyToken);
 
-        TimeEntryRequest updatedMorning = new TimeEntryRequest("This morning, I updated this entry", startDateTime, 4);
+        TimeEntryRequest updatedMorning = new TimeEntryRequest("This morning, I updated this entry", startDate, 4);
         update(updatedMorning, location, jimmyToken);
 
         // THEN
-        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This morning, I updated this entry", startDateTime, startDateTime.withHour(13).withMinute(0));
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This morning, I updated this entry", startDate, 4);
         final var expectedTimeSheetJimmy2 = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(),
                 List.of(expectedTimeEntry), null, START_DATE);
 
@@ -308,16 +307,16 @@ class TimeEntryResourceTest {
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null, START_DATE);
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
-        LocalDateTime startDateTime = LocalDateTime.of(2020, 1, 1, 9, 0);
-        TimeEntryRequest hour = new TimeEntryRequest("This hour, I did this test", LocalDateTime.of(2020, 1, 1, 9, 0), 1);
+        LocalDate startDate = LocalDate.of(2020, 1, 1);
+        TimeEntryRequest hour = new TimeEntryRequest("This hour, I did this test", LocalDate.of(2020, 1, 1), 1);
 
         var location = create(2L, hour, jimmyToken);
 
-        TimeEntryRequest updatedHour = new TimeEntryRequest("This hour, I updated this entry", startDateTime, 1);
+        TimeEntryRequest updatedHour = new TimeEntryRequest("This hour, I updated this entry", startDate, 1);
         update(updatedHour, location, jimmyToken);
 
         // THEN
-        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This hour, I updated this entry", startDateTime, startDateTime.withHour(10).withMinute(0));
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This hour, I updated this entry", startDate, 1);
         final var expectedTimeSheetJimmy2 = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(),
                 List.of(expectedTimeEntry), null, START_DATE);
         var expected = timeKeeperTestUtils.toJson(expectedTimeSheetJimmy2);
@@ -341,16 +340,16 @@ class TimeEntryResourceTest {
         final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null, START_DATE);
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
-        LocalDateTime startDateTime = LocalDateTime.of(2020, 1, 1, 9, 0);
-        TimeEntryRequest hour = new TimeEntryRequest("This hour, I did this test", LocalDateTime.of(2020, 1, 1, 9, 0), 1);
+        LocalDate startDate= LocalDate.of(2020, 1, 1);
+        TimeEntryRequest hour = new TimeEntryRequest("This hour, I did this test", LocalDate.of(2020, 1, 1),1);
 
         var location = create(2L, hour, jimmyToken);
 
-        TimeEntryRequest updatedHour = new TimeEntryRequest("This hour, I did this test", startDateTime, 2);
+        TimeEntryRequest updatedHour = new TimeEntryRequest("This hour, I did this test but in 2 hours", startDate, 2);
         update(updatedHour, location, jimmyToken);
 
         // THEN
-        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This hour, I did this test", startDateTime, startDateTime.withHour(11).withMinute(0));
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This hour, I did this test but in 2 hours", startDate, 2);
         final var expectedTimeSheetJimmy2 = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(),
                 List.of(expectedTimeEntry), null, START_DATE);
 
