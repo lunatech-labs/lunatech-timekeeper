@@ -26,7 +26,7 @@ import EditEntryForm from './EditEntryForm';
 import UserEventCard from '../UserEvent/UserEventCard';
 import {totalHoursPerDay} from '../../utils/momentUtils';
 import {getMaximumHoursPerDay} from '../../utils/configUtils';
-
+import _ from 'lodash'; // important!
 const {TextArea} = Input;
 
 const TimeEntryForm = ({entries, userEvents, currentDay, form, onSuccess, onCancel, mode, setMode, selectedEntryId}) => {
@@ -114,8 +114,8 @@ const TimeEntryForm = ({entries, userEvents, currentDay, form, onSuccess, onCanc
     );
   };
   const UserEvents = ({userEvents, date}) => {
-    const showUserEvents = (userEvents) => {
-      return userEvents.map(userEvent => {
+    const showUserEvents = (userEvents2) => {
+      return userEvents2.map(userEvent => {
         return [...Array(userEvent.eventUserDaysResponse.length).keys()]
           .filter(i => date.format('YYYY-MM-DD') === userEvent.eventUserDaysResponse[i].date)
           .map(i => {
@@ -126,8 +126,14 @@ const TimeEntryForm = ({entries, userEvents, currentDay, form, onSuccess, onCanc
     return showUserEvents(userEvents);
   };
   // Returns the number of hours for a day
-  const amountOfHoursPerDay = (entriesArray, userEvents, date) => {
-    return totalHoursPerDay(userEvents, date, entriesArray[0]);
+  const amountOfHoursPerDay = (entriesArray, ue, date) => {
+      const resultToReturn = totalHoursPerDay(ue, date, entriesArray[0]);
+      console.log('amountOfHoursPerDay' + resultToReturn);
+      console.log(resultToReturn);
+      console.log(_.isArray(resultToReturn));
+      console.log(_.toArray(resultToReturn));
+
+    return resultToReturn;
   };
   return (
     <div className="tk_ModalGen">

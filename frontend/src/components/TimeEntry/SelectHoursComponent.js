@@ -29,7 +29,7 @@ const SelectHoursComponent = ({numberOfHoursForDay, entryDuration}) => {
     return parseInt(hour) + parseInt(numberOfHoursForDay) > 8;
   };
   return (
-    <Form.Item name="numberHours" label="Number of hours:" rules={[{required: true}]}>
+    <Form.Item name="numberOfHours" label="Number of hours:" rules={[{required: true}]}>
       <Select
         showSearch
       >

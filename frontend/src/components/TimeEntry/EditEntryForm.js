@@ -27,8 +27,8 @@ import {isTimeSheetDisabled} from '../../utils/timesheetUtils';
 const {Option} = Select;
 const {TextArea} = Input;
 
-const computeTimeUnit = (numberHours) => {
-  switch (numberHours) {
+const computeTimeUnit = (numberOfHours) => {
+  switch (numberOfHours) {
     case 4:
       return 'HALFDAY';
     case 8:
@@ -41,18 +41,16 @@ const computeTimeUnit = (numberHours) => {
 const initialValues = (defaultDate, entry, timeSheetId) => {
   const newEntry = {
     ...entry,
-    startDateTime: moment.utc(entry.startDateTime),
-    endDateTime: moment.utc(entry.endDateTime)
+    startDate: moment.utc(entry.startDate),
+    numberOfHours: entry.numberOfHours
   };
-  const numberOfHours = computeNumberOfHours(newEntry.startDateTime, newEntry.endDateTime);
+  const numberOfHours = new Array(newEntry.numberOfHours);
   return {
     'comment': newEntry.comment,
     'timeSheetId': timeSheetId,
-    'date': moment.utc(newEntry.startDateTime, 'YYYY-MM-DD'),
-    'startDateTime': newEntry.startDateTime,
-    'endDateTime': newEntry.endDateTime,
+    'startDate': moment.utc(newEntry.startDate, 'YYYY-MM-DD'),
     'timeUnit' : computeTimeUnit(numberOfHours),
-    'numberHours': numberOfHours
+    'numberOfHours': numberOfHours
   };
 };
 
@@ -60,20 +58,20 @@ const updatedValues = (timeUnit, allValues, start) => {
   switch (timeUnit) {
     case 'DAY': {
       return {
-        'startDateTime': allValues.startDateTime || start, //9 am by default
-        'numberHours': 8
+        'startDate': allValues.startDate || start, //9 am by default
+        'numberOfHours': 8
       };
     }
     case 'HALFDAY': {
       return {
-        'startDateTime': allValues.startDateTime || start, //9 am by default
-        'numberHours': 4
+        'startDate': allValues.startDate || start, //9 am by default
+        'numberOfHours': 4
       };
     }
     case 'HOURLY' : {
       return {
-        'startDateTime': allValues.startDateTime || start, //9 am by default
-        'numberHours': null
+        'startDate': allValues.startDate || start, //9 am by default
+        'numberOfHours': null
       };
     }
     default: {
@@ -104,7 +102,7 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, numb
   const [entryUpdated, setEntryUpdated] = useState(false);
   const [selectedTimeSheet, setSelectedTimeSheet] = useState();
   const timeKeeperAPIPut = useTimeKeeperAPIPut(urlEdition(form, entry.id), (form => form), setEntryUpdated);
-  const entryDuration = computeNumberOfHours(moment.utc(entry.startDateTime), moment.utc(entry.endDateTime));
+  const entryDuration = entry.numberOfHours;
   useEffect(() => {
     if (entryUpdated) {
       message.success('Entry was updated');
@@ -153,8 +151,6 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, numb
         onValuesChange={onValuesChange}
       >
         <TitleSection title='Edit task'/>
-        <Form.Item name="date" noStyle={true}>
-        </Form.Item>
 
         <Form.Item label="Description:" name="comment" rules={[{required: true}]}>
           <TextArea rows={2} placeholder="What did you work on ?"/>
@@ -190,7 +186,7 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, numb
             </Form.Item>
           </Col>
 
-          <Form.Item name="startDateTime" noStyle={true}>
+          <Form.Item name="startDate" noStyle={true}>
           </Form.Item>
 
           <Col className="gutter-row" span={9}>
@@ -206,7 +202,7 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, numb
                     );
                   default:
                     return (
-                      <Form.Item name="numberHours" noStyle={true}>
+                      <Form.Item name="numberOfHours" noStyle={true}>
                         <Input hidden={true}/>
                       </Form.Item>
                     );
@@ -237,8 +233,8 @@ EditEntryForm.propTypes = {
     billable: PropTypes.bool,
     timeSheetId: PropTypes.number.isRequired,
     isMorning: PropTypes.bool.isRequired,
-    startDateTime: PropTypes.object.isRequired,
-    endDateTime: PropTypes.object.isRequired,
+    startDate: PropTypes.object.isRequired,
+    numberOfHours: PropTypes.number.isRequired
   }).isRequired,
   numberOfHoursForDay: PropTypes.array
 };

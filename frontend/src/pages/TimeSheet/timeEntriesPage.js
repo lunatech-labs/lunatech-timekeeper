@@ -41,7 +41,7 @@ const groupBy = function (xs, key) {
 const computeData = (timeSheets) => Object.entries(groupBy(timeSheets.flatMap(({entries, project}) => entries.map(x => ({
   ...x,
   project
-}))), entry => moment(entry.startDateTime).format('YYYY-MM-DD'))).map(([key, value]) => {
+}))), entry => moment(entry.startDate).format('YYYY-MM-DD'))).map(([key, value]) => {
   return ({
     data: value,
     date: moment(key),

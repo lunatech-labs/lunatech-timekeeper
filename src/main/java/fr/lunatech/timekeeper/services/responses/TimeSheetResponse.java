@@ -106,7 +106,7 @@ public class TimeSheetResponse {
 
         @NotNull
         @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_PATTERN)
-        public final LocalDate day;
+        public final LocalDate startDate;
 
         @NotNull
         public final Integer numberOfHours;
@@ -114,12 +114,12 @@ public class TimeSheetResponse {
         public TimeEntryResponse(
                 @NotNull Long id,
                 @NotNull String comment,
-                @NotNull LocalDate day,
+                @NotNull LocalDate startDate,
                 @NotNull Integer numberOfHours
         ) {
             this.id = id;
             this.comment = comment;
-            this.day = day;
+            this.startDate = startDate;
             this.numberOfHours = numberOfHours;
         }
 
@@ -143,7 +143,7 @@ public class TimeSheetResponse {
         List<TimeEntryResponse> restrictedEntries = this.entries
                 .stream()
                 .filter(timeEntryResponse -> {
-                    return isValidDate.test(timeEntryResponse.day);
+                    return isValidDate.test(timeEntryResponse.startDate);
                 })
                 .collect(Collectors.toList());
 
@@ -164,7 +164,7 @@ public class TimeSheetResponse {
     public final TimeSheetResponse filterTimeEntriesForWeek(LocalDate startDayOfWeek){
         List<TimeEntryResponse> restrictedEntries = this.entries
                 .stream()
-                .filter(timeEntryResponse -> TimeKeeperDateUtils.isSameWeekAndYear(timeEntryResponse.day, startDayOfWeek))
+                .filter(timeEntryResponse -> TimeKeeperDateUtils.isSameWeekAndYear(timeEntryResponse.startDate, startDayOfWeek))
                 .collect(Collectors.toList());
 
         return new TimeSheetResponse(this.id,

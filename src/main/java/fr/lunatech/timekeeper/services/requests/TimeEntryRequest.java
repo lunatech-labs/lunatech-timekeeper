@@ -38,7 +38,7 @@ public class TimeEntryRequest {
     private final LocalDate startDate;
 
     @NotNull
-    private final Integer numberHours;
+    private final Integer numberOfHours;
 
     public TimeEntryRequest(
             @NotBlank String comment,
@@ -47,7 +47,7 @@ public class TimeEntryRequest {
     ) {
         this.comment = comment;
         this.startDate = startDate;
-        this.numberHours = hours;
+        this.numberOfHours = hours;
     }
 
     public TimeEntry unbind(
@@ -67,7 +67,7 @@ public class TimeEntryRequest {
     ) {
         timeEntry.comment = getComment();
         timeEntry.startDate = getStartDate();
-        timeEntry.numberOfHours = getNumberHours();
+        timeEntry.numberOfHours = getnumberOfHours();
         timeEntry.timeSheet = findTimeSheet.apply(timeSheetId, ctx).orElseThrow(() -> new IllegalEntityStateException("TimeSheet not found for id " + timeSheetId));
         return timeEntry;
     }
@@ -80,8 +80,8 @@ public class TimeEntryRequest {
         return startDate;
     }
 
-    public Integer getNumberHours() {
-        return numberHours;
+    public Integer getnumberOfHours() {
+        return numberOfHours;
     }
 
     @Override
@@ -89,7 +89,7 @@ public class TimeEntryRequest {
         return "TimeEntryRequest{" +
                 "comment='" + comment + '\'' +
                 ", startDate=" + startDate +
-                ", numberHours=" + getNumberHours() +
+                ", numberOfHours=" + getnumberOfHours() +
                 '}';
     }
 }

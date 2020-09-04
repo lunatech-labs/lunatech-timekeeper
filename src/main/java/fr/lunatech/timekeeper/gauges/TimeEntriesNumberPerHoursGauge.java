@@ -13,8 +13,8 @@ public class TimeEntriesNumberPerHoursGauge {
     private long eightHours;
     private long otherHours;
 
-    public void incrementGauges(Integer numberHours) {
-        switch (numberHours) {
+    public void incrementGauges(Integer numberOfHours) {
+        switch (numberOfHours) {
             case 4:
                 fourHours++;
                 break;
@@ -27,8 +27,8 @@ public class TimeEntriesNumberPerHoursGauge {
         }
     }
 
-    public void decrementGauges(Integer numberHours) {
-        switch (numberHours) {
+    public void decrementGauges(Integer numberOfHours) {
+        switch (numberOfHours) {
             case 4:
                 if (fourHours - 1 >= 0) {
                     fourHours--;

@@ -27,46 +27,34 @@ const {Option} = Select;
 const {TextArea} = Input;
 
 const initialValues = (defaultDate) => {
-  const start = defaultDate.clone();
-  start.set({
-    hour: 9,
-    minute: 0,
-    second: 0
-  });
   return {
     'comment': null,
     'timeSheetId': null,
-    'date': defaultDate,
-    'startDateTime': start, //9 am by default
+    'startDate': defaultDate,
+    'numberOfHours':1
   };
 };
 
 // Add the additional values
 // Use the values of the form or initialize the values
 const additionalValues = (timeUnit, defaultDate, allValues) => {
-  const start = defaultDate.clone();
-  start.set({
-    hour: 9,
-    minute: 0,
-    second: 0
-  });
   switch (timeUnit) {
     case 'DAY': {
       return {
-        'startDateTime': allValues.startDateTime || start, //9 am by default
-        'numberHours': 8
+        'startDate': allValues.startDate,
+        'numberOfHours': 8
       };
     }
     case 'HALFDAY': {
       return {
-        'startDateTime': allValues.startDateTime || start, //9 am by default
-        'numberHours': 4
+        'startDate': allValues.startDate,
+        'numberOfHours': 4
       };
     }
     case 'HOURLY' : {
       return {
-        'startDateTime': allValues.startDateTime || start, //9 am by default
-        'numberHours': null
+        'startDate': allValues.startDate,
+        'numberOfHours': null
       };
     }
     default: {
@@ -107,11 +95,11 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel, numberOfHour
         setSelectedTimeSheet(timeSheet);
         const timeUnit = timeSheet ? timeSheet.timeUnit : '';
         form.setFieldsValue({timeUnit});
-        form.setFieldsValue(additionalValues(timeSheet.timeUnit, allValues.date, allValues));
+        form.setFieldsValue(additionalValues(timeSheet.timeUnit, allValues.startDate, allValues));
         break;
       }
       case 'timeUnit': {
-        form.setFieldsValue(additionalValues(changedValues.timeUnit, allValues.date, allValues));
+        form.setFieldsValue(additionalValues(changedValues.timeUnit, allValues.startDate, allValues));
         break;
       }
       default:
@@ -130,7 +118,7 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel, numberOfHour
         onValuesChange={onValuesChange}
       >
         <TitleSection title='Add task'/>
-        <Form.Item name="date" noStyle={true}>
+        <Form.Item name="startDate" noStyle={true}>
         </Form.Item>
 
         <Form.Item label="Description:" name="comment" rules={[{required: true}]}>
@@ -166,9 +154,6 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel, numberOfHour
             </Form.Item>
           </Col>
 
-          <Form.Item name="startDateTime" noStyle={true}>
-          </Form.Item>
-
           <Col className="gutter-row" span={9}>
             {/*Additional Values : depends on the Time Unit*/}
             <Form.Item shouldUpdate={(prevValues, curValues) => prevValues.timeUnit !== curValues.timeUnit}>
@@ -182,7 +167,7 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel, numberOfHour
                     );
                   default:
                     return (
-                      <Form.Item name="numberHours" noStyle={true}>
+                      <Form.Item name="numberOfHours" noStyle={true}>
                         <Input hidden={true}/>
                       </Form.Item>
                     );

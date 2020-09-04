@@ -106,10 +106,7 @@ const userEventsDurationPerDay = (userEvents, date) => {
 const timeEntriesDuration = (timeEntries) => {
   if(timeEntries){
     return _.sumBy(timeEntries, function(entry){
-      const start = moment(entry.startDateTime).utc();
-      const end = moment(entry.endDateTime).utc();
-      const duration = moment.duration(end.diff(start));
-      return duration.asHours();
+      return entry.numberOfHours;
     });
   }
   return 0;

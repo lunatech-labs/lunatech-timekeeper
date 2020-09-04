@@ -49,7 +49,7 @@ public class TimeEntryService {
         }
         try {
             timeEntry.persistAndFlush();
-            timeEntriesNumberPerHoursGauge.incrementGauges(request.getNumberHours());
+            timeEntriesNumberPerHoursGauge.incrementGauges(request.getnumberOfHours());
         } catch (PersistenceException pe) {
             throw new CreateResourceException("TimeEntry was not created due to constraint violation");
         }
@@ -62,9 +62,9 @@ public class TimeEntryService {
         Optional<TimeEntry> timeEntryOptional = findById(timeEntryId, ctx);
         timeEntryOptional.ifPresent(timeEntry -> {
             int oldNumberOfHours = timeEntry.numberOfHours;
-            if (oldNumberOfHours != request.getNumberHours()) {
+            if (oldNumberOfHours != request.getnumberOfHours()) {
                 timeEntriesNumberPerHoursGauge.decrementGauges(oldNumberOfHours);
-                timeEntriesNumberPerHoursGauge.incrementGauges(request.getNumberHours());
+                timeEntriesNumberPerHoursGauge.incrementGauges(request.getnumberOfHours());
             }
         });
         return timeEntryOptional
