@@ -43,13 +43,12 @@ const initialValues = (defaultDate, entry, timeSheetId) => {
     startDate: moment.utc(entry.startDate),
     numberOfHours: entry.numberOfHours
   };
-  const numberOfHours = new Array(newEntry.numberOfHours);
   return {
     'comment': newEntry.comment,
     'timeSheetId': timeSheetId,
     'startDate': moment.utc(newEntry.startDate, 'YYYY-MM-DD'),
-    'timeUnit' : computeTimeUnit(numberOfHours),
-    'numberOfHours': numberOfHours
+    'timeUnit' : computeTimeUnit(entry.numberOfHours),
+    'numberOfHours': entry.numberOfHours
   };
 };
 
