@@ -192,7 +192,7 @@ AddEntryForm.propTypes = {
   timeSheets: PropTypes.array.isRequired,
   onSuccess: PropTypes.func,
   onCancel: PropTypes.func,
-  numberOfHoursForDay: PropTypes.array
+  numberOfHoursForDay: PropTypes.number.isRequired
 };
 
 export default AddEntryForm;

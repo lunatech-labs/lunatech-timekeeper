@@ -24,9 +24,9 @@ const {Option} = Select;
 const SelectHoursComponent = ({numberOfHoursForDay, entryDuration}) => {
   const hourDisabled = (hour) => {
     if(entryDuration){
-      return parseInt(hour) + (parseInt(numberOfHoursForDay) - entryDuration) > 8;
+      return parseInt(hour) + (numberOfHoursForDay - entryDuration) > 8;
     }
-    return parseInt(hour) + parseInt(numberOfHoursForDay) > 8;
+    return parseInt(hour) + numberOfHoursForDay > 8;
   };
   return (
     <Form.Item name="numberOfHours" label="Number of hours:" rules={[{required: true}]}>
@@ -39,7 +39,7 @@ const SelectHoursComponent = ({numberOfHoursForDay, entryDuration}) => {
   );
 };
 SelectHoursComponent.propTypes = {
-  numberOfHoursForDay: PropTypes.array.isRequired,
+  numberOfHoursForDay: PropTypes.number.isRequired,
   entryDuration: PropTypes.number,
 };
 

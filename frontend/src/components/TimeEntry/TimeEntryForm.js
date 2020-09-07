@@ -127,13 +127,7 @@ const TimeEntryForm = ({entries, userEvents, currentDay, form, onSuccess, onCanc
   };
   // Returns the number of hours for a day
   const amountOfHoursPerDay = (entriesArray, ue, date) => {
-      const resultToReturn = totalHoursPerDay(ue, date, entriesArray[0]);
-      console.log('amountOfHoursPerDay' + resultToReturn);
-      console.log(resultToReturn);
-      console.log(_.isArray(resultToReturn));
-      console.log(_.toArray(resultToReturn));
-
-    return resultToReturn;
+    return totalHoursPerDay(ue, date, entriesArray[0]);
   };
   return (
     <div className="tk_ModalGen">

@@ -54,23 +54,23 @@ const initialValues = (defaultDate, entry, timeSheetId) => {
   };
 };
 
-const updatedValues = (timeUnit, allValues, start) => {
+const updatedValues = (timeUnit, allValues) => {
   switch (timeUnit) {
     case 'DAY': {
       return {
-        'startDate': allValues.startDate || start, //9 am by default
+        'startDate': allValues.startDate,
         'numberOfHours': 8
       };
     }
     case 'HALFDAY': {
       return {
-        'startDate': allValues.startDate || start, //9 am by default
+        'startDate': allValues.startDate,
         'numberOfHours': 4
       };
     }
     case 'HOURLY' : {
       return {
-        'startDate': allValues.startDate || start, //9 am by default
+        'startDate': allValues.startDate,
         'numberOfHours': null
       };
     }
@@ -83,13 +83,7 @@ const updatedValues = (timeUnit, allValues, start) => {
 // Add the additional values
 // Use the values of the form or initialize the values
 const additionalValues = (timeUnit, defaultDate, allValues) => {
-  const start = defaultDate.clone();
-  start.set({
-    hour: 9,
-    minute: 0,
-    second: 0
-  });
-  return updatedValues(timeUnit, allValues, start);
+  return updatedValues(timeUnit, allValues);
 };
 
 // Compute the url
@@ -186,7 +180,7 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, numb
             </Form.Item>
           </Col>
 
-          <Form.Item name="startDate" noStyle={true}>
+          <Form.Item name='startDate' noStyle={true}>
           </Form.Item>
 
           <Col className="gutter-row" span={9}>
@@ -202,7 +196,7 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, numb
                     );
                   default:
                     return (
-                      <Form.Item name="numberOfHours" noStyle={true}>
+                            <Form.Item name="numberOfHours" noStyle={true}>
                         <Input hidden={true}/>
                       </Form.Item>
                     );
@@ -231,11 +225,9 @@ EditEntryForm.propTypes = {
     id: PropTypes.number.isRequired,
     comment: PropTypes.string.isRequired,
     billable: PropTypes.bool,
-    timeSheetId: PropTypes.number.isRequired,
-    isMorning: PropTypes.bool.isRequired,
-    startDate: PropTypes.object.isRequired,
+    startDate: PropTypes.string.isRequired,
     numberOfHours: PropTypes.number.isRequired
   }).isRequired,
-  numberOfHoursForDay: PropTypes.array
+  numberOfHoursForDay: PropTypes.number
 };
 export default EditEntryForm;
