@@ -119,6 +119,7 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel, numberOfHour
       >
         <TitleSection title='Add task'/>
         <Form.Item name="startDate" noStyle={true}>
+          <Input hidden={true}/>
         </Form.Item>
 
         <Form.Item label="Description:" name="comment" rules={[{required: true}]}>
