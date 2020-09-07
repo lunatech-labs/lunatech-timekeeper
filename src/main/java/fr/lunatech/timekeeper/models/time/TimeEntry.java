@@ -40,6 +40,6 @@ public class TimeEntry extends PanacheEntityBase {
     public LocalDateTime startDateTime;
 
     @NotNull
-    public LocalDateTime endDateTime;
+    public Integer numberOfHours;
 
 }

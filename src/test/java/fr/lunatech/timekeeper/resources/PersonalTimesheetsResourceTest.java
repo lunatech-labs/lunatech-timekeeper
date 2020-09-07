@@ -166,9 +166,9 @@ class PersonalTimesheetsResourceTest {
         LocalDateTime notIncludedDayDateTime = LocalDateTime.of(2020, 6, 28, 9, 0);
         TimeEntryRequest notIncludedDay = new TimeEntryRequest("Today, I did this test", notIncludedDayDateTime, 8);
 
-        TimeSheetResponse.TimeEntryResponse entryResponseOnFirstDateExpected = new TimeSheetResponse.TimeEntryResponse(1L, "Today, I did this test", firstDateTime, firstDateTime.plusHours(8));
-        TimeSheetResponse.TimeEntryResponse entryResponseOnLastDateExpected = new TimeSheetResponse.TimeEntryResponse(2L, "Today, I did this test", lastDateTime, lastDateTime.plusHours(8));
-        TimeSheetResponse.TimeEntryResponse includedDayResponse = new TimeSheetResponse.TimeEntryResponse(3L, "Today, I did this test", includedDayDateTime, includedDayDateTime.plusHours(8));
+        TimeSheetResponse.TimeEntryResponse entryResponseOnFirstDateExpected = new TimeSheetResponse.TimeEntryResponse(1L, "Today, I did this test", firstDateTime, 8);
+        TimeSheetResponse.TimeEntryResponse entryResponseOnLastDateExpected = new TimeSheetResponse.TimeEntryResponse(2L, "Today, I did this test", lastDateTime, 8);
+        TimeSheetResponse.TimeEntryResponse includedDayResponse = new TimeSheetResponse.TimeEntryResponse(3L, "Today, I did this test", includedDayDateTime, 8);
         var timeEntriesExpected = List.of(entryResponseOnFirstDateExpected,
                 entryResponseOnLastDateExpected,
                 includedDayResponse);
@@ -268,17 +268,16 @@ class PersonalTimesheetsResourceTest {
         );
         String commentDay = "I worked on Disney content API for 8h";
         LocalDateTime startDay1 = LocalDateTime.of(2020, 6, 18, 10, 0);
-        LocalDateTime endDay1 = LocalDateTime.of(2020, 6, 18, 18, 0);
         LocalDateTime startDay2 = LocalDateTime.of(2020, 6, 19, 8, 0);
-        LocalDateTime endDay2 = LocalDateTime.of(2020, 6, 19, 16, 0);
+
         TimeEntryRequest jimmyEntry1 = new TimeEntryRequest(commentDay, startDay1, 8);
         TimeEntryRequest jimmyEntry2 = new TimeEntryRequest(commentDay, startDay2, 8);
         update(updatedTimeSheet, TimeSheetDef.uriPlusId(1L), jimmyToken);
         create(1L, jimmyEntry1, jimmyToken);
         create(1L, jimmyEntry2, jimmyToken);
 
-        TimeSheetResponse.TimeEntryResponse jimmyEntryDay1Response = new TimeSheetResponse.TimeEntryResponse(1L, commentDay, startDay1, endDay1);
-        TimeSheetResponse.TimeEntryResponse jimmyEntryDay2Response = new TimeSheetResponse.TimeEntryResponse(2L, commentDay, startDay2, endDay2);
+        TimeSheetResponse.TimeEntryResponse jimmyEntryDay1Response = new TimeSheetResponse.TimeEntryResponse(1L, commentDay, startDay1, 8);
+        TimeSheetResponse.TimeEntryResponse jimmyEntryDay2Response = new TimeSheetResponse.TimeEntryResponse(2L, commentDay, startDay2, 8);
 
         final var timesheet = new TimeSheetResponse(1L, projectResponse, jimmy.getId(), TimeUnit.HOURLY, true, null, 10, TimeUnit.DAY.toString(), List.of(jimmyEntryDay1Response, jimmyEntryDay2Response), 8L, START_DATE);
         WeekResponse response = new WeekResponse(LocalDate.of(2020, 6, 15), Collections.emptyList(), List.of(timesheet), new ArrayList<>());

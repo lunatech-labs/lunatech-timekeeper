@@ -110,19 +110,18 @@ public class TimeSheetResponse {
         public final LocalDateTime startDateTime;
 
         @NotNull
-        @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_TIME_PATTERN)
-        public final LocalDateTime endDateTime;
+        public final Integer numberOfHours;
 
         public TimeEntryResponse(
                 @NotNull Long id,
                 @NotNull String comment,
                 @NotNull LocalDateTime startDateTime,
-                @NotNull LocalDateTime endDateTime
+                @NotNull Integer numberOfHours
         ) {
             this.id = id;
             this.comment = comment;
             this.startDateTime = startDateTime;
-            this.endDateTime = endDateTime;
+            this.numberOfHours = numberOfHours;
         }
 
         public static TimeSheetResponse.TimeEntryResponse bind(@NotNull TimeEntry timeEntry) {
@@ -130,7 +129,7 @@ public class TimeSheetResponse {
                     timeEntry.id,
                     timeEntry.comment,
                     timeEntry.startDateTime,
-                    timeEntry.endDateTime
+                    timeEntry.numberOfHours
             );
         }
 
