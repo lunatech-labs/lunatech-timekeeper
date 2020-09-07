@@ -26,7 +26,6 @@ import EditEntryForm from './EditEntryForm';
 import UserEventCard from '../UserEvent/UserEventCard';
 import {totalHoursPerDay} from '../../utils/momentUtils';
 import {getMaximumHoursPerDay} from '../../utils/configUtils';
-import _ from 'lodash'; // important!
 const {TextArea} = Input;
 
 const TimeEntryForm = ({entries, userEvents, currentDay, form, onSuccess, onCancel, mode, setMode, selectedEntryId}) => {

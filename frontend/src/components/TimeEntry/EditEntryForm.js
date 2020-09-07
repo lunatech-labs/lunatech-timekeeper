@@ -20,7 +20,6 @@ import {Button, Col, Form, Input, message, Radio, Row, Select, Space} from 'antd
 import PropTypes from 'prop-types';
 import TitleSection from '../Title/TitleSection';
 import moment from 'moment';
-import {computeNumberOfHours} from '../../utils/momentUtils';
 import SelectHoursComponent from './SelectHoursComponent';
 import {isTimeSheetDisabled} from '../../utils/timesheetUtils';
 
@@ -180,26 +179,26 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, numb
             </Form.Item>
           </Col>
 
-          <Form.Item name='startDate' noStyle={true}>
+          <Form.Item name="startDate" noStyle={true}>
+            <Input hidden={true}/>
           </Form.Item>
 
           <Col className="gutter-row" span={9}>
             {/*Additional Values : depends on the Time Unit*/}
             <Form.Item shouldUpdate={(prevValues, curValues) => prevValues.timeUnit !== curValues.timeUnit}>
               {({getFieldValue}) => {
-                switch (getFieldValue('timeUnit')) {
-                  case 'HOURLY':
-                    return (
-                      <div>
-                        {<SelectHoursComponent numberOfHoursForDay={numberOfHoursForDay} entryDuration={entryDuration} />}
-                      </div>
-                    );
-                  default:
-                    return (
-                            <Form.Item name="numberOfHours" noStyle={true}>
-                        <Input hidden={true}/>
-                      </Form.Item>
-                    );
+                if (getFieldValue('timeUnit') === 'HOURLY') {
+                  return (
+                    <div>
+                      <SelectHoursComponent numberOfHoursForDay={numberOfHoursForDay} entryDuration={entryDuration} />
+                    </div>
+                  );
+                } else {
+                  return (
+                    <Form.Item name="numberOfHours" noStyle={true}>
+                      <Input hidden={true}/>
+                    </Form.Item>
+                  );
                 }
               }}
             </Form.Item>

@@ -19,7 +19,6 @@ import './TimeEntry.less';
 import {Badge} from 'antd';
 import {ClockCircleOutlined} from '@ant-design/icons';
 import PropTypes from 'prop-types';
-import {computeNumberOfHours} from '../../utils/momentUtils';
 import moment from 'moment';
 
 const computeSize = (nbHours) => {
@@ -28,7 +27,6 @@ const computeSize = (nbHours) => {
 };
 const TimeEntry = ({entry, onClick}) => {
   const start = moment(entry.startDate).utc();
-  const date = start.clone();
   const hours = entry.numberOfHours;
   const size = computeSize(hours);
   return (

@@ -24,7 +24,7 @@ const {Option} = Select;
 const SelectHoursComponent = ({numberOfHoursForDay, entryDuration}) => {
   const hourDisabled = (hour) => {
     if(entryDuration){
-      return parseInt(hour) + (numberOfHoursForDay - entryDuration) > 8;
+      return parseInt(hour) + (parseInt(numberOfHoursForDay) - entryDuration) > 8;
     }
     return parseInt(hour) + numberOfHoursForDay > 8;
   };

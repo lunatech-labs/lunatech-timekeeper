@@ -21,10 +21,7 @@ import {Button} from 'antd';
 import Tooltip from 'antd/lib/tooltip';
 import {ClockCircleOutlined, DeleteOutlined, CopyOutlined, EditOutlined} from '@ant-design/icons';
 
-const moment = require('moment');
-
 const ShowTimeEntry = ({entry, onClickEdit}) => {
-  const start = moment(entry.startDate).utc();
   const duration = entry.numberOfHours;
 
   return (
