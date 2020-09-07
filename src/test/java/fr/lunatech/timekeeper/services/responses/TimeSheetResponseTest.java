@@ -49,23 +49,22 @@ class TimeSheetResponseTest {
         assertTrue(tested.filterToSixWeeksRange(2020,2).entries.isEmpty());
     }
 
-
     @Test
     void should_drop_entries_not_in_6_weeks_timerange(){
         TimeSheetResponse.TimeEntryResponse july14 = new TimeSheetResponse.TimeEntryResponse(1L,
                 "comment",
-                LocalDateTime.of(2020,7,14,9,00),
-                LocalDateTime.of(2020,7,14,17,00)
+                LocalDateTime.of(2020,7,14,9,0),
+                8
         );
         TimeSheetResponse.TimeEntryResponse august15 = new TimeSheetResponse.TimeEntryResponse(2L,
                 "comment",
-                LocalDateTime.of(2020,8,15,9,00),
-                LocalDateTime.of(2020,8,15,17,00)
+                LocalDateTime.of(2020,8,15,9,0),
+                8
         );
         TimeSheetResponse.TimeEntryResponse junePreviousYear = new TimeSheetResponse.TimeEntryResponse(3L,
                 "comment",
-                LocalDateTime.of(2019,6,14,9,00),
-                LocalDateTime.of(2019,6,14,13,00)
+                LocalDateTime.of(2019,6,14,9,0),
+                4
         );
 
         List<TimeSheetResponse.TimeEntryResponse> initialDates = List.of(july14,junePreviousYear,august15);
@@ -88,7 +87,6 @@ class TimeSheetResponseTest {
         assertEquals(expectedList, tested.filterToSixWeeksRange(2020,7).entries);
     }
 
-
     // Open the 2020 calendar on a Mac, go to the "Year" view and look at January 2020
     // We expected to see the last week of 2019 and the first week of february on the "6 weeks view" of january 2020
     @Test
@@ -96,27 +94,27 @@ class TimeSheetResponseTest {
         TimeSheetResponse.TimeEntryResponse december29 = new TimeSheetResponse.TimeEntryResponse(1L,
                 "comment",
                 LocalDateTime.of(2019,12,29,9,00),
-                LocalDateTime.of(2019,12,29,17,00)
+                8
         );
         TimeSheetResponse.TimeEntryResponse december30 = new TimeSheetResponse.TimeEntryResponse(2L,
                 "comment",
                 LocalDateTime.of(2019,12,30,9,00),
-                LocalDateTime.of(2019,12,30,17,00)
+                8
         );
         TimeSheetResponse.TimeEntryResponse january20 = new TimeSheetResponse.TimeEntryResponse(3L,
                 "comment",
                 LocalDateTime.of(2020,1,20,9,00),
-                LocalDateTime.of(2020,1,20,17,00)
+                8
         );
         TimeSheetResponse.TimeEntryResponse february9 = new TimeSheetResponse.TimeEntryResponse(4L,
                 "comment",
                 LocalDateTime.of(2020,2,9,9,00),
-                LocalDateTime.of(2020,2,9,13,00)
+                4
         );
         TimeSheetResponse.TimeEntryResponse february10 = new TimeSheetResponse.TimeEntryResponse(5L,
                 "comment",
                 LocalDateTime.of(2020,2,10,9,00),
-                LocalDateTime.of(2020,2,10,13,00)
+                4
         );
 
         List<TimeSheetResponse.TimeEntryResponse> initialDates = List.of(december29,december30,january20,february9,february10);

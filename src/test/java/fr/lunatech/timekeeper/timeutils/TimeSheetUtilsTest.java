@@ -18,7 +18,6 @@ package fr.lunatech.timekeeper.timeutils;
 
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -48,12 +47,12 @@ class TimeSheetUtilsTest {
                 null,
                 10,
                 TimeUnit.DAY,
-                generateTestEntries(8,8L),
+                generateTestEntries(8, 8),
                 START_DATE
         );
 
         //THEN: only 2 hours left
-        assertThat(TimeSheetUtils.computeLeftOver(timesheet),is(2L));
+        assertThat(TimeSheetUtils.computeLeftOver(timesheet), is(2L));
     }
 
     @Test
@@ -74,7 +73,7 @@ class TimeSheetUtilsTest {
         );
 
         //THEN: 10 days left
-        assertThat(TimeSheetUtils.computeLeftOver(timesheet),is(10L));
+        assertThat(TimeSheetUtils.computeLeftOver(timesheet), is(10L));
     }
 
     @Test
@@ -90,12 +89,12 @@ class TimeSheetUtilsTest {
                 null,
                 4,
                 TimeUnit.HALFDAY,
-                generateTestEntries(1,8L),
+                generateTestEntries(1, 8),
                 START_DATE
         );
 
         //THEN: only 2 half day (1 day)
-        assertThat(TimeSheetUtils.computeLeftOver(timesheet),is(1L));
+        assertThat(TimeSheetUtils.computeLeftOver(timesheet), is(1L));
     }
 
     @Test
@@ -111,12 +110,12 @@ class TimeSheetUtilsTest {
                 null,
                 4,
                 TimeUnit.HALFDAY,
-                generateTestEntries(3,4L),
+                generateTestEntries(3, 4),
                 START_DATE
         );
 
         //THEN: only 1 half day left (rounded to 0 day)
-        assertThat(TimeSheetUtils.computeLeftOver(timesheet),is(0L));
+        assertThat(TimeSheetUtils.computeLeftOver(timesheet), is(0L));
     }
 
     @Test
@@ -132,12 +131,12 @@ class TimeSheetUtilsTest {
                 null,
                 20,
                 TimeUnit.HOURLY,
-                generateTestEntries(1,8L),
+                generateTestEntries(1, 8),
                 START_DATE
         );
 
         //THEN: only 12 hours left (1,5 day -> rounded 1 day)
-        assertThat(TimeSheetUtils.computeLeftOver(timesheet),is(1L));
+        assertThat(TimeSheetUtils.computeLeftOver(timesheet), is(1L));
     }
 
     @Test
@@ -153,7 +152,7 @@ class TimeSheetUtilsTest {
                 null,
                 8,
                 TimeUnit.HOURLY,
-                generateTestEntries(1,1L),
+                generateTestEntries(1, 1),
                 START_DATE
         );
 
@@ -174,12 +173,12 @@ class TimeSheetUtilsTest {
                 null,
                 2,
                 TimeUnit.DAY,
-                generateTestEntries(4,8L),
+                generateTestEntries(4, 8),
                 START_DATE
         );
 
         //THEN: the result is negative
-        assertThat(TimeSheetUtils.computeLeftOver(timesheet),is(-2L));
+        assertThat(TimeSheetUtils.computeLeftOver(timesheet), is(-2L));
     }
 
     @Test
@@ -188,8 +187,8 @@ class TimeSheetUtilsTest {
 
         //WHEN the user entry is incorrect
         TimeEntry timeEntry = new TimeEntry();
-        timeEntry.startDateTime =LocalDateTime.now().minusHours(8L);
-        timeEntry.endDateTime = LocalDateTime.now();
+        timeEntry.startDateTime =LocalDateTime.now();
+        timeEntry.numberOfHours = 8;
         TimeSheet timesheet = new TimeSheet(
                 null,
                 null,
@@ -203,7 +202,7 @@ class TimeSheetUtilsTest {
         );
 
         //THEN: only 0 hours left (rounded 0 day)
-        assertThat(TimeSheetUtils.computeLeftOver(timesheet),is(0L));
+        assertThat(TimeSheetUtils.computeLeftOver(timesheet), is(0L));
     }
 
     @Test
@@ -219,12 +218,12 @@ class TimeSheetUtilsTest {
                 null,
                 null,
                 TimeUnit.HOURLY,
-                generateTestEntries(1,1L),
+                generateTestEntries(1, 1),
                 START_DATE
         );
 
         //THEN: no calculation are made
-        assertThat(TimeSheetUtils.computeLeftOver(timesheet),is(nullValue()));
+        assertThat(TimeSheetUtils.computeLeftOver(timesheet), is(nullValue()));
     }
 
     @Test
@@ -240,12 +239,12 @@ class TimeSheetUtilsTest {
                 null,
                 -2,
                 TimeUnit.HOURLY,
-                generateTestEntries(1,1L),
+                generateTestEntries(1, 1),
                 START_DATE
         );
 
         //THEN: no calculation are made
-        assertThat(TimeSheetUtils.computeLeftOver(timesheet),is(nullValue()));
+        assertThat(TimeSheetUtils.computeLeftOver(timesheet), is(nullValue()));
     }
 
     @Test
@@ -261,7 +260,7 @@ class TimeSheetUtilsTest {
                 null,
                 4,
                 null,
-                generateTestEntries(1,8L),
+                generateTestEntries(1, 8),
                 START_DATE
         );
 
@@ -269,14 +268,14 @@ class TimeSheetUtilsTest {
         assertThat(TimeSheetUtils.computeLeftOver(timesheet),is(3L));
     }
 
-    private List<TimeEntry> generateTestEntries (int numberOfEntry, long hourPerEntry){
+    private List<TimeEntry> generateTestEntries (int numberOfEntry, int hourPerEntry){
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime nowPlusSomeHours = now.plusHours(hourPerEntry);
+        if (hourPerEntry < 0) throw new IllegalStateException("Invalid duration");
         List<TimeEntry> entries = new ArrayList<>();
         for (int i = 0 ; i<numberOfEntry;i++) {
             TimeEntry entry = new TimeEntry();
             entry.startDateTime = now;
-            entry.endDateTime = nowPlusSomeHours;
+            entry.numberOfHours = hourPerEntry;
             entries.add(entry);
         }
         return entries;

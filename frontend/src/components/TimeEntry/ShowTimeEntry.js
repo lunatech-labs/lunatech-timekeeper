@@ -21,17 +21,8 @@ import {Button} from 'antd';
 import Tooltip from 'antd/lib/tooltip';
 import {ClockCircleOutlined, DeleteOutlined, CopyOutlined, EditOutlined} from '@ant-design/icons';
 
-const moment = require('moment');
-
 const ShowTimeEntry = ({entry, onClickEdit}) => {
-  const start = moment(entry.startDateTime).utc();
-  const end = moment(entry.endDateTime).utc();
-
-  const duration = moment.duration(end.diff(start));
-  const date = start.clone();
-  date.set({
-    hour: duration.asHours()
-  });
+  const duration = entry.numberOfHours;
 
   return (
     <div className="tk_TaskInfoGen">
@@ -40,7 +31,7 @@ const ShowTimeEntry = ({entry, onClickEdit}) => {
         <div className="tk_TaskInfoMiddle">
           <div>
             <p>{entry.project ? entry.project.name : ''}</p>
-            <p><ClockCircleOutlined />{date.format('hh:mm')}</p>
+            <p><ClockCircleOutlined />{duration}</p>
           </div>
           <div>
             <Tooltip title="Edit" key="edit">
@@ -68,7 +59,7 @@ ShowTimeEntry.propTypes = {
       name: PropTypes.string.isRequired,
     }).isRequired,
     startDateTime: PropTypes.string.isRequired,
-    endDateTime: PropTypes.string.isRequired,
+    numberOfHours: PropTypes.number.isRequired
   }),
   onClickEdit: PropTypes.func.isRequired // () => set the mode to 'edit', the mode can be 'view', 'add' or 'edit'
 };
