@@ -36,7 +36,6 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 /**
  * InternalResourceUtils provided abstract implementations of resource interaction
- * @author Fabrice Sznajderman - Lunatech
  */
 final class InternalResourceUtils {
 
@@ -168,15 +167,15 @@ final class InternalResourceUtils {
      * @param token  security token
      * @return a ValidatableResponse
      */
-    static ValidatableResponse resourceValidation(String uri, String token) {
-        return resourceValidation(VerbDefinition.GET, uri, token, Option.none());
+    static ValidatableResponse resourceValidation(VerbDefinition m, String uri, String token) {
+        return resourceValidation(m, uri, token, Option.none());
     }
 
     private static <T> ValidatableResponse resourceValidation(VerbDefinition m, String uri, String token, Option<T> body) {
         var root = given()
                 .auth().preemptive().oauth2(token)
                 .when()
-                //.accept(APPLICATION_JSON)
+                .accept(APPLICATION_JSON) // this enforce JSON response even with Errors from the backend
                 .contentType(APPLICATION_JSON);
 
         body.map(root::body);
