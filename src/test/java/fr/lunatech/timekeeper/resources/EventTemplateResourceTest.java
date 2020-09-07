@@ -16,9 +16,6 @@
 
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.models.Profile;
-import fr.lunatech.timekeeper.models.User;
-import fr.lunatech.timekeeper.models.time.EventType;
 import fr.lunatech.timekeeper.resources.utils.HttpTestRuntimeException;
 import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
 import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
@@ -36,7 +33,10 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
