@@ -123,10 +123,9 @@ public class EventTemplateService {
             // Create userEvent for each attendee using the userEventService
             // Please note that we will also delete and recreate all userEvents for each attendee.
             findById(eventTemplateUpdated.id, ctx).ifPresent(eventTemplate1 -> {
-                var created = userEventService.createOrUpdateFromEventTemplate(eventTemplate1, request.getAttendees(), ctx);
-                logger.debug("Updated {} userEvents from template", created);
+                var updated = userEventService.createOrUpdateFromEventTemplate(eventTemplate1, request.getAttendees(), ctx);
+                logger.debug("Updated {} userEvents from template", updated);
             });
-
 
             return eventTemplateUpdated.id;
         });
