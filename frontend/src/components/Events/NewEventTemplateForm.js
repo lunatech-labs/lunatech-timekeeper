@@ -68,23 +68,6 @@ const NewEventTemplateForm = () => {
     );
   }
 
-  if (timeKeeperAPIPost.error) {
-    const {response} = timeKeeperAPIPost.error;
-    const {status, url} = response;
-    const errMsg = `Server error HTTP Code:${status}  for url: ${url}`;
-    return (
-      <React.Fragment>
-        <Alert
-          message="Unable to save the new Event"
-          description={errMsg}
-          type="error"
-          closable
-          style={{marginBottom: 10}}
-        />
-      </React.Fragment>
-    );
-  }
-
   const disabledDate = (current) => {
     // Can not select days before today and today
     return current && current < moment().endOf('day');
@@ -126,6 +109,7 @@ const NewEventTemplateForm = () => {
   }
   if(eventsResponse.data && usersResponse.data){
     return (
+
       <Form
         id="tk_Form"
         layout="vertical"
@@ -133,6 +117,14 @@ const NewEventTemplateForm = () => {
         onFinish={timeKeeperAPIPost.run}
         form={form}
       >
+        {timeKeeperAPIPost.error &&
+        <Alert
+          message="Unable to save the new Event"
+          description={timeKeeperAPIPost.error.data.message}
+          type="error"
+          closable
+          style={{marginBottom: 10}}
+        />}
         <div className="tk_CardLg">
           <Row gutter={16}>
             <Col className="gutter-row" span={12}>
