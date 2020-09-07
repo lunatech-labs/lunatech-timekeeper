@@ -26,7 +26,7 @@ const SelectHoursComponent = ({numberOfHoursForDay, entryDuration}) => {
     if(entryDuration){
       return parseInt(hour) + (parseInt(numberOfHoursForDay) - entryDuration) > 8;
     }
-    return parseInt(hour) + numberOfHoursForDay > 8;
+    return parseInt(hour) + parseInt(numberOfHoursForDay) > 8;
   };
   return (
     <Form.Item name="numberOfHours" label="Number of hours:" rules={[{required: true}]}>
