@@ -17,6 +17,7 @@
 package fr.lunatech.timekeeper.models.time;
 
 import fr.lunatech.timekeeper.models.Organization;
+import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
@@ -24,16 +25,12 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
-import static java.util.Optional.ofNullable;
 
 /**
  * An EventTemplate is an event, created manually by an administrator that would concern one
  * to many users. These events are “company events” like conference, hack-breakfast, training,
  * trip, all-staff-meeting...
+ *
  * @see <a href=https://lunatech.atlassian.net/wiki/spaces/T/pages/1948057763/Domain+model>Model Domain documentation</a>
  */
 @Entity
@@ -61,10 +58,6 @@ public class EventTemplate extends PanacheEntityBase {
     @Null
     public LocalDateTime endDateTime;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eventTemplate")
-    @NotNull
-    public Set<UserEvent> attendees;
-
     @Override
     public String toString() {
         return "EventTemplate{" +
@@ -74,16 +67,13 @@ public class EventTemplate extends PanacheEntityBase {
                 ", organization=" + organization +
                 ", startDateTime=" + startDateTime +
                 ", endDateTime=" + endDateTime +
-                ", attendees=" + attendees +
                 '}';
     }
 
-    public Optional<UserEvent> getAttendees(Long id) {
-        return ofNullable(attendees)
-                .flatMap(userEvents -> userEvents
-                        .stream()
-                        .filter(userEvent -> Objects.equals(userEvent.owner.id,id))
-                        .findFirst()
-                );
+    public boolean isValid() {
+        if (startDateTime != null && endDateTime != null && startDateTime.isAfter(endDateTime)) {
+            throw new CreateResourceException("Cannot create an EventTemplate if startDateTime is after endDateTime");
+        }
+        return true;
     }
 }

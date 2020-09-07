@@ -16,7 +16,7 @@
 
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.resources.openapi.EventResourceApi;
+import fr.lunatech.timekeeper.resources.openapi.EventTemplateResourceApi;
 import fr.lunatech.timekeeper.resources.providers.AuthenticationContextProvider;
 import fr.lunatech.timekeeper.services.EventTemplateService;
 import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
@@ -35,7 +35,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
-public class EventResource implements EventResourceApi {
+public class EventTemplateResource implements EventTemplateResourceApi {
 
     @Inject
     EventTemplateService eventTemplateService;
@@ -54,15 +54,15 @@ public class EventResource implements EventResourceApi {
     @Counted(name = "countGetAllEvents", description = "Counts how many times the user load the event list on method 'getAllEvents'")
     @Timed(name = "timeGetAllEvents", description = "Times how long it takes the user load the event list on method 'getAllEvents'", unit = MetricUnits.MILLISECONDS)
     public List<EventTemplateResponse> getAllEvents() {
-        return eventTemplateService.listAllResponses(authentication.context());
+        return eventTemplateService.listAll(authentication.context());
     }
 
     @RolesAllowed({"user", "admin"})
     @Override
     @Counted(name = "countGetEventUsers", description = "Counts how many times the user load the attendees for an event on method 'getEventUsers'")
     @Timed(name = "timeGetEventUsers", description = "Times how long it takes the user load the attendees for an event on method 'getEventUsers'", unit = MetricUnits.MILLISECONDS)
-    public List<UserResponse> getEventUsers(Long id) {
-        return eventTemplateService.getAttendees(id);
+    public List<UserResponse> getEventUsers(Long eventId) {
+        return eventTemplateService.getAttendees(eventId);
     }
 
     @RolesAllowed({"user", "admin"})
@@ -78,9 +78,9 @@ public class EventResource implements EventResourceApi {
                                         .build()
                         ).build()
                 ).orElseThrow(() -> new IllegalEntityStateException(
-                        "Event with name: " + request.getName() +
-                                ", already exists with same Start: " + request.getStartDateTime().toLocalDate() +
-                                " and End: " + request.getEndDateTime().toLocalDate() + " dates.")
+                        "An event template with the same name, same start day and same end day already exists. Event name=[" + request.getName() +
+                                "], start day date=" + request.getStartDateTime().toLocalDate() +
+                                " end day date=" + request.getEndDateTime().toLocalDate())
                 );
     }
 

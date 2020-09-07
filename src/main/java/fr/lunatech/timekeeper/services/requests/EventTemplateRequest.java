@@ -32,7 +32,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 public final class EventTemplateRequest {
 
@@ -69,7 +68,6 @@ public final class EventTemplateRequest {
 
     public EventTemplate unbind(
             @NotNull EventTemplate eventTemplate,
-            @NotNull BiFunction<Long, AuthenticationContext, Optional<User>> findUser,
             @NotNull AuthenticationContext ctx
     ) {
         eventTemplate.organization = ctx.getOrganization();
@@ -77,18 +75,12 @@ public final class EventTemplateRequest {
         eventTemplate.description = getDescription();
         eventTemplate.startDateTime = getStartDateTime();
         eventTemplate.endDateTime = getEndDateTime();
-        eventTemplate.attendees = getAttendees()
-                .stream()
-                .map(userEventRequest -> userEventRequest.unbind(eventTemplate, findUser, ctx))
-                .collect(Collectors.toSet());
         return eventTemplate;
     }
 
-    public EventTemplate unbind(@NotNull BiFunction<Long, AuthenticationContext, Optional<User>> findUser,
-                                @NotNull AuthenticationContext ctx) {
-        return unbind(new EventTemplate(), findUser, ctx);
+    public EventTemplate unbind(@NotNull AuthenticationContext ctx) {
+        return unbind(new EventTemplate(), ctx);
     }
-
 
     public String getName() {
         return name;
@@ -110,6 +102,17 @@ public final class EventTemplateRequest {
         return attendees;
     }
 
+    @Override
+    public String toString() {
+        return "EventTemplateRequest{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", startDateTime=" + startDateTime +
+                ", endDateTime=" + endDateTime +
+                ", attendees=" + attendees +
+                '}';
+    }
+
     /* 👤 UserEventRequest */
     public static final class UserEventRequest {
 
@@ -126,7 +129,7 @@ public final class EventTemplateRequest {
                 @NotNull BiFunction<Long, AuthenticationContext, Optional<User>> findUser,
                 @NotNull AuthenticationContext ctx
         ) {
-            final var userEvent = eventTemplate.getAttendees(getUserId()).orElse(new UserEvent());
+            final var userEvent = new UserEvent();
             userEvent.name = eventTemplate.name;
             userEvent.description = eventTemplate.description;
             userEvent.eventType = EventType.COMPANY;
