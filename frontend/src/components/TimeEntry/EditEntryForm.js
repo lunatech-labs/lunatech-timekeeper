@@ -20,15 +20,14 @@ import {Button, Col, Form, Input, message, Radio, Row, Select, Space} from 'antd
 import PropTypes from 'prop-types';
 import TitleSection from '../Title/TitleSection';
 import moment from 'moment';
-import {computeNumberOfHours} from '../../utils/momentUtils';
 import SelectHoursComponent from './SelectHoursComponent';
 import {isTimeSheetDisabled} from '../../utils/timesheetUtils';
 
 const {Option} = Select;
 const {TextArea} = Input;
 
-const computeTimeUnit = (numberHours) => {
-  switch (numberHours) {
+const computeTimeUnit = (numberofHours) => {
+  switch (numberofHours) {
     case 4:
       return 'HALFDAY';
     case 8:
@@ -42,17 +41,16 @@ const initialValues = (defaultDate, entry, timeSheetId) => {
   const newEntry = {
     ...entry,
     startDateTime: moment.utc(entry.startDateTime),
-    endDateTime: moment.utc(entry.endDateTime)
+    numberOfHours: entry.numberOfHours
   };
-  const numberOfHours = computeNumberOfHours(newEntry.startDateTime, newEntry.endDateTime);
+  const numberOfHours = new Array(newEntry.numberOfHours);
   return {
     'comment': newEntry.comment,
     'timeSheetId': timeSheetId,
     'date': moment.utc(newEntry.startDateTime, 'YYYY-MM-DD'),
     'startDateTime': newEntry.startDateTime,
-    'endDateTime': newEntry.endDateTime,
     'timeUnit' : computeTimeUnit(numberOfHours),
-    'numberHours': numberOfHours
+    'numberOfHours': newEntry.numberOfHours
   };
 };
 
@@ -61,19 +59,19 @@ const updatedValues = (timeUnit, allValues, start) => {
     case 'DAY': {
       return {
         'startDateTime': allValues.startDateTime || start, //9 am by default
-        'numberHours': 8
+        'numberOfHours': 8
       };
     }
     case 'HALFDAY': {
       return {
         'startDateTime': allValues.startDateTime || start, //9 am by default
-        'numberHours': 4
+        'numberOfHours': 4
       };
     }
     case 'HOURLY' : {
       return {
         'startDateTime': allValues.startDateTime || start, //9 am by default
-        'numberHours': null
+        'numberOfHours': null
       };
     }
     default: {
@@ -104,7 +102,7 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, numb
   const [entryUpdated, setEntryUpdated] = useState(false);
   const [selectedTimeSheet, setSelectedTimeSheet] = useState();
   const timeKeeperAPIPut = useTimeKeeperAPIPut(urlEdition(form, entry.id), (form => form), setEntryUpdated);
-  const entryDuration = computeNumberOfHours(moment.utc(entry.startDateTime), moment.utc(entry.endDateTime));
+  const entryDuration = entry.numberOfHours;
   useEffect(() => {
     if (entryUpdated) {
       message.success('Entry was updated');
@@ -154,6 +152,7 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, numb
       >
         <TitleSection title='Edit task'/>
         <Form.Item name="date" noStyle={true}>
+          <Input hidden={true}/>
         </Form.Item>
 
         <Form.Item label="Description:" name="comment" rules={[{required: true}]}>
@@ -191,6 +190,7 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, numb
           </Col>
 
           <Form.Item name="startDateTime" noStyle={true}>
+            <Input hidden={true}/>
           </Form.Item>
 
           <Col className="gutter-row" span={9}>
@@ -206,7 +206,7 @@ const EditEntryForm = ({date, form, timeSheets, onSuccess, onCancel, entry, numb
                     );
                   default:
                     return (
-                      <Form.Item name="numberHours" noStyle={true}>
+                      <Form.Item name="numberOfHours" noStyle={true}>
                         <Input hidden={true}/>
                       </Form.Item>
                     );
@@ -235,11 +235,9 @@ EditEntryForm.propTypes = {
     id: PropTypes.number.isRequired,
     comment: PropTypes.string.isRequired,
     billable: PropTypes.bool,
-    timeSheetId: PropTypes.number.isRequired,
-    isMorning: PropTypes.bool.isRequired,
-    startDateTime: PropTypes.object.isRequired,
-    endDateTime: PropTypes.object.isRequired,
+    startDateTime: PropTypes.string.isRequired,
+    numberOfHours: PropTypes.number.isRequired
   }).isRequired,
-  numberOfHoursForDay: PropTypes.array
+  numberOfHoursForDay: PropTypes.number
 };
 export default EditEntryForm;
