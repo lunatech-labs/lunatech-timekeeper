@@ -1,12 +1,16 @@
 package fr.lunatech.timekeeper.services;
 
+import fr.lunatech.timekeeper.models.time.EventTemplate;
 import fr.lunatech.timekeeper.models.time.UserEvent;
+import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
 import fr.lunatech.timekeeper.services.responses.UserEventResponse;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.function.ToIntFunction;
@@ -14,6 +18,9 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class UserEventService {
+
+    @Inject
+    UserService userService;
 
     private static final Logger logger = LoggerFactory.getLogger(UserEventService.class);
 
@@ -43,5 +50,26 @@ public class UserEventService {
 
     protected boolean validateYear(UserEvent userEvent, Integer year) {
         return userEvent.startDateTime.getYear() == year || userEvent.endDateTime.getYear() == year;
+    }
+
+    public Long createOrUpdateFromEventTemplate(EventTemplate eventTemplate,
+                                                List<EventTemplateRequest.UserEventRequest> userEventRequests,
+                                                AuthenticationContext ctx) {
+        if (userEventRequests.isEmpty()) {
+            return 0L;
+        }
+
+        // Here we delete any userEvent that was previously created with this template.
+        // If you remove a user from a template, it will delete the associated userEvent
+        UserEvent.<UserEvent>stream("eventtemplate_id=?1",eventTemplate.id) // NOSONAR
+                .forEach(PanacheEntityBase::delete);
+
+        long updated = 0;
+        for (var userEventRequest : userEventRequests) {
+            var userEvent = userEventRequest.unbind(eventTemplate, userService::findById, ctx);
+            userEvent.persistAndFlush();
+            updated++;
+        }
+        return updated;
     }
 }

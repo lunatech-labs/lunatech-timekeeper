@@ -37,19 +37,18 @@ public class UserEventResponse {
     private String duration;
 
     private UserEventResponse() {
-
     }
 
-    public static UserEventResponse bind(UserEvent event) {
+    public static UserEventResponse bind(final UserEvent event) {
         return UserEventResponse.createFromUserEvent(event);
     }
 
     /**
      * Factory method
-     * @param event
+     * @param event is the template event
      * @return a new UserEventResponse initialized
      */
-    protected static UserEventResponse createFromUserEvent(UserEvent event) {
+    protected static UserEventResponse createFromUserEvent(final UserEvent event) {
         var userEventResponse = new UserEventResponse();
         userEventResponse.id = event.id;
         userEventResponse.name = event.name;
@@ -63,13 +62,10 @@ public class UserEventResponse {
      * @param userEventResponse
      * @return UserEventResponse
      */
-    private static UserEventResponse checkParameters(UserEvent event, UserEventResponse userEventResponse) {
+    private static UserEventResponse checkParameters(final UserEvent event, UserEventResponse userEventResponse) {
         if(event.startDateTime != null && event.endDateTime != null){
-            if(event.startDateTime.isAfter(event.endDateTime)){
-                throw new IllegalArgumentException("StartDateTime must be before endDateTime");
-            }
-            userEventResponse.eventUserDaysResponse = createEventUserDayResponseList(event);
-            userEventResponse.duration = Duration.between(event.startDateTime, event.endDateTime).toString();
+                userEventResponse.eventUserDaysResponse = createEventUserDayResponseList(event);
+                userEventResponse.duration = Duration.between(event.startDateTime, event.endDateTime).toString();
         }
         if (event.startDateTime != null) {
             userEventResponse.startDateTime = TimeKeeperDateUtils.formatToString(event.startDateTime);
@@ -95,7 +91,7 @@ public class UserEventResponse {
      * @param event
      * @return List<EventUserDayResponse>
      */
-    protected static List<EventUserDayResponse> createEventUserDayResponseList(UserEvent event) {
+    protected static List<EventUserDayResponse> createEventUserDayResponseList(final UserEvent event) {
         List<LocalDate> dates = event.startDateTime.toLocalDate().datesUntil(event.endDateTime.toLocalDate().plusDays(1))
                 .collect(Collectors.toList());
             return dates.stream()

@@ -154,7 +154,7 @@ final class InternalResourceUtils {
      * @param m      HttpMethod
      * @param uri    uri
      * @param token  security token
-     * @return
+     * @return  a ValidatableResponse
      */
     static <T> ValidatableResponse resourceValidation(VerbDefinition m, String uri, String token, T body) {
         return resourceValidation(m, uri, token, Option.some(body));
@@ -163,24 +163,22 @@ final class InternalResourceUtils {
     /**
      * Allows the caller to specify as parameter the statusCode
      *
-     * @param m      HttpMethod
      * @param uri    uri
      * @param token  security token
-     * @return
+     * @return a ValidatableResponse
      */
     static ValidatableResponse resourceValidation(VerbDefinition m, String uri, String token) {
         return resourceValidation(m, uri, token, Option.none());
     }
 
-
     private static <T> ValidatableResponse resourceValidation(VerbDefinition m, String uri, String token, Option<T> body) {
-
         var root = given()
                 .auth().preemptive().oauth2(token)
                 .when()
+                .accept(APPLICATION_JSON) // this enforce JSON response even with Errors from the backend
                 .contentType(APPLICATION_JSON);
 
-        body.map(b -> root.body(b));
+        body.map(root::body);
 
         var resp = computeVerb(m, uri, root);
         return resp.then();

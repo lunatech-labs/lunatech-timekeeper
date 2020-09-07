@@ -38,32 +38,31 @@ import java.util.List;
 import static javax.ws.rs.core.HttpHeaders.LOCATION;
 
 @Path("/events")
-public interface EventResourceApi {
-
+public interface EventTemplateResourceApi {
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Retrieve an Event",
-            description = "Retrieve the event details with all it's attendees")
+    @Operation(summary = "Retrieve an eventTemplate",
+            description = "Retrieve the eventTemplate's details")
     @Tag(ref = "events")
     @APIResponses(value = {
             @APIResponse(
                     responseCode = "200",
-                    description = "Event retrieved"
+                    description = "EventTemplate retrieved"
             )
     })
     EventTemplateResponse getEventById(@PathParam("id") Long id);
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Retrieve all Events",
-            description = "Retrieve the list of existing events for you organization")
+    @Operation(summary = "Retrieve all eventTemplates",
+            description = "Retrieve the list of existing eventTemplates for you organization")
     @Tag(ref = "events")
     @APIResponses(value = {
             @APIResponse(
                     responseCode = "200",
-                    description = "Events retrieved"
+                    description = "List of eventTemplates"
             )
     })
     List<EventTemplateResponse> getAllEvents();
@@ -71,37 +70,37 @@ public interface EventResourceApi {
     @GET
     @Path("/{id}/users")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Retrieve all attendees of an event",
-            description = "Retrieve all attendees details concerned by the event")
+    @Operation(summary = "Retrieve all attendees of an eventTemplate",
+            description = "Retrieve all attendees details concerned by the eventTemplate")
     @Tag(ref = "events")
     @APIResponses(value = {
             @APIResponse(
                     responseCode = "200",
-                    description = "User list of the event retrieved"
+                    description = "All userEvents related to this eventTemplate"
             ),
             @APIResponse(
                     responseCode = "404",
-                    description = "Event not found"
+                    description = "eventTemplate not found"
             )
     })
     List<UserResponse> getEventUsers(@PathParam("id") Long id);
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Create an event",
-            description = "Create a new event")
+    @Operation(summary = "Create an eventTemplate",
+            description = "Create a new eventTemplate and create associated userEvent for each eventTemplateRequest attendee.")
     @Tag(ref = "events")
     @APIResponses(value = {
             @APIResponse(
                     responseCode = "201",
-                    description = "Event created",
+                    description = "EventTemplate created",
                     headers = {
                             @Header(name = LOCATION, description = "New event url", schema = @Schema(type = SchemaType.STRING))
                     }
             ),
             @APIResponse(
                     responseCode = "400",
-                    description = "Bad Request. Event name with same start & end dates already exists."
+                    description = "Bad Request, an eventTemplate name with same start & end dates already exists."
             )
     })
     Response createEvent(@RequestBody EventTemplateRequest request, @Context UriInfo uriInfo);
@@ -109,8 +108,8 @@ public interface EventResourceApi {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Update an event",
-            description = "Update and event details")
+    @Operation(summary = "Update an event and the list of attendees",
+                description = "Update an eventTemplate, this operation will also flush and recreate all associated UserEvents for each attendee defined in the EventTemplateRequest.")
     @Tag(ref = "events")
     @APIResponses(value = {
             @APIResponse(
@@ -119,7 +118,7 @@ public interface EventResourceApi {
             ),
             @APIResponse(
                     responseCode = "404",
-                    description = "Event not found"
+                    description = "EventTemplate not found"
             )
     })
     Response updateEvent(@PathParam("id") Long id, @RequestBody EventTemplateRequest request);
