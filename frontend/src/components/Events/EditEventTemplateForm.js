@@ -161,7 +161,7 @@ const EditEventTemplateForm = () => {
                     },
                   ]}
                 >
-                  <Radio.Group defaultValue="eventType">
+                  <Radio.Group>
                     <Radio.Button value="COMPANY_EVENT">Company event</Radio.Button>
                     <Radio.Button value="USER_EVENT" disabled>User event</Radio.Button>
                   </Radio.Group>
