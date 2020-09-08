@@ -19,7 +19,6 @@ import './TimeEntry.less';
 import {Badge} from 'antd';
 import {ClockCircleOutlined} from '@ant-design/icons';
 import PropTypes from 'prop-types';
-import {computeNumberOfHours} from '../../utils/momentUtils';
 import moment from 'moment';
 
 const computeSize = (nbHours) => {
@@ -28,12 +27,7 @@ const computeSize = (nbHours) => {
 };
 const TimeEntry = ({entry, onClick}) => {
   const start = moment(entry.startDateTime).utc();
-  const end = moment(entry.endDateTime).utc();
-  const date = start.clone();
-  const hours = computeNumberOfHours(start, end);
-  date.set({
-    hour: hours
-  });
+  const hours = entry.numberOfHours;
   const size = computeSize(hours);
   return (
     <div className="tk_TaskCard" style={{height: `${size}px`}}
@@ -45,7 +39,7 @@ const TimeEntry = ({entry, onClick}) => {
         />
         <p>{(entry && entry.project && entry.project.name) ? entry.project.name : ''}</p>
       </div>
-      <p><ClockCircleOutlined/>{date.format('hh:mm')}</p>
+      <p><ClockCircleOutlined/>{hours}</p>
     </div>
   );
 };
@@ -57,7 +51,7 @@ TimeEntry.propTypes = {
       name: PropTypes.string.isRequired,
     }).isRequired,
     startDateTime: PropTypes.string.isRequired,
-    endDateTime: PropTypes.string.isRequired,
+    numberOfHours: PropTypes.number.isRequired,
   }),
   onClick: PropTypes.func.isRequired
 };

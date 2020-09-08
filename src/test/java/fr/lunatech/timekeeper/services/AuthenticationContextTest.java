@@ -232,7 +232,7 @@ class AuthenticationContextTest {
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.id=999L;
         timeEntry.startDateTime= LocalDateTime.now();
-        timeEntry.endDateTime= LocalDateTime.now();
+        timeEntry.numberOfHours=8;
         timeEntry.timeSheet = timeSheet;
         timeEntry.comment = "??";
 
@@ -709,7 +709,7 @@ class AuthenticationContextTest {
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.id=999L;
         timeEntry.startDateTime= LocalDateTime.now();
-        timeEntry.endDateTime= LocalDateTime.now();
+        timeEntry.numberOfHours = 8;
         timeEntry.timeSheet = timeSheet;
         timeEntry.comment = "??";
 
@@ -754,7 +754,7 @@ class AuthenticationContextTest {
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.id=999L;
         timeEntry.startDateTime= LocalDateTime.now();
-        timeEntry.endDateTime= LocalDateTime.now();
+        timeEntry.numberOfHours = 8;
         timeEntry.timeSheet = timeSheet;
         timeEntry.comment = "??";
 
@@ -798,7 +798,7 @@ class AuthenticationContextTest {
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.id=999L;
         timeEntry.startDateTime= LocalDateTime.now();
-        timeEntry.endDateTime= LocalDateTime.now();
+        timeEntry.numberOfHours = 8;
         timeEntry.timeSheet = timeSheet;
         timeEntry.comment = "??";
 
@@ -842,14 +842,13 @@ class AuthenticationContextTest {
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.id=999L;
         timeEntry.startDateTime= LocalDateTime.now();
-        timeEntry.endDateTime= LocalDateTime.now();
+        timeEntry.numberOfHours = 4;
         timeEntry.timeSheet = timeSheet;
         timeEntry.comment = "??";
 
         AuthenticationContext tested = new AuthenticationContext(zeUser.id, organization, List.of(Profile.SUPER_ADMIN));
         assertTrue(tested.canCreate(timeEntry));
     }
-
 
     @Test
     void project_canJoin_should_return_true_for_public_project() {

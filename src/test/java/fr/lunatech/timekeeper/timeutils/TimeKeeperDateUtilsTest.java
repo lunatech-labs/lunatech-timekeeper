@@ -330,24 +330,4 @@ class TimeKeeperDateUtilsTest {
         assertEquals(expected, TimeKeeperDateUtils.adjustToFirstDayOfWeek(inputDate));
     }
 
-    @Test
-    void shouldReturnNumberOfHours() {
-        LocalDateTime start = LocalDateTime.of(2020, 7, 2, 9, 0, 0);
-        LocalDateTime end = LocalDateTime.of(2020, 7, 2, 13, 0, 0);
-        assertEquals(4, TimeKeeperDateUtils.numberOfHoursBetween(start, end));
-    }
-
-    @Test
-    void shouldReturnNumberOfHoursForTwoDifferentDates() {
-        LocalDateTime start = LocalDateTime.of(2020, 7, 1, 23, 0, 0);
-        LocalDateTime end = LocalDateTime.of(2020, 7, 2, 1, 0, 0);
-        assertEquals(2, TimeKeeperDateUtils.numberOfHoursBetween(start, end));
-    }
-
-    @Test
-    void shouldThrowsExceptionWhenStartIsAfterEnd() {
-        LocalDateTime start = LocalDateTime.of(2020, 7, 2, 10, 0, 0);
-        LocalDateTime end = LocalDateTime.of(2020, 7, 2, 9, 0, 0);
-        assertThrows(IllegalStateException.class, () -> TimeKeeperDateUtils.numberOfHoursBetween(start, end));
-    }
 }

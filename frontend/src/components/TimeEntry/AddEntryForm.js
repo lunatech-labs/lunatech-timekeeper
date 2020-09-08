@@ -38,6 +38,7 @@ const initialValues = (defaultDate) => {
     'timeSheetId': null,
     'date': defaultDate,
     'startDateTime': start, //9 am by default
+    'numberOfHours':1
   };
 };
 
@@ -54,19 +55,19 @@ const additionalValues = (timeUnit, defaultDate, allValues) => {
     case 'DAY': {
       return {
         'startDateTime': allValues.startDateTime || start, //9 am by default
-        'numberHours': 8
+        'numberOfHours': 8
       };
     }
     case 'HALFDAY': {
       return {
         'startDateTime': allValues.startDateTime || start, //9 am by default
-        'numberHours': 4
+        'numberOfHours': 4
       };
     }
     case 'HOURLY' : {
       return {
         'startDateTime': allValues.startDateTime || start, //9 am by default
-        'numberHours': null
+        'numberOfHours': allValues.numberOfHours
       };
     }
     default: {
@@ -131,6 +132,7 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel, numberOfHour
       >
         <TitleSection title='Add task'/>
         <Form.Item name="date" noStyle={true}>
+          <Input hidden={true}/>
         </Form.Item>
 
         <Form.Item label="Description:" name="comment" rules={[{required: true}]}>
@@ -167,6 +169,7 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel, numberOfHour
           </Col>
 
           <Form.Item name="startDateTime" noStyle={true}>
+            <Input hidden={true}/>
           </Form.Item>
 
           <Col className="gutter-row" span={9}>
@@ -182,7 +185,7 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel, numberOfHour
                     );
                   default:
                     return (
-                      <Form.Item name="numberHours" noStyle={true}>
+                      <Form.Item name="numberOfHours" noStyle={true}>
                         <Input hidden={true}/>
                       </Form.Item>
                     );
@@ -207,7 +210,7 @@ AddEntryForm.propTypes = {
   timeSheets: PropTypes.array.isRequired,
   onSuccess: PropTypes.func,
   onCancel: PropTypes.func,
-  numberOfHoursForDay: PropTypes.array
+  numberOfHoursForDay: PropTypes.number.isRequired
 };
 
 export default AddEntryForm;

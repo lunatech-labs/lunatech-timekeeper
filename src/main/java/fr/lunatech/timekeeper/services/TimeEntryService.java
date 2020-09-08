@@ -50,7 +50,7 @@ public class TimeEntryService {
         }
         try {
             timeEntry.persistAndFlush();
-            timeEntriesNumberPerHoursGauge.incrementGauges(request.getNumberHours());
+            timeEntriesNumberPerHoursGauge.incrementGauges(request.getNumberOfHours());
         } catch (PersistenceException pe) {
             throw new CreateResourceException("TimeEntry was not created due to constraint violation");
         }
@@ -62,10 +62,10 @@ public class TimeEntryService {
         logger.debug("Modify timeEntry for id={} with {}, {}", timeSheetId, request, ctx);
         Optional<TimeEntry> timeEntryOptional = findById(timeEntryId, ctx);
         timeEntryOptional.ifPresent(timeEntry -> {
-            int oldNumberOfHours = TimeKeeperDateUtils.numberOfHoursBetween(timeEntry.startDateTime, timeEntry.endDateTime).intValue();
-            if (oldNumberOfHours != request.getNumberHours()) {
+            int oldNumberOfHours = timeEntry.numberOfHours;
+            if (oldNumberOfHours != request.getNumberOfHours()) {
                 timeEntriesNumberPerHoursGauge.decrementGauges(oldNumberOfHours);
-                timeEntriesNumberPerHoursGauge.incrementGauges(request.getNumberHours());
+                timeEntriesNumberPerHoursGauge.incrementGauges(request.getNumberOfHours());
             }
         });
         return timeEntryOptional

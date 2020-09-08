@@ -198,44 +198,44 @@ test('totalHoursPerDay should return 0 for no entries', () =>{
 
 // eslint-disable-next-line
 test('totalHoursPerDay should return 8 for some entries', () =>{
-  const emptyEntries=[];
+  const someEntries=[];
   const emptyUserEvent=[];
-  emptyEntries.push({
-    startDateTime: moment.utc('2020-08-04T09:00:00Z'),
-    endDateTime: moment.utc('2020-08-04T11:00:00Z'),
+  someEntries.push({
+    startDate: moment.utc('2020-08-04T09:00:00Z'),
+    numberOfHours: 2
   });
-  emptyEntries.push({
-    startDateTime: moment.utc('2020-08-04T11:00:00Z'),
-    endDateTime: moment.utc('2020-08-04T13:00:00Z'),
+  someEntries.push({
+    startDate: moment.utc('2020-08-04T11:00:00Z'),
+    numberOfHours: 2
   });
-  emptyEntries.push({
-    startDateTime: moment.utc('2020-08-04T15:00:00Z'),
-    endDateTime: moment.utc('2020-08-04T17:00:00Z'),
+  someEntries.push({
+    startDate: moment.utc('2020-08-04T11:00:00Z'),
+    numberOfHours: 2
   });
-  emptyEntries.push({
-    startDateTime: moment.utc('2020-08-04T17:00:00Z'),
-    endDateTime: moment.utc('2020-08-04T19:00:00Z'),
+  someEntries.push({
+    startDate: moment.utc('2020-08-04T11:00:00Z'),
+    numberOfHours: 2
   });
-  const result = totalHoursPerDay(emptyUserEvent,'2020-08-04',emptyEntries);
+  const result = totalHoursPerDay(emptyUserEvent,'2020-08-04',someEntries);
   // eslint-disable-next-line
   expect(result).toBe(8);
 });
 
 // eslint-disable-next-line
-test('totalHoursPerDay should return 3 hours for 2 entries that overlaps each other by one hour', () =>{
-  const emptyEntries=[];
+test('totalHoursPerDay should return a total for entries event if the 2 event are not on the same day...', () =>{
+  const timeEntries=[];
   const emptyUserEvent=[];
-  emptyEntries.push({
-    startDateTime: moment.utc('2020-08-04T09:00:00Z'),
-    endDateTime: moment.utc('2020-08-04T11:00:00Z'),
+  timeEntries.push({
+    startDate: moment.utc('2020-08-04'),
+    numberOfHours: 2
   });
-  emptyEntries.push({
-    startDateTime: moment.utc('2020-08-04T10:00:00Z'),
-    endDateTime: moment.utc('2020-08-04T11:00:00Z'),
+  timeEntries.push({
+    startDate: moment.utc('2020-08-24'),
+    numberOfHours: 2
   });
-  const result = totalHoursPerDay(emptyUserEvent,'2020-08-04',emptyEntries);
+  const result = totalHoursPerDay(emptyUserEvent,'2020-08-04',timeEntries);
   // eslint-disable-next-line
-  expect(result).toBe(3);
+  expect(result).toBe(4);
 });
 
 // eslint-disable-next-line

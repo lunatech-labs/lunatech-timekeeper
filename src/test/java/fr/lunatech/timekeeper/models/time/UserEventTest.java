@@ -147,6 +147,7 @@ class UserEventTest {
         hackBreakfastTemplate.description = "A great company event";
         hackBreakfastTemplate.startDateTime = LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS);
         hackBreakfastTemplate.endDateTime = LocalDate.of(2020, 6, 17).atTime(12, 0).truncatedTo(ChronoUnit.HOURS);
+
         final UserEvent userEvent = new UserEvent();
         userEvent.id = null;
         userEvent.eventType = EventType.COMPANY;
@@ -156,12 +157,14 @@ class UserEventTest {
         userEvent.endDateTime = LocalDate.of(2020, 6, 17).atTime(12, 0).truncatedTo(ChronoUnit.HOURS);
         userEvent.owner = user;
         userEvent.eventTemplate = hackBreakfastTemplate;
-        hackBreakfastTemplate.attendees = Set.of(userEvent);
 
         transaction.begin();
         hackBreakfastTemplate.persistAndFlush();
         transaction.commit();
 
+        transaction.begin();
+        userEvent.persistAndFlush();
+        transaction.commit();
 
         // Retrieve the userEvent
         transaction.begin();
