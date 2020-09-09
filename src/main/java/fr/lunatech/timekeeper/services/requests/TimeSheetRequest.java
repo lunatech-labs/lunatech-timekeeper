@@ -48,6 +48,7 @@ public class TimeSheetRequest {
     public TimeUnit durationUnit; // DAYS
 
     @NotNull
+    @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_PATTERN)
     public LocalDate startDate;
 
     public TimeSheetRequest( TimeUnit timeUnit, Boolean defaultIsBillable, @Null LocalDate expirationDate, @Null Integer maxDuration, @Null TimeUnit durationUnit, @NotNull LocalDate startDate) {

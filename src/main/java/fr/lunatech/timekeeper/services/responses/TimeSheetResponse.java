@@ -53,6 +53,7 @@ public class TimeSheetResponse {
 
     public final Long leftOver;
 
+    @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_PATTERN)
     public final LocalDate startDate;
 
     public TimeSheetResponse(Long id,
