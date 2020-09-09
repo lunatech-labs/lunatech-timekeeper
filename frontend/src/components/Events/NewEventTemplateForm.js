@@ -54,42 +54,36 @@ const NewEventTemplateForm = () => {
     timeUnitStartDate:'DAY',
     startDateTime: moment.utc('9:00 AM', 'LT') ,
     startDateNumberOfHours: 1,
-    timeUnitEndDate:'DAY',
-    endDateTime: moment.utc('09:00 AM', 'LT'),
-    endDateNumberOfHours: 1,
+    // timeUnitEndDate:'DAY',
+    // endDateTime: moment.utc('09:00 AM', 'LT'),
+    // endDateNumberOfHours: 1,
     attendees: []
   };
 
+  const timeUnitToNumberOfHour = (timeUnit) => {
+    switch (timeUnit) {
+      case 'DAY': {
+        return 8;
+      }
+      case 'HALFDAY': {
+        return 4;
+      }
+      case 'HOURLY' : {
+        return 1;
+      }
+      default: {
+        return {};
+      }
+    }
+  };
 
   // Update the values when a field changes
-  const onValuesChangeStartDate = (changedValues, allValues) => {
+  const onValuesChange = (changedValues, allValues) => {
     const key = Object.keys(changedValues)[0];
     switch (key) {
       case 'timeUnitStartDate': {
-        form.setFieldsValue(additionalValues(changedValues.timeUnit, allValues.date, allValues));
-        switch (timeUnitStartDate) {
-          case 'DAY': {
-            return {
-              'startDateTime': allValues.startDateTime || start, //9 am by default
-              'numberOfHours': 8
-            };
-          }
-          case 'HALFDAY': {
-            return {
-              'startDateTime': allValues.startDateTime || start, //9 am by default
-              'numberOfHours': 4
-            };
-          }
-          case 'HOURLY' : {
-            return {
-              'startDateTime': allValues.startDateTime || start, //9 am by default
-              'numberOfHours': allValues.numberOfHours
-            };
-          }
-          default: {
-            return {};
-          }
-        }
+        form.setFieldsValue({'startDateNumberOfHours': timeUnitToNumberOfHour(allValues.timeUnitStartDate)});
+        console.log(form.getFieldValue('startDateNumberOfHours'))
         break;
       }
 
@@ -98,8 +92,8 @@ const NewEventTemplateForm = () => {
     }
   };
 
-  console.log("InitialValue startDateTime:> " + initialValues.startDateTime);
-  console.log("InitialValue endDate:> " + initialValues.endDateTime);
+  // console.log("InitialValue startDateTime:> " + initialValues.startDateTime);
+  // console.log("InitialValue endDate:> " + initialValues.endDateTime);
 
   useEffect(() => {
     if (!eventTemplateCreated) {
@@ -140,6 +134,7 @@ const NewEventTemplateForm = () => {
         initialValues={initialValues}
         onFinish={timeKeeperAPIPost.run}
         form={form}
+        onValuesChange={onValuesChange}
       >
         <div className="tk_CardLg">
           <Row gutter={16}>
@@ -154,7 +149,6 @@ const NewEventTemplateForm = () => {
                 <TextArea rows={4} placeholder="A short description about this event"/>
               </Form.Item>
 
-              {{/* ----- START DATE TIME ----- */}}
               <Form.Item label="Start Date" name="startDateTime" rules={[{required: true}]}>
                 <DatePicker format="DD-MM-YYYY" className="tk_DatePicker"/>
               </Form.Item>
@@ -169,27 +163,27 @@ const NewEventTemplateForm = () => {
                     </Radio.Group>
                   </Form.Item>
 
-                  <Form.Item >
+                  <Form.Item shouldUpdate={(prevValues, curValues) => prevValues.timeUnitStartDate !== curValues.timeUnitStartDate}>
                     {({getFieldValue}) => {
-                      switch (getFieldValue('timeUnitStartDate')) {
-                        case 'HOURLY':
-                          return (
-                              <div>
-                                {<SelectHoursComponent numberOfHoursForDay={numberOfHoursForDay}/>}
-                              </div>
-                          );
-                        default:
-                          return (
-                              <Form.Item name="numberHours" noStyle={true}>
-                                <Input hidden={true}/>
-                              </Form.Item>
-                          );
+                      if(getFieldValue('timeUnitStartDate') === 'HOURLY') {
+                        return (
+                          <div>
+                            {/*TODO : Need to compute this numberOfHoursForDay*/}
+                            {<SelectHoursComponent numberOfHoursForDay={4}/>}
+                          </div>
+                        );
+                      } else {
+                        return (
+                            <Form.Item name="startDateNumberOfHours" noStyle={true}>
+                              <Input hidden={true}/>
+                            </Form.Item>
+                        );
                       }
                     }}
                   </Form.Item>
                 </Row>
               </Col>
-              {{/* ----- START DATE TIME ----- */}}
+              {/* ----- START DATE TIME ----- */}
 
             </Col>
 
