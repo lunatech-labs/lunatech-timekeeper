@@ -57,7 +57,7 @@ public interface EventTemplateResourceApi {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Retrieve all eventTemplates",
-            description = "Retrieve the list of existing eventTemplates for you organization")
+            description = "Retrieve the list of existing eventTemplates for you organization. Each event also returns the list of current attendees or participants.")
     @Tag(ref = "events")
     @APIResponses(value = {
             @APIResponse(

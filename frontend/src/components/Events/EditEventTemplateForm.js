@@ -15,7 +15,7 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {Alert, Button, Col, DatePicker, Form, Input, message, Row, Spin,} from 'antd';
+import {Alert, Button, Col, DatePicker, Form, Input, message, Radio, Row, Spin,} from 'antd';
 import {Link, Redirect, useRouteMatch} from 'react-router-dom';
 import {sortListByName, useTimeKeeperAPI, useTimeKeeperAPIPut} from '../../utils/services';
 import Space from 'antd/lib/space';
@@ -38,7 +38,8 @@ const EditEventTemplateForm = () => {
     description: formData.description,
     startDateTime: formData.eventDateTime[0],
     endDateTime: formData.eventDateTime[1],
-    attendees: usersSelected
+    attendees: usersSelected,
+    // eventType: formData.eventType : Shouldn't be sent while the backend is not implemented
   });
 
   const eventIdSlug = useRouteMatch({
@@ -127,7 +128,8 @@ const EditEventTemplateForm = () => {
         name: event.name,
         description: event.description,
         eventDateTime: [moment.utc(event.startDateTime),moment.utc(event.endDateTime)],
-        attendees: usersSelected
+        attendees: usersSelected,
+        eventType: 'COMPANY_EVENT'
       };
       return (
         <Form
@@ -149,6 +151,21 @@ const EditEventTemplateForm = () => {
             <Row gutter={16}>
               <Col className="gutter-row" span={12}>
                 <TitleSection title="Information"/>
+                <Form.Item
+                  label="Event type:"
+                  name="eventType"
+                  hasFeedback
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Radio.Group>
+                    <Radio.Button value="COMPANY_EVENT">Company event</Radio.Button>
+                    <Radio.Button value="USER_EVENT" disabled>User event</Radio.Button>
+                  </Radio.Group>
+                </Form.Item>
                 <Form.Item
                   label="Name :"
                   name="name"

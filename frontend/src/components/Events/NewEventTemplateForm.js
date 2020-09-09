@@ -40,7 +40,8 @@ const NewEventTemplateForm = () => {
     startDateNumberOfHours: formData.startDateNumberOfHours,
     endDateTime: formData.endDateTime,
     endDateNumberOfHours: formData.endDateNumberOfHours,
-    attendees: usersSelected
+    attendees: usersSelected,
+    // eventType: formData.eventType : Shouldn't be sent while the backend is not implemented
   });
   const usersResponse = useTimeKeeperAPI('/api/users');
   const timeKeeperAPIPost = useTimeKeeperAPIPost('/api/events', (form => form) , setEventTemplateCreated, formDataToEventRequest);
@@ -56,7 +57,8 @@ const NewEventTemplateForm = () => {
     timeUnitEndDate:'DAY',
     endDateTime: moment.utc('09:00 AM', 'LT'),
     endDateNumberOfHours: 1,
-    attendees: []
+    attendees: [],
+    eventType: 'COMPANY_EVENT'
   };
 
   const timeUnitToNumberOfHour = (timeUnit) => {
@@ -109,43 +111,65 @@ const NewEventTemplateForm = () => {
     );
   }
 
-  if (timeKeeperAPIPost.error) {
-    const {response} = timeKeeperAPIPost.error;
-    const {status, url} = response;
-    const errMsg = `Server error HTTP Code:${status}  for url: ${url}`;
-    return (
-      <React.Fragment>
-        <Alert
-          message="Unable to save the new Event"
-          description={errMsg}
-          type="error"
-          closable
-          style={{marginBottom: 10}}
-        />
-      </React.Fragment>
-    );
-  }
-
   if(usersResponse.data){
     return (
+
       <Form
-        id="tk_Form" layout="vertical"
+        id="tk_Form"
+        layout="vertical"
         initialValues={initialValues}
         onFinish={timeKeeperAPIPost.run}
         form={form}
-        onValuesChange={onValuesChange}
       >
+        {timeKeeperAPIPost.error &&
+        <Alert
+          message="Unable to save the new Event"
+          description={timeKeeperAPIPost.error.data.message}
+          type="error"
+          closable
+          style={{marginBottom: 10}}
+        />}
         <div className="tk_CardLg">
           <Row gutter={16}>
-
             <Col className="gutter-row" span={12}>
-
               <TitleSection title="Information"/>
-              <Form.Item label="Name :" name="name" hasFeedback rules={[{required: true}]}>
-                <Input placeholder="Event's name"/>
+              <Form.Item
+                label="Event type:"
+                name="eventType"
+                hasFeedback
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Radio.Group>
+                  <Radio.Button value="COMPANY_EVENT">Company event</Radio.Button>
+                  <Radio.Button value="USER_EVENT" disabled>User event</Radio.Button>
+                </Radio.Group>
               </Form.Item>
-              <Form.Item label="Description :" name="description">
-                <TextArea rows={4} placeholder="A short description about this event"/>
+              <Form.Item
+                label="Name :"
+                name="name"
+                hasFeedback
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Input
+                  placeholder="Event's name"
+                />
+              </Form.Item>
+              <Form.Item
+                label="Description :"
+                name="description"
+              >
+                <TextArea
+                  rows={4}
+                  placeholder="A short description about this event"
+                />
               </Form.Item>
 
               {/* ----- START-DATETIME & DURATION----- */}
@@ -228,16 +252,17 @@ const NewEventTemplateForm = () => {
               </Col>
               {/* ----- END-DATETIME & DURATION----- */}
 
+
             </Col>
-
-
             <Col className="gutter-row" span={12}>
               <TitleSection title="Users"/>
-              <Form.Item label="Select users :" name="usersSelected">
+              <Form.Item
+                label="Select users :"
+                name="usersSelected"
+              >
                 <UserTreeData users={sortListByName(usersResponse.data)} usersSelected={usersSelected} setUsersSelected={setUsersSelected}/>
               </Form.Item>
             </Col>
-
           </Row>
           <Space className="tk_JcFe" size="middle" align="center">
             <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={'/events'}>Cancel</Link>
