@@ -17,6 +17,7 @@
 package fr.lunatech.timekeeper.services.responses;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.EventTemplate;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateFormat;
@@ -104,6 +105,7 @@ public class EventTemplateResponse {
         return Collections.unmodifiableList(attendees);
     }
 
+    @JsonIgnore
     public Long getNumberOfHours() {
         if (startDateTime == null) return 0L;
         if (startDateTime.isAfter(endDateTime)) return 0L;
