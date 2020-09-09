@@ -16,7 +16,7 @@
 
 import React, {useEffect, useState} from 'react';
 import {sortListByName, useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
-import {Alert, Button, Col, Form, Input, message, Row, Space, Spin, DatePicker} from 'antd';
+import {Alert, Button, Col, Form, Input, message, Row, Space, Spin, DatePicker, Radio} from 'antd';
 import './NewEventTemplateForm.less';
 import '../../components/Button/BtnGeneral.less';
 import {Link, Redirect} from 'react-router-dom';
@@ -38,7 +38,8 @@ const NewEventTemplateForm = () => {
     description: formData.description,
     startDateTime: formData.eventDateTime[0],
     endDateTime: formData.eventDateTime[1],
-    attendees: usersSelected
+    attendees: usersSelected,
+    // eventType: formData.eventType : Shouldn't be sent while the backend is not implemented
   });
   const usersResponse = useTimeKeeperAPI('/api/users');
   const eventsResponse = useTimeKeeperAPI('/api/users');
@@ -50,7 +51,8 @@ const NewEventTemplateForm = () => {
     name: '',
     description: '',
     eventDateTime: [moment.utc('9:00 AM', 'LT'),moment.utc('9:00 AM', 'LT')],
-    attendees: []
+    attendees: [],
+    eventType: 'COMPANY_EVENT'
   };
 
   useEffect(() => {
@@ -129,6 +131,21 @@ const NewEventTemplateForm = () => {
           <Row gutter={16}>
             <Col className="gutter-row" span={12}>
               <TitleSection title="Information"/>
+              <Form.Item
+                label="Event type:"
+                name="eventType"
+                hasFeedback
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Radio.Group>
+                  <Radio.Button value="COMPANY_EVENT">Company event</Radio.Button>
+                  <Radio.Button value="USER_EVENT" disabled>User event</Radio.Button>
+                </Radio.Group>
+              </Form.Item>
               <Form.Item
                 label="Name :"
                 name="name"

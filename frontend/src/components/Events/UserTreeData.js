@@ -21,9 +21,9 @@ import './UserTreeData.less';
 import TkUserAvatar from '../Users/TkUserAvatar';
 
 const UserTreeData = ({users, usersSelected, setUsersSelected}) => {
-  const renderUser = (name, picture) => {
+  const renderUser = (id, name, picture) => {
     return (
-      <div>
+      <div key={`user-row-tree-data-${id}`}>
         <TkUserAvatar name={name} picture={picture}/>
         <span id="tk_User_Name">{name}</span>
       </div>
@@ -42,7 +42,7 @@ const UserTreeData = ({users, usersSelected, setUsersSelected}) => {
       dataIndex: 'name',
       key: 'name',
       width: '100%',
-      render: name => users.filter(user => user.name === name).map(user => renderUser(user.name, user.picture))
+      render: name => users.filter(user => user.name === name).map(user => renderUser(user.id, user.name, user.picture))
     }
   ];
 
