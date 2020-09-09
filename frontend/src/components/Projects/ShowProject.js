@@ -35,19 +35,19 @@ const {Title} = Typography;
 
 const ShowProject = ({project, onSuccessJoinProject}) => {
 
-  const [projectUpdated, setProjectUpdated] = useState(false);
+  const [joinProjectUpdated, setJoinProjectUpdated] = useState(false);
 
-  const timeKeeperAPIPutJoin = useTimeKeeperAPIPut(`/api/projects/${project.id}/join`, (form => form), setProjectUpdated);
+  const timeKeeperAPIPutJoin = useTimeKeeperAPIPut(`/api/projects/${project.id}/join`, (form => form), setJoinProjectUpdated);
 
   const {currentUser} = useContext(UserContext);
 
   useEffect(() => {
-    if (projectUpdated) {
+    if (joinProjectUpdated) {
       message.success('You successfully joined the project');
       onSuccessJoinProject && onSuccessJoinProject();
     }
-    return () => setProjectUpdated(false);
-  }, [projectUpdated, onSuccessJoinProject]);
+    return () => setJoinProjectUpdated(false);
+  }, [joinProjectUpdated, onSuccessJoinProject]);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedMember, setSelectedMember] = useState();
