@@ -1,5 +1,6 @@
 package fr.lunatech.timekeeper.services;
 
+import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.EventTemplate;
 import fr.lunatech.timekeeper.models.time.UserEvent;
 import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
@@ -50,6 +51,12 @@ public class UserEventService {
 
     protected boolean validateYear(UserEvent userEvent, Integer year) {
         return userEvent.startDateTime.getYear() == year || userEvent.endDateTime.getYear() == year;
+    }
+
+    protected List<User> findAllUsersFromEventTemplate(Long templateId){
+        return UserEvent.<UserEvent>stream("eventtemplate_id=?1",templateId) // NOSONAR
+                .map( userEvent -> userEvent.owner)
+                .collect(Collectors.toList());
     }
 
     public Long createOrUpdateFromEventTemplate(EventTemplate eventTemplate,
