@@ -120,6 +120,7 @@ const NewEventTemplateForm = () => {
         initialValues={initialValues}
         onFinish={timeKeeperAPIPost.run}
         form={form}
+        onValuesChange={onValuesChange}
       >
         {timeKeeperAPIPost.error &&
         <Alert
