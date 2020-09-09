@@ -16,7 +16,7 @@
 
 import React, {useEffect, useState} from 'react';
 import {sortListByName, useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
-import {Alert, Button, Col, Form, Input, message, Row, Space, Spin, DatePicker, Radio} from 'antd';
+import {Alert, Button, Col, Form, Input, message, Row, Space, Spin, DatePicker, Radio, Select} from 'antd';
 import './NewEventTemplateForm.less';
 import '../../components/Button/BtnGeneral.less';
 import {Link, Redirect} from 'react-router-dom';
@@ -25,9 +25,9 @@ import moment from 'moment';
 import UserTreeData from './UserTreeData';
 import _ from 'lodash';
 import 'moment/locale/en-gb';
-import SelectHoursComponent from "../TimeEntry/SelectHoursComponent";
 
 const {TextArea} = Input;
+const {Option} = Select;
 
 const NewEventTemplateForm = () => {
   const [eventTemplateCreated, setEventTemplateCreated] = useState(false);
@@ -43,7 +43,7 @@ const NewEventTemplateForm = () => {
     attendees: usersSelected
   });
   const usersResponse = useTimeKeeperAPI('/api/users');
-  const eventsResponse = useTimeKeeperAPI('/api/events');
+  const eventsResponse = useTimeKeeperAPI('/api/users');
   const timeKeeperAPIPost = useTimeKeeperAPIPost('/api/events', (form => form) , setEventTemplateCreated, formDataToEventRequest);
 
   const [form] = Form.useForm();
@@ -54,9 +54,9 @@ const NewEventTemplateForm = () => {
     timeUnitStartDate:'DAY',
     startDateTime: moment.utc('9:00 AM', 'LT') ,
     startDateNumberOfHours: 1,
-    // timeUnitEndDate:'DAY',
-    // endDateTime: moment.utc('09:00 AM', 'LT'),
-    // endDateNumberOfHours: 1,
+    timeUnitEndDate:'DAY',
+    endDateTime: moment.utc('09:00 AM', 'LT'),
+    endDateNumberOfHours: 1,
     attendees: []
   };
 
@@ -83,7 +83,10 @@ const NewEventTemplateForm = () => {
     switch (key) {
       case 'timeUnitStartDate': {
         form.setFieldsValue({'startDateNumberOfHours': timeUnitToNumberOfHour(allValues.timeUnitStartDate)});
-        console.log(form.getFieldValue('startDateNumberOfHours'))
+        break;
+      }
+      case 'timeUnitEndDate': {
+        form.setFieldsValue({'endDateNumberOfHours': timeUnitToNumberOfHour(allValues.timeUnitEndDate)});
         break;
       }
 
@@ -91,9 +94,6 @@ const NewEventTemplateForm = () => {
         break;
     }
   };
-
-  // console.log("InitialValue startDateTime:> " + initialValues.startDateTime);
-  // console.log("InitialValue endDate:> " + initialValues.endDateTime);
 
   useEffect(() => {
     if (!eventTemplateCreated) {
@@ -149,6 +149,7 @@ const NewEventTemplateForm = () => {
                 <TextArea rows={4} placeholder="A short description about this event"/>
               </Form.Item>
 
+              {/* ----- START-DATETIME & DURATION----- */}
               <Form.Item label="Start Date" name="startDateTime" rules={[{required: true}]}>
                 <DatePicker format="DD-MM-YYYY" className="tk_DatePicker"/>
               </Form.Item>
@@ -162,15 +163,18 @@ const NewEventTemplateForm = () => {
                       <Radio value="HOURLY">Hours</Radio>
                     </Radio.Group>
                   </Form.Item>
-
                   <Form.Item shouldUpdate={(prevValues, curValues) => prevValues.timeUnitStartDate !== curValues.timeUnitStartDate}>
                     {({getFieldValue}) => {
                       if(getFieldValue('timeUnitStartDate') === 'HOURLY') {
                         return (
-                          <div>
-                            {/*TODO : Need to compute this numberOfHoursForDay*/}
-                            {<SelectHoursComponent numberOfHoursForDay={4}/>}
-                          </div>
+                            <Form.Item name="startDateNumberOfHours" label="Duration:" rules={[{required: true}]}>
+                              <Select showSearch>
+                                {_.range(1, 9, 1).map(i =>
+                                    <Option key={`option-hour-${i}`} value={i}>
+                                      {i}
+                                    </Option>)};
+                              </Select>
+                            </Form.Item>
                         );
                       } else {
                         return (
@@ -183,7 +187,47 @@ const NewEventTemplateForm = () => {
                   </Form.Item>
                 </Row>
               </Col>
-              {/* ----- START DATE TIME ----- */}
+              {/* ----- START-DATETIME & DURATION----- */}
+
+              {/* ----- END-DATETIME & DURATION----- */}
+              <Form.Item label="End Date" name="endDateTime" rules={[{required: true}]}>
+                <DatePicker format="DD-MM-YYYY" className="tk_DatePicker"/>
+              </Form.Item>
+
+              <Col className="gutter-row" span={9}>
+                <Row>
+                  <Form.Item name="timeUnitEndDate" label="Duration" rules={[{required: true}]}>
+                    <Radio.Group>
+                      <Radio value="DAY" className="tk-radio">Day</Radio>
+                      <Radio value="HALFDAY" className="tk-radio">Half-day</Radio>
+                      <Radio value="HOURLY">Hours</Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                  <Form.Item shouldUpdate={(prevValues, curValues) => prevValues.timeUnitEndDate !== curValues.timeUnitEndDate}>
+                    {({getFieldValue}) => {
+                      if(getFieldValue('timeUnitEndDate') === 'HOURLY') {
+                        return (
+                            <Form.Item name="endDateNumberOfHours" label="Duration:" rules={[{required: true}]}>
+                              <Select showSearch>
+                                {_.range(1, 9, 1).map(i =>
+                                    <Option key={`option-hour-${i}`} value={i}>
+                                      {i}
+                                    </Option>)};
+                              </Select>
+                            </Form.Item>
+                        );
+                      } else {
+                        return (
+                            <Form.Item name="endDateNumberOfHours" noStyle={true}>
+                              <Input hidden={true}/>
+                            </Form.Item>
+                        );
+                      }
+                    }}
+                  </Form.Item>
+                </Row>
+              </Col>
+              {/* ----- END-DATETIME & DURATION----- */}
 
             </Col>
 
