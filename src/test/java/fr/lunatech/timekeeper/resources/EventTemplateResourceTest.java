@@ -33,10 +33,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -129,8 +126,11 @@ class EventTemplateResourceTest {
         //WHEN: an eventTemplateRequest is created with SAM as an attendee
         EventTemplateRequest newEventTemplate = generateTestEventRequest(eventName, sam.getId());
         create(newEventTemplate, samToken);
+        var attendees2 = new ArrayList<EventTemplateResponse.Attendee>(1);
+        attendees2.add(new EventTemplateResponse.Attendee(1L,"Sam","Uell","sam@lunatech.fr","sam.png"));
+
         //THEN: userEvent of attendees are created
-        EventTemplateResponse expectedResponse = generateExpectedEventTemplateResponse(eventName, 1L);
+        EventTemplateResponse expectedResponse = generateExpectedEventTemplateResponse(eventName, 1L, attendees2);
 
         EventTemplateResponse actual = Arrays.asList(getValidation(EventDef.uri, samToken).extract().as(EventTemplateResponse[].class)).get(0);
         assertThat(timeKeeperTestUtils.toJson(actual), is(timeKeeperTestUtils.toJson(expectedResponse)));
@@ -164,8 +164,14 @@ class EventTemplateResourceTest {
         create(eventTemplateRequest1,adminToken);
         create(eventTemplateRequest2,adminToken);
         //THEN: get on /events return the 2 event template
-        EventTemplateResponse expectedResponse1 = generateExpectedEventTemplateResponse(eventName1,1L);
-        EventTemplateResponse expectedResponse2 = generateExpectedEventTemplateResponse(eventName2,2L);
+        var attendees2 = new ArrayList<EventTemplateResponse.Attendee>(1);
+        attendees2.add(new EventTemplateResponse.Attendee(2L,"Jimmy","James","jimmy@lunatech.fr","jimmy.png"));
+
+        var attendees = new ArrayList<EventTemplateResponse.Attendee>(1);
+        attendees.add(new EventTemplateResponse.Attendee(1L,"Sam","Uell","sam@lunatech.fr","sam.png"));
+
+        EventTemplateResponse expectedResponse1 = generateExpectedEventTemplateResponse(eventName1,1L, attendees);
+        EventTemplateResponse expectedResponse2 = generateExpectedEventTemplateResponse(eventName2,2L, attendees2);
         getValidation(EventDef.uri, adminToken).body(is(timeKeeperTestUtils.listOfTasJson(expectedResponse1,expectedResponse2))).statusCode(CoreMatchers.is(OK.getStatusCode()));
     }
 
@@ -214,12 +220,15 @@ class EventTemplateResourceTest {
         );
         update(updatedRequest,EventDef.uriPlusId(1L),adminToken);
         //THEN if we set jimmy and we remove sam, we should keep only Jimmy
+        List<EventTemplateResponse.Attendee> attendees = new ArrayList<>();
+        attendees.add(new EventTemplateResponse.Attendee(2L,"Jimmy","James","jimmy@lunatech.fr","jimmy.png"));
         EventTemplateResponse expectedResponse = new EventTemplateResponse(
                 1L,
                 eventName,
                 EVENT_DESCRIPTION,
                 updatedStartTime,
-                updatedEndTime
+                updatedEndTime,
+                attendees
         );
         getValidation(EventDef.uri, adminToken).body(is(timeKeeperTestUtils.listOfTasJson(expectedResponse))).statusCode(CoreMatchers.is(OK.getStatusCode()));
 
@@ -255,12 +264,15 @@ class EventTemplateResourceTest {
         );
         update(updatedRequest,EventDef.uriPlusId(1L),adminToken);
         //THEN the userEvent list contains this new attendee (Jimmy)
+        List<EventTemplateResponse.Attendee> attendees = new ArrayList<>();
+        attendees.add(new EventTemplateResponse.Attendee(2L,"Jimmy","James","jimmy@lunatech.fr","jimmy.png"));
         EventTemplateResponse expectedResponse = new EventTemplateResponse(
                 1L,
                 eventName,
                 EVENT_DESCRIPTION,
                 THE_24_TH_JUNE_2020_AT_9_AM,
-                THE_24_TH_JUNE_2020_AT_5_PM
+                THE_24_TH_JUNE_2020_AT_5_PM,
+                attendees
         );
         getValidation(EventDef.uri, adminToken).body(is(timeKeeperTestUtils.listOfTasJson(expectedResponse))).statusCode(CoreMatchers.is(OK.getStatusCode()));
     }
@@ -323,13 +335,14 @@ class EventTemplateResourceTest {
     }
 
     // the backend reverse order of the user ID and the generated userEvent id
-    private EventTemplateResponse generateExpectedEventTemplateResponse(String eventName, Long expectedID){
+    private EventTemplateResponse generateExpectedEventTemplateResponse(String eventName, Long expectedID, List<EventTemplateResponse.Attendee> attendees){
         return new EventTemplateResponse(
                 expectedID,
                 eventName,
                 EVENT_DESCRIPTION,
                 THE_24_TH_JUNE_2020_AT_9_AM,
-                THE_24_TH_JUNE_2020_AT_5_PM
+                THE_24_TH_JUNE_2020_AT_5_PM,
+                attendees
         );
     }
 

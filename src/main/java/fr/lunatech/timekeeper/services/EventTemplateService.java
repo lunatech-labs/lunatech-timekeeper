@@ -29,11 +29,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,19 +40,27 @@ public class EventTemplateService {
     private static final Logger logger = LoggerFactory.getLogger(EventTemplateService.class);
 
     @Inject
-    UserService userService;
-
-    @Inject
     UserEventService userEventService;
 
     public Optional<EventTemplateResponse> getById(Long id, AuthenticationContext context) {
         return EventTemplate.<EventTemplate>findByIdOptional(id) //NOSONAR
                 .filter(context::canAccess)
-                .map(EventTemplateResponse::bind);
+                .map(eventTemplate -> {
+                    var users = userEventService.findAllUsersFromEventTemplate(eventTemplate.id);
+                    return EventTemplateResponse.bind(eventTemplate, users);
+                });
     }
 
     public List<EventTemplateResponse> listAll(AuthenticationContext ctx) {
-        return streamAll(ctx, EventTemplateResponse::bind, Collectors.toList());
+        try (final Stream<EventTemplate> eventTemplates = EventTemplate.streamAll()) { // NOSONAR
+            return eventTemplates
+                    .filter(ctx::canAccess)
+                    .map(t -> {
+                        var users = userEventService.findAllUsersFromEventTemplate(t.id);
+                        return EventTemplateResponse.bind(t, users);
+                    })
+                    .collect(Collectors.toList());
+        }
     }
 
     public List<UserResponse> getAttendees(Long eventId) {
@@ -84,7 +89,7 @@ public class EventTemplateService {
 
         // Create a userEvent for each attendee using the userEventService
         if (!request.getAttendees().isEmpty()) {
-            logger.debug("Create specific userEvents from this eventTemplate {} ",eventTemplate.id);
+            logger.debug("Create specific userEvents from this eventTemplate {} ", eventTemplate.id);
             findById(eventTemplate.id, ctx).ifPresent(eventTemplate1 -> {
                 var created = userEventService.createOrUpdateFromEventTemplate(eventTemplate1, request.getAttendees(), ctx);
                 logger.debug("Created {} userEvents from template", created);
@@ -162,16 +167,4 @@ public class EventTemplateService {
                 .collect(Collectors.toList());
     }
 
-    <R extends Collection<EventTemplateResponse>> R streamAll(
-            AuthenticationContext ctx,
-            Function<EventTemplate, EventTemplateResponse> bind,
-            Collector<EventTemplateResponse, ?, R> collector
-    ) {
-        try (final Stream<EventTemplate> eventTemplates = EventTemplate.streamAll()) {
-            return eventTemplates
-                    .filter(ctx::canAccess)
-                    .map(bind)
-                    .collect(collector);
-        }
-    }
 }
