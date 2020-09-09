@@ -31,7 +31,7 @@ const isTimeUnitDisabled = (timeSheet, numberOfHoursForDay, entryDuration) => {
   const dayDisabled = numberOfHoursForDay && entryDuration ? (numberOfHoursForDay - entryDuration) > 0 : numberOfHoursForDay > 0;
 
   return hourDisabled && halfDayDisabled && dayDisabled;
-}
+};
 
 // Returns true if the date is not in timesheets date range
 const isDateOutOfTimeSheetRange = (timeSheet, date) => {
@@ -39,14 +39,14 @@ const isDateOutOfTimeSheetRange = (timeSheet, date) => {
     return isDateOutOfTimeSheetRangeWithEndDate(timeSheet, date);
   }
   return isDateOutOfTimeSheetRangeWithOutEndDate(timeSheet, date);
-}
+};
 
 // Returns true if the date is before the startDate with no endDate
 const isDateOutOfTimeSheetRangeWithOutEndDate = (timeSheet, date) => {
   const startDate = moment(timeSheet.startDate);
   const dateFormatted = moment(date.format('YYYY-MM-DD'));
   return !(dateFormatted.isAfter(startDate) || dateFormatted.isSame(startDate));
-}
+};
 
 // Returns true if the date is before the startDate or after the endDate
 const isDateOutOfTimeSheetRangeWithEndDate = (timeSheet, date) => {
@@ -54,4 +54,4 @@ const isDateOutOfTimeSheetRangeWithEndDate = (timeSheet, date) => {
   const endDate = moment(timeSheet.expirationDate);
   const dateFormatted = moment(date.format('YYYY-MM-DD'));
   return !dateFormatted.isBetween(startDate, endDate,undefined, []);
-}
+};

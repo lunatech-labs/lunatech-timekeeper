@@ -39,7 +39,7 @@ const DetailProjectPage = () => {
 
   const useTimeKeeperAPICurrentUser = useTimeKeeperAPI('/api/users/me');
   const useTimeKeeperAPIProject = useTimeKeeperAPI('/api/projects/' + projectId);
-  const {run} = useTimeKeeperAPICurrentUser;
+  const {run} = useTimeKeeperAPIProject;
 
   const onSuccessCallback = useCallback(() => {
     run();
