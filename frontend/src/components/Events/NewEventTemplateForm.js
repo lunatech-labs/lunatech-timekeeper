@@ -43,7 +43,6 @@ const NewEventTemplateForm = () => {
     attendees: usersSelected
   });
   const usersResponse = useTimeKeeperAPI('/api/users');
-  const eventsResponse = useTimeKeeperAPI('/api/users');
   const timeKeeperAPIPost = useTimeKeeperAPIPost('/api/events', (form => form) , setEventTemplateCreated, formDataToEventRequest);
 
   const [form] = Form.useForm();
@@ -127,7 +126,7 @@ const NewEventTemplateForm = () => {
     );
   }
 
-  if(eventsResponse.data && usersResponse.data){
+  if(usersResponse.data){
     return (
       <Form
         id="tk_Form" layout="vertical"
@@ -249,7 +248,7 @@ const NewEventTemplateForm = () => {
     );
   }
 
-  if (eventsResponse.loading || usersResponse.loading) {
+  if (usersResponse.loading) {
     return (
       <React.Fragment>
         <Spin size="large">
@@ -274,7 +273,7 @@ const NewEventTemplateForm = () => {
     );
   }
 
-  if (eventsResponse.error || usersResponse.error) {
+  if (usersResponse.error) {
     return (
       <React.Fragment>
         <Alert title='Server error'
