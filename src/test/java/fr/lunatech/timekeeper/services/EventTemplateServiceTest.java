@@ -38,7 +38,7 @@ import java.util.List;
 
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
@@ -189,5 +189,59 @@ class EventTemplateServiceTest {
         );
 
         assertThrows(CreateResourceException.class, () -> eventTemplateService.create(eventTemplateRequest, ctx), "should throw a CreateException if the endDateTime is null");
+    }
+
+    @Test
+    void create_should_updat_an_user_event() {
+        final String samToken = getAdminAccessToken();
+        var sam = create(samToken);
+
+        EventTemplateRequest.UserEventRequest userEventRequest = new EventTemplateRequest.UserEventRequest(sam.getId());
+
+        EventTemplateRequest eventTemplateRequest = new EventTemplateRequest(
+                "request1",
+                "description1",
+                START_DAY,
+                START_DAY.plusHours(6),
+                Lists.newArrayList(userEventRequest)
+        );
+
+        Organization organization = new Organization();
+        organization.id = 1L;
+        organization.name = "name";
+        organization.tokenName = "tokenName";
+        organization.users = Collections.emptyList();
+        organization.projects = Collections.emptyList();
+        organization.clients = Collections.emptyList();
+
+        AuthenticationContext ctx = new AuthenticationContext(
+                sam.getId(),
+                organization,
+                Collections.emptyList()
+        );
+
+        var maybeEventId = eventTemplateService.create(eventTemplateRequest, ctx);
+
+        assertTrue(maybeEventId.isPresent());
+
+        EventTemplateRequest updatedEventTemplateRequest = new EventTemplateRequest(
+                "updated name",
+                "updated descr",
+                START_DAY.plusDays(1),
+                START_DAY.plusDays(1).plusHours(6),
+                Lists.newArrayList()
+        );
+        eventTemplateService.update(maybeEventId.get(), updatedEventTemplateRequest, ctx);
+
+        var maybeUpdatedEvent = eventTemplateService.getById(maybeEventId.get(), ctx);
+        assertTrue(maybeUpdatedEvent.isPresent());
+
+        var updatedEvent = maybeUpdatedEvent.get();
+
+        assertEquals("updated name", updatedEvent.getName());
+        assertEquals("updated descr", updatedEvent.getDescription());
+        assertEquals(updatedEventTemplateRequest.getStartDateTime(), updatedEvent.getStartDateTime());
+        assertEquals(updatedEventTemplateRequest.getEndDateTime(), updatedEvent.getEndDateTime());
+        assertTrue(updatedEvent.getAttendees().isEmpty());
     }
 }

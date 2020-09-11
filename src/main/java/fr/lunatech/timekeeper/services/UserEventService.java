@@ -62,14 +62,14 @@ public class UserEventService {
     public Long createOrUpdateFromEventTemplate(EventTemplate eventTemplate,
                                                 List<EventTemplateRequest.UserEventRequest> userEventRequests,
                                                 AuthenticationContext ctx) {
-        if (userEventRequests.isEmpty()) {
-            return 0L;
-        }
-
         // Here we delete any userEvent that was previously created with this template.
         // If you remove a user from a template, it will delete the associated userEvent
         UserEvent.<UserEvent>stream("eventtemplate_id=?1",eventTemplate.id) // NOSONAR
                 .forEach(PanacheEntityBase::delete);
+
+        if (userEventRequests.isEmpty()) {
+            return 0L;
+        }
 
         long updated = 0;
         for (var userEventRequest : userEventRequests) {
