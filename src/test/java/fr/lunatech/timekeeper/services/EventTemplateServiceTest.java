@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import fr.lunatech.timekeeper.models.Organization;
 import fr.lunatech.timekeeper.resources.KeycloakTestResource;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
+import fr.lunatech.timekeeper.resources.exceptions.UpdateResourceException;
 import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
 import fr.lunatech.timekeeper.services.responses.EventTemplateResponse;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -243,5 +244,137 @@ class EventTemplateServiceTest {
         assertEquals(updatedEventTemplateRequest.getStartDateTime(), updatedEvent.getStartDateTime());
         assertEquals(updatedEventTemplateRequest.getEndDateTime(), updatedEvent.getEndDateTime());
         assertTrue(updatedEvent.getAttendees().isEmpty());
+    }
+
+    @Test
+    void create_should_not_update_if_start_date_is_null() {
+        final String samToken = getAdminAccessToken();
+        var sam = create(samToken);
+
+        EventTemplateRequest.UserEventRequest userEventRequest = new EventTemplateRequest.UserEventRequest(sam.getId());
+
+        EventTemplateRequest eventTemplateRequest = new EventTemplateRequest(
+                "request1",
+                "description1",
+                START_DAY,
+                START_DAY.plusHours(6),
+                Lists.newArrayList(userEventRequest)
+        );
+
+        Organization organization = new Organization();
+        organization.id = 1L;
+        organization.name = "name";
+        organization.tokenName = "tokenName";
+        organization.users = Collections.emptyList();
+        organization.projects = Collections.emptyList();
+        organization.clients = Collections.emptyList();
+
+        AuthenticationContext ctx = new AuthenticationContext(
+                sam.getId(),
+                organization,
+                Collections.emptyList()
+        );
+
+        var maybeEventId = eventTemplateService.create(eventTemplateRequest, ctx);
+
+        assertTrue(maybeEventId.isPresent());
+
+        EventTemplateRequest updatedEventTemplateRequest = new EventTemplateRequest(
+                "updated name",
+                "updated descr",
+                null,
+                START_DAY.plusDays(1).plusHours(6),
+                Lists.newArrayList()
+        );
+        Long eventId = maybeEventId.get();
+        assertThrows(UpdateResourceException.class, () -> eventTemplateService.update(eventId, updatedEventTemplateRequest, ctx), "should throw a CreateException if the endDateTime is null");
+    }
+
+    @Test
+    void create_should_not_update_if_end_date_is_null() {
+        final String samToken = getAdminAccessToken();
+        var sam = create(samToken);
+
+        EventTemplateRequest.UserEventRequest userEventRequest = new EventTemplateRequest.UserEventRequest(sam.getId());
+
+        EventTemplateRequest eventTemplateRequest = new EventTemplateRequest(
+                "request1",
+                "description1",
+                START_DAY,
+                START_DAY.plusHours(6),
+                Lists.newArrayList(userEventRequest)
+        );
+
+        Organization organization = new Organization();
+        organization.id = 1L;
+        organization.name = "name";
+        organization.tokenName = "tokenName";
+        organization.users = Collections.emptyList();
+        organization.projects = Collections.emptyList();
+        organization.clients = Collections.emptyList();
+
+        AuthenticationContext ctx = new AuthenticationContext(
+                sam.getId(),
+                organization,
+                Collections.emptyList()
+        );
+
+        var maybeEventId = eventTemplateService.create(eventTemplateRequest, ctx);
+
+        assertTrue(maybeEventId.isPresent());
+
+        EventTemplateRequest updatedEventTemplateRequest = new EventTemplateRequest(
+                "updated name",
+                "updated descr",
+                START_DAY.plusDays(1).plusHours(6),
+                null,
+                Lists.newArrayList()
+        );
+        Long eventId = maybeEventId.get();
+        assertThrows(UpdateResourceException.class, () -> eventTemplateService.update(eventId, updatedEventTemplateRequest, ctx), "should throw a CreateException if the endDateTime is null");
+    }
+
+    @Test
+    void create_should_not_update_if_end_date_is_beofre_start_date() {
+        final String samToken = getAdminAccessToken();
+        var sam = create(samToken);
+
+        EventTemplateRequest.UserEventRequest userEventRequest = new EventTemplateRequest.UserEventRequest(sam.getId());
+
+        EventTemplateRequest eventTemplateRequest = new EventTemplateRequest(
+                "request1",
+                "description1",
+                START_DAY,
+                START_DAY.plusHours(6),
+                Lists.newArrayList(userEventRequest)
+        );
+
+        Organization organization = new Organization();
+        organization.id = 1L;
+        organization.name = "name";
+        organization.tokenName = "tokenName";
+        organization.users = Collections.emptyList();
+        organization.projects = Collections.emptyList();
+        organization.clients = Collections.emptyList();
+
+        AuthenticationContext ctx = new AuthenticationContext(
+                sam.getId(),
+                organization,
+                Collections.emptyList()
+        );
+
+        var maybeEventId = eventTemplateService.create(eventTemplateRequest, ctx);
+
+        assertTrue(maybeEventId.isPresent());
+
+        EventTemplateRequest updatedEventTemplateRequest = new EventTemplateRequest(
+                "updated name",
+                "updated descr",
+                START_DAY.plusHours(1),
+                START_DAY,
+                Lists.newArrayList()
+        );
+        Long eventId = maybeEventId.get();
+        assertThrows(UpdateResourceException.class, () -> eventTemplateService.update(eventId, updatedEventTemplateRequest, ctx), "should throw a CreateException if the endDateTime is null");
     }
 }

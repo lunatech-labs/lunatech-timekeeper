@@ -136,7 +136,7 @@ public class EventTemplateService {
             }catch (PersistenceException pe){
                 if(pe.getCause() instanceof org.hibernate.exception.ConstraintViolationException && pe.getCause().getCause() instanceof  org.postgresql.util.PSQLException){
                     logger.warn(String.format("SQL Exception : unable to persist this EventTemplate due to [%s]",pe.getCause().getCause().getMessage()) );
-                    throw new CreateResourceException("Cannot create EventTemplate due to database constraints. Check that no other eventTemplate with sameDate, same name already exists");
+                    throw new UpdateResourceException("Cannot create EventTemplate due to database constraints. Check that no other eventTemplate with sameDate, same name already exists");
                 }
                 throw new CreateResourceException(String.format("Unable to persist this EventTemplate due to [%s]",pe.getMessage()));
             }

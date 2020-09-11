@@ -17,7 +17,6 @@
 package fr.lunatech.timekeeper.models.time;
 
 import fr.lunatech.timekeeper.models.Organization;
-import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
