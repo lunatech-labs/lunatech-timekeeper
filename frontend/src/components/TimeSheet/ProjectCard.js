@@ -35,16 +35,15 @@ const formatEmpty = (stringToCheck) => {
     return ' - ';
 };
 
-const makeItGrey = (startDate, endDate, daysLeft) => {
-    const today = moment();
-    const isStartDateBeforeToday = moment(startDate).isBefore(today);
-    const isTodayAfterEndDate = moment(today).isAfter(endDate);
+const now = moment();
+export const makeItGrey = (now, startDate, endDate, daysLeft) => {
+    const isNowBeforeStartDate = moment(now).isBefore(startDate);
+    const isNowAfterEndDate = moment(now).isAfter(endDate);
 
-    if (isStartDateBeforeToday || isTodayAfterEndDate || daysLeft === null || daysLeft === 0 ) {
+    if (isNowBeforeStartDate || isNowAfterEndDate || daysLeft === null || daysLeft === 0 ) {
         return 'tk_UnlimitedField';
-    } else {
-        return '';
     }
+        return '';
 };
 
 const projectCard = (props) => {
@@ -59,7 +58,7 @@ const projectCard = (props) => {
                             return (
                                 <List.Item>
                                     <ProjectClientHeader project={timeSheet.project}
-                                                         classes={makeItGrey(timeSheet.startDate, timeSheet.endDate, timeSheet.leftOver)}/>
+                                                         classes={makeItGrey(now, timeSheet.startDate, timeSheet.endDate, timeSheet.leftOver)}/>
                                     <div
                                         className={makeItGrey(timeSheet.startDate, timeSheet.endDate, timeSheet.leftOver)}>
                                         <p>
