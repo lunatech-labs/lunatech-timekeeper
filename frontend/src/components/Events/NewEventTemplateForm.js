@@ -16,7 +16,7 @@
 
 import React, {useEffect, useState} from 'react';
 import {sortListByName, useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
-import {Alert, Button, Col, Form, Input, message, Row, Space, Spin, DatePicker, Radio} from 'antd';
+import {Alert, Button, Col, Form, Input, message, Row, Space, Spin, DatePicker, Radio, Select} from 'antd';
 import './NewEventTemplateForm.less';
 import '../../components/Button/BtnGeneral.less';
 import {Link, Redirect} from 'react-router-dom';
@@ -27,7 +27,7 @@ import _ from 'lodash';
 import 'moment/locale/en-gb';
 
 const {TextArea} = Input;
-const { RangePicker } = DatePicker;
+const {Option} = Select;
 
 const NewEventTemplateForm = () => {
   const [eventTemplateCreated, setEventTemplateCreated] = useState(false);
@@ -36,13 +36,14 @@ const NewEventTemplateForm = () => {
   const formDataToEventRequest = (formData) => ({
     name: formData.name,
     description: formData.description,
-    startDateTime: formData.eventDateTime[0],
-    endDateTime: formData.eventDateTime[1],
+    startDateTime: formData.startDateTime,
+    startDateNumberOfHours: formData.startDateNumberOfHours,
+    endDateTime: formData.endDateTime,
+    endDateNumberOfHours: formData.endDateNumberOfHours,
     attendees: usersSelected,
     // eventType: formData.eventType : Shouldn't be sent while the backend is not implemented
   });
   const usersResponse = useTimeKeeperAPI('/api/users');
-  const eventsResponse = useTimeKeeperAPI('/api/users');
   const timeKeeperAPIPost = useTimeKeeperAPIPost('/api/events', (form => form) , setEventTemplateCreated, formDataToEventRequest);
 
   const [form] = Form.useForm();
@@ -50,9 +51,49 @@ const NewEventTemplateForm = () => {
   const initialValues = {
     name: '',
     description: '',
-    eventDateTime: [moment.utc('9:00 AM', 'LT'),moment.utc('9:00 AM', 'LT')],
+    timeUnitStartDate:'DAY',
+    startDateTime: moment.utc('9:00 AM', 'LT') ,
+    startDateNumberOfHours: 1,
+    timeUnitEndDate:'DAY',
+    endDateTime: moment.utc('09:00 AM', 'LT'),
+    endDateNumberOfHours: 1,
     attendees: [],
     eventType: 'COMPANY_EVENT'
+  };
+
+  const timeUnitToNumberOfHour = (timeUnit) => {
+    switch (timeUnit) {
+      case 'DAY': {
+        return 8;
+      }
+      case 'HALFDAY': {
+        return 4;
+      }
+      case 'HOURLY' : {
+        return 1;
+      }
+      default: {
+        return {};
+      }
+    }
+  };
+
+  // Update the values when a field changes
+  const onValuesChange = (changedValues, allValues) => {
+    const key = Object.keys(changedValues)[0];
+    switch (key) {
+      case 'timeUnitStartDate': {
+        form.setFieldsValue({'startDateNumberOfHours': timeUnitToNumberOfHour(allValues.timeUnitStartDate)});
+        break;
+      }
+      case 'timeUnitEndDate': {
+        form.setFieldsValue({'endDateNumberOfHours': timeUnitToNumberOfHour(allValues.timeUnitEndDate)});
+        break;
+      }
+
+      default:
+        break;
+    }
   };
 
   useEffect(() => {
@@ -70,46 +111,7 @@ const NewEventTemplateForm = () => {
     );
   }
 
-  const disabledDate = (current) => {
-    // Can not select days before today and today
-    return current && current < moment().endOf('day');
-  };
-
-  function disabledTime(time, type) {
-    if (type === 'start') {
-      return {
-        disabledHours() {
-          let morning =  _.range(0, 7);
-          let evening =  _.range(20, 24);
-          return _.concat(morning,evening);
-        },
-        disabledMinutes: function () {
-          return _.filter(_.range(0, 60), function (x) {
-            return x % 15 !== 0;
-          });
-        },
-        disabledSeconds() {
-          return _.range(0, 60);
-        },
-      };
-    }
-    return {
-      disabledHours() {
-        let morning =  _.range(0, 7);
-        let evening =  _.range(20, 24);
-        return _.concat(morning,evening);
-      },
-      disabledMinutes: function () {
-        return _.filter(_.range(0, 60), function (x) {
-          return x % 15 !== 0;
-        });
-      },
-      disabledSeconds() {
-        return _.range(0, 60);
-      },
-    };
-  }
-  if(eventsResponse.data && usersResponse.data){
+  if(usersResponse.data){
     return (
 
       <Form
@@ -118,6 +120,7 @@ const NewEventTemplateForm = () => {
         initialValues={initialValues}
         onFinish={timeKeeperAPIPost.run}
         form={form}
+        onValuesChange={onValuesChange}
       >
         {timeKeeperAPIPost.error &&
         <Alert
@@ -170,26 +173,87 @@ const NewEventTemplateForm = () => {
                 />
               </Form.Item>
 
-              <Form.Item
-                label="Date and duration"
-                name="eventDateTime"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-
-                <RangePicker
-                  disabledDate={disabledDate}
-                  disabledTime={disabledTime}
-                  showTime={{
-                    hideDisabledOptions: true
-                  }}
-                  format="YYYY-MM-DD HH:mm"
-                  className="tk_RangePicker"
-                />
+              {/* ----- START-DATETIME & DURATION----- */}
+              <Form.Item label="Start Date" name="startDateTime" rules={[{required: true}]}>
+                <DatePicker format="DD-MM-YYYY" className="tk_DatePicker"/>
               </Form.Item>
+
+              <Col className="gutter-row" span={9}>
+                <Row>
+                  <Form.Item name="timeUnitStartDate" label="Duration" rules={[{required: true}]}>
+                    <Radio.Group>
+                      <Radio value="DAY" className="tk-radio">Day</Radio>
+                      <Radio value="HALFDAY" className="tk-radio">Half-day</Radio>
+                      <Radio value="HOURLY">Hours</Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                  <Form.Item shouldUpdate={(prevValues, curValues) => prevValues.timeUnitStartDate !== curValues.timeUnitStartDate}>
+                    {({getFieldValue}) => {
+                      if(getFieldValue('timeUnitStartDate') === 'HOURLY') {
+                        return (
+                            <Form.Item name="startDateNumberOfHours" label="Duration:" rules={[{required: true}]}>
+                              <Select showSearch>
+                                {_.range(1, 9, 1).map(i =>
+                                    <Option key={`option-hour-${i}`} value={i}>
+                                      {i}
+                                    </Option>)};
+                              </Select>
+                            </Form.Item>
+                        );
+                      } else {
+                        return (
+                            <Form.Item name="startDateNumberOfHours" noStyle={true}>
+                              <Input hidden={true}/>
+                            </Form.Item>
+                        );
+                      }
+                    }}
+                  </Form.Item>
+                </Row>
+              </Col>
+              {/* ----- START-DATETIME & DURATION----- */}
+
+              {/* ----- END-DATETIME & DURATION----- */}
+              <Form.Item label="End Date" name="endDateTime" rules={[{required: true}]}>
+                <DatePicker format="DD-MM-YYYY" className="tk_DatePicker"/>
+              </Form.Item>
+
+              <Col className="gutter-row" span={9}>
+                <Row>
+                  <Form.Item name="timeUnitEndDate" label="Duration" rules={[{required: true}]}>
+                    <Radio.Group>
+                      <Radio value="DAY" className="tk-radio">Day</Radio>
+                      <Radio value="HALFDAY" className="tk-radio">Half-day</Radio>
+                      <Radio value="HOURLY">Hours</Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                  <Form.Item shouldUpdate={(prevValues, curValues) => prevValues.timeUnitEndDate !== curValues.timeUnitEndDate}>
+                    {({getFieldValue}) => {
+                      if(getFieldValue('timeUnitEndDate') === 'HOURLY') {
+                        return (
+                            <Form.Item name="endDateNumberOfHours" label="Duration:" rules={[{required: true}]}>
+                              <Select showSearch>
+                                {_.range(1, 9, 1).map(i =>
+                                    <Option key={`option-hour-${i}`} value={i}>
+                                      {i}
+                                    </Option>)};
+                              </Select>
+                            </Form.Item>
+                        );
+                      } else {
+                        return (
+                            <Form.Item name="endDateNumberOfHours" noStyle={true}>
+                              <Input hidden={true}/>
+                            </Form.Item>
+                        );
+                      }
+                    }}
+                  </Form.Item>
+                </Row>
+              </Col>
+              {/* ----- END-DATETIME & DURATION----- */}
+
+
             </Col>
             <Col className="gutter-row" span={12}>
               <TitleSection title="Users"/>
@@ -210,7 +274,7 @@ const NewEventTemplateForm = () => {
     );
   }
 
-  if (eventsResponse.loading || usersResponse.loading) {
+  if (usersResponse.loading) {
     return (
       <React.Fragment>
         <Spin size="large">
@@ -235,7 +299,7 @@ const NewEventTemplateForm = () => {
     );
   }
 
-  if (eventsResponse.error || usersResponse.error) {
+  if (usersResponse.error) {
     return (
       <React.Fragment>
         <Alert title='Server error'
