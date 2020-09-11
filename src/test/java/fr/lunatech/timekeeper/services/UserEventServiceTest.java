@@ -3,6 +3,7 @@ package fr.lunatech.timekeeper.services;
 import fr.lunatech.timekeeper.models.time.UserEvent;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 import org.junit.jupiter.api.Test;
+
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

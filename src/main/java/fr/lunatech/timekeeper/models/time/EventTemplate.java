@@ -70,10 +70,4 @@ public class EventTemplate extends PanacheEntityBase {
                 '}';
     }
 
-    public boolean isValid() {
-        if (startDateTime != null && endDateTime != null && startDateTime.isAfter(endDateTime)) {
-            throw new CreateResourceException("Cannot create an EventTemplate if startDateTime is after endDateTime");
-        }
-        return true;
-    }
 }
