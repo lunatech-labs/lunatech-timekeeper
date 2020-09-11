@@ -12,8 +12,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
@@ -53,9 +56,9 @@ public class UserEventService {
         return userEvent.startDateTime.getYear() == year || userEvent.endDateTime.getYear() == year;
     }
 
-    protected List<User> findAllUsersFromEventTemplate(Long templateId){
-        return UserEvent.<UserEvent>stream("eventtemplate_id=?1",templateId) // NOSONAR
-                .map( userEvent -> userEvent.owner)
+    protected List<User> findAllUsersFromEventTemplate(Long templateId) {
+        return UserEvent.<UserEvent>stream("eventtemplate_id=?1", templateId) // NOSONAR
+                .map(userEvent -> userEvent.owner)
                 .collect(Collectors.toList());
     }
 
@@ -64,7 +67,7 @@ public class UserEventService {
                                                 AuthenticationContext ctx) {
         // Here we delete any userEvent that was previously created with this template.
         // If you remove a user from a template, it will delete the associated userEvent
-        UserEvent.<UserEvent>stream("eventtemplate_id=?1",eventTemplate.id) // NOSONAR
+        UserEvent.<UserEvent>stream("eventtemplate_id=?1", eventTemplate.id) // NOSONAR
                 .forEach(PanacheEntityBase::delete);
 
         if (userEventRequests.isEmpty()) {
@@ -78,5 +81,19 @@ public class UserEventService {
             updated++;
         }
         return updated;
+    }
+
+    /**
+     * Returns true if the specified user is available for the specified date range
+     *
+     * @param userId        cannot be null
+     * @param startDateTime is a valid startDateTime and cannot be null
+     * @param endDateTime   if specified, must be after startDateTime
+     * @return true if the user is available, otherwise returns false
+     */
+    public boolean isUserAvailableForDates(@NotNull Long userId, @NotNull LocalDateTime startDateTime, LocalDateTime endDateTime) {
+
+
+        return true;
     }
 }

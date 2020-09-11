@@ -52,7 +52,7 @@ class UserEventServiceIntegrationTest {
         UserResponse userSam = create(adminToken);
 
         //WHEN: an eventTemplate is created with the 1 attendee
-        EventTemplateRequest newEventTemplate = generateTestEventRequest("Event Name", 1L);
+        EventTemplateRequest newEventTemplate = generateTestEventRequest("Event Name 1", 1L);
         create(newEventTemplate,adminToken);
         var expected = userEventService.getEventsByUser(userSam.getId(), TimeKeeperDateUtils.getWeekNumberFromDate(THE_24_TH_JUNE_2020_AT_9_AM.toLocalDate()), 2020, TimeKeeperDateUtils::getWeekNumberFromDate);
 
@@ -66,7 +66,7 @@ class UserEventServiceIntegrationTest {
         UserResponse userSam = create(adminToken);
 
         //WHEN: an eventTemplate is created with the 1 attendee
-        EventTemplateRequest newEventTemplate = generateTestEventRequest("Event Name", 1L);
+        EventTemplateRequest newEventTemplate = generateTestEventRequest("Event Name 2", 1L);
         create(newEventTemplate,adminToken);
         var expected = userEventService.getEventsByUser(userSam.getId(), TimeKeeperDateUtils.getMonthNumberFromDate(THE_24_TH_JUNE_2020_AT_9_AM.toLocalDate()), 2020, TimeKeeperDateUtils::getMonthNumberFromDate);
 
@@ -80,7 +80,7 @@ class UserEventServiceIntegrationTest {
         UserResponse userSam = create(adminToken);
 
         //WHEN: an eventTemplate is created with the 1 attendee
-        EventTemplateRequest newEventTemplate = generateTestEventRequest("Event Name", 1L);
+        EventTemplateRequest newEventTemplate = generateTestEventRequest("Event Name 3", 1L);
         create(newEventTemplate,adminToken);
         var expected = List.of();
 
@@ -94,7 +94,7 @@ class UserEventServiceIntegrationTest {
         UserResponse userSam = create(adminToken);
 
         //WHEN: an eventTemplate is created with the 1 attendee
-        EventTemplateRequest newEventTemplate = generateTestEventRequest("Event Name", 1L);
+        EventTemplateRequest newEventTemplate = generateTestEventRequest("Event Name 4", 1L);
         create(newEventTemplate,adminToken);
         var expected = List.of();
         assertEquals(expected,userEventService.getEventsByUserForMonthNumber(userSam.getId(), TimeKeeperDateUtils.getMonthNumberFromDate(THE_24_TH_JUNE_2020_AT_9_AM.toLocalDate()) + 1, 2020));

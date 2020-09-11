@@ -33,10 +33,12 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
+import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static org.junit.jupiter.api.Assertions.*;
@@ -193,7 +195,7 @@ class EventTemplateServiceTest {
     }
 
     @Test
-    void create_should_updat_an_user_event() {
+    void create_should_update_an_user_event() {
         final String samToken = getAdminAccessToken();
         var sam = create(samToken);
 
@@ -376,5 +378,55 @@ class EventTemplateServiceTest {
         );
         Long eventId = maybeEventId.get();
         assertThrows(UpdateResourceException.class, () -> eventTemplateService.update(eventId, updatedEventTemplateRequest, ctx), "should throw a CreateException if the endDateTime is null");
+    }
+
+    @Test
+    void create_should_not_create_overlapping_events_for_same_user_tk_441() {
+        // Given an Event with Jimmy
+        final String samToken = getAdminAccessToken();
+        var sam = create(samToken);
+
+        final String jimmyToken = getUserAccessToken();
+        var jimmy = create(jimmyToken);
+
+        EventTemplateRequest.UserEventRequest userEventRequest = new EventTemplateRequest.UserEventRequest(jimmy.getId());
+
+        EventTemplateRequest eventTemplateRequest = new EventTemplateRequest(
+                "Agira ",
+                "Agira training whole day",
+                LocalDateTime.of(2020,7,22,9,0),
+                LocalDateTime.of(2020,7,22,17,0),
+                Lists.newArrayList(userEventRequest)
+        );
+
+        Organization organization = new Organization();
+        organization.id = 1L;
+        organization.name = "some organization";
+        organization.tokenName = "tokenName";
+        organization.users = Collections.emptyList();
+        organization.projects = Collections.emptyList();
+        organization.clients = Collections.emptyList();
+
+        AuthenticationContext ctx = new AuthenticationContext(
+                sam.getId(),
+                organization,
+                Collections.emptyList()
+        );
+
+        var maybeEventId = eventTemplateService.create(eventTemplateRequest, ctx);
+        assertTrue(maybeEventId.isPresent());
+
+        // WHEN jimmy is added to another eventTemplate
+        EventTemplateRequest anotherEvent = new EventTemplateRequest(
+                "Hackbreakfast",
+                "An event in the morning with Jimmy",
+                LocalDateTime.of(2020,7,22,9,0),
+                LocalDateTime.of(2020,7,22,12,0),
+                Lists.newArrayList(userEventRequest)
+        );
+
+        // THEN it should raise an exception
+        Long eventId = maybeEventId.get();
+        assertThrows(UpdateResourceException.class, () -> eventTemplateService.update(eventId, anotherEvent, ctx), "should throw a CreateException if the endDateTime is null");
     }
 }
