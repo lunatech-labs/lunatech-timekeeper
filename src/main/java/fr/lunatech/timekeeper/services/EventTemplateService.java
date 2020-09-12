@@ -110,8 +110,15 @@ public class EventTemplateService {
         return Optional.of(eventTemplate.id);
     }
 
+    /**
+     * Update an existing EventTemplate and delete/recreate all associated userEvents from this Event Template
+     * @param eventId is the event to be updated
+     * @param request is the eventTemplateRequest DTO that should replace all existing EventTemplate data
+     * @param ctx for security
+     * @return the number of updated userEvents, default 0
+     */
     @Transactional
-    public Optional<Long> update(Long eventId, EventTemplateRequest request, AuthenticationContext ctx) {
+    public Long update(Long eventId, EventTemplateRequest request, AuthenticationContext ctx) {
         logger.debug("Modify event template for for id={} with {}, {}", eventId, request, ctx);
 
         if (request.getStartDateTime() == null) {
@@ -145,13 +152,11 @@ public class EventTemplateService {
 
             // Create userEvent for each attendee using the userEventService
             // Please note that we will also delete and recreate all userEvents for each attendee.
-            findById(eventTemplateUpdated.id, ctx).ifPresent(eventTemplate1 -> {
-                var updated = userEventService.createOrUpdateFromEventTemplate(eventTemplate1, request.getAttendees(), ctx);
-                logger.debug("Updated {} userEvents from template", updated);
-            });
+            var updatedUsers = findById(eventTemplateUpdated.id, ctx).map(evt -> userEventService.createOrUpdateFromEventTemplate(evt, request.getAttendees(), ctx)).orElse(0L);
+            logger.debug("Updated {} userEvents from template", updatedUsers);
 
-            return eventTemplateUpdated.id;
-        });
+            return updatedUsers;
+        }).orElse(0L);
     }
 
     private Optional<EventTemplate> findById(Long id, AuthenticationContext ctx) {

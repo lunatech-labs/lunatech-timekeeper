@@ -37,6 +37,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
@@ -416,7 +417,7 @@ class EventTemplateServiceTest {
         var maybeEventId = eventTemplateService.create(eventTemplateRequest, ctx);
         assertTrue(maybeEventId.isPresent());
 
-        // WHEN jimmy is added to another eventTemplate
+        // WHEN jimmy is added to another eventTemplate but the new date overlaps each other
         EventTemplateRequest anotherEvent = new EventTemplateRequest(
                 "Hackbreakfast",
                 "An event in the morning with Jimmy",
@@ -425,8 +426,11 @@ class EventTemplateServiceTest {
                 Lists.newArrayList(userEventRequest)
         );
 
-        // THEN it should raise an exception
-        Long eventId = maybeEventId.get();
-        assertThrows(UpdateResourceException.class, () -> eventTemplateService.update(eventId, anotherEvent, ctx), "should throw a CreateException if the endDateTime is null");
+        // THEN
+        assertEquals(Optional.of(2L), eventTemplateService.create(anotherEvent, ctx), "Should create a 2nd userEvent");
+
+        Optional<EventTemplateResponse> response = eventTemplateService.getById(2L, ctx);
+        response.
+
     }
 }

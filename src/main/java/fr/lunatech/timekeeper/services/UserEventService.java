@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -77,8 +76,16 @@ public class UserEventService {
         long updated = 0;
         for (var userEventRequest : userEventRequests) {
             var userEvent = userEventRequest.unbind(eventTemplate, userService::findById, ctx);
-            userEvent.persistAndFlush();
-            updated++;
+
+            if(isUserAvailableForDates(userEvent.owner.id, userEvent.startDateTime, userEvent.endDateTime)){
+                userEvent.persistAndFlush();
+                updated++;
+            }else{
+                if(logger.isWarnEnabled()) {
+                    logger.warn(String.format("Cannot persist a userEvent for user %s as the user is already booked for those dates.", userEvent.owner.getFullName()));
+                }
+            }
+
         }
         return updated;
     }
@@ -91,9 +98,18 @@ public class UserEventService {
      * @param endDateTime   if specified, must be after startDateTime
      * @return true if the user is available, otherwise returns false
      */
-    public boolean isUserAvailableForDates(@NotNull Long userId, @NotNull LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    protected boolean isUserAvailableForDates(Long userId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        if (userId == null) {
+            throw new IllegalArgumentException("userId cannot be null");
+        }
+        if (startDateTime == null) {
+            throw new IllegalArgumentException("startDateTime cannot be null");
+        }
 
-
-        return true;
+        LocalDateTime localEndDateTime = endDateTime == null ? startDateTime : endDateTime;
+        Optional<UserEvent> maybeOneEvent;
+        // Please not that it is on purpose that we check that the localEndDateTime is strictly lower than thestartdatetime
+        maybeOneEvent = UserEvent.<UserEvent>stream("owner_id=?1 and startdatetime<?2 and enddatetime>=?3", userId, localEndDateTime, startDateTime).findFirst(); //NOSONAR
+        return maybeOneEvent.isEmpty();
     }
 }

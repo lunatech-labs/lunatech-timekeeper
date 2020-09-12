@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 class UserEventServiceTest {
@@ -122,4 +121,21 @@ class UserEventServiceTest {
 
         assertTrue(userEventService.validateYear(userEvent, 2020));
     }
+
+    @Test
+    void shouldThrowExceptionForNullUserId() {
+        UserEventService userEventService = new UserEventService();
+        var aDate=LocalDateTime.of(2020,02,1,9,0,0);
+        var otherDate=aDate.plusHours(3);
+        assertThrows(IllegalArgumentException.class , () -> userEventService.isUserAvailableForDates(null,aDate,otherDate));
+    }
+
+    @Test
+    void shouldThrowExceptionForStartDate() {
+        UserEventService userEventService = new UserEventService();
+        var aDate=LocalDateTime.of(2020,02,1,9,0,0);
+        var otherDate=aDate.plusHours(3);
+        assertThrows(IllegalArgumentException.class , () -> userEventService.isUserAvailableForDates(1L,null,otherDate));
+    }
+
 }
