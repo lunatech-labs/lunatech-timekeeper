@@ -16,6 +16,7 @@
 
 package fr.lunatech.timekeeper.resources.openapi;
 
+import fr.lunatech.timekeeper.services.responses.EventTemplateResponse;
 import fr.lunatech.timekeeper.services.responses.MonthResponse;
 import fr.lunatech.timekeeper.services.responses.WeekResponse;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -25,9 +26,10 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 @Path("/my")
-public interface PersonalTimesheetsResourceApi {
+public interface PersonalResourceApi {
 
     @GET
     @Path("/{year}/month")
@@ -76,5 +78,30 @@ public interface PersonalTimesheetsResourceApi {
     })
     WeekResponse getWeek(@PathParam("year") Integer year,
                          @QueryParam("weekNumber") Integer weekNumber);
+
+
+    @GET
+    @Path("/{userId}/events")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Retrieve user's eventTemplates",
+            description = "Retrieve the list of existing eventTemplates for an user.")
+    @Tag(ref = "personnalEvents")
+    @APIResponses(value = {
+            @APIResponse(
+                    responseCode = "200",
+                    description = "List of eventTemplates"
+            ),
+            @APIResponse(
+                    responseCode = "400",
+                    description = "Invalid userId value"),
+            @APIResponse(
+                    responseCode = "403",
+                    description = "Invalid JWT token"),
+            @APIResponse(
+                    responseCode = "404",
+                    description = "user not found"
+            )
+    })
+    List<EventTemplateResponse> getMyEvents(@PathParam("userId") Long id);
 
 }

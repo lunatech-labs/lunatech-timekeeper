@@ -49,12 +49,12 @@ public class EventTemplateResource implements EventTemplateResourceApi {
                 .orElseThrow(NotFoundException::new);
     }
 
-    @RolesAllowed({"user", "admin"})
+    @RolesAllowed({"admin"})
     @Override
     @Counted(name = "countGetAllEvents", description = "Counts how many times the user load the event list on method 'getAllEvents'")
     @Timed(name = "timeGetAllEvents", description = "Times how long it takes the user load the event list on method 'getAllEvents'", unit = MetricUnits.MILLISECONDS)
     public List<EventTemplateResponse> getAllEvents() {
-        return eventTemplateService.listAll(authentication.context());
+        return eventTemplateService.listEvent(null, authentication.context());
     }
 
     @RolesAllowed({"user", "admin"})

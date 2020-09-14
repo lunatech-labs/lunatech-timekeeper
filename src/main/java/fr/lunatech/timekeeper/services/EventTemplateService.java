@@ -51,7 +51,8 @@ public class EventTemplateService {
                 });
     }
 
-    public List<EventTemplateResponse> listAll(AuthenticationContext ctx) {
+    public List<EventTemplateResponse> listEvent(Long id, AuthenticationContext ctx) {
+        Optional<Long> maybeUserId = Optional.ofNullable(id);
         try (final Stream<EventTemplate> eventTemplates = EventTemplate.streamAll()) { // NOSONAR
             return eventTemplates
                     .filter(ctx::canAccess)
@@ -59,6 +60,7 @@ public class EventTemplateService {
                         var users = userEventService.findAllUsersFromEventTemplate(t.id);
                         return EventTemplateResponse.bind(t, users);
                     })
+                    .filter(element -> maybeUserId.isEmpty() || element.getAttendees().stream().anyMatch(x -> x.getUserId().equals(id)))
                     .collect(Collectors.toList());
         }
     }

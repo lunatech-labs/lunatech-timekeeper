@@ -16,11 +16,9 @@
 
 package fr.lunatech.timekeeper.resources;
 
+import fr.lunatech.timekeeper.resources.utils.DataTestProvider;
 import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
-import fr.lunatech.timekeeper.services.requests.ClientRequest;
-import fr.lunatech.timekeeper.services.requests.ProjectRequest;
-import fr.lunatech.timekeeper.services.requests.TimeEntryRequest;
-import fr.lunatech.timekeeper.services.requests.TimeSheetRequest;
+import fr.lunatech.timekeeper.services.requests.*;
 import fr.lunatech.timekeeper.services.responses.*;
 import fr.lunatech.timekeeper.timeutils.PublicHoliday;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
@@ -28,6 +26,8 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.flywaydb.core.Flyway;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -52,21 +52,24 @@ import static org.hamcrest.CoreMatchers.is;
 @QuarkusTestResource(H2DatabaseTestResource.class)
 @QuarkusTestResource(KeycloakTestResource.class)
 @Tag("integration")
-class PersonalTimesheetsResourceTest {
+class PersonalResourceTest {
 
     @Inject
     TimeKeeperTestUtils timeKeeperTestUtils;
 
     @Inject
+    DataTestProvider dataTestProvider;
+
+    @Inject
     Flyway flyway;
+
+    private final LocalDate START_DATE = LocalDate.now();
 
     @AfterEach
     void cleanDB() {
         flyway.clean();
         flyway.migrate();
     }
-
-    private final LocalDate START_DATE = LocalDate.now();
 
     @Test
     void shouldReturnEmptyWeekResponseIfUserNotMemberOfProject() {
@@ -284,5 +287,29 @@ class PersonalTimesheetsResourceTest {
 
         //THEN: the days left should be 8
         getValidation(PersonalTimeSheetsWeekDef.uriWithMultiInt(2020, 25), jimmyToken).body(is(timeKeeperTestUtils.toJson(response))).statusCode(is(OK.getStatusCode()));
+    }
+
+
+    @Test
+    void shouldListEventTemplateForAnUser() {
+        //WITH: Unique EventName
+        final String eventName1 = dataTestProvider.generateRandomEventName();
+        final String eventName2 = dataTestProvider.generateRandomEventName();
+
+        //GIVEN: 2 user
+        final String adminToken = getAdminAccessToken();
+        var sam = create(adminToken);
+        //WHEN: 2 eventTemplates are created
+        EventTemplateRequest eventTemplateRequest = dataTestProvider.generateTestEventRequest(eventName1, 1L);
+        EventTemplateRequest eventTemplateRequest2 = dataTestProvider.generateTestEventRequest(eventName2, 1L);
+        create(eventTemplateRequest, adminToken);
+        create(eventTemplateRequest2, adminToken);
+
+        var attendees = new ArrayList<EventTemplateResponse.Attendee>(1);
+        attendees.add(new EventTemplateResponse.Attendee(1L, "Sam", "Uell", "sam@lunatech.fr", "sam.png"));
+
+        EventTemplateResponse expectedResponse1 = dataTestProvider.generateExpectedEventTemplateResponse(eventName1, 1L, attendees);
+        EventTemplateResponse expectedResponse2 = dataTestProvider.generateExpectedEventTemplateResponse(eventName2, 2L, attendees);
+        getValidation(PersonalEventsDef.uriWithMultiId(sam.getId()), adminToken).body(Matchers.is(timeKeeperTestUtils.listOfTasJson(expectedResponse1, expectedResponse2))).statusCode(CoreMatchers.is(OK.getStatusCode()));
     }
 }
