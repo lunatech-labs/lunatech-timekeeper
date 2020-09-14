@@ -16,67 +16,18 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import Space from 'antd/lib/space';
-import {Collapse, List} from 'antd';
-import FolderFilled from '@ant-design/icons/lib/icons/FolderFilled';
-import {CalendarOutlined, ClockCircleOutlined} from '@ant-design/icons';
-import HistoryOutlined from '@ant-design/icons/lib/icons/HistoryOutlined';
-import './UserTimeSheetList.less';
-import ProjectClientHeader from '../Projects/ProjectClientHeader';
+import Aux from '../../hoc/Aux'; // hoc - Higher Order Component
+import ProjectCard from './ProjectCard';
 
-const {Panel} = Collapse;
-const formatDate = (s) => s.replace('-', '/').replace('-', '/');
-const formatEmpty = (stringToCheck) => {
-  if (stringToCheck)
-    return stringToCheck;
-  return 'Unlimited';
-};
-
-const defineClassNameDayLeft = (daysLeft) => {
-  if (!daysLeft) {
-    return 'tk_UnlimitedField';
-  } else if (daysLeft < 9) {
-    return 'tk_WarnDayLeft';
-  } else {
-    return '';
-  }
-};
-
-
-const UserTimeSheetList = ({timeSheets}) => {
-  const privateProject = timeSheets.filter(item => !item.project.publicAccess);
-  return (
-    <div className="tk_CardCollapse">
-      <Collapse bordered={false} expandIconPosition={'right'} key="timeSheets">
-        <Panel header={<Space size="small"><FolderFilled/>{'Time sheets list'}</Space>} key="1">
-          <List
-            className={'tk_TimeSheetList'}
-            dataSource={privateProject}
-            renderItem={timeSheet => {
-              return (
-                <List.Item>
-                  <ProjectClientHeader project={timeSheet.project}/>
-                  <div>
-                    <p>
-                      <ClockCircleOutlined/> TimeUnit: {timeSheet.timeUnit}</p>
-                    <p className={timeSheet.maxDuration ? '' : 'tk_UnlimitedField'}>
-                      <CalendarOutlined/> Number of days: {formatEmpty(timeSheet.maxDuration)}
-                    </p>
-                    <p className={timeSheet.expirationDate ? '' : 'tk_UnlimitedField'}>
-                      <CalendarOutlined/> End
-                                  date: {timeSheet.expirationDate ? formatDate(timeSheet.expirationDate) : 'Unlimited'}
-                    </p>
-                    <p className={defineClassNameDayLeft(timeSheet.leftOver)}>
-                      <HistoryOutlined/>Days left : {formatEmpty(timeSheet.leftOver)}
-                    </p>
-                  </div>
-                </List.Item>
-              );
-            }}/>
-        </Panel>
-      </Collapse>
-    </div>
-  );
+const UserTimeSheetList = (props) => {
+    const publicProject = props.timeSheets.filter(item => item.project.publicAccess);
+    const privateProject = props.timeSheets.filter(item => !item.project.publicAccess);
+    return (
+        <Aux>
+            <ProjectCard project={privateProject} title="My Private Projects"/>
+            <ProjectCard project={publicProject} title="My Public Projects"/>
+        </Aux>
+    );
 };
 
 UserTimeSheetList.propTypes = {
