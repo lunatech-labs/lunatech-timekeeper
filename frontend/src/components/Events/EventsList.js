@@ -56,9 +56,9 @@ const EventsList = () => {
     return (
       <React.Fragment>
         <Alert title='Server error'
-          message='Failed to load the list of projects'
-          type='error'
-          description='Unable to fetch the list of Projects from the server'
+               message='Failed to load the list of events'
+               type='error'
+               description='Unable to fetch the list of Events from the server'
         />
       </React.Fragment>
     );
