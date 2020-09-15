@@ -43,11 +43,11 @@ public class TimeEntryRequest {
     public TimeEntryRequest(
             @NotBlank String comment,
             @NotNull LocalDateTime startDateTime,
-            @NotNull Integer hours
+            @NotNull Integer numberOfHours
     ) {
         this.comment = comment;
         this.startDateTime = startDateTime;
-        this.numberOfHours = hours;
+        this.numberOfHours = numberOfHours;
     }
 
     public TimeEntry unbind(
