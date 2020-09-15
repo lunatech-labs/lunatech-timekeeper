@@ -32,7 +32,7 @@ const getLogoURL = (item) => {
 
 const ProjectClientHeader = (props) => {
   return (
-    <div className={props.classes.concat(' tk_ProjectClientHeader')}>
+    <div className='tk_ProjectClientHeader'>
       <Avatar src={getLogoURL(props.project)} shape={'square'} size="large"/>
       <p>{props.project.name}</p>
       <Divider type="vertical"/>
