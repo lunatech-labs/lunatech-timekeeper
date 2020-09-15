@@ -36,10 +36,8 @@ const NewEventTemplateForm = () => {
   const formDataToEventRequest = (formData) => ({
     name: formData.name,
     description: formData.description,
-    startDateTime: formData.startDateTime,
-    // startDateNumberOfHours: formData.startDateNumberOfHours, : Shouldn't be sent while the backend is not implemented
-    endDateTime: formData.endDateTime,
-    // endDateNumberOfHours: formData.endDateNumberOfHours, : Shouldn't be sent while the backend is not implemented
+    startDateTime: moment.utc(formData.startDateTime).add(formData.startDateNumberOfHours, 'hours'),
+    endDateTime: moment.utc(formData.endDateTime).add(formData.endDateNumberOfHours, 'hours'),
     attendees: usersSelected,
     // eventType: formData.eventType : Shouldn't be sent while the backend is not implemented
   });
