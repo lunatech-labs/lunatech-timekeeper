@@ -325,8 +325,8 @@ class EventTemplateResourceTest {
         return new EventTemplateRequest(
                 eventName,
                 EVENT_DESCRIPTION,
-                THE_24_TH_JUNE_2020_AT_9_AM,
-                THE_24_TH_JUNE_2020_AT_5_PM,
+                THE_24_TH_JUNE_2020_AT_9_AM.withNano(0),
+                THE_24_TH_JUNE_2020_AT_5_PM.withNano(0),
                 Arrays.stream(usersId)
                         .sorted(Comparator.comparingLong(value -> (long)value))
                         .map(EventTemplateRequest.UserEventRequest::new)
@@ -340,8 +340,8 @@ class EventTemplateResourceTest {
                 expectedID,
                 eventName,
                 EVENT_DESCRIPTION,
-                THE_24_TH_JUNE_2020_AT_9_AM,
-                THE_24_TH_JUNE_2020_AT_5_PM,
+                THE_24_TH_JUNE_2020_AT_9_AM.withNano(0),
+                THE_24_TH_JUNE_2020_AT_5_PM.withNano(0),
                 attendees
         );
     }
