@@ -40,7 +40,7 @@ export const makeItGrey = (now, startDate, endDate, daysLeft) => {
     const isNowBeforeStartDate = moment(now).isBefore(startDate);
     const isNowAfterEndDate = moment(now).isAfter(endDate);
 
-    if (isNowBeforeStartDate || isNowAfterEndDate || daysLeft === null || daysLeft === 0 ) {
+    if (isNowBeforeStartDate || isNowAfterEndDate || daysLeft === 0 ) {
         return 'tk_UnlimitedField';
     }
         return '';
