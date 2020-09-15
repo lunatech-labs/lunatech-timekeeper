@@ -37,9 +37,9 @@ const NewEventTemplateForm = () => {
     name: formData.name,
     description: formData.description,
     startDateTime: formData.startDateTime,
-    startDateNumberOfHours: formData.startDateNumberOfHours,
+    // startDateNumberOfHours: formData.startDateNumberOfHours, : Shouldn't be sent while the backend is not implemented
     endDateTime: formData.endDateTime,
-    endDateNumberOfHours: formData.endDateNumberOfHours,
+    // endDateNumberOfHours: formData.endDateNumberOfHours, : Shouldn't be sent while the backend is not implemented
     attendees: usersSelected,
     // eventType: formData.eventType : Shouldn't be sent while the backend is not implemented
   });
