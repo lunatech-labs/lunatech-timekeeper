@@ -30,13 +30,13 @@ const getLogoURL = (item) => {
   }
 };
 
-const ProjectClientHeader = ({project}) => {
+const ProjectClientHeader = (props) => {
   return (
     <div className='tk_ProjectClientHeader'>
-      <Avatar src={getLogoURL(project)} shape={'square'} size="large"/>
-      <p>{project.name}</p>
+      <Avatar src={getLogoURL(props.project)} shape={'square'} size="large"/>
+      <p>{props.project.name}</p>
       <Divider type="vertical"/>
-      <TagProjectClient client={project.client}/>
+      <TagProjectClient client={props.project.client}/>
     </div>
   );
 };

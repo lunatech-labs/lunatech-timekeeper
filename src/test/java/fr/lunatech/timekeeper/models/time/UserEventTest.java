@@ -34,7 +34,6 @@ import javax.inject.Inject;
 import javax.transaction.*;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Set;
 
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;

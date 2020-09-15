@@ -113,15 +113,15 @@ public interface EventTemplateResourceApi {
     @Tag(ref = "events")
     @APIResponses(value = {
             @APIResponse(
-                    responseCode = "204",
-                    description = "Event updated"
+                    responseCode = "200",
+                    description = "Returns the number of associated userEvents updated or created"
             ),
             @APIResponse(
                     responseCode = "404",
                     description = "EventTemplate not found"
             )
     })
-    Response updateEvent(@PathParam("id") Long id, @RequestBody EventTemplateRequest request);
+    Response updateEvent(@PathParam("id") Long eventTemplateId, @RequestBody EventTemplateRequest request);
 
 
 }

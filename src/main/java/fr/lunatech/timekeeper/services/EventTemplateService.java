@@ -18,6 +18,7 @@ package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.time.EventTemplate;
 import fr.lunatech.timekeeper.models.time.UserEvent;
+import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.resources.exceptions.UpdateResourceException;
 import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
 import fr.lunatech.timekeeper.services.responses.EventTemplateResponse;
@@ -27,8 +28,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -75,17 +76,26 @@ public class EventTemplateService {
         logger.debug("Create a new event template with {}, {}", request, ctx);
         final EventTemplate eventTemplate = request.unbind(ctx);
 
-        eventTemplate.isValid();
+        if (request.getStartDateTime() == null) {
+            throw new CreateResourceException("Cannot create an EventTemplate if startDateTime is null");
+        }
+        if (request.getEndDateTime() == null) {
+            throw new CreateResourceException("Cannot create an EventTemplate if endDateTime is null");
+        }
 
-        // by unbinding we also generate userEvent in db for each user
-        // user event attributes will be inherited from eventTemplate (startTime, etc.)
-        checkThatNoOtherEventSameNameSameDateAlreadyExists(
-                eventTemplate.name,
-                eventTemplate.id,
-                eventTemplate.startDateTime,
-                eventTemplate.endDateTime, ctx);
+        if (request.getStartDateTime().isAfter(request.getEndDateTime())) {
+            throw new CreateResourceException("Cannot create an EventTemplate if startDateTime is after endDateTime");
+        }
 
-        eventTemplate.persistAndFlush();
+        try {
+            eventTemplate.persistAndFlush();
+        }catch (PersistenceException pe){
+            if(pe.getCause() instanceof org.hibernate.exception.ConstraintViolationException && pe.getCause().getCause() instanceof  org.postgresql.util.PSQLException){
+                    logger.warn(String.format("SQL Exception : unable to persist this EventTemplate due to [%s]",pe.getCause().getCause().getMessage()) );
+                    throw new CreateResourceException("Cannot create EventTemplate due to database constraints. Check that no other eventTemplate with sameDate, same name already exists");
+            }
+            throw new CreateResourceException(String.format("Unable to persist this EventTemplate due to [%s]",pe.getMessage()));
+        }
 
         // Create a userEvent for each attendee using the userEventService
         if (!request.getAttendees().isEmpty()) {
@@ -100,71 +110,58 @@ public class EventTemplateService {
         return Optional.of(eventTemplate.id);
     }
 
+    /**
+     * Update an existing EventTemplate and delete/recreate all associated userEvents from this Event Template
+     * @param eventId is the event to be updated
+     * @param request is the eventTemplateRequest DTO that should replace all existing EventTemplate data
+     * @param ctx for security
+     * @return the number of updated userEvents, default 0
+     */
     @Transactional
-    public Optional<Long> update(Long eventId, EventTemplateRequest request, AuthenticationContext ctx) {
+    public Long update(Long eventId, EventTemplateRequest request, AuthenticationContext ctx) {
         logger.debug("Modify event template for for id={} with {}, {}", eventId, request, ctx);
 
-        // Request coming from frontend
-        final var newName = request.getName();
-        final var newStartTime = request.getStartDateTime();
-        final var newEndTime = request.getEndDateTime();
+        if (request.getStartDateTime() == null) {
+            throw new UpdateResourceException("Cannot update an EventTemplate if startDateTime is null");
+        }
+        if (request.getEndDateTime() == null) {
+            throw new UpdateResourceException("Cannot update an EventTemplate if endDateTime is null");
+        }
 
-        // early quit: eventTemplate doesn't exist
+        if (request.getStartDateTime().isAfter(request.getEndDateTime())) {
+            throw new UpdateResourceException("Cannot update an EventTemplate if startDateTime is after endDateTime");
+        }
+
         final Optional<EventTemplate> maybeEvent = findById(eventId, ctx);
 
         return maybeEvent.map(event -> {
-            checkThatNoOtherEventSameNameSameDateAlreadyExists(
-                    newName,
-                    event.id,
-                    newStartTime,
-                    newEndTime,
-                    ctx);
-
             // actually update the event
             EventTemplate eventTemplateUpdated = request.unbind(event, ctx);
-            eventTemplateUpdated.persistAndFlush();
+
+            try {
+                eventTemplateUpdated.persistAndFlush();
+            }catch (PersistenceException pe){
+                if(pe.getCause() instanceof org.hibernate.exception.ConstraintViolationException && pe.getCause().getCause() instanceof  org.postgresql.util.PSQLException){
+                    logger.warn(String.format("SQL Exception : unable to persist this EventTemplate due to [%s]",pe.getCause().getCause().getMessage()) );
+                    throw new UpdateResourceException("Cannot create EventTemplate due to database constraints. Check that no other eventTemplate with sameDate, same name already exists");
+                }
+                throw new CreateResourceException(String.format("Unable to persist this EventTemplate due to [%s]",pe.getMessage()));
+            }
+
             logger.debug("Updated eventTemplate id={}", eventTemplateUpdated.id);
 
             // Create userEvent for each attendee using the userEventService
             // Please note that we will also delete and recreate all userEvents for each attendee.
-            findById(eventTemplateUpdated.id, ctx).ifPresent(eventTemplate1 -> {
-                var updated = userEventService.createOrUpdateFromEventTemplate(eventTemplate1, request.getAttendees(), ctx);
-                logger.debug("Updated {} userEvents from template", updated);
-            });
+            var updatedUsers = findById(eventTemplateUpdated.id, ctx).map(evt -> userEventService.createOrUpdateFromEventTemplate(evt, request.getAttendees(), ctx)).orElse(0L);
+            logger.debug("Updated {} userEvents from template", updatedUsers);
 
-            return eventTemplateUpdated.id;
-        });
-    }
-
-    protected void checkThatNoOtherEventSameNameSameDateAlreadyExists(String name, Long eventId, LocalDateTime startDateTime, LocalDateTime endDateTime, AuthenticationContext ctx) {
-        final var startDate = startDateTime.toLocalDate();
-        final var endDate = endDateTime.toLocalDate();
-        final var foundEvents = findByName(name, ctx)
-                .stream()
-                .filter(eventTemplate -> !eventTemplate.id.equals(eventId) &&
-                        eventTemplate.startDateTime.toLocalDate().isEqual(startDate) &&
-                        eventTemplate.endDateTime.toLocalDate().isEqual(endDate))
-                .findAny();
-
-        if (foundEvents.isPresent()) {
-            throw new UpdateResourceException(
-                    "Event with name: " + name +
-                            ", already exists with same start " + startDateTime.toLocalDate() +
-                            " and end " + endDateTime.toLocalDate() + " dates."
-            );
-        }
+            return updatedUsers;
+        }).orElse(0L);
     }
 
     private Optional<EventTemplate> findById(Long id, AuthenticationContext ctx) {
         return EventTemplate.<EventTemplate>findByIdOptional(id) //NOSONAR
                 .filter(ctx::canAccess);
-    }
-
-    private List<EventTemplate> findByName(String name, AuthenticationContext ctx) {
-        return EventTemplate.<EventTemplate>find("name", name) //NOSONAR
-                .stream()
-                .filter(ctx::canAccess)
-                .collect(Collectors.toList());
     }
 
 }
