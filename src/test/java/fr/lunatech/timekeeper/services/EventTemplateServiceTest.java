@@ -426,11 +426,64 @@ class EventTemplateServiceTest {
                 Lists.newArrayList(userEventRequest)
         );
 
-        // THEN
         assertEquals(Optional.of(2L), eventTemplateService.create(anotherEvent, ctx), "Should create a 2nd userEvent");
 
+        // THEN
         Optional<EventTemplateResponse> response = eventTemplateService.getById(2L, ctx);
-        response.
+        assertTrue(response.isPresent());
+        assertTrue(response.get().getAttendees().isEmpty(), "Jimmy should not be a participant of the 2nd event");
+    }
 
+    @Test
+    void createEvent_should_add_the_user_to_another_event() {
+        // Given an Event with Jimmy
+        final String samToken = getAdminAccessToken();
+        var sam = create(samToken);
+
+        final String jimmyToken = getUserAccessToken();
+        var jimmy = create(jimmyToken);
+
+        EventTemplateRequest.UserEventRequest userEventRequest = new EventTemplateRequest.UserEventRequest(jimmy.getId());
+
+        EventTemplateRequest eventTemplateRequest = new EventTemplateRequest(
+                "Agira ",
+                "Agira training whole day",
+                LocalDateTime.of(2020,7,22,9,0),
+                LocalDateTime.of(2020,7,22,17,0),
+                Lists.newArrayList(userEventRequest)
+        );
+
+        Organization organization = new Organization();
+        organization.id = 1L;
+        organization.name = "some organization";
+        organization.tokenName = "tokenName";
+        organization.users = Collections.emptyList();
+        organization.projects = Collections.emptyList();
+        organization.clients = Collections.emptyList();
+
+        AuthenticationContext ctx = new AuthenticationContext(
+                sam.getId(),
+                organization,
+                Collections.emptyList()
+        );
+
+        var maybeEventId = eventTemplateService.create(eventTemplateRequest, ctx);
+        assertTrue(maybeEventId.isPresent());
+
+        // WHEN jimmy is added to another eventTemplate but the new date overlaps each other
+        EventTemplateRequest anotherEvent = new EventTemplateRequest(
+                "Hackbreakfast",
+                "An event in the morning with Jimmy",
+                LocalDateTime.of(2020,7,5,9,0),
+                LocalDateTime.of(2020,7,5,12,0),
+                Lists.newArrayList(userEventRequest)
+        );
+
+        assertEquals(Optional.of(2L), eventTemplateService.create(anotherEvent, ctx), "Should create a 2nd userEvent");
+
+        // THEN
+        Optional<EventTemplateResponse> response = eventTemplateService.getById(2L, ctx);
+        assertTrue(response.isPresent());
+        assertFalse(response.get().getAttendees().isEmpty(), "Jimmy should be an attendee of the 2nd event");
     }
 }
