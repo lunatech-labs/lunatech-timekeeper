@@ -92,11 +92,14 @@ public class EventTemplateResource implements EventTemplateResourceApi {
     @Timed(name = "timeUpdateEvent", description = "Times how long it takes the user to update an event on method 'updateEvent'", unit = MetricUnits.MILLISECONDS)
     public Response updateEvent(Long eventTemplateId, EventTemplateRequest request) {
         Long updatedUserEvents = eventTemplateService.update(eventTemplateId, request, authentication.context());
-        return Response.status(Response.Status.OK)
+        return Response
+                .status(Response.Status.OK)
                 .type(MediaType.APPLICATION_JSON)
                 .entity(Json.createObjectBuilder()
-                        .add("numberOfUpdatedUserEvents", String.format("%d", updatedUserEvents))
-                ).build();
-
+                        .add("numberOfUpdatedUserEvents", String.format("%d", updatedUserEvents)) // e.getMessage can be null, but JSON format requires a value.
+                        .build()
+                        .toString()
+                )
+                .build();
     }
 }
