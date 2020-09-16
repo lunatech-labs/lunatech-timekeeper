@@ -108,8 +108,9 @@ public interface EventTemplateResourceApi {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Update an event and the list of attendees",
-                description = "Update an eventTemplate, this operation will also flush and recreate all associated UserEvents for each attendee defined in the EventTemplateRequest.")
+               description = "Update an eventTemplate, this operation will also flush and recreate all associated UserEvents for each attendee defined in the EventTemplateRequest.")
     @Tag(ref = "events")
     @APIResponses(value = {
             @APIResponse(
