@@ -38,7 +38,7 @@ public class TimeEntryService {
     protected TimeSheetService timeSheetService;
 
     @Inject
-    private TimeEntriesNumberPerHoursGauge timeEntriesNumberPerHoursGauge;
+    protected TimeEntriesNumberPerHoursGauge timeEntriesNumberPerHoursGauge;
 
     @Transactional
     public Long createTimeEntry(Long timeSheetId, TimeEntryRequest request, AuthenticationContext ctx) {
