@@ -13,13 +13,14 @@
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <quarkus-plugin.version>1.3.2.Final</quarkus-plugin.version>
+        <quarkus-plugin.version>1.8.0.Final</quarkus-plugin.version>
         <quarkus.platform.artifact-id>quarkus-universe-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
-        <quarkus.platform.version>1.3.2.Final</quarkus.platform.version>
-        <surefire-plugin.version>2.22.2</surefire-plugin.version>
+        <quarkus.platform.version>1.8.0.Final</quarkus.platform.version>
+        <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
         <jacoco.version>0.8.6</jacoco.version>
         <aggregate.report.dir>target/site/jacoco/jacoco.xml</aggregate.report.dir>
+        <camel.quarkus.version>1.1.0</camel.quarkus.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -140,6 +141,48 @@
             <scope>test</scope>
             <version>${jacoco.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel.quarkus</groupId>
+            <artifactId>camel-quarkus-core</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel.quarkus</groupId>
+            <artifactId>camel-quarkus-main</artifactId>
+            <version>${camel.quarkus.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel.quarkus</groupId>
+            <artifactId>camel-quarkus-platform-http</artifactId>
+            <version>${camel.quarkus.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel.quarkus</groupId>
+            <artifactId>camel-quarkus-log</artifactId>
+            <version>${camel.quarkus.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel.quarkus</groupId>
+            <artifactId>camel-quarkus-microprofile-health</artifactId>
+            <version>${camel.quarkus.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel.quarkus</groupId>
+            <artifactId>camel-quarkus-microprofile-metrics</artifactId>
+            <version>${camel.quarkus.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel.quarkus</groupId>
+            <artifactId>camel-quarkus-csv</artifactId>
+            <version>${camel.quarkus.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel.quarkus</groupId>
+            <artifactId>camel-quarkus-bindy</artifactId>
+            <version>${camel.quarkus.version}</version>
+        </dependency>
+
+
     </dependencies>
     <build>
         <plugins>
@@ -371,7 +414,7 @@
                 </property>
             </activation>
             <properties>
-                <sonar.projectVersion>${project.version}</sonar.projectVersion>
+                <sonar.projectVersion>${camel.quarkus.version}</sonar.projectVersion>
                 <sonar.projectName>TimeKeeper</sonar.projectName>
                 <sonar.projectKey>lunatech-labs_lunatech-timekeeper</sonar.projectKey>
                 <sonar.host.url>https://sonarcloud.io</sonar.host.url>
