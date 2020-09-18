@@ -18,27 +18,28 @@ package fr.lunatech.timekeeper.importcsv;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.apache.camel.dataformat.bindy.csv.BindyCsvDataFormat;
 import org.apache.camel.spi.DataFormat;
 
-
 @ApplicationScoped
-public class CamelRoute extends RouteBuilder {
+public class CamelRoute extends EndpointRouteBuilder {
     /**
      * An injected bean
      */
     @Inject
-    NamedBean csvParser;
+    CSVTimeEntriesParser csvParser;
 
     @Override
     public void configure() throws Exception {
-        final DataFormat bindy = new BindyCsvDataFormat(fr.lunatech.timekeeper.importcsv.TimerEntry.class);
 
+        final DataFormat bindy = new BindyCsvDataFormat(ImportedTimeEntry.class);
 
-        from("file:/Users/nmartignole/Dev/lunatech-timekeeper/src/main/resources/file?noop=true&amp;delay=3000&amp;initialDelay=4000&amp;idempotent=false")
+        from(file("/Users/nmartignole/Dev/Lunatech/lunatech-timekeeper/src/main/resources/input?noop=true&delay=10000&idempotent=false"))
                 .unmarshal(bindy)
-                .setBody( exchange -> "test " + csvParser.hello("coucou"))
-                .to("log:example");
+                .bean(CSVTimeEntriesParser.class, "importEntries")
+                .to("log:done")
+
+        ;
     }
 }

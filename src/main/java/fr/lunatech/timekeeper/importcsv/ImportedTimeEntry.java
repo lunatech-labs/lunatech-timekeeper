@@ -19,7 +19,7 @@ import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 
 @CsvRecord(separator = ",", skipFirstLine = true)
-public class TimerEntry {
+public class ImportedTimeEntry {
 
     @DataField(pos = 1)
     private String user;
@@ -40,9 +40,17 @@ public class TimerEntry {
     @DataField(pos = 9)
     private String startTime;
     @DataField(pos = 10)
-    private String duration;
+    private String enddDate;
     @DataField(pos = 11)
+    private String endTime;
+    @DataField(pos = 12)
+    private String duration;
+    @DataField(pos = 13)
     private String tags;
+    @DataField(pos = 14)
+    private String amount;
+
+    //User,Email,Client,Project,Task,Description,Billable,Start date,Start time,End date,End time,Duration,Tags,Amount (EUR)
 
 //    @DataField(pos = 9, pattern = "dd-MM-yyyy")
 //    private Date orderDate;
@@ -133,5 +141,29 @@ public class TimerEntry {
 
     public void setTags(String tags) {
         this.tags = tags;
+    }
+
+    public String getEnddDate() {
+        return enddDate;
+    }
+
+    public void setEnddDate(String enddDate) {
+        this.enddDate = enddDate;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getAmount() {
+        return amount;
+    }
+
+    public void setAmount(String amount) {
+        this.amount = amount;
     }
 }
