@@ -21,46 +21,62 @@ import fr.lunatech.timekeeper.models.Client;
 import fr.lunatech.timekeeper.models.Organization;
 import fr.lunatech.timekeeper.models.Project;
 import io.smallrye.mutiny.tuples.Tuple2;
+import io.smallrye.mutiny.tuples.Tuple3;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Singleton
 @Named("CSVTimeEntriesParserBean")
 public class CSVTimeEntriesParser {
 
+    private static Logger logger = LoggerFactory.getLogger(CSVTimeEntriesParser.class);
+
     public String importEntries(List<ImportedTimeEntry> entries) {
-
-        System.out.println("Got entries " + entries.size());
-
-        var clients = entries.stream().map(entry -> entry.getClient()).distinct().collect(Collectors.toList());
-        System.out.println("Clients : " + clients);
-        //updateOrCreateClients(clients);
+        var clients = entries.stream().map(ImportedTimeEntry::getClient).distinct().collect(Collectors.toList());
+        updateOrCreateClients(clients);
 
         var projects = entries
                 .stream()
                 .map(entry -> Tuple2.of(entry.getProject(), entry.getClient()))
                 .distinct()
                 .collect(Collectors.toMap(Tuple2::getItem1, Tuple2::getItem2));
-        System.out.println("Projects : " + projects);
         updateOrCreateProjects(projects);
+
+        var members = entries
+                .stream()
+                .map(entry -> Tuple3.of(entry.getEmail(), entry.getProject(), entry.getClient()))
+                .collect(Collectors.toList());
+
+        checkUserMembership(members);
+
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Total number of entries: %d", entries.size()));
+            logger.debug(String.format("Number of clients: %d", clients.size()));
+            logger.debug(String.format("Number of projects : %d", projects.size()));
+        }
 
         return "ok";
     }
 
     @Transactional
-    protected void updateOrCreateClients(List<String> clients){
-        Organization defaultOrganization = Organization.findById(1L);
+    protected void updateOrCreateClients(List<String> clients) {
+        Organization defaultOrganization = Organization.findById(1L);//NOSONAR
 
-        clients.stream().filter(clientName -> !clientName.isBlank()).forEach( clientName -> {
-            Optional<Client> maybeClient = Client.find("name", clientName).firstResultOptional();
-            if(maybeClient.isPresent()){
-                System.out.println("Skip existing client [" + maybeClient.get().name+"]");
-            }else{
-                System.out.println("Create client ["+clientName+"]");
+        clients.stream().filter(clientName -> !clientName.isBlank()).forEach(clientName -> {
+            Optional<Client> maybeClient = Client.find("name", clientName).firstResultOptional(); // NOSONAR
+            if (maybeClient.isPresent()) {
+                logger.debug(String.format("Skip existing client [%s]", maybeClient.get().name));
+            } else {
+                logger.debug(String.format("Create client [%s]", clientName));
                 Client c = new Client();
                 c.name = clientName;
                 c.description = "Imported from Toggl";
@@ -72,22 +88,21 @@ public class CSVTimeEntriesParser {
     }
 
     @Transactional
-    protected void updateOrCreateProjects(Map<String,String> clientsAndProjects){
-        Organization defaultOrganization = Organization.findById(1L);
+    protected void updateOrCreateProjects(Map<String, String> clientsAndProjects) {
+        Organization defaultOrganization = Organization.findById(1L); // NOSONAR
 
-
-        clientsAndProjects.entrySet().stream().filter(projectAndClient -> !projectAndClient.getKey().isBlank()).forEach( projectAndClient -> {
+        clientsAndProjects.entrySet().stream().filter(projectAndClient -> !projectAndClient.getKey().isBlank()).forEach(projectAndClient -> {
 
             String projectName = projectAndClient.getKey();
             String clientName = projectAndClient.getValue();
 
-            Optional<Client> maybeClient = Client.find("name", clientName).firstResultOptional();
+            Optional<Client> maybeClient = Client.find("name", clientName).firstResultOptional(); // NOSONAR
 
-            if(maybeClient.isPresent()){
-                Optional<Project> maybeProject = Project.find("name",projectName).firstResultOptional();
-                if(maybeProject.isPresent()){
-                    System.out.println("Skip existing project ["+maybeProject.get().name+"]");
-                }else{
+            if (maybeClient.isPresent()) {
+                Optional<Project> maybeProject = Project.find("name", projectName).firstResultOptional(); // NOSONAR
+                if (maybeProject.isPresent()) {
+                    logger.debug(String.format("Skip existing project [%s]", maybeProject.get().name));
+                } else {
                     Project project = new Project();
                     project.name = projectName;
                     project.publicAccess = true;
@@ -98,10 +113,19 @@ public class CSVTimeEntriesParser {
                     project.version = 1L;
                     project.persistAndFlush();
                 }
-            }else{
-                System.out.println("Client not found, cannot import project");
+            } else {
+                logger.warn(String.format("Client not found, cannot import project %s", projectName));
             }
         });
+    }
 
+    @Transactional
+    protected void checkUserMembership(List<Tuple3<String, String, String>> userEmailAndProjectName) {
+        Organization defaultOrganization = Organization.findById(1L); // NOSONAR
+
+        userEmailAndProjectName.stream().forEach(entry -> {
+            logger.debug("userEmail:" + entry.getItem1() + " project:" + entry.getItem2() + " client:" + entry.getItem3()))
+            ;
+        });
     }
 }
