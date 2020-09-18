@@ -49,10 +49,10 @@ public class Client extends PanacheEntityBase {
     public String toString() {
         return "Client{" +
                 "id=" + id +
-                ", organization=" + organization +
+                ", organization=" + organization.name+
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", projects=" + projects +
+                ", nb of projects=" + projects.size() +
                 '}';
     }
 }
