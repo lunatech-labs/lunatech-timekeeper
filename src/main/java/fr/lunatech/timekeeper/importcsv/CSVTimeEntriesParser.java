@@ -124,8 +124,7 @@ public class CSVTimeEntriesParser {
         Organization defaultOrganization = Organization.findById(1L); // NOSONAR
 
         userEmailAndProjectName.stream().forEach(entry -> {
-            logger.debug("userEmail:" + entry.getItem1() + " project:" + entry.getItem2() + " client:" + entry.getItem3()))
-            ;
+            logger.debug("userEmail:" + entry.getItem1() + " project:" + entry.getItem2() + " client:" + entry.getItem3());
         });
     }
 }
