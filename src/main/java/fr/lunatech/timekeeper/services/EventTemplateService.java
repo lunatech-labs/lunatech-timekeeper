@@ -51,16 +51,14 @@ public class EventTemplateService {
                 });
     }
 
-    public List<EventTemplateResponse> listEvent(Long id, AuthenticationContext ctx) {
-        Optional<Long> maybeUserId = Optional.ofNullable(id);
+    public List<EventTemplateResponse> listEventCompany(AuthenticationContext ctx) {
         try (final Stream<EventTemplate> eventTemplates = EventTemplate.streamAll()) { // NOSONAR
             return eventTemplates
                     .filter(ctx::canAccess)
-                    .map(t -> {
-                        var users = userEventService.findAllUsersFromEventTemplate(t.id);
-                        return EventTemplateResponse.bind(t, users);
+                    .map(template -> {
+                        var users = userEventService.findAllUsersFromEventTemplate(template.id);
+                        return EventTemplateResponse.bind(template, users);
                     })
-                    .filter(element -> maybeUserId.isEmpty() || element.getAttendees().stream().anyMatch(x -> x.getUserId().equals(id)))
                     .collect(Collectors.toList());
         }
     }

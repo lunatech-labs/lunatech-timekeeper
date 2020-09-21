@@ -4,6 +4,8 @@ import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.EventTemplate;
 import fr.lunatech.timekeeper.models.time.UserEvent;
 import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
+import fr.lunatech.timekeeper.services.requests.UserEventRequest;
+import fr.lunatech.timekeeper.services.responses.EventTemplateResponse;
 import fr.lunatech.timekeeper.services.responses.UserEventResponse;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -12,8 +14,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
@@ -31,6 +35,27 @@ public class UserEventService {
 
     public List<UserEventResponse> getEventsByUserForMonthNumber(Long ownerId, Integer monthNumber, Integer year) {
         return getEventsByUser(ownerId, monthNumber, year, TimeKeeperDateUtils::getMonthNumberFromDate);
+    }
+
+    /**
+     * @param id
+     * @param context TODO SECURE ME WITH a CAN ACCESS
+     * @return
+     */
+    public Optional<UserEventResponse> getUserEventById(Long id, AuthenticationContext context) {
+        return UserEvent.<UserEvent>findByIdOptional(id)
+                .map(UserEventResponse::bind);
+    }
+
+    /**
+     * @param ownerId it's the user id to filter events.
+     * @param context TODO SECURE ME WITH a CAN ACCESS
+     * @return list of event response
+     */
+    public List<UserEventResponse> listPersonnalEventForAnUser(Long ownerId, AuthenticationContext context) {
+        return UserEvent.<UserEvent>stream("owner_id=?1", ownerId)
+                .map(UserEventResponse::bind)
+                .collect(Collectors.toList());
     }
 
     protected List<UserEventResponse> getEventsByUser(Long ownerId, Integer monthNumber, Integer year, ToIntFunction<LocalDate> getWeekOfMonthNumberFromDate) {
@@ -60,7 +85,7 @@ public class UserEventService {
     }
 
     public Long createOrUpdateFromEventTemplate(EventTemplate eventTemplate,
-                                                List<EventTemplateRequest.UserEventRequest> userEventRequests,
+                                                List<UserEventRequest> userEventRequests,
                                                 AuthenticationContext ctx) {
         if (userEventRequests.isEmpty()) {
             return 0L;
@@ -79,4 +104,20 @@ public class UserEventService {
         }
         return updated;
     }
+
+    /**
+     * TODO add uservent rules
+     *
+     * @param request
+     * @param ctx
+     * @return
+     */
+    @Transactional
+    public Optional<Long> create(UserEventRequest request, AuthenticationContext ctx) {
+        logger.debug("Create a new user event with {}, {}", request, ctx);
+        final UserEvent userEvent = request.unbind(userService::findById, ctx);
+        userEvent.persistAndFlush();
+        return Optional.of(userEvent.id);
+    }
+
 }

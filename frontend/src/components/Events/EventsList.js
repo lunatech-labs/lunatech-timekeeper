@@ -35,7 +35,7 @@ import DownOutlined from '@ant-design/icons/lib/icons/DownOutlined';
 const EventsList = () => {
   const [keycloak] = useKeycloak();
   const isAdmin = keycloak.hasRealmRole('admin');
-  const eventsResponse = useTimeKeeperAPI('/api/events');
+  const eventsResponse = useTimeKeeperAPI('/api/events-template');
 
   const [filterText, setFilterText] = useState('All');
   const [searchValue, setSearchValue] = useState('');

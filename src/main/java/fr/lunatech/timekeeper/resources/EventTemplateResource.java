@@ -54,7 +54,7 @@ public class EventTemplateResource implements EventTemplateResourceApi {
     @Counted(name = "countGetAllEvents", description = "Counts how many times the user load the event list on method 'getAllEvents'")
     @Timed(name = "timeGetAllEvents", description = "Times how long it takes the user load the event list on method 'getAllEvents'", unit = MetricUnits.MILLISECONDS)
     public List<EventTemplateResponse> getAllEvents() {
-        return eventTemplateService.listEvent(null, authentication.context());
+        return eventTemplateService.listEventCompany(authentication.context());
     }
 
     @RolesAllowed({"user", "admin"})

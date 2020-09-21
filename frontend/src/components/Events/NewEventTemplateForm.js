@@ -43,7 +43,7 @@ const NewEventTemplateForm = () => {
   });
   const usersResponse = useTimeKeeperAPI('/api/users');
   const eventsResponse = useTimeKeeperAPI('/api/users');
-  const timeKeeperAPIPost = useTimeKeeperAPIPost('/api/events', (form => form) , setEventTemplateCreated, formDataToEventRequest);
+  const timeKeeperAPIPost = useTimeKeeperAPIPost('/api/events-template', (form => form), setEventTemplateCreated, formDataToEventRequest);
 
   const [form] = Form.useForm();
 

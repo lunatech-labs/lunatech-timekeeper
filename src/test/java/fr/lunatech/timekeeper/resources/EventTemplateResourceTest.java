@@ -16,7 +16,7 @@
 
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.resources.utils.DataTestProvider;
+import fr.lunatech.timekeeper.resources.utils.DataEventProvider;
 import fr.lunatech.timekeeper.resources.utils.HttpTestRuntimeException;
 import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
 import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
@@ -25,6 +25,7 @@ import fr.lunatech.timekeeper.services.responses.UserResponse;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import io.vavr.Tuple2;
 import org.flywaydb.core.Flyway;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.AfterEach;
@@ -32,16 +33,17 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
 import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
-import static fr.lunatech.timekeeper.resources.utils.DataTestProvider.*;
-import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.EventDef;
+import static fr.lunatech.timekeeper.resources.utils.DataEventProvider.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.EventUsersDef;
+import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TemplateEventDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.*;
@@ -62,17 +64,10 @@ class EventTemplateResourceTest {
     TimeKeeperTestUtils timeKeeperTestUtils;
 
     @Inject
-    DataTestProvider dataTestProvider;
+    DataEventProvider eventProvider;
 
     @Inject
     Flyway flyway;
-
-//    @Inject
-//    private EventTemplateResourceTest(TimeKeeperTestUtils timeKeeperTestUtils, DataHelper dataHelper, Flyway flyway) {
-//        this.timeKeeperTestUtils = timeKeeperTestUtils;
-//        this.flyway = flyway;
-//        this.dataHelper = dataHelper;
-//    }
 
     @AfterEach
     void cleanUp() {
@@ -83,31 +78,20 @@ class EventTemplateResourceTest {
     @Test
     void shouldNotCreateEventWithSameNameAndSameDates() {
         //WITH: Unique EventName
-        final String eventName = dataTestProvider.generateRandomEventName();
+        final String eventName = eventProvider.generateRandomEventName();
 
         //GIVEN: 2 user
         final String samToken = getAdminAccessToken();
-        var sam = create(samToken);
         create(getUserAccessToken());
 
         //WHEN: an eventTemplateRequest is created with SAM as an attendee
-        var newEventTemplate = new EventTemplateRequest(
-                eventName,
-                EVENT_DESCRIPTION,
-                THE_24_TH_JUNE_2020_AT_9_AM,
-                THE_28_TH_JUNE_2020_AT_2_PM,
-                Collections.emptyList()
-        );
+        final var newEventTemplate =
+                eventProvider.generateEventTemplateRequest(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM);
         create(newEventTemplate, samToken);
 
         //THEN: if we try to create an event with same name, same date, it should NOT work
-        var anotherEventTemplate = new EventTemplateRequest(
-                eventName,
-                EVENT_DESCRIPTION,
-                THE_24_TH_JUNE_2020_AT_8_AM,
-                THE_28_TH_JUNE_2020_AT_5_PM,
-                Collections.emptyList()
-        );
+        final var anotherEventTemplate =
+                eventProvider.generateEventTemplateRequest(eventName, THE_24_TH_JUNE_2020_AT_8_AM, THE_24_TH_JUNE_2020_AT_2_PM);
         try {
             create(anotherEventTemplate, samToken);
         } catch (HttpTestRuntimeException httpError) {
@@ -119,24 +103,30 @@ class EventTemplateResourceTest {
     @Test
     void shouldCreateUserEventWhenCreateEventTemplate() {
         //WITH: Unique EventName
-        final String eventName = dataTestProvider.generateRandomEventName();
+        final String eventName = eventProvider.generateRandomEventName();
 
         //GIVEN: 2 user
         final String samToken = getAdminAccessToken();
-        var sam = create(samToken);
+        final var sam = create(samToken);
 
         create(getUserAccessToken());
         //WHEN: an eventTemplateRequest is created with SAM as an attendee
-        EventTemplateRequest newEventTemplate = dataTestProvider.generateTestEventRequest(eventName, sam.getId());
-        create(newEventTemplate, samToken);
-        var attendees2 = new ArrayList<EventTemplateResponse.Attendee>(1);
-        attendees2.add(new EventTemplateResponse.Attendee(1L, "Sam", "Uell", "sam@lunatech.fr", "sam.png"));
+
+        final Tuple2<EventTemplateRequest, EventTemplateResponse> eventTemplate =
+                eventProvider.generateEventTemplateTuple(
+                        eventName,
+                        THE_24_TH_JUNE_2020_AT_9_AM,
+                        THE_24_TH_JUNE_2020_AT_5_PM,
+                        1L,
+                        sam.getId()
+                );
+        create(eventTemplate._1, samToken);
 
         //THEN: userEvent of attendees are created
-        EventTemplateResponse expectedResponse = dataTestProvider.generateExpectedEventTemplateResponse(eventName, 1L, attendees2);
+        EventTemplateResponse expectedResponse = eventTemplate._2;
 
-        EventTemplateResponse actual = Arrays.asList(getValidation(EventDef.uri, samToken).extract().as(EventTemplateResponse[].class)).get(0);
-        assertThat(timeKeeperTestUtils.toJson(actual), is(timeKeeperTestUtils.toJson(expectedResponse)));
+        Optional<EventTemplateResponse> actual = Arrays.asList(getValidation(TemplateEventDef.uri, samToken).extract().as(EventTemplateResponse[].class)).stream().findFirst();
+        actual.ifPresent(et -> assertThat(timeKeeperTestUtils.toJson(et), is(timeKeeperTestUtils.toJson(expectedResponse))));
 
         List<UserResponse> sortedUserResponses = Arrays.stream(
                 getValidation(EventUsersDef.uriWithMultiId(1L), samToken)
@@ -147,47 +137,53 @@ class EventTemplateResourceTest {
 
         assertFalse(sortedUserResponses.isEmpty());
         assertEquals(1, sortedUserResponses.size());
-        assertThat(sortedUserResponses.get(0).getEmail(), is(sam.getEmail()));
-        assertThat(sortedUserResponses.get(0).getId(), is(sam.getId()));
+        sortedUserResponses.stream().findFirst().ifPresent(userResponse -> {
+            assertThat(userResponse.getEmail(), is(sam.getEmail()));
+            assertThat(userResponse.getId(), is(sam.getId()));
+        });
     }
 
     @Test
     void shouldListEventTemplates() {
         //WITH: Unique EventName
-        final String eventName1 = dataTestProvider.generateRandomEventName();
-        final String eventName2 = dataTestProvider.generateRandomEventName();
+        final String eventName1 = eventProvider.generateRandomEventName();
+        final String eventName2 = eventProvider.generateRandomEventName();
 
         //GIVEN: 2 user
         final String adminToken = getAdminAccessToken();
-        var sam = create(adminToken);
-        var jimmy = create(getUserAccessToken());
+        final var sam = create(adminToken);
+        create(getUserAccessToken());
         //WHEN: 2 eventTemplates are created
-        EventTemplateRequest eventTemplateRequest1 = dataTestProvider.generateTestEventRequest(eventName1, 1L);
-        EventTemplateRequest eventTemplateRequest2 = dataTestProvider.generateTestEventRequest(eventName2, 2L);
-        create(eventTemplateRequest1, adminToken);
-        create(eventTemplateRequest2, adminToken);
+        final Tuple2<EventTemplateRequest, EventTemplateResponse> eventTuple =
+                eventProvider.generateEventTemplateTuple(eventName1, THE_24_TH_JUNE_2020_AT_9_AM, THE_28_TH_JUNE_2020_AT_5_PM, 1L, sam.getId());
+        final Tuple2<EventTemplateRequest, EventTemplateResponse> eventTuple2 =
+                eventProvider.generateEventTemplateTuple(eventName2, THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_6_PM, 2L, sam.getId());
+        create(eventTuple._1, adminToken);
+        create(eventTuple2._1, adminToken);
+
         //THEN: get on /events return the 2 event template
-        var attendees2 = new ArrayList<EventTemplateResponse.Attendee>(1);
-        attendees2.add(new EventTemplateResponse.Attendee(2L, "Jimmy", "James", "jimmy@lunatech.fr", "jimmy.png"));
-
-        var attendees = new ArrayList<EventTemplateResponse.Attendee>(1);
-        attendees.add(new EventTemplateResponse.Attendee(1L, "Sam", "Uell", "sam@lunatech.fr", "sam.png"));
-
-        EventTemplateResponse expectedResponse1 = dataTestProvider.generateExpectedEventTemplateResponse(eventName1, 1L, attendees);
-        EventTemplateResponse expectedResponse2 = dataTestProvider.generateExpectedEventTemplateResponse(eventName2, 2L, attendees2);
-        getValidation(EventDef.uri, adminToken).body(is(timeKeeperTestUtils.listOfTasJson(expectedResponse1, expectedResponse2))).statusCode(CoreMatchers.is(OK.getStatusCode()));
+        getValidation(TemplateEventDef.uri, adminToken)
+                .body(is(timeKeeperTestUtils.listOfTasJson(eventTuple._2, eventTuple2._2)))
+                .statusCode(CoreMatchers.is(OK.getStatusCode()));
     }
 
     @Test
     void shouldListUserOfAnEvent() {
         //WITH: Unique EventName
-        final String eventName = dataTestProvider.generateRandomEventName();
+        final String eventName = eventProvider.generateRandomEventName();
         //GIVEN: 2 user
         final String adminToken = getAdminAccessToken();
-        UserResponse userResponseAdmin = create(adminToken);
-        UserResponse userResponseJimmy = create(getUserAccessToken());
+        final UserResponse userResponseAdmin = create(adminToken);
+        final UserResponse userResponseJimmy = create(getUserAccessToken());
         //WHEN: an eventTemplate is created with the 2 attendees
-        EventTemplateRequest newEventTemplate = dataTestProvider.generateTestEventRequest(eventName, userResponseAdmin.getId(), userResponseJimmy.getId());
+        EventTemplateRequest newEventTemplate =
+                eventProvider.generateEventTemplateRequest(
+                        eventName,
+                        THE_24_TH_JUNE_2020_AT_9_AM,
+                        THE_24_TH_JUNE_2020_AT_5_PM,
+                        userResponseAdmin.getId(),
+                        userResponseJimmy.getId()
+                );
         create(newEventTemplate, adminToken);
         //THEN: the attendees list is returned
         List<UserResponse> sortedUserResponses = Arrays.stream(
@@ -202,7 +198,7 @@ class EventTemplateResourceTest {
     @Test
     void shouldUpdateUserEventDateWhenUpdateEventTemplate() {
         //WITH: Unique EventName
-        final String eventName = dataTestProvider.generateRandomEventName();
+        final String eventName = eventProvider.generateRandomEventName();
         //GIVEN: 1 user and an existing event with this user as attendee
         final String adminToken = getAdminAccessToken();
         UserResponse userSam = create(adminToken);
@@ -210,30 +206,16 @@ class EventTemplateResourceTest {
         final String jimmyToken = getUserAccessToken();
         UserResponse jimmy = create(jimmyToken);
 
-        create(dataTestProvider.generateTestEventRequest(eventName, userSam.getId()), adminToken);
+        create(eventProvider.generateEventTemplateRequest(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, userSam.getId()), adminToken);
+
         //WHEN the event date are updated
-        LocalDateTime updatedStartTime = LocalDateTime.of(2020, 6, 28, 9, 0);
-        LocalDateTime updatedEndTime = LocalDateTime.of(2020, 6, 28, 15, 0);
-        EventTemplateRequest updatedRequest = new EventTemplateRequest(
-                eventName,
-                EVENT_DESCRIPTION,
-                updatedStartTime,
-                updatedEndTime,
-                Collections.singletonList(new EventTemplateRequest.UserEventRequest(jimmy.getId()))
-        );
-        update(updatedRequest, EventDef.uriPlusId(1L), adminToken);
+        final Tuple2<EventTemplateRequest, EventTemplateResponse> updatedRequest =
+                eventProvider.generateEventTemplateTuple(eventName, THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_6_PM, 1L, jimmy.getId());
+        update(updatedRequest._1, TemplateEventDef.uriPlusId(1L), adminToken);
+
         //THEN if we set jimmy and we remove sam, we should keep only Jimmy
-        List<EventTemplateResponse.Attendee> attendees = new ArrayList<>();
-        attendees.add(new EventTemplateResponse.Attendee(2L, "Jimmy", "James", "jimmy@lunatech.fr", "jimmy.png"));
-        EventTemplateResponse expectedResponse = new EventTemplateResponse(
-                1L,
-                eventName,
-                EVENT_DESCRIPTION,
-                updatedStartTime,
-                updatedEndTime,
-                attendees
-        );
-        getValidation(EventDef.uri, adminToken).body(is(timeKeeperTestUtils.listOfTasJson(expectedResponse))).statusCode(CoreMatchers.is(OK.getStatusCode()));
+        final EventTemplateResponse expectedResponse = updatedRequest._2;
+        getValidation(TemplateEventDef.uri, adminToken).body(is(timeKeeperTestUtils.listOfTasJson(expectedResponse))).statusCode(CoreMatchers.is(OK.getStatusCode()));
 
         List<UserResponse> sortedUserResponses = Arrays.stream(
                 getValidation(EventUsersDef.uriWithMultiId(1L), adminToken)
@@ -244,84 +226,71 @@ class EventTemplateResourceTest {
 
         assertFalse(sortedUserResponses.isEmpty());
         assertEquals(1, sortedUserResponses.size()); // Sam userEvent should be deleted and we should have only jimmy
-        assertThat(sortedUserResponses.get(0).getEmail(), is(jimmy.getEmail())); // TODO Jimmy
-        assertThat(sortedUserResponses.get(0).getId(), is(jimmy.getId()));
+        sortedUserResponses.stream().findFirst().ifPresent(userResponse -> {
+            assertThat(userResponse.getEmail(), is(jimmy.getEmail()));
+            assertThat(userResponse.getId(), is(jimmy.getId()));
+        });
     }
 
     @Test
     void shouldUpdateUserEventListWhenUpdateEventTemplate() {
         //WITH: Unique EventName
-        final String eventName = dataTestProvider.generateRandomEventName();
+        final String eventName = eventProvider.generateRandomEventName();
         //GIVEN: 2 user and an existing event with 1 attendee (Sam)
         final String adminToken = getAdminAccessToken();
-        UserResponse userSam = create(adminToken);
-        UserResponse jimmy = create(getUserAccessToken());
-        create(dataTestProvider.generateTestEventRequest(eventName, userSam.getId()), adminToken);
+        final UserResponse userSam = create(adminToken);
+        final UserResponse jimmy = create(getUserAccessToken());
+
+        create(eventProvider.generateEventTemplateRequest(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, userSam.getId()), adminToken);
+
         //WHEN the event is updated with another attendee
-        EventTemplateRequest updatedRequest = new EventTemplateRequest(
-                eventName,
-                EVENT_DESCRIPTION,
-                THE_24_TH_JUNE_2020_AT_9_AM,
-                THE_24_TH_JUNE_2020_AT_5_PM,
-                Collections.singletonList(new EventTemplateRequest.UserEventRequest(jimmy.getId()))
-        );
-        update(updatedRequest, EventDef.uriPlusId(1L), adminToken);
+        final var tuple = eventProvider.generateEventTemplateTuple(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, 1L, jimmy.getId());
+        update(tuple._1, TemplateEventDef.uriPlusId(1L), adminToken);
         //THEN the userEvent list contains this new attendee (Jimmy)
-        List<EventTemplateResponse.Attendee> attendees = new ArrayList<>();
-        attendees.add(new EventTemplateResponse.Attendee(2L, "Jimmy", "James", "jimmy@lunatech.fr", "jimmy.png"));
-        EventTemplateResponse expectedResponse = new EventTemplateResponse(
-                1L,
-                eventName,
-                EVENT_DESCRIPTION,
-                THE_24_TH_JUNE_2020_AT_9_AM,
-                THE_24_TH_JUNE_2020_AT_5_PM,
-                attendees
-        );
-        getValidation(EventDef.uri, adminToken).body(is(timeKeeperTestUtils.listOfTasJson(expectedResponse))).statusCode(CoreMatchers.is(OK.getStatusCode()));
+        getValidation(TemplateEventDef.uri, adminToken)
+                .body(is(timeKeeperTestUtils.listOfTasJson(tuple._2)))
+                .statusCode(CoreMatchers.is(OK.getStatusCode()));
     }
 
 
     @Test
     void createDuplicatedEvent() {
         //WITH: Unique EventName
-        final String eventName = dataTestProvider.generateRandomEventName();
+        final String eventName = eventProvider.generateRandomEventName();
         //GIVEN: 2 user
         final String adminToken = getAdminAccessToken();
-        create(adminToken);
+        var admin = create(adminToken);
         create(getUserAccessToken());
         //WHEN: an eventTemplate is created with the 1 attendee
-        final EventTemplateRequest newEventTemplate = dataTestProvider.generateTestEventRequest(eventName, 1L);
+        final EventTemplateRequest newEventTemplate =
+                eventProvider.generateEventTemplateRequest(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, admin.getId());
         create(newEventTemplate, adminToken);
 
         //WHEN: Create event for second time with same template request
-        postValidation(EventDef.uri, adminToken, newEventTemplate).statusCode(CoreMatchers.is(BAD_REQUEST.getStatusCode()));
+        postValidation(TemplateEventDef.uri, adminToken, newEventTemplate)
+                .statusCode(CoreMatchers.is(BAD_REQUEST.getStatusCode()));
     }
 
     @Test
     void updateDuplicatedEvent() {
         //WITH: Unique EventName
-        final String eventName = dataTestProvider.generateRandomEventName();
+        final String eventName = eventProvider.generateRandomEventName();
         //GIVEN: Admin user
         final String adminToken = getAdminAccessToken();
         create(adminToken);
-        create(getUserAccessToken());
+        var user = create(getUserAccessToken());
         //WHEN: an eventTemplate is created with the 1 attendee
-        final EventTemplateRequest firstEventTemplate = dataTestProvider.generateTestEventRequest(eventName, 1L);
+        final EventTemplateRequest firstEventTemplate =
+                eventProvider.generateEventTemplateRequest(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, user.getId());
         create(firstEventTemplate, adminToken);
 
-        final EventTemplateRequest secondEventTemplate = new EventTemplateRequest(
-                eventName,
-                EVENT_DESCRIPTION,
-                THE_24_TH_JUNE_2020_AT_9_AM,
-                THE_28_TH_JUNE_2020_AT_5_PM,
-                Stream.of(1L)
-                        .map(EventTemplateRequest.UserEventRequest::new)
-                        .collect(Collectors.toList())
-        );
+        final EventTemplateRequest secondEventTemplate =
+                eventProvider.generateEventTemplateRequest(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_28_TH_JUNE_2020_AT_5_PM, user.getId());
         final Long secondEventId = create(secondEventTemplate, adminToken).getId();
 
         //WHEN: Update an event with already existing event
-        putValidation(EventDef.uriPlusId(secondEventId), adminToken, firstEventTemplate).statusCode(CoreMatchers.is(BAD_REQUEST.getStatusCode()));
+        putValidation(TemplateEventDef.uriPlusId(secondEventId), adminToken, firstEventTemplate)
+                .statusCode(CoreMatchers.is(BAD_REQUEST.getStatusCode()));
     }
 
 }

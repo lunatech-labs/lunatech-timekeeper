@@ -63,6 +63,24 @@ public class UserEvent extends PanacheEntityBase {
     @JoinColumn(name = "eventtemplate_id")
     public EventTemplate eventTemplate;
 
+    public UserEvent() {
+
+    }
+
+    public UserEvent(Long id,
+                     LocalDateTime startDateTime,
+                     LocalDateTime endDateTime,
+                     String name,
+                     String description,
+                     EventType type) {
+        this.id = id;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.name = name;
+        this.description = description;
+        this.eventType = type;
+    }
+
     @Null
     public LocalDate getDay() {
         if (startDateTime == null) {

@@ -19,6 +19,7 @@ package fr.lunatech.timekeeper.services.responses;
 import fr.lunatech.timekeeper.models.time.UserEvent;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 
+import javax.validation.constraints.NotNull;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class UserEventResponse {
+    @NotNull
     private Long id;
     private String name;
     private String description;

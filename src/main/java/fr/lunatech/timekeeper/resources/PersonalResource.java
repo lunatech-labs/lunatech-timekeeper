@@ -18,10 +18,8 @@ package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.resources.openapi.PersonalResourceApi;
 import fr.lunatech.timekeeper.resources.providers.AuthenticationContextProvider;
-import fr.lunatech.timekeeper.services.EventTemplateService;
 import fr.lunatech.timekeeper.services.MonthService;
 import fr.lunatech.timekeeper.services.WeekService;
-import fr.lunatech.timekeeper.services.responses.EventTemplateResponse;
 import fr.lunatech.timekeeper.services.responses.MonthResponse;
 import fr.lunatech.timekeeper.services.responses.WeekResponse;
 import org.eclipse.microprofile.metrics.MetricUnits;
@@ -32,8 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
-import javax.ws.rs.QueryParam;
-import java.util.List;
 
 /**
  * A Resource to serve only personal worksheet, timesheet and typical week for a specific user.
@@ -46,9 +42,6 @@ public class PersonalResource implements PersonalResourceApi {
 
     @Inject
     MonthService monthService;
-
-    @Inject
-    EventTemplateService eventTemplateService;
 
     @Inject
     AuthenticationContextProvider authentication;
@@ -76,14 +69,4 @@ public class PersonalResource implements PersonalResourceApi {
         final var ctx = authentication.context();
         return monthService.getMonth(ctx, year, monthNumber);
     }
-
-    @RolesAllowed({"user", "admin"})
-    @Override
-    @Counted(name = "countGetMyEvents", description = "Counts how many times the user load the event list on method 'getMyEvents'")
-    @Timed(name = "timeGetMyEvents", description = "Times how long it takes the user load the event list on method 'getMyEvents'", unit = MetricUnits.MILLISECONDS)
-    public List<EventTemplateResponse> getMyEvents(@QueryParam("idUser") Long userId) {
-        return eventTemplateService.listEvent(userId, authentication.context());
-    }
-
-
 }

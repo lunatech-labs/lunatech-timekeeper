@@ -38,7 +38,7 @@ import java.util.List;
 
 import static javax.ws.rs.core.HttpHeaders.LOCATION;
 
-@Path("/events")
+@Path("/events-template")
 public interface EventTemplateResourceApi {
 
     @GET
