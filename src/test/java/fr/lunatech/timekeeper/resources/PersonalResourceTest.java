@@ -19,10 +19,10 @@ package fr.lunatech.timekeeper.resources;
 import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
 import fr.lunatech.timekeeper.services.requests.*;
 import fr.lunatech.timekeeper.services.responses.*;
+import fr.lunatech.timekeeper.testcontainers.KeycloakTestResource;
 import fr.lunatech.timekeeper.timeutils.PublicHoliday;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
 import io.quarkus.test.common.QuarkusTestResource;
-import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterEach;
@@ -36,17 +36,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
-import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
+import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getAdminAccessToken;
+import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getUserAccessToken;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
-@QuarkusTestResource(H2DatabaseTestResource.class)
+
 @QuarkusTestResource(KeycloakTestResource.class)
 @Tag("integration")
 class PersonalResourceTest {

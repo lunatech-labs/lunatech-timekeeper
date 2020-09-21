@@ -20,7 +20,6 @@ import fr.lunatech.timekeeper.gauges.TimeEntriesNumberPerHoursGauge;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.services.requests.TimeEntryRequest;
-import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 import io.quarkus.security.ForbiddenException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +38,7 @@ public class TimeEntryService {
     protected TimeSheetService timeSheetService;
 
     @Inject
-    private TimeEntriesNumberPerHoursGauge timeEntriesNumberPerHoursGauge;
+    protected TimeEntriesNumberPerHoursGauge timeEntriesNumberPerHoursGauge;
 
     @Transactional
     public Long createTimeEntry(Long timeSheetId, TimeEntryRequest request, AuthenticationContext ctx) {

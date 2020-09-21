@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package fr.lunatech.timekeeper.resources;
+package fr.lunatech.timekeeper.testcontainers;
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import io.restassured.RestAssured;

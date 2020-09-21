@@ -29,8 +29,10 @@ import org.eclipse.microprofile.metrics.annotation.Timed;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.json.Json;
 import javax.validation.Valid;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
@@ -88,9 +90,16 @@ public class EventTemplateResource implements EventTemplateResourceApi {
     @Override
     @Counted(name = "countUpdateEvent", description = "Counts how many times the user to update an event on method 'updateEvent'")
     @Timed(name = "timeUpdateEvent", description = "Times how long it takes the user to update an event on method 'updateEvent'", unit = MetricUnits.MILLISECONDS)
-    public Response updateEvent(Long id, EventTemplateRequest request) {
-        return eventTemplateService.update(id, request, authentication.context())
-                .map(it -> Response.noContent().build())
-                .orElseThrow(() -> new NotFoundException(String.format("Event Template not found for id=%d", id)));
+    public Response updateEvent(Long eventTemplateId, EventTemplateRequest request) {
+        Long updatedUserEvents = eventTemplateService.update(eventTemplateId, request, authentication.context());
+        return Response
+                .status(Response.Status.OK)
+                .type(MediaType.APPLICATION_JSON)
+                .entity(Json.createObjectBuilder()
+                        .add("numberOfUpdatedUserEvents", String.format("%d", updatedUserEvents)) // e.getMessage can be null, but JSON format requires a value.
+                        .build()
+                        .toString()
+                )
+                .build();
     }
 }

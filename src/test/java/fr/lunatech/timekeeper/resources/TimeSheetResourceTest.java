@@ -23,9 +23,9 @@ import fr.lunatech.timekeeper.services.requests.TimeSheetRequest;
 import fr.lunatech.timekeeper.services.responses.ClientResponse;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import fr.lunatech.timekeeper.services.responses.UserResponse;
+import fr.lunatech.timekeeper.testcontainers.KeycloakTestResource;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
 import io.quarkus.test.common.QuarkusTestResource;
-import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.flywaydb.core.Flyway;
 import org.hamcrest.CoreMatchers;
@@ -38,12 +38,12 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
-import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
-import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TimeSheetDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.putValidation;
+import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getAdminAccessToken;
+import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getUserAccessToken;
 import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -51,7 +51,7 @@ import static org.hamcrest.core.Is.is;
 
 
 @QuarkusTest
-@QuarkusTestResource(H2DatabaseTestResource.class)
+
 @QuarkusTestResource(KeycloakTestResource.class)
 @Tag("integration")
 class TimeSheetResourceTest {

@@ -110,20 +110,21 @@ public interface EventTemplateResourceApi {
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Update an event and the list of attendees",
-                description = "Update an eventTemplate, this operation will also flush and recreate all associated UserEvents for each attendee defined in the EventTemplateRequest.")
+               description = "Update an eventTemplate, this operation will also flush and recreate all associated UserEvents for each attendee defined in the EventTemplateRequest.")
     @Tag(ref = "events")
     @APIResponses(value = {
             @APIResponse(
-                    responseCode = "204",
-                    description = "Event updated"
+                    responseCode = "200",
+                    description = "Returns the number of associated userEvents updated or created"
             ),
             @APIResponse(
                     responseCode = "404",
                     description = "EventTemplate not found"
             )
     })
-    Response updateEvent(@PathParam("id") Long id, @RequestBody EventTemplateRequest request);
+    Response updateEvent(@PathParam("id") Long eventTemplateId, @RequestBody EventTemplateRequest request);
 
 
 }

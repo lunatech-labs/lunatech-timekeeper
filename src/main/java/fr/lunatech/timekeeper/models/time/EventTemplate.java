@@ -17,7 +17,6 @@
 package fr.lunatech.timekeeper.models.time;
 
 import fr.lunatech.timekeeper.models.Organization;
-import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
@@ -70,10 +69,4 @@ public class EventTemplate extends PanacheEntityBase {
                 '}';
     }
 
-    public boolean isValid() {
-        if (startDateTime != null && endDateTime != null && startDateTime.isAfter(endDateTime)) {
-            throw new CreateResourceException("Cannot create an EventTemplate if startDateTime is after endDateTime");
-        }
-        return true;
-    }
 }

@@ -16,8 +16,8 @@
 
 package fr.lunatech.timekeeper.resources;
 
+import fr.lunatech.timekeeper.testcontainers.KeycloakTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
-import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.flywaydb.core.Flyway;
 import org.junit.Assert;
@@ -34,11 +34,9 @@ import static javax.ws.rs.core.MediaType.TEXT_HTML;
 import static javax.ws.rs.core.Response.Status.OK;
 
 @QuarkusTest
-@QuarkusTestResource(H2DatabaseTestResource.class)
 @QuarkusTestResource(KeycloakTestResource.class)
 @Tag("integration")
 class InfrastructureTest {
-
     @Inject
     Flyway flyway;
 

@@ -16,30 +16,11 @@
 
 package fr.lunatech.timekeeper.models.time;
 
-import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EventTemplateTest {
-
-    @Test
-    void shouldValidateTwoDates() {
-        var tested = new EventTemplate();
-        tested.startDateTime = LocalDateTime.of(2020, 2, 29, 12, 23, 29);
-        tested.endDateTime = LocalDateTime.of(2020, 4, 2, 13, 29);
-        assertTrue(tested.isValid());
-    }
-
-    @Test
-    void shouldNotValidateEventTemplate() {
-        var tested = new EventTemplate();
-        tested.startDateTime = LocalDateTime.of(2020, 2, 29, 12, 23, 29);
-        tested.endDateTime = LocalDateTime.of(2018, 4, 2, 11, 29);
-        assertThrows(CreateResourceException.class, tested::isValid);
-    }
 
     @Test
     void shouldNotThrowAnyNpe() {
