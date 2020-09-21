@@ -18,10 +18,11 @@ package fr.lunatech.timekeeper.services;
 
 import com.google.common.collect.Lists;
 import fr.lunatech.timekeeper.models.Organization;
-
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.resources.exceptions.UpdateResourceException;
+import fr.lunatech.timekeeper.resources.utils.DataTestProvider;
 import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
+import fr.lunatech.timekeeper.services.requests.UserEventRequest;
 import fr.lunatech.timekeeper.services.responses.EventTemplateResponse;
 import fr.lunatech.timekeeper.testcontainers.KeycloakTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -38,9 +39,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getUserAccessToken;
-import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getAdminAccessToken;
+import static fr.lunatech.timekeeper.resources.utils.DataTestProvider.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
+import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getAdminAccessToken;
+import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getUserAccessToken;
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
@@ -49,11 +51,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("integration")
 class EventTemplateServiceTest {
 
+    private static final LocalDateTime START_DAY = LocalDateTime.of(2020, 1, 1, 8, 0);
     @Inject
     Flyway flyway;
-
     @Inject
     EventTemplateService eventTemplateService;
+    @Inject
+    DataTestProvider dataTestProvider;
 
     @AfterEach
     void cleanUp() {
@@ -61,40 +65,25 @@ class EventTemplateServiceTest {
         flyway.migrate();
     }
 
-    private static final LocalDateTime START_DAY = LocalDateTime.of(2020, 1, 1, 8, 0);
-
     @Test
     void create_should_create_an_user_event() {
         final String samToken = getAdminAccessToken();
         var sam = create(samToken);
 
-        EventTemplateRequest.UserEventRequest userEventRequest = new EventTemplateRequest.UserEventRequest(sam.getId());
+        final String eventName = dataTestProvider.generateRandomEventName();
+        final EventTemplateRequest eventTemplateRequest =
+                dataTestProvider.generateEventTemplateRequest(eventName, THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_10_AM.plusHours(6), sam.getId());
 
-        EventTemplateRequest eventTemplateRequest = new EventTemplateRequest(
-                "request1",
-                "description1",
-                START_DAY,
-                START_DAY.plusHours(6),
-                Lists.newArrayList(userEventRequest)
-        );
-
-        Organization organization = new Organization();
-        organization.id = 1L;
-        organization.name = "name";
-        organization.tokenName = "tokenName";
-        organization.users = Collections.emptyList();
-        organization.projects = Collections.emptyList();
-        organization.clients = Collections.emptyList();
-
+        final Organization organization = dataTestProvider.generateOrganization();
         AuthenticationContext ctx = new AuthenticationContext(
                 sam.getId(),
                 organization,
                 Collections.emptyList()
         );
 
-        List<EventTemplateResponse> eventsBefore = eventTemplateService.listAll(ctx);
+        List<EventTemplateResponse> eventsBefore = eventTemplateService.listEventCompany(ctx);
         eventTemplateService.create(eventTemplateRequest, ctx);
-        List<EventTemplateResponse> eventsAfter = eventTemplateService.listAll(ctx);
+        List<EventTemplateResponse> eventsAfter = eventTemplateService.listEventCompany(ctx);
 
         Assertions.assertTrue(eventsBefore.isEmpty());
         Assertions.assertEquals(1, eventsAfter.size());
@@ -104,23 +93,10 @@ class EventTemplateServiceTest {
     void should_reject_create_event_without_startdatetime() {
         final String samToken = getAdminAccessToken();
         var sam = create(samToken);
+        final EventTemplateRequest eventTemplateRequest =
+                dataTestProvider.generateEventTemplateRequest("an event with no startDateTime", null, THE_18_TH_JULY_2020_AT_10_AM.plusHours(6), sam.getId());
 
-        EventTemplateRequest.UserEventRequest userEventRequest = new EventTemplateRequest.UserEventRequest(sam.getId());
-
-        EventTemplateRequest eventTemplateRequest = new EventTemplateRequest(
-                "an event with no startDateTime",
-                "description1",
-                null,
-                START_DAY.plusHours(6),
-                Lists.newArrayList(userEventRequest)
-        );
-        Organization organization = new Organization();
-        organization.id = 1L;
-        organization.name = "name";
-        organization.tokenName = "tokenName";
-        organization.users = Collections.emptyList();
-        organization.projects = Collections.emptyList();
-        organization.clients = Collections.emptyList();
+        final Organization organization = dataTestProvider.generateOrganization();
 
         AuthenticationContext ctx = new AuthenticationContext(
                 sam.getId(),
@@ -137,22 +113,10 @@ class EventTemplateServiceTest {
         final String samToken = getAdminAccessToken();
         var sam = create(samToken);
 
-        EventTemplateRequest.UserEventRequest userEventRequest = new EventTemplateRequest.UserEventRequest(sam.getId());
+        final EventTemplateRequest eventTemplateRequest =
+                dataTestProvider.generateEventTemplateRequest("an event with no endDateTime", THE_18_TH_JULY_2020_AT_10_AM, null, sam.getId());
 
-        EventTemplateRequest eventTemplateRequest = new EventTemplateRequest(
-                "same name",
-                "description1",
-                START_DAY,
-                null,
-                Lists.newArrayList(userEventRequest)
-        );
-        Organization organization = new Organization();
-        organization.id = 1L;
-        organization.name = "name";
-        organization.tokenName = "tokenName";
-        organization.users = Collections.emptyList();
-        organization.projects = Collections.emptyList();
-        organization.clients = Collections.emptyList();
+        final Organization organization = dataTestProvider.generateOrganization();
 
         AuthenticationContext ctx = new AuthenticationContext(
                 sam.getId(),
@@ -168,22 +132,10 @@ class EventTemplateServiceTest {
         final String samToken = getAdminAccessToken();
         var sam = create(samToken);
 
-        EventTemplateRequest.UserEventRequest userEventRequest = new EventTemplateRequest.UserEventRequest(sam.getId());
+        final EventTemplateRequest eventTemplateRequest =
+                dataTestProvider.generateEventTemplateRequest("an event with no startDateTime", THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_10_AM.minusHours(2), sam.getId());
 
-        EventTemplateRequest eventTemplateRequest = new EventTemplateRequest(
-                "same name",
-                "description1",
-                START_DAY,
-                START_DAY.minusHours(2),
-                Lists.newArrayList(userEventRequest)
-        );
-        Organization organization = new Organization();
-        organization.id = 1L;
-        organization.name = "name";
-        organization.tokenName = "tokenName";
-        organization.users = Collections.emptyList();
-        organization.projects = Collections.emptyList();
-        organization.clients = Collections.emptyList();
+        final Organization organization = dataTestProvider.generateOrganization();
 
         AuthenticationContext ctx = new AuthenticationContext(
                 sam.getId(),
@@ -199,23 +151,12 @@ class EventTemplateServiceTest {
         final String samToken = getAdminAccessToken();
         var sam = create(samToken);
 
-        EventTemplateRequest.UserEventRequest userEventRequest = new EventTemplateRequest.UserEventRequest(sam.getId());
 
-        EventTemplateRequest eventTemplateRequest = new EventTemplateRequest(
-                "request1",
-                "description1",
-                START_DAY,
-                START_DAY.plusHours(6),
-                Lists.newArrayList(userEventRequest)
-        );
+        final EventTemplateRequest eventTemplateRequest =
+                dataTestProvider.generateEventTemplateRequest("an event", THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_10_AM.plusHours(6), sam.getId());
 
-        Organization organization = new Organization();
-        organization.id = 1L;
-        organization.name = "name";
-        organization.tokenName = "tokenName";
-        organization.users = Collections.emptyList();
-        organization.projects = Collections.emptyList();
-        organization.clients = Collections.emptyList();
+
+        final Organization organization = dataTestProvider.generateOrganization();
 
         AuthenticationContext ctx = new AuthenticationContext(
                 sam.getId(),
@@ -227,13 +168,9 @@ class EventTemplateServiceTest {
 
         assertTrue(maybeEventId.isPresent());
 
-        EventTemplateRequest updatedEventTemplateRequest = new EventTemplateRequest(
-                "updated name",
-                "updated descr",
-                START_DAY.plusDays(1),
-                START_DAY.plusDays(1).plusHours(6),
-                Lists.newArrayList()
-        );
+        EventTemplateRequest updatedEventTemplateRequest =
+                dataTestProvider.generateEventTemplateRequest("updated name", THE_18_TH_JULY_2020_AT_10_AM.plusDays(1), THE_18_TH_JULY_2020_AT_10_AM.plusDays(1).plusHours(6));
+
         eventTemplateService.update(maybeEventId.get(), updatedEventTemplateRequest, ctx);
 
         var maybeUpdatedEvent = eventTemplateService.getById(maybeEventId.get(), ctx);
@@ -242,7 +179,6 @@ class EventTemplateServiceTest {
         var updatedEvent = maybeUpdatedEvent.get();
 
         assertEquals("updated name", updatedEvent.getName());
-        assertEquals("updated descr", updatedEvent.getDescription());
         assertEquals(updatedEventTemplateRequest.getStartDateTime(), updatedEvent.getStartDateTime());
         assertEquals(updatedEventTemplateRequest.getEndDateTime(), updatedEvent.getEndDateTime());
         assertTrue(updatedEvent.getAttendees().isEmpty());
@@ -253,23 +189,10 @@ class EventTemplateServiceTest {
         final String samToken = getAdminAccessToken();
         var sam = create(samToken);
 
-        EventTemplateRequest.UserEventRequest userEventRequest = new EventTemplateRequest.UserEventRequest(sam.getId());
+        final EventTemplateRequest eventTemplateRequest =
+                dataTestProvider.generateEventTemplateRequest("an event", THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_10_AM.plusHours(6), sam.getId());
 
-        EventTemplateRequest eventTemplateRequest = new EventTemplateRequest(
-                "request1",
-                "description1",
-                START_DAY,
-                START_DAY.plusHours(6),
-                Lists.newArrayList(userEventRequest)
-        );
-
-        Organization organization = new Organization();
-        organization.id = 1L;
-        organization.name = "name";
-        organization.tokenName = "tokenName";
-        organization.users = Collections.emptyList();
-        organization.projects = Collections.emptyList();
-        organization.clients = Collections.emptyList();
+        final Organization organization = dataTestProvider.generateOrganization();
 
         AuthenticationContext ctx = new AuthenticationContext(
                 sam.getId(),
@@ -281,13 +204,9 @@ class EventTemplateServiceTest {
 
         assertTrue(maybeEventId.isPresent());
 
-        EventTemplateRequest updatedEventTemplateRequest = new EventTemplateRequest(
-                "updated name",
-                "updated descr",
-                null,
-                START_DAY.plusDays(1).plusHours(6),
-                Lists.newArrayList()
-        );
+        EventTemplateRequest updatedEventTemplateRequest =
+                dataTestProvider.generateEventTemplateRequest("update an event with no startDateTime", null, THE_18_TH_JULY_2020_AT_10_AM.plusDays(1).plusHours(6), sam.getId());
+
         Long eventId = maybeEventId.get();
         assertThrows(UpdateResourceException.class, () -> eventTemplateService.update(eventId, updatedEventTemplateRequest, ctx), "should throw a CreateException if the endDateTime is null");
     }
@@ -297,23 +216,11 @@ class EventTemplateServiceTest {
         final String samToken = getAdminAccessToken();
         var sam = create(samToken);
 
-        EventTemplateRequest.UserEventRequest userEventRequest = new EventTemplateRequest.UserEventRequest(sam.getId());
+        final EventTemplateRequest eventTemplateRequest =
+                dataTestProvider.generateEventTemplateRequest("an event", THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_10_AM.plusHours(6), sam.getId());
 
-        EventTemplateRequest eventTemplateRequest = new EventTemplateRequest(
-                "request1",
-                "description1",
-                START_DAY,
-                START_DAY.plusHours(6),
-                Lists.newArrayList(userEventRequest)
-        );
 
-        Organization organization = new Organization();
-        organization.id = 1L;
-        organization.name = "name";
-        organization.tokenName = "tokenName";
-        organization.users = Collections.emptyList();
-        organization.projects = Collections.emptyList();
-        organization.clients = Collections.emptyList();
+        final Organization organization = dataTestProvider.generateOrganization();
 
         AuthenticationContext ctx = new AuthenticationContext(
                 sam.getId(),
@@ -325,13 +232,8 @@ class EventTemplateServiceTest {
 
         assertTrue(maybeEventId.isPresent());
 
-        EventTemplateRequest updatedEventTemplateRequest = new EventTemplateRequest(
-                "updated name",
-                "updated descr",
-                START_DAY.plusDays(1).plusHours(6),
-                null,
-                Lists.newArrayList()
-        );
+        EventTemplateRequest updatedEventTemplateRequest = dataTestProvider.generateEventTemplateRequest("an event with no endDateTime", THE_18_TH_JULY_2020_AT_10_AM, null, sam.getId());
+
         Long eventId = maybeEventId.get();
         assertThrows(UpdateResourceException.class, () -> eventTemplateService.update(eventId, updatedEventTemplateRequest, ctx), "should throw a CreateException if the endDateTime is null");
     }
@@ -341,23 +243,11 @@ class EventTemplateServiceTest {
         final String samToken = getAdminAccessToken();
         var sam = create(samToken);
 
-        EventTemplateRequest.UserEventRequest userEventRequest = new EventTemplateRequest.UserEventRequest(sam.getId());
+        final EventTemplateRequest eventTemplateRequest =
+                dataTestProvider.generateEventTemplateRequest("an event", THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_10_AM.plusHours(6), sam.getId());
 
-        EventTemplateRequest eventTemplateRequest = new EventTemplateRequest(
-                "request1",
-                "description1",
-                START_DAY,
-                START_DAY.plusHours(6),
-                Lists.newArrayList(userEventRequest)
-        );
 
-        Organization organization = new Organization();
-        organization.id = 1L;
-        organization.name = "name";
-        organization.tokenName = "tokenName";
-        organization.users = Collections.emptyList();
-        organization.projects = Collections.emptyList();
-        organization.clients = Collections.emptyList();
+        final Organization organization = dataTestProvider.generateOrganization();
 
         AuthenticationContext ctx = new AuthenticationContext(
                 sam.getId(),
@@ -369,13 +259,9 @@ class EventTemplateServiceTest {
 
         assertTrue(maybeEventId.isPresent());
 
-        EventTemplateRequest updatedEventTemplateRequest = new EventTemplateRequest(
-                "updated name",
-                "updated descr",
-                START_DAY.plusHours(1),
-                START_DAY,
-                Lists.newArrayList()
-        );
+        final EventTemplateRequest updatedEventTemplateRequest =
+                dataTestProvider.generateEventTemplateRequest("an event", THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_10_AM.minusHours(6), sam.getId());
+
         Long eventId = maybeEventId.get();
         assertThrows(UpdateResourceException.class, () -> eventTemplateService.update(eventId, updatedEventTemplateRequest, ctx), "should throw a CreateException if the endDateTime is null");
     }
@@ -389,23 +275,10 @@ class EventTemplateServiceTest {
         final String jimmyToken = getUserAccessToken();
         var jimmy = create(jimmyToken);
 
-        EventTemplateRequest.UserEventRequest userEventRequest = new EventTemplateRequest.UserEventRequest(jimmy.getId());
+        final EventTemplateRequest eventTemplateRequest =
+                dataTestProvider.generateEventTemplateRequest("Agira", THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_10_AM.plusHours(6), jimmy.getId());
 
-        EventTemplateRequest eventTemplateRequest = new EventTemplateRequest(
-                "Agira ",
-                "Agira training whole day",
-                LocalDateTime.of(2020,7,22,9,0),
-                LocalDateTime.of(2020,7,22,17,0),
-                Lists.newArrayList(userEventRequest)
-        );
-
-        Organization organization = new Organization();
-        organization.id = 1L;
-        organization.name = "some organization";
-        organization.tokenName = "tokenName";
-        organization.users = Collections.emptyList();
-        organization.projects = Collections.emptyList();
-        organization.clients = Collections.emptyList();
+        final Organization organization = dataTestProvider.generateOrganization();
 
         AuthenticationContext ctx = new AuthenticationContext(
                 sam.getId(),
@@ -417,13 +290,9 @@ class EventTemplateServiceTest {
         assertTrue(maybeEventId.isPresent());
 
         // WHEN jimmy is added to another eventTemplate but the new date overlaps each other
-        EventTemplateRequest anotherEvent = new EventTemplateRequest(
-                "Hackbreakfast",
-                "An event in the morning with Jimmy",
-                LocalDateTime.of(2020,7,22,9,0),
-                LocalDateTime.of(2020,7,22,12,0),
-                Lists.newArrayList(userEventRequest)
-        );
+        final EventTemplateRequest anotherEvent =
+                dataTestProvider.generateEventTemplateRequest("Hackbreakfast", THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_10_AM.plusHours(3), jimmy.getId());
+
 
         assertEquals(Optional.of(2L), eventTemplateService.create(anotherEvent, ctx), "Should create a 2nd userEvent");
 
@@ -442,23 +311,10 @@ class EventTemplateServiceTest {
         final String jimmyToken = getUserAccessToken();
         var jimmy = create(jimmyToken);
 
-        EventTemplateRequest.UserEventRequest userEventRequest = new EventTemplateRequest.UserEventRequest(jimmy.getId());
+        final EventTemplateRequest eventTemplateRequest =
+                dataTestProvider.generateEventTemplateRequest("Agira", THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_10_AM.plusHours(6), jimmy.getId());
 
-        EventTemplateRequest eventTemplateRequest = new EventTemplateRequest(
-                "Agira ",
-                "Agira training whole day",
-                LocalDateTime.of(2020,7,22,9,0),
-                LocalDateTime.of(2020,7,22,17,0),
-                Lists.newArrayList(userEventRequest)
-        );
-
-        Organization organization = new Organization();
-        organization.id = 1L;
-        organization.name = "some organization";
-        organization.tokenName = "tokenName";
-        organization.users = Collections.emptyList();
-        organization.projects = Collections.emptyList();
-        organization.clients = Collections.emptyList();
+        final Organization organization = dataTestProvider.generateOrganization();
 
         AuthenticationContext ctx = new AuthenticationContext(
                 sam.getId(),
@@ -470,13 +326,9 @@ class EventTemplateServiceTest {
         assertTrue(maybeEventId.isPresent());
 
         // WHEN jimmy is added to another eventTemplate but the new date overlaps each other
-        EventTemplateRequest anotherEvent = new EventTemplateRequest(
-                "Hackbreakfast",
-                "An event in the morning with Jimmy",
-                LocalDateTime.of(2020,7,5,9,0),
-                LocalDateTime.of(2020,7,5,12,0),
-                Lists.newArrayList(userEventRequest)
-        );
+        final EventTemplateRequest anotherEvent =
+                dataTestProvider.generateEventTemplateRequest("Hackbreakfast", THE_24_TH_JUNE_2020_AT_8_AM, THE_24_TH_JUNE_2020_AT_2_PM.plusHours(3), jimmy.getId());
+
 
         assertEquals(Optional.of(2L), eventTemplateService.create(anotherEvent, ctx), "Should create a 2nd userEvent");
 

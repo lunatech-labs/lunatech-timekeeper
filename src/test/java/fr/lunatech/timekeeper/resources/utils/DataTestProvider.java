@@ -1,7 +1,9 @@
 package fr.lunatech.timekeeper.resources.utils;
 
+import fr.lunatech.timekeeper.models.Organization;
 import fr.lunatech.timekeeper.models.time.EventType;
 import fr.lunatech.timekeeper.models.time.UserEvent;
+import fr.lunatech.timekeeper.services.AuthenticationContext;
 import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
 import fr.lunatech.timekeeper.services.requests.UserEventRequest;
 import fr.lunatech.timekeeper.services.responses.EventTemplateResponse;
@@ -13,6 +15,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import javax.inject.Singleton;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,16 +23,16 @@ import java.util.stream.Collectors;
 import static fr.lunatech.timekeeper.services.responses.UserEventResponse.bind;
 
 @Singleton
-public class DataEventProvider {
+public class DataTestProvider {
 
-    public static final LocalDateTime THE_24_TH_JUNE_2020_AT_8_AM = LocalDateTime.of(2020, 6, 24, 8, 0);
-    public static final LocalDateTime THE_28_TH_JUNE_2020_AT_5_PM = LocalDateTime.of(2020, 6, 28, 17, 0);
-    public static final LocalDateTime THE_24_TH_JUNE_2020_AT_2_PM = LocalDateTime.of(2020, 6, 28, 14, 0);
-    public static final LocalDateTime THE_24_TH_JUNE_2020_AT_9_AM = LocalDateTime.of(2020, 6, 24, 9, 0);
-    public static final LocalDateTime THE_24_TH_JUNE_2020_AT_5_PM = LocalDateTime.of(2020, 6, 24, 17, 0);
+    public static final LocalDateTime THE_24_TH_JUNE_2020_AT_8_AM = LocalDateTime.of(2020, 6, 24, 8, 0).withNano(0);
+    public static final LocalDateTime THE_28_TH_JUNE_2020_AT_5_PM = LocalDateTime.of(2020, 6, 28, 17, 0).withNano(0);
+    public static final LocalDateTime THE_24_TH_JUNE_2020_AT_2_PM = LocalDateTime.of(2020, 6, 28, 14, 0).withNano(0);
+    public static final LocalDateTime THE_24_TH_JUNE_2020_AT_9_AM = LocalDateTime.of(2020, 6, 24, 9, 0).withNano(0);
+    public static final LocalDateTime THE_24_TH_JUNE_2020_AT_5_PM = LocalDateTime.of(2020, 6, 24, 17, 0).withNano(0);
 
-    public static final LocalDateTime THE_18_TH_JULY_2020_AT_10_AM = LocalDateTime.of(2020, 7, 18, 10, 0);
-    public static final LocalDateTime THE_18_TH_JULY_2020_AT_6_PM = LocalDateTime.of(2020, 7, 18, 18, 0);
+    public static final LocalDateTime THE_18_TH_JULY_2020_AT_10_AM = LocalDateTime.of(2020, 7, 18, 10, 0).withNano(0);
+    public static final LocalDateTime THE_18_TH_JULY_2020_AT_6_PM = LocalDateTime.of(2020, 7, 18, 18, 0).withNano(0);
     public static final String EVENT_DESCRIPTION = "It's a corporate event";
     public static final String EVENT_NAME = "The test event";
 
@@ -113,6 +116,17 @@ public class DataEventProvider {
                 .stream()
                 .filter(attendee -> Arrays.asList(usersId).contains(attendee.getUserId()))
                 .collect(Collectors.toList());
+    }
+
+    public Organization generateOrganization() {
+        Organization organization = new Organization();
+        organization.id = 1L;
+        organization.name = "name";
+        organization.tokenName = "tokenName";
+        organization.users = Collections.emptyList();
+        organization.projects = Collections.emptyList();
+        organization.clients = Collections.emptyList();
+        return organization;
     }
 
 }

@@ -16,10 +16,11 @@
 
 package fr.lunatech.timekeeper.resources;
 
-import fr.lunatech.timekeeper.resources.utils.DataEventProvider;
+import fr.lunatech.timekeeper.resources.utils.DataTestProvider;
 import fr.lunatech.timekeeper.resources.utils.HttpTestRuntimeException;
 import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
 import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
+import fr.lunatech.timekeeper.services.requests.UserEventRequest;
 import fr.lunatech.timekeeper.services.responses.EventTemplateResponse;
 import fr.lunatech.timekeeper.services.responses.UserResponse;
 import fr.lunatech.timekeeper.testcontainers.KeycloakTestResource;
@@ -39,10 +40,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.EventDef;
-import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
-import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
-import static fr.lunatech.timekeeper.resources.utils.DataEventProvider.*;
+import static fr.lunatech.timekeeper.resources.utils.DataTestProvider.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.EventUsersDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TemplateEventDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
@@ -66,7 +64,7 @@ class EventTemplateResourceTest {
     TimeKeeperTestUtils timeKeeperTestUtils;
 
     @Inject
-    DataEventProvider eventProvider;
+    DataTestProvider eventProvider;
 
     @Inject
     Flyway flyway;
@@ -302,29 +300,9 @@ class EventTemplateResourceTest {
                 THE_24_TH_JUNE_2020_AT_9_AM,
                 THE_24_TH_JUNE_2020_AT_5_PM,
                 Arrays.stream(usersId)
-                        .sorted(Comparator.comparingLong(value -> (long)value))
-                        .map(EventTemplateRequest.UserEventRequest::new)
+                        .sorted(Comparator.comparingLong(value -> (long) value))
+                        .map(UserEventRequest::new)
                         .collect(Collectors.toList())
         );
     }
-
-    // the backend reverse order of the user ID and the generated userEvent id
-    private EventTemplateResponse generateExpectedEventTemplateResponse(String eventName, Long expectedID, List<EventTemplateResponse.Attendee> attendees){
-        return new EventTemplateResponse(
-                expectedID,
-                eventName,
-                EVENT_DESCRIPTION,
-                THE_24_TH_JUNE_2020_AT_9_AM,
-                THE_24_TH_JUNE_2020_AT_5_PM,
-                attendees
-        );
-    }
-
-    private String generateRandomEventName() {
-        final int length = 5;
-        final boolean useLetters = true;
-        final boolean useNumbers = false;
-        return EVENT_NAME + "-" + RandomStringUtils.random(length, useLetters, useNumbers);
-    }
-
 }
