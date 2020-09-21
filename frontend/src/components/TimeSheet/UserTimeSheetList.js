@@ -16,17 +16,16 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import Aux from '../../hoc/Aux'; // hoc - Higher Order Component
 import ProjectCard from './ProjectCard';
 
 const UserTimeSheetList = (props) => {
     const publicProject = props.timeSheets.filter(item => item.project.publicAccess);
     const privateProject = props.timeSheets.filter(item => !item.project.publicAccess);
     return (
-        <Aux>
+        <React.Fragment>
             <ProjectCard project={privateProject} title="My Private Projects"/>
             <ProjectCard project={publicProject} title="My Public Projects"/>
-        </Aux>
+        </React.Fragment>
     );
 };
 
