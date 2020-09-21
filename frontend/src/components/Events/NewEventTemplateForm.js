@@ -16,7 +16,7 @@
 
 import React, {useEffect, useState} from 'react';
 import {sortListByName, useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
-import {Alert, Button, Col, Form, Input, message, Row, Space, Spin, DatePicker, Radio} from 'antd';
+import {Alert, Button, Col, Form, Input, message, Row, Space, Spin, DatePicker, Radio, Select} from 'antd';
 import './NewEventTemplateForm.less';
 import '../../components/Button/BtnGeneral.less';
 import {Link, Redirect} from 'react-router-dom';
@@ -28,6 +28,9 @@ import 'moment/locale/en-gb';
 
 const {TextArea} = Input;
 const { RangePicker } = DatePicker;
+const {Option} = Select;
+
+const USER_EVENTS = ['Vacations', 'Sickness', 'Maternity/Paternity leave', 'Family event'];
 
 const NewEventTemplateForm = () => {
   const [eventTemplateCreated, setEventTemplateCreated] = useState(false);
@@ -40,6 +43,7 @@ const NewEventTemplateForm = () => {
     endDateTime: formData.eventDateTime[1],
     attendees: usersSelected,
     // eventType: formData.eventType : Shouldn't be sent while the backend is not implemented
+    // eventName: formData.eventName : Shouldn't be sent while the backend is not implemented
   });
   const usersResponse = useTimeKeeperAPI('/api/users');
   const eventsResponse = useTimeKeeperAPI('/api/events');
@@ -52,7 +56,8 @@ const NewEventTemplateForm = () => {
     description: '',
     eventDateTime: [moment.utc('9:00 AM', 'LT'), moment.utc('9:00 AM', 'LT')],
     attendees: [],
-    eventType: 'COMPANY_EVENT'
+    eventType: 'COMPANY_EVENT',
+    eventName: ''
   };
 
   useEffect(() => {
@@ -109,11 +114,12 @@ const NewEventTemplateForm = () => {
       },
     };
   }
+
   if(eventsResponse.data && usersResponse.data){
     return (
-
         <Form
             id="tk_Form"
+            className="addEvent"
             layout="vertical"
             initialValues={initialValues}
             onFinish={timeKeeperAPIPost.run}
@@ -131,54 +137,64 @@ const NewEventTemplateForm = () => {
             <Row gutter={16}>
               <Col className="gutter-row" span={12}>
                 <TitleSection title="Information"/>
-                <Form.Item
-                    label="Event type:"
-                    name="eventType"
-                    hasFeedback
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                >
-                  <Radio.Group>
-                    <Radio.Button value="COMPANY_EVENT">Company event</Radio.Button>
-                    <Radio.Button value="USER_EVENT" disabled>User event</Radio.Button>
-                  </Radio.Group>
-                </Form.Item>
-                <Form.Item
-                    label="Name :"
-                    name="name"
-                    hasFeedback
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                >
-                  <Input
-                      placeholder="Event's name"
-                  />
-                </Form.Item>
-                <Form.Item
-                    label="Description :"
-                    name="description"
-                >
-                  <TextArea
-                      rows={4}
-                      placeholder="A short description about this event"
-                  />
-                </Form.Item>
 
-                <Form.Item
-                    label="Date and duration"
-                    name="eventDateTime"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                >
+                    <Form.Item label="Event type:" name="eventType" rules={[{required: true}]}>
+                      <Radio.Group>
+                        <Radio.Button value="COMPANY_EVENT">Company event</Radio.Button>
+                        <Radio.Button value="USER_EVENT">User event</Radio.Button>
+                      </Radio.Group>
+                    </Form.Item>
+
+                    <Form.Item shouldUpdate={(prevValues, curValues) => prevValues.eventType !== curValues.eventType || prevValues.eventName !== curValues.eventName}>
+                      {({getFieldValue}) => {
+                        switch (getFieldValue('eventType')) {
+                          case 'USER_EVENT':
+                            return (
+                                <Form.Item
+                                    name="eventName"
+                                    label="Events"
+                                    rules={[{required: true}]}
+                                >
+                                  <Select>{USER_EVENTS.map(i =>
+                                      <Option key={`option-event-${i}`} value={i}>{i}</Option>)}
+                                  </Select>
+                                </Form.Item>
+                            );
+                          case 'COMPANY_EVENT':
+                            return (
+                                <Form.Item
+                                    name="eventName"
+                                    label="Events"
+                                    rules={[{required: true}]}
+                                    >
+                                  <Input placeholder="Please enter event's name" type="text"/>
+                                </Form.Item>
+                            );
+                          default:
+                            return (<div></div>);
+                        }
+                      }}
+                    </Form.Item>
+
+                  <Form.Item
+                      label="Description :"
+                      name="description"
+                  >
+                    <TextArea
+                        rows={4}
+                        placeholder="A short description about this event"
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                      label="Date and duration"
+                      name="eventDateTime"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                  >
 
                   <RangePicker
                       disabledDate={disabledDate}
@@ -191,6 +207,7 @@ const NewEventTemplateForm = () => {
                   />
                 </Form.Item>
               </Col>
+
               <Col className="gutter-row" span={12}>
                 <TitleSection title="Users"/>
                 <Form.Item
@@ -200,7 +217,9 @@ const NewEventTemplateForm = () => {
                   <UserTreeData users={sortListByName(usersResponse.data)} usersSelected={usersSelected} setUsersSelected={setUsersSelected}/>
                 </Form.Item>
               </Col>
+
             </Row>
+
             <Space className="tk_JcFe" size="middle" align="center">
               <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={'/events'}>Cancel</Link>
               <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Submit</Button>
