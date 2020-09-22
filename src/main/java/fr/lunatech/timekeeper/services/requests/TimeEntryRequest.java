@@ -67,7 +67,7 @@ public class TimeEntryRequest {
     ) {
         timeEntry.comment = getComment();
         timeEntry.startDateTime = getStartDateTime();
-        timeEntry.numberOfHours = getNumberOfHours();
+        timeEntry.endDateTime = startDateTime.plusHours(getNumberOfHours());
         timeEntry.timeSheet = findTimeSheet.apply(timeSheetId, ctx).orElseThrow(() -> new IllegalEntityStateException("TimeSheet not found for id " + timeSheetId));
         return timeEntry;
     }

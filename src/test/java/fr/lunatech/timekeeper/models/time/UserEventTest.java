@@ -45,7 +45,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
-
 @QuarkusTestResource(KeycloakTestResource.class)
 @Tag("integration")
 class UserEventTest {

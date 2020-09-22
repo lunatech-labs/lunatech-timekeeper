@@ -34,7 +34,7 @@ public class TimeSheetUtils {
             }
 
             long consumedHours = sheet.entries.stream()
-                    .mapToLong(timeEntry -> timeEntry.numberOfHours)
+                    .mapToLong(timeEntry -> timeEntry.getRoundedNumberOfHours())
                     .sum();
 
             // Compute what's left based on durationUnit type (see constant)

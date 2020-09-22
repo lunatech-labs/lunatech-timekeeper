@@ -60,13 +60,6 @@ public class TimeEntryService {
     public Optional<Long> updateTimeEntry(Long timeSheetId, Long timeEntryId, TimeEntryRequest request, AuthenticationContext ctx) {
         logger.debug("Modify timeEntry for id={} with {}, {}", timeSheetId, request, ctx);
         Optional<TimeEntry> timeEntryOptional = findById(timeEntryId, ctx);
-        timeEntryOptional.ifPresent(timeEntry -> {
-            int oldNumberOfHours = timeEntry.numberOfHours;
-            if (oldNumberOfHours != request.getNumberOfHours()) {
-                timeEntriesNumberPerHoursGauge.decrementGauges(oldNumberOfHours);
-                timeEntriesNumberPerHoursGauge.incrementGauges(request.getNumberOfHours());
-            }
-        });
         return timeEntryOptional
                 .map(timeEntry -> request.unbind(timeEntry, timeSheetId, timeSheetService::findById, ctx))
                 .map(timeEntry -> timeEntry.id);
