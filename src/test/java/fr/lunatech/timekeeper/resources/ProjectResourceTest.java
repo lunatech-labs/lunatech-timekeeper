@@ -289,7 +289,7 @@ class ProjectResourceTest {
         //Create the project
         final String adminToken = getAdminAccessToken();
         final String userToken = getUserAccessToken();
-        final var sam = create(adminToken);
+        create(adminToken);
         final var projectRequest = new ProjectRequest("Some Project", true, "some description", null, true, Collections.emptyList(), 1L);
         final var projectCreated = create(projectRequest, adminToken);
         update(ProjectDef.uriPlusId(projectCreated.getId())+"/join", userToken).statusCode(is(NO_CONTENT.getStatusCode()));
@@ -434,7 +434,7 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
 
-        var sam = create(adminToken);
+        create(adminToken);
         var jimmy = create(jimmyToken);
         final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
 

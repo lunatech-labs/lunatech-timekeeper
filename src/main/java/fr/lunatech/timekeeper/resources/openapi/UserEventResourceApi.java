@@ -26,7 +26,7 @@ public interface UserEventResourceApi {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Retrieve an user event",
-            description = "Retrieve the user event's details")
+            description = "Retrieve the user event by id")
     @Tag(ref = "events")
     @APIResponses(value = {
             @APIResponse(
@@ -40,7 +40,7 @@ public interface UserEventResourceApi {
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Create an user event",
             description = "Create a new userEvent.")
-    @Tag(ref = "events")
+    @Tag(ref = "personnalEvents")
     @APIResponses(value = {
             @APIResponse(
                     responseCode = "201",

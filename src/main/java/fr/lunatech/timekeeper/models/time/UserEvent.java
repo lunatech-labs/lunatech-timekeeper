@@ -72,13 +72,16 @@ public class UserEvent extends PanacheEntityBase {
                      LocalDateTime endDateTime,
                      String name,
                      String description,
-                     EventType type) {
+                     EventType type,
+                     User user
+    ) {
         this.id = id;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.name = name;
         this.description = description;
         this.eventType = type;
+        this.owner = user;
     }
 
     @Null

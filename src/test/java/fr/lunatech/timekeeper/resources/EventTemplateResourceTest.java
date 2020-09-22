@@ -125,10 +125,10 @@ class EventTemplateResourceTest {
         //THEN: userEvent of attendees are created
         EventTemplateResponse expectedResponse = eventTemplate._2;
 
-        Optional<EventTemplateResponse> actual = Arrays.asList(getValidation(TemplateEventDef.uri, samToken).extract().as(EventTemplateResponse[].class)).stream().findFirst();
+        final Optional<EventTemplateResponse> actual = Arrays.stream(getValidation(TemplateEventDef.uri, samToken).extract().as(EventTemplateResponse[].class)).findFirst();
         actual.ifPresent(et -> assertThat(timeKeeperTestUtils.toJson(et), is(timeKeeperTestUtils.toJson(expectedResponse))));
 
-        List<UserResponse> sortedUserResponses = Arrays.stream(
+        final List<UserResponse> sortedUserResponses = Arrays.stream(
                 getValidation(EventUsersDef.uriWithMultiId(1L), samToken)
                         .extract()
                         .as(UserResponse[].class))
@@ -201,10 +201,10 @@ class EventTemplateResourceTest {
         final String eventName = eventProvider.generateRandomEventName();
         //GIVEN: 1 user and an existing event with this user as attendee
         final String adminToken = getAdminAccessToken();
-        UserResponse userSam = create(adminToken);
+        final UserResponse userSam = create(adminToken);
 
         final String jimmyToken = getUserAccessToken();
-        UserResponse jimmy = create(jimmyToken);
+        final UserResponse jimmy = create(jimmyToken);
 
         create(eventProvider.generateEventTemplateRequest(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, userSam.getId()), adminToken);
 
@@ -278,7 +278,7 @@ class EventTemplateResourceTest {
         //GIVEN: Admin user
         final String adminToken = getAdminAccessToken();
         create(adminToken);
-        var user = create(getUserAccessToken());
+        final var user = create(getUserAccessToken());
         //WHEN: an eventTemplate is created with the 1 attendee
         final EventTemplateRequest firstEventTemplate =
                 eventProvider.generateEventTemplateRequest(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, user.getId());

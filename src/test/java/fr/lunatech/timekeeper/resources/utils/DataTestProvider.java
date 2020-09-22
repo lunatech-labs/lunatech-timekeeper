@@ -1,9 +1,9 @@
 package fr.lunatech.timekeeper.resources.utils;
 
 import fr.lunatech.timekeeper.models.Organization;
+import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.EventType;
 import fr.lunatech.timekeeper.models.time.UserEvent;
-import fr.lunatech.timekeeper.services.AuthenticationContext;
 import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
 import fr.lunatech.timekeeper.services.requests.UserEventRequest;
 import fr.lunatech.timekeeper.services.responses.EventTemplateResponse;
@@ -13,11 +13,9 @@ import io.vavr.Tuple2;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import javax.inject.Singleton;
+import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static fr.lunatech.timekeeper.services.responses.UserEventResponse.bind;
@@ -50,7 +48,7 @@ public class DataTestProvider {
     }
 
     // the backend reverse order of the user ID and the generated userEvent id
-    private EventTemplateResponse generateExpectedEventTemplateResponse(String eventName, LocalDateTime start, LocalDateTime end, Long expectedID, List<EventTemplateResponse.Attendee> attendees) {
+    private EventTemplateResponse generateExpectedEventTemplateResponse(String eventName, LocalDateTime start, LocalDateTime end, Long expectedID, List<User.Attendee> attendees) {
         return new EventTemplateResponse(
                 expectedID,
                 eventName,
@@ -62,7 +60,7 @@ public class DataTestProvider {
     }
 
     public Tuple2<EventTemplateRequest, EventTemplateResponse> generateEventTemplateTuple(String eventName, LocalDateTime start, LocalDateTime end, Long expectedTemplateId, Long... usersId) {
-        List<EventTemplateResponse.Attendee> attendees = generateAttendees(usersId);
+        final List<User.Attendee> attendees = generateAttendees(usersId);
         return Tuple.of(
                 generateEventTemplateRequest(eventName, start, end, usersId),
                 generateExpectedEventTemplateResponse(eventName, start, end, expectedTemplateId, attendees)
@@ -81,22 +79,24 @@ public class DataTestProvider {
 
 
     // the backend reverse order of the user ID and the generated userEvent id
-    public UserEventResponse generateExpectedUserEventResponse(String eventName, LocalDateTime start, LocalDateTime end, Long expectedID) {
+    public UserEventResponse generateExpectedUserEventResponse(String eventName, LocalDateTime start, LocalDateTime end, Long expectedID, User user) {
         final var userEvent = new UserEvent(
                 expectedID,
                 start,
                 end,
                 eventName,
                 EVENT_DESCRIPTION,
-                EventType.PERSONAL
+                EventType.PERSONAL,
+                user
         );
         return bind(userEvent);
     }
 
     public Tuple2<UserEventRequest, UserEventResponse> generateUserEventTuple(String eventName, LocalDateTime start, LocalDateTime end, Long expectedTemplateId, Long userId) {
+        var user = generateUser(userId).stream().findFirst().orElseThrow(NotFoundException::new);
         return Tuple.of(
                 generateUserEventRequest(eventName, start, end, userId),
-                generateExpectedUserEventResponse(eventName, start, end, expectedTemplateId)
+                generateExpectedUserEventResponse(eventName, start, end, expectedTemplateId, user)
         );
     }
 
@@ -107,11 +107,21 @@ public class DataTestProvider {
         return EVENT_NAME + "-" + RandomStringUtils.random(length, useLetters, useNumbers);
     }
 
-
-    private List<EventTemplateResponse.Attendee> generateAttendees(Long... usersId) {
+    private List<User> generateUser(Long... usersId) {
         return List.of(
-                new EventTemplateResponse.Attendee(1L, "Sam", "Uell", "sam@lunatech.fr", "sam.png"),
-                new EventTemplateResponse.Attendee(2L, "Jimmy", "James", "jimmy@lunatech.fr", "jimmy.png")
+                new User(1L, "Sam", "Uell", "sam@lunatech.fr", "sam.png"),
+                new User(2L, "Jimmy", "James", "jimmy@lunatech.fr", "jimmy.png")
+        )
+                .stream()
+                .filter(user -> Arrays.asList(usersId).contains(user.getId()))
+                .collect(Collectors.toList());
+    }
+
+
+    private List<User.Attendee> generateAttendees(Long... usersId) {
+        return List.of(
+                new User.Attendee(1L, "Sam", "Uell", "sam@lunatech.fr", "sam.png"),
+                new User.Attendee(2L, "Jimmy", "James", "jimmy@lunatech.fr", "jimmy.png")
         )
                 .stream()
                 .filter(attendee -> Arrays.asList(usersId).contains(attendee.getUserId()))

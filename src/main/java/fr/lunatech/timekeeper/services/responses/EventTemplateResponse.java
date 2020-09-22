@@ -51,7 +51,7 @@ public class EventTemplateResponse {
     private final LocalDateTime endDateTime;
 
     @Null
-    private final List<EventTemplateResponse.Attendee> attendees;
+    private final List<User.Attendee> attendees;
 
     public EventTemplateResponse(
             @NotNull Long id,
@@ -59,7 +59,7 @@ public class EventTemplateResponse {
             @NotNull String description,
             @NotNull LocalDateTime startDateTime,
             @Null LocalDateTime endDateTime,
-            @Null List<Attendee> attendees
+            @Null List<User.Attendee> attendees
     ) {
         this.id = id;
         this.name = name;
@@ -70,7 +70,7 @@ public class EventTemplateResponse {
     }
 
     public static EventTemplateResponse bind(@NotNull EventTemplate eventTemplate, List<User> users) {
-        var userEventResponses = users.stream().map(Attendee::bind).collect(Collectors.toList());
+        var userEventResponses = users.stream().map(User.Attendee::bind).collect(Collectors.toList());
         return new EventTemplateResponse(
                 eventTemplate.id,
                 eventTemplate.name,
@@ -101,7 +101,7 @@ public class EventTemplateResponse {
         return endDateTime;
     }
 
-    public List<Attendee> getAttendees() {
+    public List<User.Attendee> getAttendees() {
         return Collections.unmodifiableList(attendees);
     }
 
@@ -124,55 +124,5 @@ public class EventTemplateResponse {
                 '}';
     }
 
-    public static final class Attendee {
-        @NotNull
-        private final Long userId;
-        private final String firstName;
-        private final String lastName;
-        private final String email;
-        private final String picture;
 
-        public Attendee(Long id, String firstName, String lastName, String email, String picture) {
-            this.userId = id;
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.email = email;
-            this.picture = picture;
-        }
-
-        public static Attendee bind(@NotNull User user) {
-            return new Attendee(user.id, user.firstName, user.lastName, user.email, user.picture);
-        }
-
-        public Long getUserId() {
-            return userId;
-        }
-
-        public String getFirstName() {
-            return firstName;
-        }
-
-        public String getLastName() {
-            return lastName;
-        }
-
-        public String getEmail() {
-            return email;
-        }
-
-        public String getPicture() {
-            return picture;
-        }
-
-        @Override
-        public String toString() {
-            return "Attendee{" +
-                    "userId=" + userId +
-                    ", firstName='" + firstName + '\'' +
-                    ", lastName='" + lastName + '\'' +
-                    ", email='" + email + '\'' +
-                    ", picture='" + picture + '\'' +
-                    '}';
-        }
-    }
 }

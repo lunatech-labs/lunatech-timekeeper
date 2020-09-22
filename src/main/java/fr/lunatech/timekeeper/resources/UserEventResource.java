@@ -57,7 +57,6 @@ public class UserEventResource implements UserEventResourceApi {
         return userEventService.listPersonnalEventForAnUser(userId, authentication.context());
     }
 
-
     @RolesAllowed({"user", "admin"})
     @Override
     @Counted(name = "countCreateUserEvent", description = "Counts how many times the user create an event on method 'createUserEvent'")

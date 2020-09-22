@@ -82,6 +82,7 @@ class UserEventResourceTest {
         var sam = create(adminToken);
         var eventName = dataTestProvider.generateRandomEventName();
         var anotherEventName = dataTestProvider.generateRandomEventName();
+
         Tuple2<UserEventRequest, UserEventResponse> userEventTuple1 =
                 dataTestProvider.generateUserEventTuple(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, 1L, sam.getId());
         Tuple2<UserEventRequest, UserEventResponse> userEventTuple2 =

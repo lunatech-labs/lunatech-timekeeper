@@ -59,7 +59,104 @@ public class User extends PanacheEntityBase {
     @NotNull
     public List<ProjectUser> projects;
 
+    public User() {
+
+    }
+
+    public User(Long id, String firstName, String lastName, String email, String picture) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.picture = picture;
+    }
+
+
     public String getFullName() {
         return firstName + " " + lastName;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Organization getOrganization() {
+        return organization;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public List<Profile> getProfiles() {
+        return profiles;
+    }
+
+    public List<ProjectUser> getProjects() {
+        return projects;
+    }
+
+    public static final class Attendee {
+        @NotNull
+        private final Long userId;
+        private final String firstName;
+        private final String lastName;
+        private final String email;
+        private final String picture;
+
+        public Attendee(Long id, String firstName, String lastName, String email, String picture) {
+            this.userId = id;
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.email = email;
+            this.picture = picture;
+        }
+
+        public static Attendee bind(@NotNull User user) {
+            return new Attendee(user.id, user.firstName, user.lastName, user.email, user.picture);
+        }
+
+        public Long getUserId() {
+            return userId;
+        }
+
+        public String getFirstName() {
+            return firstName;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public String getPicture() {
+            return picture;
+        }
+
+        @Override
+        public String toString() {
+            return "Attendee{" +
+                    "userId=" + userId +
+                    ", firstName='" + firstName + '\'' +
+                    ", lastName='" + lastName + '\'' +
+                    ", email='" + email + '\'' +
+                    ", picture='" + picture + '\'' +
+                    '}';
+        }
     }
 }

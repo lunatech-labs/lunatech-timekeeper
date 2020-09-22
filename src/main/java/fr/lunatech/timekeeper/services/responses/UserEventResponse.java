@@ -16,10 +16,12 @@
 
 package fr.lunatech.timekeeper.services.responses;
 
+import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.UserEvent;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.NotFoundException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
@@ -38,6 +40,9 @@ public class UserEventResponse {
     private String eventType;
     private String duration;
 
+    //wrap into a list in order to be maybe next feature, and it helps to be  with the front part
+    private List<User.Attendee> attendees;
+
     private UserEventResponse() {
     }
 
@@ -47,6 +52,7 @@ public class UserEventResponse {
 
     /**
      * Factory method
+     *
      * @param event is the template event
      * @return a new UserEventResponse initialized
      */
@@ -55,19 +61,21 @@ public class UserEventResponse {
         userEventResponse.id = event.id;
         userEventResponse.name = event.name;
         userEventResponse.description = event.description;
+        userEventResponse.attendees = List.of(User.Attendee.bind(event.owner));
         return checkParameters(event, userEventResponse);
     }
 
     /**
      * Method that check parameters for business logic
+     *
      * @param event
      * @param userEventResponse
      * @return UserEventResponse
      */
     private static UserEventResponse checkParameters(final UserEvent event, UserEventResponse userEventResponse) {
-        if(event.startDateTime != null && event.endDateTime != null){
-                userEventResponse.eventUserDaysResponse = createEventUserDayResponseList(event);
-                userEventResponse.duration = Duration.between(event.startDateTime, event.endDateTime).toString();
+        if (event.startDateTime != null && event.endDateTime != null) {
+            userEventResponse.eventUserDaysResponse = createEventUserDayResponseList(event);
+            userEventResponse.duration = Duration.between(event.startDateTime, event.endDateTime).toString();
         }
         if (event.startDateTime != null) {
             userEventResponse.startDateTime = TimeKeeperDateUtils.formatToString(event.startDateTime);
@@ -78,7 +86,7 @@ public class UserEventResponse {
         if (event.getDay() != null) {
             userEventResponse.date = TimeKeeperDateUtils.formatToString(event.getDay());
         }
-        if(event.eventType != null){
+        if (event.eventType != null) {
             userEventResponse.eventType = event.eventType.name();
         }
         return userEventResponse;
@@ -86,51 +94,54 @@ public class UserEventResponse {
 
 
     /**
-     *  Create a List of UserEventResponse with an event
-     *  For the event, it uses a sequential ordered stream of dates. The returned stream starts from this date
-     *  (inclusive) and goes to {@code endExclusive} (exclusive) by an incremental step of 1 day. Because it goes to the exclusive end date,
-     *  this uses the endTimeDate + 1.
+     * Create a List of UserEventResponse with an event
+     * For the event, it uses a sequential ordered stream of dates. The returned stream starts from this date
+     * (inclusive) and goes to {@code endExclusive} (exclusive) by an incremental step of 1 day. Because it goes to the exclusive end date,
+     * this uses the endTimeDate + 1.
+     *
      * @param event
      * @return List<EventUserDayResponse>
      */
     protected static List<EventUserDayResponse> createEventUserDayResponseList(final UserEvent event) {
         List<LocalDate> dates = event.startDateTime.toLocalDate().datesUntil(event.endDateTime.toLocalDate().plusDays(1))
                 .collect(Collectors.toList());
-            return dates.stream()
-                    .map(date -> createEventUserDayResponse(event, date, dates.size()))
-                    .collect(Collectors.toList());
+        return dates.stream()
+                .map(date -> createEventUserDayResponse(event, date, dates.size()))
+                .collect(Collectors.toList());
     }
 
     /**
      * Create One day of EventUserDayResponse with the startDateTime and EndDateTime of the event.
+     *
      * @param event
      * @param date
      * @return EventUserDayResponse
      */
-    private static EventUserDayResponse createEventUserOneDayResponse(UserEvent event, LocalDate date){
-            return new EventUserDayResponse(
-                    event.name,
-                    event.description,
-                    TimeKeeperDateUtils.formatToString(date.atTime(
-                            event.startDateTime.getHour(),
-                            event.startDateTime.getMinute())),
-                    TimeKeeperDateUtils.formatToString(date.atTime(
-                            event.endDateTime.getHour(),
-                            event.endDateTime.getMinute())),
-                    TimeKeeperDateUtils.formatToString(date)
-            );
+    private static EventUserDayResponse createEventUserOneDayResponse(UserEvent event, LocalDate date) {
+        return new EventUserDayResponse(
+                event.name,
+                event.description,
+                TimeKeeperDateUtils.formatToString(date.atTime(
+                        event.startDateTime.getHour(),
+                        event.startDateTime.getMinute())),
+                TimeKeeperDateUtils.formatToString(date.atTime(
+                        event.endDateTime.getHour(),
+                        event.endDateTime.getMinute())),
+                TimeKeeperDateUtils.formatToString(date)
+        );
     }
 
     /**
      * Create an EventUserDayResponse from the startDateTime to 5PM if the date is the first day of the Event,
      * from 9AM to endDateTime if the date is the last day of the Event,
      * from 9AM to 5PM if the date is a day between the first day and the last day of the Event.
+     *
      * @param event
      * @param date
      * @return EventUserDayResponse
      */
     private static EventUserDayResponse createEventUserDayResponse(UserEvent event, LocalDate date, int datesSize) {
-        if(datesSize <= 1) {
+        if (datesSize <= 1) {
             return createEventUserOneDayResponse(event, date);
         } else {
             if (date.isEqual(event.startDateTime.toLocalDate())) {
@@ -207,10 +218,14 @@ public class UserEventResponse {
     }
 
     public String getDuration() {
-        if(startDateTime==null || endDateTime==null){
+        if (startDateTime == null || endDateTime == null) {
             return "";
         }
-       return duration;
+        return duration;
+    }
+
+    public List<User.Attendee> getAttendees() {
+        return attendees;
     }
 
     @Override
@@ -231,6 +246,21 @@ public class UserEventResponse {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, description, eventUserDaysResponse, startDateTime, endDateTime, date, eventType, duration);
+    }
+
+    @Override
+    public String toString() {
+        return "UserEventResponse{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", eventUserDaysResponse=" + eventUserDaysResponse +
+                ", startDateTime='" + startDateTime + '\'' +
+                ", endDateTime='" + endDateTime + '\'' +
+                ", date='" + date + '\'' +
+                ", eventType='" + eventType + '\'' +
+                ", duration='" + duration + '\'' +
+                '}';
     }
 
     public static class EventUserDayResponse {
@@ -284,20 +314,5 @@ public class UserEventResponse {
         public int hashCode() {
             return Objects.hash(name, description, startDateTime, endDateTime, date);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "UserEventResponse{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", eventUserDaysResponse=" + eventUserDaysResponse +
-                ", startDateTime='" + startDateTime + '\'' +
-                ", endDateTime='" + endDateTime + '\'' +
-                ", date='" + date + '\'' +
-                ", eventType='" + eventType + '\'' +
-                ", duration='" + duration + '\'' +
-                '}';
     }
 }

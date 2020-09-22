@@ -3,9 +3,7 @@ package fr.lunatech.timekeeper.services;
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.EventTemplate;
 import fr.lunatech.timekeeper.models.time.UserEvent;
-import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
 import fr.lunatech.timekeeper.services.requests.UserEventRequest;
-import fr.lunatech.timekeeper.services.responses.EventTemplateResponse;
 import fr.lunatech.timekeeper.services.responses.UserEventResponse;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -21,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ApplicationScoped
 public class UserEventService {
@@ -54,8 +53,9 @@ public class UserEventService {
      * @return list of event response
      */
     public List<UserEventResponse> listPersonnalEventForAnUser(Long ownerId, AuthenticationContext context) {
-        return UserEvent.<UserEvent>stream("owner_id=?1", ownerId)
-                .map(UserEventResponse::bind)
+        final var maybeParam = Optional.ofNullable(ownerId);
+        Stream<UserEvent> stream = maybeParam.isPresent() ? UserEvent.stream("owner_id=?1", ownerId) : UserEvent.streamAll();
+        return stream.map(UserEventResponse::bind)
                 .collect(Collectors.toList());
     }
 
@@ -150,5 +150,11 @@ public class UserEventService {
         // Please not that it is on purpose that we check that the localEndDateTime is strictly lower than thestartdatetime
         maybeOneEvent = UserEvent.<UserEvent>stream("owner_id=?1 and startdatetime<?2 and enddatetime>=?3", userId, localEndDateTime, startDateTime).findFirst(); //NOSONAR
         return maybeOneEvent.isEmpty();
+    }
+
+    public List<UserEventResponse> listAllEventUser(AuthenticationContext context) {
+        try (final Stream<UserEvent> userEvent = UserEvent.streamAll()) {
+            return userEvent.map(UserEventResponse::bind).collect(Collectors.toList());
+        }
     }
 }

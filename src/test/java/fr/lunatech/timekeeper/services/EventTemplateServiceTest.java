@@ -16,13 +16,11 @@
 
 package fr.lunatech.timekeeper.services;
 
-import com.google.common.collect.Lists;
 import fr.lunatech.timekeeper.models.Organization;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.resources.exceptions.UpdateResourceException;
 import fr.lunatech.timekeeper.resources.utils.DataTestProvider;
 import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
-import fr.lunatech.timekeeper.services.requests.UserEventRequest;
 import fr.lunatech.timekeeper.services.responses.EventTemplateResponse;
 import fr.lunatech.timekeeper.testcontainers.KeycloakTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -75,15 +73,15 @@ class EventTemplateServiceTest {
                 dataTestProvider.generateEventTemplateRequest(eventName, THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_10_AM.plusHours(6), sam.getId());
 
         final Organization organization = dataTestProvider.generateOrganization();
-        AuthenticationContext ctx = new AuthenticationContext(
+        final AuthenticationContext ctx = new AuthenticationContext(
                 sam.getId(),
                 organization,
                 Collections.emptyList()
         );
 
-        List<EventTemplateResponse> eventsBefore = eventTemplateService.listEventCompany(ctx);
+        final List<EventTemplateResponse> eventsBefore = eventTemplateService.listEventCompany(ctx);
         eventTemplateService.create(eventTemplateRequest, ctx);
-        List<EventTemplateResponse> eventsAfter = eventTemplateService.listEventCompany(ctx);
+        final List<EventTemplateResponse> eventsAfter = eventTemplateService.listEventCompany(ctx);
 
         Assertions.assertTrue(eventsBefore.isEmpty());
         Assertions.assertEquals(1, eventsAfter.size());
@@ -98,7 +96,7 @@ class EventTemplateServiceTest {
 
         final Organization organization = dataTestProvider.generateOrganization();
 
-        AuthenticationContext ctx = new AuthenticationContext(
+        final AuthenticationContext ctx = new AuthenticationContext(
                 sam.getId(),
                 organization,
                 Collections.emptyList()
@@ -118,7 +116,7 @@ class EventTemplateServiceTest {
 
         final Organization organization = dataTestProvider.generateOrganization();
 
-        AuthenticationContext ctx = new AuthenticationContext(
+        final AuthenticationContext ctx = new AuthenticationContext(
                 sam.getId(),
                 organization,
                 Collections.emptyList()
@@ -137,7 +135,7 @@ class EventTemplateServiceTest {
 
         final Organization organization = dataTestProvider.generateOrganization();
 
-        AuthenticationContext ctx = new AuthenticationContext(
+        final AuthenticationContext ctx = new AuthenticationContext(
                 sam.getId(),
                 organization,
                 Collections.emptyList()
@@ -214,7 +212,7 @@ class EventTemplateServiceTest {
     @Test
     void create_should_not_update_if_end_date_is_null() {
         final String samToken = getAdminAccessToken();
-        var sam = create(samToken);
+        final var sam = create(samToken);
 
         final EventTemplateRequest eventTemplateRequest =
                 dataTestProvider.generateEventTemplateRequest("an event", THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_10_AM.plusHours(6), sam.getId());
@@ -228,7 +226,7 @@ class EventTemplateServiceTest {
                 Collections.emptyList()
         );
 
-        var maybeEventId = eventTemplateService.create(eventTemplateRequest, ctx);
+        final var maybeEventId = eventTemplateService.create(eventTemplateRequest, ctx);
 
         assertTrue(maybeEventId.isPresent());
 
@@ -241,7 +239,7 @@ class EventTemplateServiceTest {
     @Test
     void create_should_not_update_if_end_date_is_beofre_start_date() {
         final String samToken = getAdminAccessToken();
-        var sam = create(samToken);
+        final var sam = create(samToken);
 
         final EventTemplateRequest eventTemplateRequest =
                 dataTestProvider.generateEventTemplateRequest("an event", THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_10_AM.plusHours(6), sam.getId());
@@ -249,13 +247,13 @@ class EventTemplateServiceTest {
 
         final Organization organization = dataTestProvider.generateOrganization();
 
-        AuthenticationContext ctx = new AuthenticationContext(
+        final AuthenticationContext ctx = new AuthenticationContext(
                 sam.getId(),
                 organization,
                 Collections.emptyList()
         );
 
-        var maybeEventId = eventTemplateService.create(eventTemplateRequest, ctx);
+        final var maybeEventId = eventTemplateService.create(eventTemplateRequest, ctx);
 
         assertTrue(maybeEventId.isPresent());
 
@@ -270,23 +268,23 @@ class EventTemplateServiceTest {
     void create_should_not_create_overlapping_events_for_same_user_tk_441() {
         // Given an Event with Jimmy
         final String samToken = getAdminAccessToken();
-        var sam = create(samToken);
+        final var sam = create(samToken);
 
         final String jimmyToken = getUserAccessToken();
-        var jimmy = create(jimmyToken);
+        final var jimmy = create(jimmyToken);
 
         final EventTemplateRequest eventTemplateRequest =
                 dataTestProvider.generateEventTemplateRequest("Agira", THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_10_AM.plusHours(6), jimmy.getId());
 
         final Organization organization = dataTestProvider.generateOrganization();
 
-        AuthenticationContext ctx = new AuthenticationContext(
+        final AuthenticationContext ctx = new AuthenticationContext(
                 sam.getId(),
                 organization,
                 Collections.emptyList()
         );
 
-        var maybeEventId = eventTemplateService.create(eventTemplateRequest, ctx);
+        final var maybeEventId = eventTemplateService.create(eventTemplateRequest, ctx);
         assertTrue(maybeEventId.isPresent());
 
         // WHEN jimmy is added to another eventTemplate but the new date overlaps each other
@@ -297,7 +295,7 @@ class EventTemplateServiceTest {
         assertEquals(Optional.of(2L), eventTemplateService.create(anotherEvent, ctx), "Should create a 2nd userEvent");
 
         // THEN
-        Optional<EventTemplateResponse> response = eventTemplateService.getById(2L, ctx);
+        final Optional<EventTemplateResponse> response = eventTemplateService.getById(2L, ctx);
         assertTrue(response.isPresent());
         assertTrue(response.get().getAttendees().isEmpty(), "Jimmy should not be a participant of the 2nd event");
     }
@@ -306,23 +304,23 @@ class EventTemplateServiceTest {
     void createEvent_should_add_the_user_to_another_event() {
         // Given an Event with Jimmy
         final String samToken = getAdminAccessToken();
-        var sam = create(samToken);
+        final var sam = create(samToken);
 
         final String jimmyToken = getUserAccessToken();
-        var jimmy = create(jimmyToken);
+        final var jimmy = create(jimmyToken);
 
         final EventTemplateRequest eventTemplateRequest =
                 dataTestProvider.generateEventTemplateRequest("Agira", THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_10_AM.plusHours(6), jimmy.getId());
 
         final Organization organization = dataTestProvider.generateOrganization();
 
-        AuthenticationContext ctx = new AuthenticationContext(
+        final AuthenticationContext ctx = new AuthenticationContext(
                 sam.getId(),
                 organization,
                 Collections.emptyList()
         );
 
-        var maybeEventId = eventTemplateService.create(eventTemplateRequest, ctx);
+        final var maybeEventId = eventTemplateService.create(eventTemplateRequest, ctx);
         assertTrue(maybeEventId.isPresent());
 
         // WHEN jimmy is added to another eventTemplate but the new date overlaps each other
@@ -333,7 +331,7 @@ class EventTemplateServiceTest {
         assertEquals(Optional.of(2L), eventTemplateService.create(anotherEvent, ctx), "Should create a 2nd userEvent");
 
         // THEN
-        Optional<EventTemplateResponse> response = eventTemplateService.getById(2L, ctx);
+        final Optional<EventTemplateResponse> response = eventTemplateService.getById(2L, ctx);
         assertTrue(response.isPresent());
         assertFalse(response.get().getAttendees().isEmpty(), "Jimmy should be an attendee of the 2nd event");
     }
