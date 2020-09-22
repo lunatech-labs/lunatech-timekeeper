@@ -188,7 +188,7 @@ class TimeSheetUtilsTest {
         //WHEN the user entry is incorrect
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.startDateTime =LocalDateTime.now();
-        timeEntry.numberOfHours = 8;
+        timeEntry.endDateTime = timeEntry.startDateTime.plusHours(8);
         TimeSheet timesheet = new TimeSheet(
                 null,
                 null,
@@ -275,7 +275,7 @@ class TimeSheetUtilsTest {
         for (int i = 0 ; i<numberOfEntry;i++) {
             TimeEntry entry = new TimeEntry();
             entry.startDateTime = now;
-            entry.numberOfHours = hourPerEntry;
+            entry.endDateTime = now.plusHours(hourPerEntry);
             entries.add(entry);
         }
         return entries;

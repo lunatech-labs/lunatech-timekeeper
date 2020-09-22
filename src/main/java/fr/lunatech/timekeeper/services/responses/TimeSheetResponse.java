@@ -108,16 +108,16 @@ public class TimeSheetResponse {
 
         @NotNull
         @JsonFormat(pattern = TimeKeeperDateFormat.DEFAULT_DATE_TIME_PATTERN)
-        public final LocalDateTime startDateTime;
+        private final LocalDateTime startDateTime;
 
         @NotNull
-        public final Integer numberOfHours;
+        public final Long numberOfHours;
 
         public TimeEntryResponse(
                 @NotNull Long id,
                 @NotNull String comment,
                 @NotNull LocalDateTime startDateTime,
-                @NotNull Integer numberOfHours
+                @NotNull Long numberOfHours
         ) {
             this.id = id;
             this.comment = comment;
@@ -130,8 +130,15 @@ public class TimeSheetResponse {
                     timeEntry.id,
                     timeEntry.comment,
                     timeEntry.startDateTime,
-                    timeEntry.numberOfHours
+                    timeEntry.getRoundedNumberOfHours()
             );
+        }
+
+        public LocalDateTime getStartDateTime(){
+            if(startDateTime==null){
+                return LocalDateTime.now().withDayOfMonth(1).withDayOfYear(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+            }
+            return startDateTime;
         }
 
         @Override
@@ -146,6 +153,9 @@ public class TimeSheetResponse {
                 .stream()
                 .filter(timeEntryResponse -> {
                     LocalDateTime startDateTime = timeEntryResponse.startDateTime;
+                    if(startDateTime == null){
+                        return true;
+                    }
                     return isValidDate.test(startDateTime.toLocalDate());
                 })
                 .collect(Collectors.toList());
@@ -167,7 +177,7 @@ public class TimeSheetResponse {
     public final TimeSheetResponse filterTimeEntriesForWeek(LocalDate startDayOfWeek){
         List<TimeEntryResponse> restrictedEntries = this.entries
                 .stream()
-                .filter(timeEntryResponse -> TimeKeeperDateUtils.isSameWeekAndYear(timeEntryResponse.startDateTime.toLocalDate(), startDayOfWeek))
+                .filter(timeEntryResponse -> TimeKeeperDateUtils.isSameWeekAndYear(timeEntryResponse.getStartDateTime().toLocalDate(), startDayOfWeek))
                 .collect(Collectors.toList());
 
         return new TimeSheetResponse(this.id,
