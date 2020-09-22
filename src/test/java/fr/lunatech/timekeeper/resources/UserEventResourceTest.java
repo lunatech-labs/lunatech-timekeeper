@@ -64,11 +64,11 @@ class UserEventResourceTest {
     @Test
     void shouldSuccessWhenCreateAnUserEvent() {
         final String adminToken = getAdminAccessToken();
-        var sam = create(adminToken);
-        var eventName = dataTestProvider.generateRandomEventName();
-        Tuple2<UserEventRequest, UserEventResponse> userEventTuple1 =
+        final var sam = create(adminToken);
+        final var eventName = dataTestProvider.generateRandomEventName();
+        final Tuple2<UserEventRequest, UserEventResponse> userEventTuple1 =
                 dataTestProvider.generateUserEventTuple(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, 1L, sam.getId());
-        var response = create(userEventTuple1._1, adminToken);
+        final var response = create(userEventTuple1._1, adminToken);
         getValidation(
                 UserEventsDef.uriPlusId(response.getId()), adminToken
         ).body(
@@ -79,13 +79,13 @@ class UserEventResourceTest {
     @Test
     void shouldListUserEvent() {
         final String adminToken = getAdminAccessToken();
-        var sam = create(adminToken);
-        var eventName = dataTestProvider.generateRandomEventName();
-        var anotherEventName = dataTestProvider.generateRandomEventName();
+        final var sam = create(adminToken);
+        final var eventName = dataTestProvider.generateRandomEventName();
+        final var anotherEventName = dataTestProvider.generateRandomEventName();
 
-        Tuple2<UserEventRequest, UserEventResponse> userEventTuple1 =
+        final Tuple2<UserEventRequest, UserEventResponse> userEventTuple1 =
                 dataTestProvider.generateUserEventTuple(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, 1L, sam.getId());
-        Tuple2<UserEventRequest, UserEventResponse> userEventTuple2 =
+        final Tuple2<UserEventRequest, UserEventResponse> userEventTuple2 =
                 dataTestProvider.generateUserEventTuple(anotherEventName, THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_6_PM, 2L, sam.getId());
         create(userEventTuple1._1, adminToken);
         create(userEventTuple2._1, adminToken);
@@ -101,12 +101,12 @@ class UserEventResourceTest {
         final String adminToken = getAdminAccessToken();
         final String userToken = getAdminAccessToken();
         create(adminToken);
-        var jimmy = create(userToken);
-        var eventName = dataTestProvider.generateRandomEventName();
-        var anotherEventName = dataTestProvider.generateRandomEventName();
-        Tuple2<UserEventRequest, UserEventResponse> userEventTuple1 =
+        final var jimmy = create(userToken);
+        final var eventName = dataTestProvider.generateRandomEventName();
+        final var anotherEventName = dataTestProvider.generateRandomEventName();
+        final Tuple2<UserEventRequest, UserEventResponse> userEventTuple1 =
                 dataTestProvider.generateUserEventTuple(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, 1L, jimmy.getId());
-        Tuple2<UserEventRequest, UserEventResponse> userEventTuple2 =
+        final Tuple2<UserEventRequest, UserEventResponse> userEventTuple2 =
                 dataTestProvider.generateUserEventTuple(anotherEventName, THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_6_PM, 2L, jimmy.getId());
         create(userEventTuple1._1, adminToken);
         create(userEventTuple2._1, adminToken);
