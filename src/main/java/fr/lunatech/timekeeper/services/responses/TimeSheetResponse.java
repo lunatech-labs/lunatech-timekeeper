@@ -154,7 +154,7 @@ public class TimeSheetResponse {
                 .filter(timeEntryResponse -> {
                     LocalDateTime startDateTime = timeEntryResponse.startDateTime;
                     if(startDateTime == null){
-                        return true;
+                        return false;
                     }
                     return isValidDate.test(startDateTime.toLocalDate());
                 })

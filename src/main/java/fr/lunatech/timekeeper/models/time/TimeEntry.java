@@ -44,13 +44,7 @@ public class TimeEntry extends PanacheEntityBase {
     public LocalDateTime endDateTime;
 
     public Long getRoundedNumberOfHours() {
-        if(startDateTime == null ) {
-            return 0L;
-        }
-        if(endDateTime==null){
-            return 0L;
-        }
-        if(endDateTime.isBefore(startDateTime)){
+        if(startDateTime == null  || endDateTime==null || endDateTime.isBefore(startDateTime)){
             return 0L;
         }
         Duration d = Duration.between(startDateTime, endDateTime);
