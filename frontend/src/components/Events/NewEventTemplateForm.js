@@ -50,7 +50,7 @@ const NewEventTemplateForm = () => {
   const initialValues = {
     name: '',
     description: '',
-    eventDateTime: [moment.utc('9:00 AM', 'LT').add(1, 'day'),moment.utc('9:00 AM', 'LT').add(1, 'day')],
+    eventDateTime: [moment.utc('9:00 AM', 'LT'), moment.utc('9:00 AM', 'LT')],
     attendees: [],
     eventType: 'COMPANY_EVENT'
   };
@@ -64,15 +64,15 @@ const NewEventTemplateForm = () => {
 
   if (eventTemplateCreated) {
     return (
-        <React.Fragment>
-          <Redirect to="/events"/>
-        </React.Fragment>
+      <React.Fragment>
+        <Redirect to="/events"/>
+      </React.Fragment>
     );
   }
 
   const disabledDate = (current) => {
     // Can not select days before today and today
-    return current && current < moment().endOf('day');
+    return current && current < moment().subtract(1, 'days').endOf('day');
   };
 
   function disabledTime(time, type) {
@@ -186,7 +186,7 @@ const NewEventTemplateForm = () => {
                       showTime={{
                         hideDisabledOptions: true
                       }}
-                      format="YYYY-MM-DD HH:mm"
+                      format="DD-MM-YYYY HH:mm"
                       className="tk_RangePicker"
                   />
                 </Form.Item>
