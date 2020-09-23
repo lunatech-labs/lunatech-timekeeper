@@ -29,21 +29,25 @@ const formatDate = (date) => {
     return  moment(date).format('DD-MM-YYYY');
 };
 
-const formatEmpty = (stringToCheck) => {
-    if (stringToCheck)
-        return stringToCheck;
-    return ' - ';
+const displayNumber = (number) => {
+    if (number === 0) {
+        return '0';
+    }
+    if (null === number){
+        return '-';
+    }
+    return number.toString();
 };
 
 const now = moment();
-export const makeItGrey = (now, startDate, endDate, daysLeft) => {
+export const makeItGrey = (now, startDate, expirationDate, daysLeft) => {
     const isNowBeforeStartDate = moment(now).isBefore(startDate);
-    const isNowAfterEndDate = moment(now).isAfter(endDate);
+    const isNowAfterEndDate = moment(now).isAfter(expirationDate);
 
     if (isNowBeforeStartDate || isNowAfterEndDate || daysLeft === 0 ) {
-        return 'tk_UnlimitedField';
+        return true;
     }
-        return '';
+        return false;
 };
 
 const projectCard = (props) => {
@@ -58,13 +62,14 @@ const projectCard = (props) => {
                             return (
                                 <List.Item>
                                     <ProjectClientHeader project={timeSheet.project}
-                                                         classes={makeItGrey(now, timeSheet.startDate, timeSheet.endDate, timeSheet.leftOver)}/>
+                                                         makeItGrey={makeItGrey(now, timeSheet.startDate, timeSheet.expirationDate, timeSheet.leftOver)}
+                                    />
                                     <div
-                                        className={makeItGrey(timeSheet.startDate, timeSheet.endDate, timeSheet.leftOver)}>
+                                        className={makeItGrey(now, timeSheet.startDate, timeSheet.expirationDate, timeSheet.leftOver) ? 'tk_UnlimitedField' : ''}>
                                         <p>
                                             <ClockCircleOutlined/> TimeUnit: {timeSheet.timeUnit}</p>
                                         <p>
-                                            <CalendarOutlined/> Number of days: {formatEmpty(timeSheet.maxDuration)}
+                                            <CalendarOutlined/> Number of days: <span>&nbsp;{displayNumber(timeSheet.maxDuration)}&nbsp;</span>
                                         </p>
                                         <p>
                                             <CalendarOutlined/> Start
@@ -74,14 +79,15 @@ const projectCard = (props) => {
                                             date: {timeSheet.expirationDate ? formatDate(timeSheet.expirationDate) : ' - '}
                                         </p>
                                         <p>
-                                            <HistoryOutlined/>Days left : {formatEmpty(timeSheet.leftOver)}
+                                            <HistoryOutlined/> Days left : <span>&nbsp;{displayNumber(timeSheet.leftOver)}&nbsp;</span>
                                         </p>
                                     </div>
                                 </List.Item>
 
                             );
                             }
-                        } />
+                        }
+                    />
                 </Panel>
             </Collapse>
         </div>
