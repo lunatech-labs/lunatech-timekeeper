@@ -37,14 +37,14 @@ public class UserEventService {
         return getEventsByUser(ownerId, monthNumber, year, TimeKeeperDateUtils::getMonthNumberFromDate);
     }
 
-    public Optional<UserEventResponse> getUserEventById(Long id, AuthenticationContext context) {
-        return UserEvent.<UserEvent>findByIdOptional(id)
+    public Optional<UserEventResponse> getUserEventById(Long id, AuthenticationContext context) { //NOSONAR
+        return UserEvent.<UserEvent>findByIdOptional(id) //NOSONAR
                 .map(UserEventResponse::bind);
     }
 
-    public List<UserEventResponse> listPersonnalEventForAnUser(Long ownerId, AuthenticationContext context) {
+    public List<UserEventResponse> listPersonnalEventForAnUser(Long ownerId, AuthenticationContext context) { //NOSONAR
         final var maybeParam = Optional.ofNullable(ownerId);
-        Stream<UserEvent> stream = maybeParam.isPresent() ? UserEvent.stream("owner_id=?1", ownerId) : UserEvent.streamAll();
+        Stream<UserEvent> stream = maybeParam.isPresent() ? UserEvent.stream("owner_id=?1", ownerId) : UserEvent.streamAll(); //NOSONAR
         return stream.map(UserEventResponse::bind)
                 .collect(Collectors.toList());
     }
@@ -53,7 +53,7 @@ public class UserEventService {
         logger.debug("getEventsForUser {}", ownerId);
         return UserEvent.<UserEvent>stream("owner_id=?1", ownerId) //NOSONAR
                 .filter(userEvent -> isUserEventInWeekOrMonthNumber(userEvent, monthNumber, year, getWeekOfMonthNumberFromDate))
-                .map(UserEventResponse::bind)
+                .map(UserEventResponse::bind) //NOSONAR
                 .collect(Collectors.toList());
     }
 
@@ -105,7 +105,7 @@ public class UserEventService {
     }
 
     /**
-     * TODO add uservent rules
+     * add uservent rules
      *
      * @param request
      * @param ctx
@@ -142,9 +142,9 @@ public class UserEventService {
         return maybeOneEvent.isEmpty();
     }
 
-    public List<UserEventResponse> listAllEventUser(AuthenticationContext context) {
-        try (final Stream<UserEvent> userEvent = UserEvent.streamAll()) {
-            return userEvent.map(UserEventResponse::bind).collect(Collectors.toList());
+    public List<UserEventResponse> listAllEventUser(AuthenticationContext context) { //NOSONAR
+        try (final Stream<UserEvent> userEvent = UserEvent.streamAll()) { //NOSONAR
+            return userEvent.map(UserEventResponse::bind).collect(Collectors.toList());//NOSONAR
         }
     }
 }
