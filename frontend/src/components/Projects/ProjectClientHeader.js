@@ -46,8 +46,8 @@ ProjectClientHeader.propTypes = {
   project: PropTypes.shape({
     name: PropTypes.string,
     client: PropTypes.object
-  })
+  }),
+  makeItGrey: PropTypes.bool.isRequired
 };
-
 
 export default ProjectClientHeader;
