@@ -16,7 +16,7 @@
 
 import React, {useState} from 'react';
 import {useTimeKeeperAPI} from '../../utils/services';
-import {Alert, Card, List, Spin, Dropdown, Button, Menu, AutoComplete} from 'antd';
+import {Alert, AutoComplete, Button, Card, Dropdown, List, Menu, Spin} from 'antd';
 import CalendarOutlined from '@ant-design/icons/lib/icons/CalendarOutlined';
 import EventMemberTag from './EventMemberTag';
 import './EventsList.less';
@@ -31,14 +31,16 @@ import Pluralize from '../Pluralize/Pluralize';
 import Input from 'antd/lib/input';
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined';
 import DownOutlined from '@ant-design/icons/lib/icons/DownOutlined';
+import PropTypes from 'prop-types';
 
-const EventsList = () => {
+const EventsList = ({endPoint}) => {
   const [keycloak] = useKeycloak();
   const isAdmin = keycloak.hasRealmRole('admin');
-  const eventsResponse = useTimeKeeperAPI('/api/events');
+  const eventsResponse = useTimeKeeperAPI(endPoint);
 
   const [filterText, setFilterText] = useState('All');
   const [searchValue, setSearchValue] = useState('');
+
 
   const onSearch = searchText => setSearchValue(searchText);
 
@@ -46,7 +48,7 @@ const EventsList = () => {
     return (
       <React.Fragment>
         <Spin size="large">
-          <p>Loading list of projects</p>
+          <p>Loading list of Company Events</p>
         </Spin>
       </React.Fragment>
     );
@@ -55,16 +57,14 @@ const EventsList = () => {
   if (eventsResponse.error) {
     return (
       <React.Fragment>
-        <Alert title='Server error'
-          message='Failed to load the list of projects'
-          type='error'
-          description='Unable to fetch the list of Projects from the server'
+        <Alert title='Server error' message='Failed to load the list of events' type='error'
+               description='Unable to fetch the list of Events from the server'
         />
       </React.Fragment>
     );
   }
 
-  const getEventsFiltered = () =>  eventsOrdered.filter(event => {
+  const getEventsFiltered = () => eventsOrdered.filter(event => {
     const startDateTime = moment(event.startDateTime);
     const endDateTime = moment(event.endDateTime);
     return (
@@ -77,7 +77,7 @@ const EventsList = () => {
   // Sort events by startDateTime order (DESC) && filter with searchValue
   const eventsOrdered = _.orderBy(eventsResponse.data.filter(event => event.name.toLowerCase().includes(searchValue.toLowerCase())), (userEvent) => {
     return moment(userEvent.startDateTime).utc();
-  },'desc');
+  }, 'desc');
 
   // Filter events by month
   const eventsFilter = () => {
@@ -106,22 +106,23 @@ const EventsList = () => {
   const dropdownCardAction = (item, isAdmin) => (
     <Menu>
       {isAdmin &&
-            <Menu.Item key="edit">
-              <a href={`/events/${item.id}/edit`}><EditFilled/>Edit</a>
-            </Menu.Item>}
+      <Menu.Item key="edit">
+        <a href={`/events/${item.id}/edit`}><EditFilled/>Edit</a>
+      </Menu.Item>}
       <Menu.Item key="copy">
-        <a href={'#'}><CopyOutlined />Copy</a>
+        <a href={'#'}><CopyOutlined/>Copy</a>
       </Menu.Item>
     </Menu>
   );
 
   const displayMembersButton = (item) => {
-    if(item.attendees.length === 0){
+    if (item.attendees.length === 0) {
       return <Button className="tk_Link_People" type="link">{item.attendees.length}{' people'}</Button>;
     }
-    return(
+    return (
       <Dropdown overlay={menu(item)} key="members">
-        <Button className="tk_Link_People" type="link" onClick={e => e.preventDefault()}>{item.attendees.length}{' people'}</Button>
+        <Button className="tk_Link_People" type="link"
+                onClick={e => e.preventDefault()}>{item.attendees.length}{' people'}</Button>
       </Dropdown>
     );
   };
@@ -133,7 +134,7 @@ const EventsList = () => {
   const filterMenu = (
     <Menu className="tk_Filter_Month" onClick={({key}) => setFilterText(key)}>
       <Menu.Item key="All">
-                All
+        All
       </Menu.Item>
       {
         moment.months().map(month => {
@@ -158,7 +159,7 @@ const EventsList = () => {
     </React.Fragment>
   );
 
-  return(
+  return (
     <div>
       <div className="tk_SubHeader">
         <p><Pluralize label="event" size={eventsFilter().length}/></p>
@@ -166,7 +167,8 @@ const EventsList = () => {
           <div className="tk_SubHeader_Filters">{filterComponent}</div>
           <div className="tk_Search_Input">
             <AutoComplete onSearch={onSearch}>
-              <Input data-cy="searchClientBox" size="large" placeholder="Search in events..." allowClear  prefix={<SearchOutlined />} />
+              <Input data-cy="searchClientBox" size="large" placeholder="Search in events..." allowClear
+                     prefix={<SearchOutlined/>}/>
             </AutoComplete>
           </div>
         </div>
@@ -183,7 +185,7 @@ const EventsList = () => {
               title={item.name}
               extra={[
                 <Dropdown key={`ant-dropdown-${item.id}`} overlay={dropdownCardAction(item, isAdmin)}>
-                  <a className="ant-dropdown-link" onClick={e => e.preventDefault()}><EllipsisOutlined /></a>
+                  <a className="ant-dropdown-link" onClick={e => e.preventDefault()}><EllipsisOutlined/></a>
                 </Dropdown>,
               ]}
             >
@@ -191,12 +193,13 @@ const EventsList = () => {
                 <p className="tk_CardEvent_Desc">{item.description}</p>
                 <div className="tk_CardEvent_Bottom">
                   <div className="tk_CardEvent_Date">
-                    <CalendarOutlined />
-                    <p>{formatDateEvent(item.startDateTime)}<br />{formatDateEvent(item.endDateTime)}</p>
+                    <CalendarOutlined/>
+                    <p>{formatDateEvent(item.startDateTime)}<br/>{formatDateEvent(item.endDateTime)}</p>
                   </div>
                   <div className="tk_CardEvent_People">
                     <div>
-                      <EventMembersPictures key={`event-member-picture-${item.id}`} membersIds={item.attendees.map(user => user.userId)} />
+                      <EventMembersPictures key={`event-member-picture-${item.id}`}
+                                            membersIds={item.attendees.map(user => user.userId)}/>
                     </div>
                     {displayMembersButton(item)}
                   </div>
@@ -209,4 +212,9 @@ const EventsList = () => {
     </div>
   );
 };
+
+EventsList.propTypes = {
+  endPoint: PropTypes.string.isRequired
+};
+
 export default EventsList;

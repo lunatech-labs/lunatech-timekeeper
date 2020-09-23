@@ -46,8 +46,8 @@ const NewEventTemplateForm = () => {
     // eventName: formData.eventName : Shouldn't be sent while the backend is not implemented
   });
   const usersResponse = useTimeKeeperAPI('/api/users');
-  const eventsResponse = useTimeKeeperAPI('/api/events');
-  const timeKeeperAPIPost = useTimeKeeperAPIPost('/api/events', (form => form) , setEventTemplateCreated, formDataToEventRequest);
+  const eventsResponse = useTimeKeeperAPI('/api/users');
+  const timeKeeperAPIPost = useTimeKeeperAPIPost('/api/events-template', (form => form), setEventTemplateCreated, formDataToEventRequest);
 
   const [form] = Form.useForm();
 
