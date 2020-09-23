@@ -132,7 +132,7 @@ const ProjectList = () => {
     </Menu>
   );
 
-  const filterComponent = (
+    const filterComponent = (
     <React.Fragment>
       <p>Filter by :</p>
       <Dropdown overlay={filterMenu}>
@@ -225,11 +225,13 @@ const ProjectList = () => {
             </Collapse>
           ]}
         >
-          <a href={`/projects/${item.id}`}>
-            <Meta
-              description={item.description}
-            />
-          </a>
+          {
+            <div className="descriptionBox">
+              <a className="descriptionLink" href={`/projects/${item.id}`}>
+                <Meta description={item.description}/>
+              </a>
+            </div>
+          }
         </Card>
       </List.Item>
     )}
