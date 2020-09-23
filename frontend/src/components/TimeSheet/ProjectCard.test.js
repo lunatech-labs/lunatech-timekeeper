@@ -15,32 +15,32 @@
  */
 
 import moment from 'moment';
-import {makeItGrey} from "../../components/TimeSheet/ProjectCard";
+import {makeItGrey} from '../../components/TimeSheet/ProjectCard';
 
 // eslint-disable-next-line
 test('When Now is before StartDate or Now is after EndDate and days-left = 0, should return class=tk_UnlimitedField', () => {
 
-    const now = moment('2020-01-05'); // 05 Jan
-    const startDate = moment('2020-01-06'); // 06 Jan
-    const endDate = moment('2020-01-04'); // 04 Jan
-    const daysLeft = 0;
+  const now = moment('2020-01-05'); // 05 Jan
+  const startDate = moment('2020-01-06'); // 06 Jan
+  const expirationDate = moment('2020-01-04'); // 04 Jan
+  const daysLeft = 0;
 
-    const result = makeItGrey(now, startDate, endDate, daysLeft);
+  const result = makeItGrey(now, startDate, expirationDate, daysLeft);
 
-    // eslint-disable-next-line
-    expect(result).toBe('tk_UnlimitedField');
+  // eslint-disable-next-line
+    expect(result).toBe(true);
 });
 
 // eslint-disable-next-line
 test('When Now is after StartDate or Now is before EndDate and days-left > 0, should return class=\'\'', () => {
 
-    const now = moment('2020-01-05'); // 05 Jan
-    const startDate = moment('2020-01-04'); // 04 Jan
-    const endDate = moment('2020-01-06'); // 06 Jan
-    const daysLeft = 1;
+  const now = moment('2020-01-05'); // 05 Jan
+  const startDate = moment('2020-01-04'); // 04 Jan
+  const expirationDate = moment('2020-01-06'); // 06 Jan
+  const daysLeft = 1;
 
-    const result = makeItGrey(now, startDate, endDate, daysLeft);
+  const result = makeItGrey(now, startDate, expirationDate, daysLeft);
 
-    // eslint-disable-next-line
-    expect(result).toBe('');
+  // eslint-disable-next-line
+    expect(result).toBe(false);
 });

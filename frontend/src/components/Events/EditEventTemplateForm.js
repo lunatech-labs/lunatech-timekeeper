@@ -81,7 +81,7 @@ const EditEventTemplateForm = () => {
     );
   }
 
-  const disabledDate = (current) => {
+  const disabledDate = () => {
     // Can not select days before today and today
     //return current && current < moment().endOf('day');
     return false;
