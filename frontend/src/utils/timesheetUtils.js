@@ -20,7 +20,7 @@ import moment from 'moment';
 // Filter the list based on start date end date and Given date
 export const filteredProjects = (timeSheets, givenDate) => {
   return timeSheets.filter(timesheet =>
-      (null == timesheet.startDate && null == timesheet.expirationDate) ||
+    (null == timesheet.startDate && null == timesheet.expirationDate) ||
       (moment(timesheet.startDate).isSameOrBefore(givenDate) && null == timesheet.expirationDate) ||
       (null == timesheet.startDate && moment(timesheet.expirationDate).isSameOrAfter(givenDate)) ||
       (moment(timesheet.startDate).isSameOrBefore(givenDate) && moment(timesheet.expirationDate).isSameOrAfter(givenDate))
