@@ -34,6 +34,13 @@ public class DataTestProvider {
     public static final String EVENT_DESCRIPTION = "It's a corporate event";
     public static final String EVENT_NAME = "The test event";
 
+    private List<User> usersTest() {
+        return List.of(
+                new User(1L, "Sam", "Uell", "sam@lunatech.fr", "sam.png"),
+                new User(2L, "Jimmy", "James", "jimmy@lunatech.fr", "jimmy.png")
+        );
+    }
+
     public EventTemplateRequest generateEventTemplateRequest(String eventName, LocalDateTime start, LocalDateTime end, Long... usersId) {
         return new EventTemplateRequest(
                 eventName,
@@ -93,7 +100,7 @@ public class DataTestProvider {
     }
 
     public Tuple2<UserEventRequest, UserEventResponse> generateUserEventTuple(String eventName, LocalDateTime start, LocalDateTime end, Long expectedTemplateId, Long userId) {
-        var user = generateUser(userId).stream().findFirst().orElseThrow(NotFoundException::new);
+        final var user = generateUser(userId).stream().findFirst().orElseThrow(NotFoundException::new);
         return Tuple.of(
                 generateUserEventRequest(eventName, start, end, userId),
                 generateExpectedUserEventResponse(eventName, start, end, expectedTemplateId, user)
@@ -107,11 +114,9 @@ public class DataTestProvider {
         return EVENT_NAME + "-" + RandomStringUtils.random(length, useLetters, useNumbers);
     }
 
+
     private List<User> generateUser(Long... usersId) {
-        return List.of(
-                new User(1L, "Sam", "Uell", "sam@lunatech.fr", "sam.png"),
-                new User(2L, "Jimmy", "James", "jimmy@lunatech.fr", "jimmy.png")
-        )
+        return usersTest()
                 .stream()
                 .filter(user -> Arrays.asList(usersId).contains(user.getId()))
                 .collect(Collectors.toList());
@@ -119,11 +124,9 @@ public class DataTestProvider {
 
 
     private List<User.Attendee> generateAttendees(Long... usersId) {
-        return List.of(
-                new User.Attendee(1L, "Sam", "Uell", "sam@lunatech.fr", "sam.png"),
-                new User.Attendee(2L, "Jimmy", "James", "jimmy@lunatech.fr", "jimmy.png")
-        )
+        return usersTest()
                 .stream()
+                .map(user -> new User.Attendee(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPicture()))
                 .filter(attendee -> Arrays.asList(usersId).contains(attendee.getUserId()))
                 .collect(Collectors.toList());
     }
