@@ -31,10 +31,10 @@ const formatDate = (date) => {
 
 const displayNumber = (number) => {
     if (number === 0) {
-        return ' 0 ';
+        return '0';
     }
     if (null === number){
-        return ' - ';
+        return '-';
     }
     return number.toString();
 };
@@ -69,7 +69,7 @@ const projectCard = (props) => {
                                         <p>
                                             <ClockCircleOutlined/> TimeUnit: {timeSheet.timeUnit}</p>
                                         <p>
-                                            <CalendarOutlined/> Number of days: {displayNumber(timeSheet.maxDuration)}
+                                            <CalendarOutlined/> Number of days: <span>&nbsp;{displayNumber(timeSheet.maxDuration)}&nbsp;</span>
                                         </p>
                                         <p>
                                             <CalendarOutlined/> Start
@@ -79,7 +79,7 @@ const projectCard = (props) => {
                                             date: {timeSheet.expirationDate ? formatDate(timeSheet.expirationDate) : ' - '}
                                         </p>
                                         <p>
-                                            <HistoryOutlined/> Days left : {displayNumber(timeSheet.leftOver)}
+                                            <HistoryOutlined/> Days left : <span>&nbsp;{displayNumber(timeSheet.leftOver)}&nbsp;</span>
                                         </p>
                                     </div>
                                 </List.Item>
