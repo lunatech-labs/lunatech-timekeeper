@@ -11,35 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserEventResponseTest {
 
-    @Test
-    void shouldCreateFromUserEvent() {
-        var userEvent = new UserEvent();
-        var user = new User();
-        user.id = 1L;
-        userEvent.id = 1L;
-        userEvent.name = "Event name";
-        userEvent.description = "Event description";
-        userEvent.owner = user;
-        var response = UserEventResponse.createFromUserEvent(userEvent);
-        //TODO GUILLAUME CEST QUOI ÇA'??????????????????????????
-        assertEquals(UserEventResponse.createFromUserEvent(userEvent), response);
-    }
-
-    @Test
-    void shouldCreateFromUserEventWithEventUserDaysResponse() {
-        var userEvent = new UserEvent();
-        var user = new User();
-        user.id = 1L;
-        userEvent.id = 1L;
-        userEvent.name = "Event name";
-        userEvent.description = "Event description";
-        userEvent.startDateTime = LocalDateTime.of(2020, 03, 16, 9, 0, 0);
-        userEvent.endDateTime = LocalDateTime.of(2020, 03, 16, 17, 0, 0);
-        userEvent.owner = user;
-        var response = UserEventResponse.createFromUserEvent(userEvent);
-        //TODO GUILLAUME CEST QUOI ÇA'??????????????????????????
-        assertEquals(UserEventResponse.createFromUserEvent(userEvent), response);
-    }
 
     @Test
     void shouldCreateFromUserEventWithNoStartDateTime() {

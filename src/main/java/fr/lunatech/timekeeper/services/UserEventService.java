@@ -37,21 +37,11 @@ public class UserEventService {
         return getEventsByUser(ownerId, monthNumber, year, TimeKeeperDateUtils::getMonthNumberFromDate);
     }
 
-    /**
-     * @param id
-     * @param context TODO SECURE ME WITH a CAN ACCESS
-     * @return
-     */
     public Optional<UserEventResponse> getUserEventById(Long id, AuthenticationContext context) {
         return UserEvent.<UserEvent>findByIdOptional(id)
                 .map(UserEventResponse::bind);
     }
 
-    /**
-     * @param ownerId it's the user id to filter events.
-     * @param context TODO SECURE ME WITH a CAN ACCESS
-     * @return list of event response
-     */
     public List<UserEventResponse> listPersonnalEventForAnUser(Long ownerId, AuthenticationContext context) {
         final var maybeParam = Optional.ofNullable(ownerId);
         Stream<UserEvent> stream = maybeParam.isPresent() ? UserEvent.stream("owner_id=?1", ownerId) : UserEvent.streamAll();

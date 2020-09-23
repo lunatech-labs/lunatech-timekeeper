@@ -6,6 +6,7 @@ import fr.lunatech.timekeeper.models.time.EventType;
 import fr.lunatech.timekeeper.models.time.UserEvent;
 import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
 import fr.lunatech.timekeeper.services.requests.UserEventRequest;
+import fr.lunatech.timekeeper.services.responses.Attendee;
 import fr.lunatech.timekeeper.services.responses.EventTemplateResponse;
 import fr.lunatech.timekeeper.services.responses.UserEventResponse;
 import io.vavr.Tuple;
@@ -52,7 +53,7 @@ public class DataTestProvider {
 
 
     public Tuple2<EventTemplateRequest, EventTemplateResponse> generateEventTemplateTuple(String eventName, LocalDateTime start, LocalDateTime end, Long expectedTemplateId, Long... usersId) {
-        final List<User.Attendee> attendees = generateAttendees(usersId);
+        final List<Attendee> attendees = generateAttendees(usersId);
         return Tuple.of(
                 generateEventTemplateRequest(eventName, start, end, usersId),
                 generateExpectedEventTemplateResponse(eventName, start, end, expectedTemplateId, attendees)
@@ -119,16 +120,16 @@ public class DataTestProvider {
     }
 
 
-    private List<User.Attendee> generateAttendees(Long... usersId) {
+    private List<Attendee> generateAttendees(Long... usersId) {
         return usersTest()
                 .stream()
-                .map(user -> new User.Attendee(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPicture()))
+                .map(user -> new Attendee(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPicture()))
                 .filter(attendee -> Arrays.asList(usersId).contains(attendee.getUserId()))
                 .collect(Collectors.toList());
     }
 
     // the backend reverse order of the user ID and the generated userEvent id
-    private EventTemplateResponse generateExpectedEventTemplateResponse(String eventName, LocalDateTime start, LocalDateTime end, Long expectedID, List<User.Attendee> attendees) {
+    private EventTemplateResponse generateExpectedEventTemplateResponse(String eventName, LocalDateTime start, LocalDateTime end, Long expectedID, List<Attendee> attendees) {
         return new EventTemplateResponse(
                 expectedID,
                 eventName,

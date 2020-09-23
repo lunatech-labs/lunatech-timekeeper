@@ -16,12 +16,10 @@
 
 package fr.lunatech.timekeeper.services.responses;
 
-import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.UserEvent;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.NotFoundException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
@@ -41,7 +39,7 @@ public class UserEventResponse {
     private String duration;
 
     //wrap into a list in order to be maybe next feature, and it helps to be  with the front part
-    private List<User.Attendee> attendees;
+    private List<Attendee> attendees;
 
     private UserEventResponse() {
     }
@@ -61,7 +59,7 @@ public class UserEventResponse {
         userEventResponse.id = event.id;
         userEventResponse.name = event.name;
         userEventResponse.description = event.description;
-        userEventResponse.attendees = List.of(User.Attendee.bind(event.owner));
+        userEventResponse.attendees = List.of(Attendee.bind(event.owner));
         return checkParameters(event, userEventResponse);
     }
 
@@ -224,7 +222,7 @@ public class UserEventResponse {
         return duration;
     }
 
-    public List<User.Attendee> getAttendees() {
+    public List<Attendee> getAttendees() {
         return attendees;
     }
 

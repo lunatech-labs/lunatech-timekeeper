@@ -51,7 +51,7 @@ public class EventTemplateResponse {
     private final LocalDateTime endDateTime;
 
     @Null
-    private final List<User.Attendee> attendees;
+    private final List<Attendee> attendees;
 
     public EventTemplateResponse(
             @NotNull Long id,
@@ -59,7 +59,7 @@ public class EventTemplateResponse {
             @NotNull String description,
             @NotNull LocalDateTime startDateTime,
             @Null LocalDateTime endDateTime,
-            @Null List<User.Attendee> attendees
+            @Null List<Attendee> attendees
     ) {
         this.id = id;
         this.name = name;
@@ -70,7 +70,7 @@ public class EventTemplateResponse {
     }
 
     public static EventTemplateResponse bind(@NotNull EventTemplate eventTemplate, List<User> users) {
-        var userEventResponses = users.stream().map(User.Attendee::bind).collect(Collectors.toList());
+        var userEventResponses = users.stream().map(Attendee::bind).collect(Collectors.toList());
         return new EventTemplateResponse(
                 eventTemplate.id,
                 eventTemplate.name,
@@ -101,7 +101,7 @@ public class EventTemplateResponse {
         return endDateTime;
     }
 
-    public List<User.Attendee> getAttendees() {
+    public List<Attendee> getAttendees() {
         return Collections.unmodifiableList(attendees);
     }
 
