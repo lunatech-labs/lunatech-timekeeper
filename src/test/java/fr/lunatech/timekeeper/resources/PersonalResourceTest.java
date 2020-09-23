@@ -17,10 +17,7 @@
 package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
-import fr.lunatech.timekeeper.services.requests.ClientRequest;
-import fr.lunatech.timekeeper.services.requests.ProjectRequest;
-import fr.lunatech.timekeeper.services.requests.TimeEntryRequest;
-import fr.lunatech.timekeeper.services.requests.TimeSheetRequest;
+import fr.lunatech.timekeeper.services.requests.*;
 import fr.lunatech.timekeeper.services.responses.*;
 import fr.lunatech.timekeeper.testcontainers.KeycloakTestResource;
 import fr.lunatech.timekeeper.timeutils.PublicHoliday;
@@ -52,11 +49,11 @@ import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTestResource(KeycloakTestResource.class)
 @Tag("integration")
-class PersonalTimesheetsResourceTest {
+class PersonalResourceTest {
 
+    private final LocalDate START_DATE = LocalDate.now();
     @Inject
     TimeKeeperTestUtils timeKeeperTestUtils;
-
     @Inject
     Flyway flyway;
 
@@ -65,8 +62,6 @@ class PersonalTimesheetsResourceTest {
         flyway.clean();
         flyway.migrate();
     }
-
-    private final LocalDate START_DATE = LocalDate.now();
 
     @Test
     void shouldReturnEmptyWeekResponseIfUserNotMemberOfProject() {

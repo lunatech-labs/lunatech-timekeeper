@@ -36,8 +36,10 @@ public enum ResourceDefinition {
     TimeSheetDef("/api/time-sheets", apply(TimeSheetRequest.class, TimeSheetResponse.class)),
     PersonalTimeSheetsWeekDef("/api/my/%d?weekNumber=%d", apply(Void.class, WeekResponse.class)),
     PersonalTimeSheetsMonthDef("/api/my/%d/month?monthNumber=%d", apply(Void.class, MonthResponse.class)),
-    EventDef("api/events", apply(EventTemplateRequest.class,EventTemplateResponse.class)),
-    EventUsersDef("api/events/%d/users", apply(Void.class,UserResponse.class));
+    PersonnalUserEventsDef("/api/user-events?userId=%d", apply(Void.class, UserEventResponse.class)),
+    UserEventsDef("/api/user-events", apply(UserEventRequest.class, UserEventResponse.class)),
+    TemplateEventDef("/api/events-template", apply(EventTemplateRequest.class, EventTemplateResponse.class)),
+    EventUsersDef("/api/events-template/%d/users", apply(Void.class, UserResponse.class));
 
     final public String uri;
     final public TypeDefinition typeDef;

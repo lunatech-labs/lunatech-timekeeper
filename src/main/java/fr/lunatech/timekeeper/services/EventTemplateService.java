@@ -52,13 +52,13 @@ public class EventTemplateService {
                 });
     }
 
-    public List<EventTemplateResponse> listAll(AuthenticationContext ctx) {
+    public List<EventTemplateResponse> getAllEventsTemplate(AuthenticationContext ctx) {
         try (final Stream<EventTemplate> eventTemplates = EventTemplate.streamAll()) { // NOSONAR
             return eventTemplates
                     .filter(ctx::canAccess)
-                    .map(t -> {
-                        var users = userEventService.findAllUsersFromEventTemplate(t.id);
-                        return EventTemplateResponse.bind(t, users);
+                    .map(template -> {
+                        var users = userEventService.findAllUsersFromEventTemplate(template.id);
+                        return EventTemplateResponse.bind(template, users);
                     })
                     .collect(Collectors.toList());
         }

@@ -43,7 +43,11 @@ public class ResourceFactory {
     }
 
     public static EventTemplateResponse create(EventTemplateRequest eventTemplate, String token) {
-        return InternalResourceUtils.createResource(eventTemplate, EventDef.uri, EventTemplateResponse.class, token);
+        return InternalResourceUtils.createResource(eventTemplate, TemplateEventDef.uri, EventTemplateResponse.class, token);
+    }
+
+    public static UserEventResponse create(UserEventRequest userEventRequest, String token) {
+        return InternalResourceUtils.createResource(userEventRequest, UserEventsDef.uri, UserEventResponse.class, token);
     }
 
     public static OrganizationResponse create(OrganizationRequest organization, String token) {
