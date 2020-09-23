@@ -15,7 +15,10 @@ import org.apache.commons.lang3.RandomStringUtils;
 import javax.inject.Singleton;
 import javax.ws.rs.NotFoundException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static fr.lunatech.timekeeper.services.responses.UserEventResponse.bind;
@@ -34,13 +37,6 @@ public class DataTestProvider {
     public static final String EVENT_DESCRIPTION = "It's a corporate event";
     public static final String EVENT_NAME = "The test event";
 
-    private List<User> usersTest() {
-        return List.of(
-                new User(1L, "Sam", "Uell", "sam@lunatech.fr", "sam.png"),
-                new User(2L, "Jimmy", "James", "jimmy@lunatech.fr", "jimmy.png")
-        );
-    }
-
     public EventTemplateRequest generateEventTemplateRequest(String eventName, LocalDateTime start, LocalDateTime end, Long... usersId) {
         return new EventTemplateRequest(
                 eventName,
@@ -54,17 +50,6 @@ public class DataTestProvider {
         );
     }
 
-    // the backend reverse order of the user ID and the generated userEvent id
-    private EventTemplateResponse generateExpectedEventTemplateResponse(String eventName, LocalDateTime start, LocalDateTime end, Long expectedID, List<User.Attendee> attendees) {
-        return new EventTemplateResponse(
-                expectedID,
-                eventName,
-                EVENT_DESCRIPTION,
-                start,
-                end,
-                attendees
-        );
-    }
 
     public Tuple2<EventTemplateRequest, EventTemplateResponse> generateEventTemplateTuple(String eventName, LocalDateTime start, LocalDateTime end, Long expectedTemplateId, Long... usersId) {
         final List<User.Attendee> attendees = generateAttendees(usersId);
@@ -114,6 +99,17 @@ public class DataTestProvider {
         return EVENT_NAME + "-" + RandomStringUtils.random(length, useLetters, useNumbers);
     }
 
+    public Organization generateOrganization() {
+        Organization organization = new Organization();
+        organization.id = 1L;
+        organization.name = "name";
+        organization.tokenName = "tokenName";
+        organization.users = Collections.emptyList();
+        organization.projects = Collections.emptyList();
+        organization.clients = Collections.emptyList();
+        return organization;
+    }
+
 
     private List<User> generateUser(Long... usersId) {
         return usersTest()
@@ -131,15 +127,23 @@ public class DataTestProvider {
                 .collect(Collectors.toList());
     }
 
-    public Organization generateOrganization() {
-        Organization organization = new Organization();
-        organization.id = 1L;
-        organization.name = "name";
-        organization.tokenName = "tokenName";
-        organization.users = Collections.emptyList();
-        organization.projects = Collections.emptyList();
-        organization.clients = Collections.emptyList();
-        return organization;
+    // the backend reverse order of the user ID and the generated userEvent id
+    private EventTemplateResponse generateExpectedEventTemplateResponse(String eventName, LocalDateTime start, LocalDateTime end, Long expectedID, List<User.Attendee> attendees) {
+        return new EventTemplateResponse(
+                expectedID,
+                eventName,
+                EVENT_DESCRIPTION,
+                start,
+                end,
+                attendees
+        );
+    }
+
+    private List<User> usersTest() {
+        return List.of(
+                new User(1L, "Sam", "Uell", "sam@lunatech.fr", "sam.png"),
+                new User(2L, "Jimmy", "James", "jimmy@lunatech.fr", "jimmy.png")
+        );
     }
 
 }
