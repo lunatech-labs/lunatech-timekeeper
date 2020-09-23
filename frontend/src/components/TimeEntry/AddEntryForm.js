@@ -143,10 +143,10 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel, numberOfHour
             <Option value={null}/>
             {
               filteredProjects(timeSheets, date).map(timeSheet =>
-                  <Option disabled={isTimeSheetDisabled(timeSheet, date, numberOfHoursForDay)}
-                    key={`select-timesheet-${timeSheet.id}`}
-                    value={timeSheet.id}>{timeSheet.project.name}
-                  </Option> )
+                <Option disabled={isTimeSheetDisabled(timeSheet, date, numberOfHoursForDay)}
+                  key={`select-timesheet-${timeSheet.id}`}
+                  value={timeSheet.id}>{timeSheet.project.name}
+                </Option> )
             }
           </Select>
         </Form.Item>

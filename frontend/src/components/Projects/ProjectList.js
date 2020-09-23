@@ -132,7 +132,7 @@ const ProjectList = () => {
     </Menu>
   );
 
-    const filterComponent = (
+  const filterComponent = (
     <React.Fragment>
       <p>Filter by :</p>
       <Dropdown overlay={filterMenu}>
