@@ -38,7 +38,7 @@ public class UserEventResponse {
     private String eventType;
     private String duration;
 
-    //wrap into a list in order to be maybe next feature, and it helps to be  with the front part
+    //wrap into a list it helps to re-use a component in the front part
     private List<Attendee> attendees;
 
     private UserEventResponse() {
