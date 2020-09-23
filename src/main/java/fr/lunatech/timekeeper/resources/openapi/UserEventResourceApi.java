@@ -77,7 +77,7 @@ public interface UserEventResourceApi {
                     description = "user not found"
             )
     })
-    List<UserEventResponse> getPersonnalEvents(@QueryParam("userId") Long id);
+    List<UserEventResponse> getPersonalEvents(@QueryParam("userId") Long id);
 
 
 }

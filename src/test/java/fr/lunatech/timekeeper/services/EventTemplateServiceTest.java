@@ -79,9 +79,9 @@ class EventTemplateServiceTest {
                 Collections.emptyList()
         );
 
-        final List<EventTemplateResponse> eventsBefore = eventTemplateService.listEventCompany(ctx);
+        final List<EventTemplateResponse> eventsBefore = eventTemplateService.getAllEventsTemplate(ctx);
         eventTemplateService.create(eventTemplateRequest, ctx);
-        final List<EventTemplateResponse> eventsAfter = eventTemplateService.listEventCompany(ctx);
+        final List<EventTemplateResponse> eventsAfter = eventTemplateService.getAllEventsTemplate(ctx);
 
         Assertions.assertTrue(eventsBefore.isEmpty());
         Assertions.assertEquals(1, eventsAfter.size());

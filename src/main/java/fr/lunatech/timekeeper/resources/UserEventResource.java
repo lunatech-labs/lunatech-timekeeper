@@ -51,10 +51,10 @@ public class UserEventResource implements UserEventResourceApi {
 
     @RolesAllowed({"user", "admin"})
     @Override
-    @Counted(name = "countgetPersonnalEvents", description = "Counts how many times the user load the event list on method 'getPersonnalEvents'")
-    @Timed(name = "timegetPersonnalEvents", description = "Times how long it takes the user load the event list on method 'getPersonnalEvents'", unit = MetricUnits.MILLISECONDS)
-    public List<UserEventResponse> getPersonnalEvents(Long userId) {
-        return userEventService.listPersonnalEventForAnUser(userId, authentication.context());
+    @Counted(name = "countgetPersonalEvents", description = "Counts how many times the user load the event list on method 'getPersonalEvents'")
+    @Timed(name = "timegetPersonalEvents", description = "Times how long it takes the user load the event list on method 'getPersonalEvents'", unit = MetricUnits.MILLISECONDS)
+    public List<UserEventResponse> getPersonalEvents(Long userId) {
+        return userEventService.getAllPersonalEventsForAnUser(userId, authentication.context());
     }
 
     @RolesAllowed({"user", "admin"})

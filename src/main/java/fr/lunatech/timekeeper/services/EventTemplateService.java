@@ -52,7 +52,7 @@ public class EventTemplateService {
                 });
     }
 
-    public List<EventTemplateResponse> listEventCompany(AuthenticationContext ctx) {
+    public List<EventTemplateResponse> getAllEventsTemplate(AuthenticationContext ctx) {
         try (final Stream<EventTemplate> eventTemplates = EventTemplate.streamAll()) { // NOSONAR
             return eventTemplates
                     .filter(ctx::canAccess)

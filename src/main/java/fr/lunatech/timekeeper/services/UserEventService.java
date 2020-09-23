@@ -42,7 +42,7 @@ public class UserEventService {
                 .map(UserEventResponse::bind);
     }
 
-    public List<UserEventResponse> listPersonnalEventForAnUser(Long ownerId, AuthenticationContext context) { //NOSONAR
+    public List<UserEventResponse> getAllPersonalEventsForAnUser(Long ownerId, AuthenticationContext context) { //NOSONAR
         final var maybeParam = Optional.ofNullable(ownerId);
         Stream<UserEvent> stream = maybeParam.isPresent() ? UserEvent.stream("owner_id=?1", ownerId) : UserEvent.streamAll(); //NOSONAR
         return stream.map(UserEventResponse::bind)
