@@ -69,7 +69,7 @@ public class UserEventRequest {
         final var userEvent = new UserEvent();
         userEvent.name = this.name;
         userEvent.description = this.description;
-        userEvent.eventType = EventType.PERSONAL;//TODO parameter
+        userEvent.eventType = EventType.PERSONAL;
         userEvent.startDateTime = this.startDateTime;
         userEvent.endDateTime = this.endDateTime;
         userEvent.owner = findUser.apply(getUserId(), ctx)
