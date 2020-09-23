@@ -17,8 +17,19 @@
 import {getHalfDayDuration} from './configUtils';
 import moment from 'moment';
 
+// Filter the list based on start date end date and Given date
+export const filteredProjects = (timeSheets, givenDate) => {
+  return timeSheets.filter(timesheet =>
+    (null == timesheet.startDate && null == timesheet.expirationDate) ||
+      (moment(timesheet.startDate).isSameOrBefore(givenDate) && null == timesheet.expirationDate) ||
+      (null == timesheet.startDate && moment(timesheet.expirationDate).isSameOrAfter(givenDate)) ||
+      (moment(timesheet.startDate).isSameOrBefore(givenDate) && moment(timesheet.expirationDate).isSameOrAfter(givenDate))
+  );
+};
+
 // Returns true if the timeUnits are disabled or if the date is out of range
 export const isTimeSheetDisabled = (timeSheet, date, numberOfHoursForDay, entryDuration) => {
+  if(timeSheet.leftOver === 0) return true; // days left equals 0
   return isTimeUnitDisabled(timeSheet, numberOfHoursForDay, entryDuration) || isDateOutOfTimeSheetRange(timeSheet, date);
 };
 
@@ -45,7 +56,7 @@ const isDateOutOfTimeSheetRange = (timeSheet, date) => {
 const isDateOutOfTimeSheetRangeWithOutEndDate = (timeSheet, date) => {
   const startDate = moment(timeSheet.startDate);
   const dateFormatted = moment(date.format('YYYY-MM-DD'));
-  return !(dateFormatted.isAfter(startDate) || dateFormatted.isSame(startDate));
+  return !(dateFormatted.isSameOrAfter(startDate));
 };
 
 // Returns true if the date is before the startDate or after the endDate

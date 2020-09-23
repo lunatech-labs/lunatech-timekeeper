@@ -77,7 +77,7 @@ const NewEventTemplateForm = () => {
 
   const disabledDate = (current) => {
     // Can not select days before today and today
-    return current && current < moment().subtract(1, 'days').endOf('day');
+    return current && current < moment().endOf('day');
   };
 
   function disabledTime(time, type) {
@@ -127,11 +127,11 @@ const NewEventTemplateForm = () => {
         >
           {timeKeeperAPIPost.error &&
           <Alert
-              message="Unable to save the new Event"
-              description={timeKeeperAPIPost.error.data.message}
-              type="error"
-              closable
-              style={{marginBottom: 10}}
+            message="Unable to save the new Event"
+            description={timeKeeperAPIPost.error.data.message}
+            type="error"
+            closable
+            style={{marginBottom: 10}}
           />}
           <div className="tk_CardLg">
             <Row gutter={16}>
@@ -231,37 +231,37 @@ const NewEventTemplateForm = () => {
 
   if (eventsResponse.loading || usersResponse.loading) {
     return (
-        <React.Fragment>
-          <Spin size="large">
-            <Form
-                labelCol={{span: 4}}
-                wrapperCol={{span: 14}}
-                layout="horizontal"
-            >
-              <Form.Item label="Name" name="name">
-                <Input placeholder="Loading data from server..."/>
-              </Form.Item>
-              <Form.Item label="Description" name="description">
-                <TextArea
-                    rows={4}
-                    placeholder="Loading data from server..."
-                />
-              </Form.Item>
-            </Form>
-          </Spin>
+      <React.Fragment>
+        <Spin size="large">
+          <Form
+            labelCol={{span: 4}}
+            wrapperCol={{span: 14}}
+            layout="horizontal"
+          >
+            <Form.Item label="Name" name="name">
+              <Input placeholder="Loading data from server..."/>
+            </Form.Item>
+            <Form.Item label="Description" name="description">
+              <TextArea
+                rows={4}
+                placeholder="Loading data from server..."
+              />
+            </Form.Item>
+          </Form>
+        </Spin>
 
-        </React.Fragment>
+      </React.Fragment>
     );
   }
 
   if (eventsResponse.error || usersResponse.error) {
     return (
-        <React.Fragment>
-          <Alert title='Server error'
-                 message='Failed to load the data'
-                 type='error'
-          />
-        </React.Fragment>
+      <React.Fragment>
+        <Alert title='Server error'
+          message='Failed to load the data'
+          type='error'
+        />
+      </React.Fragment>
     );
   }
 
