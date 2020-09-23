@@ -232,7 +232,7 @@ class AuthenticationContextTest {
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.id=999L;
         timeEntry.startDateTime= LocalDateTime.now();
-        timeEntry.numberOfHours=8;
+        timeEntry.endDateTime=timeEntry.startDateTime.plusHours(8);
         timeEntry.timeSheet = timeSheet;
         timeEntry.comment = "??";
 
@@ -709,7 +709,7 @@ class AuthenticationContextTest {
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.id=999L;
         timeEntry.startDateTime= LocalDateTime.now();
-        timeEntry.numberOfHours = 8;
+        timeEntry.endDateTime=timeEntry.startDateTime.plusHours(8);
         timeEntry.timeSheet = timeSheet;
         timeEntry.comment = "??";
 
@@ -754,7 +754,7 @@ class AuthenticationContextTest {
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.id=999L;
         timeEntry.startDateTime= LocalDateTime.now();
-        timeEntry.numberOfHours = 8;
+        timeEntry.endDateTime=timeEntry.startDateTime.plusHours(8);
         timeEntry.timeSheet = timeSheet;
         timeEntry.comment = "??";
 
@@ -798,7 +798,7 @@ class AuthenticationContextTest {
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.id=999L;
         timeEntry.startDateTime= LocalDateTime.now();
-        timeEntry.numberOfHours = 8;
+        timeEntry.endDateTime=timeEntry.startDateTime.plusHours(8);
         timeEntry.timeSheet = timeSheet;
         timeEntry.comment = "??";
 
@@ -842,7 +842,7 @@ class AuthenticationContextTest {
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.id=999L;
         timeEntry.startDateTime= LocalDateTime.now();
-        timeEntry.numberOfHours = 4;
+        timeEntry.endDateTime=timeEntry.startDateTime.plusHours(4);
         timeEntry.timeSheet = timeSheet;
         timeEntry.comment = "??";
 
