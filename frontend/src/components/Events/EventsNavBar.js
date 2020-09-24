@@ -19,19 +19,28 @@ import {Tabs} from 'antd';
 import './EventsList.less';
 import EventsList from './EventsList';
 import {UserContext} from '../../context/UserContext';
+import {useKeycloak} from '@react-keycloak/web';
 
 const EventsNavBar = () => {
 
+
   const {TabPane} = Tabs;
   const {currentUser} = useContext(UserContext);
+
+  const [keycloak] = useKeycloak();
+  const isAdmin = keycloak.hasRealmRole('admin');
+  const isUser = keycloak.hasRealmRole('user');
+
   return (
     <div>
-      <Tabs defaultActiveKey="tk_companyEvent">
-        <TabPane tab="Company Events" key="tk_companyEvent"><EventsList endPoint={'/api/events-template'}/></TabPane>
+      {(isAdmin || isUser) && <Tabs defaultActiveKey="tk_personnalEvent">
         <TabPane tab="Personal Events" key="tk_personnalEvent"><EventsList
           endPoint={'/api/user-events?userId=' + currentUser.id}/></TabPane>
-        <TabPane tab="Users Events" key="tk_userEvents"><EventsList endPoint={'/api/user-events'}/></TabPane>
-      </Tabs>
+        {isAdmin &&
+        <TabPane tab="Company Events" key="tk_companyEvent"><EventsList endPoint={'/api/events-template'}/></TabPane>}
+        {isAdmin &&
+        <TabPane tab="Users Events" key="tk_userEvents"><EventsList endPoint={'/api/user-events'}/></TabPane>}
+      </Tabs>}
     </div>
   );
 };
