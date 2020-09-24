@@ -50,7 +50,7 @@ const EventMembersPictures = ({membersIds}) => {
   const displayAvatar = (users) => {
     return users.map(user => {
       return user[0] !== undefined && user[0].id !== undefined ?
-        <Avatar key={`avatar-user-${user[0].id}`} src={user[0].picture}/> : {};
+        <Avatar key={`avatar-user-${user[0].id}`} src={user[0].picture}/> :<div> </div>;
     });
   };
 
