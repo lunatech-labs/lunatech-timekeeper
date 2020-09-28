@@ -20,6 +20,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity
@@ -40,6 +41,13 @@ public class TimeEntry extends PanacheEntityBase {
     public LocalDateTime startDateTime;
 
     @NotNull
-    public Integer numberOfHours;
+    public LocalDateTime endDateTime;
 
+    public Long getRoundedNumberOfHours() {
+        if(startDateTime == null  || endDateTime==null || endDateTime.isBefore(startDateTime)){
+            return 0L;
+        }
+        Duration d = Duration.between(startDateTime, endDateTime);
+        return d.toHours();
+    }
 }

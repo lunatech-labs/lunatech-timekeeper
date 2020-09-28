@@ -24,9 +24,9 @@ import fr.lunatech.timekeeper.services.requests.TimeEntryRequest;
 import fr.lunatech.timekeeper.services.responses.ClientResponse;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
+import fr.lunatech.timekeeper.testcontainers.KeycloakTestResource;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
 import io.quarkus.test.common.QuarkusTestResource;
-import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterEach;
@@ -39,20 +39,22 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
-import static fr.lunatech.timekeeper.resources.KeycloakTestResource.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TimeEntryDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TimeSheetPerProjectPerUserDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.postValidation;
+import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getAdminAccessToken;
+import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getUserAccessToken;
+import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getUser2AccessToken;
 import static javax.ws.rs.core.Response.Status.FORBIDDEN;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
-@QuarkusTestResource(H2DatabaseTestResource.class)
+
 @QuarkusTestResource(KeycloakTestResource.class)
 @Tag("integration")
 class TimeEntryResourceTest {
@@ -94,7 +96,7 @@ class TimeEntryResourceTest {
         create(2L, today, jimmyToken);
 
         // THEN
-        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "Today, I did this test", startDateTime, 8);
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "Today, I did this test", startDateTime, 8L);
 
         final var expectedTimeSheetJimmy2 = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(),
                 List.of(expectedTimeEntry), null, START_DATE);
@@ -126,7 +128,7 @@ class TimeEntryResourceTest {
         create(2L, morning, jimmyToken);
 
         // THEN
-        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This morning, I did this test", startDateTime, 4);
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This morning, I did this test", startDateTime, 4L);
 
         final var expectedTimeSheetJimmy2 = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(),
                 List.of(expectedTimeEntry), null, START_DATE);
@@ -159,7 +161,7 @@ class TimeEntryResourceTest {
         create(2L, hour, jimmyToken);
 
         // THEN
-        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This hour, I did this test", start, 1);
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This hour, I did this test", start, 1L);
         final var expectedTimeSheetJimmy2 = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(),
                 List.of(expectedTimeEntry), null, START_DATE);
 
@@ -248,7 +250,7 @@ class TimeEntryResourceTest {
         update(updatedToday, location, jimmyToken);
 
         // THEN
-        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "Today, I updated this entry", startDateTime, 8);
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "Today, I updated this entry", startDateTime, 8L);
 
         final var expectedTimeSheetJimmy2 = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(),
                 List.of(expectedTimeEntry), null, START_DATE);
@@ -283,7 +285,7 @@ class TimeEntryResourceTest {
         update(updatedMorning, location, jimmyToken);
 
         // THEN
-        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This morning, I updated this entry", startDateTime, 4);
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This morning, I updated this entry", startDateTime, 4L);
         final var expectedTimeSheetJimmy2 = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(),
                 List.of(expectedTimeEntry), null, START_DATE);
 
@@ -317,7 +319,7 @@ class TimeEntryResourceTest {
         update(updatedHour, location, jimmyToken);
 
         // THEN
-        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This hour, I updated this entry", startDateTime, 1);
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This hour, I updated this entry", startDateTime, 1L);
         final var expectedTimeSheetJimmy2 = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(),
                 List.of(expectedTimeEntry), null, START_DATE);
         var expected = timeKeeperTestUtils.toJson(expectedTimeSheetJimmy2);
@@ -350,7 +352,7 @@ class TimeEntryResourceTest {
         update(updatedHour, location, jimmyToken);
 
         // THEN
-        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This hour, I did this test", startDateTime, 2);
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry = new TimeSheetResponse.TimeEntryResponse(1L, "This hour, I did this test", startDateTime, 2L);
         final var expectedTimeSheetJimmy2 = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(),
                 List.of(expectedTimeEntry), null, START_DATE);
 

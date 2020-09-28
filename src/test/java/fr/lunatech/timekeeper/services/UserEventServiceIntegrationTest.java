@@ -1,13 +1,11 @@
 package fr.lunatech.timekeeper.services;
 
-import fr.lunatech.timekeeper.models.time.UserEvent;
-import fr.lunatech.timekeeper.resources.KeycloakTestResource;
+import fr.lunatech.timekeeper.resources.utils.DataTestProvider;
 import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
-import fr.lunatech.timekeeper.services.responses.EventTemplateResponse;
 import fr.lunatech.timekeeper.services.responses.UserResponse;
+import fr.lunatech.timekeeper.testcontainers.KeycloakTestResource;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 import io.quarkus.test.common.QuarkusTestResource;
-import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.flywaydb.core.Flyway;
@@ -17,31 +15,20 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
-import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
-import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.EventDef;
-import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.EventUsersDef;
+import static fr.lunatech.timekeeper.resources.utils.DataTestProvider.THE_24_TH_JUNE_2020_AT_5_PM;
+import static fr.lunatech.timekeeper.resources.utils.DataTestProvider.THE_24_TH_JUNE_2020_AT_9_AM;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
-import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getAdminAccessToken;
+import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getUserAccessToken;
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
-@QuarkusTestResource(H2DatabaseTestResource.class)
+
 @QuarkusTestResource(KeycloakTestResource.class)
 @Tag("integration")
 class UserEventServiceIntegrationTest {
-
-    private static final LocalDateTime THE_24_TH_JUNE_2020_AT_9_AM = LocalDateTime.of(2020,6,24,9,0);
-    private static final LocalDateTime THE_24_TH_JUNE_2020_AT_5_PM = LocalDateTime.of(2020,6,24,17,0);
-    private static final String EVENT_DESCRIPTION = "It's a corporate event";
 
     @Inject
     Flyway flyway;
@@ -49,36 +36,27 @@ class UserEventServiceIntegrationTest {
     @Inject
     UserEventService userEventService;
 
+    @Inject
+    DataTestProvider dataTestProvider;
+
     @AfterEach
     void cleanDB() {
         flyway.clean();
         flyway.migrate();
     }
 
-    private EventTemplateRequest generateTestEventRequest(String eventName, Long... usersId){
-        return new EventTemplateRequest(
-                eventName,
-                EVENT_DESCRIPTION,
-                THE_24_TH_JUNE_2020_AT_9_AM,
-                THE_24_TH_JUNE_2020_AT_5_PM,
-                Arrays.stream(usersId)
-                        .sorted(Comparator.comparingLong(value -> (long)value))
-                        .map(EventTemplateRequest.UserEventRequest::new)
-                        .collect(Collectors.toList())
-        );
-    }
     @Test
     void shouldGetEventsByUserForAWeekNumber() {
         //Given
         final String adminToken = getAdminAccessToken();
-        UserResponse userSam = create(adminToken);
+        final UserResponse userSam = create(adminToken);
 
         //WHEN: an eventTemplate is created with the 1 attendee
-        EventTemplateRequest newEventTemplate = generateTestEventRequest("Event Name 1", 1L);
-        create(newEventTemplate,adminToken);
-        var expected = userEventService.getEventsByUser(userSam.getId(), TimeKeeperDateUtils.getWeekNumberFromDate(THE_24_TH_JUNE_2020_AT_9_AM.toLocalDate()), 2020, TimeKeeperDateUtils::getWeekNumberFromDate);
+        final EventTemplateRequest newEventTemplate = dataTestProvider.generateEventTemplateRequest("Event Name 1", THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, userSam.getId());
+        create(newEventTemplate, adminToken);
+        final var expected = userEventService.getEventsByUser(userSam.getId(), TimeKeeperDateUtils.getWeekNumberFromDate(THE_24_TH_JUNE_2020_AT_9_AM.toLocalDate()), 2020, TimeKeeperDateUtils::getWeekNumberFromDate);
 
-        assertEquals(expected,userEventService.getEventsByUserForWeekNumber(userSam.getId(), TimeKeeperDateUtils.getWeekNumberFromDate(THE_24_TH_JUNE_2020_AT_9_AM.toLocalDate()), 2020));
+        assertEquals(expected, userEventService.getEventsByUserForWeekNumber(userSam.getId(), TimeKeeperDateUtils.getWeekNumberFromDate(THE_24_TH_JUNE_2020_AT_9_AM.toLocalDate()), 2020));
     }
 
     @Test
@@ -88,38 +66,54 @@ class UserEventServiceIntegrationTest {
         UserResponse userSam = create(adminToken);
 
         //WHEN: an eventTemplate is created with the 1 attendee
-        EventTemplateRequest newEventTemplate = generateTestEventRequest("Event Name 2", 1L);
-        create(newEventTemplate,adminToken);
-        var expected = userEventService.getEventsByUser(userSam.getId(), TimeKeeperDateUtils.getMonthNumberFromDate(THE_24_TH_JUNE_2020_AT_9_AM.toLocalDate()), 2020, TimeKeeperDateUtils::getMonthNumberFromDate);
+        final EventTemplateRequest newEventTemplate =
+                dataTestProvider.generateEventTemplateRequest(
+                        "Event Name 2",
+                        THE_24_TH_JUNE_2020_AT_9_AM,
+                        THE_24_TH_JUNE_2020_AT_5_PM,
+                        userSam.getId()
+                );
+        create(newEventTemplate, adminToken);
+        final var expected = userEventService.getEventsByUser(
+                userSam.getId(),
+                TimeKeeperDateUtils.getMonthNumberFromDate(
+                        THE_24_TH_JUNE_2020_AT_9_AM.toLocalDate()
+                ), 2020, TimeKeeperDateUtils::getMonthNumberFromDate
+        );
+        final var actual = userEventService.getEventsByUserForMonthNumber(
+                userSam.getId(),
+                TimeKeeperDateUtils.getMonthNumberFromDate(THE_24_TH_JUNE_2020_AT_9_AM.toLocalDate()),
+                2020
+        );
+        assertEquals(expected, actual);
 
-        assertEquals(expected,userEventService.getEventsByUserForMonthNumber(userSam.getId(), TimeKeeperDateUtils.getMonthNumberFromDate(THE_24_TH_JUNE_2020_AT_9_AM.toLocalDate()), 2020));
     }
 
     @Test
     void shouldGetAnEmptyListOfEventsByUserForAWrongWeekNumber() {
         //Given
         final String adminToken = getAdminAccessToken();
-        UserResponse userSam = create(adminToken);
+        final UserResponse userSam = create(adminToken);
 
         //WHEN: an eventTemplate is created with the 1 attendee
-        EventTemplateRequest newEventTemplate = generateTestEventRequest("Event Name 3", 1L);
-        create(newEventTemplate,adminToken);
+        final EventTemplateRequest newEventTemplate = dataTestProvider.generateEventTemplateRequest("Event Name 3", THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, userSam.getId());
+        create(newEventTemplate, adminToken);
         var expected = List.of();
 
-        assertEquals(expected,userEventService.getEventsByUserForWeekNumber(userSam.getId(), TimeKeeperDateUtils.getWeekNumberFromDate(THE_24_TH_JUNE_2020_AT_9_AM.toLocalDate()) + 1, 2020));
+        assertEquals(expected, userEventService.getEventsByUserForWeekNumber(userSam.getId(), TimeKeeperDateUtils.getWeekNumberFromDate(THE_24_TH_JUNE_2020_AT_9_AM.toLocalDate()) + 1, 2020));
     }
 
     @Test
     void shouldGetAnEmptyListOfEventsByUserForAWrongMonthNumber() {
         //Given
         final String adminToken = getAdminAccessToken();
-        UserResponse userSam = create(adminToken);
+        final UserResponse userSam = create(adminToken);
 
         //WHEN: an eventTemplate is created with the 1 attendee
-        EventTemplateRequest newEventTemplate = generateTestEventRequest("Event Name 4", 1L);
-        create(newEventTemplate,adminToken);
-        var expected = List.of();
-        assertEquals(expected,userEventService.getEventsByUserForMonthNumber(userSam.getId(), TimeKeeperDateUtils.getMonthNumberFromDate(THE_24_TH_JUNE_2020_AT_9_AM.toLocalDate()) + 1, 2020));
+        final EventTemplateRequest newEventTemplate = dataTestProvider.generateEventTemplateRequest("Event Name 4", THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, userSam.getId());
+        create(newEventTemplate, adminToken);
+        final var expected = List.of();
+        assertEquals(expected, userEventService.getEventsByUserForMonthNumber(userSam.getId(), TimeKeeperDateUtils.getMonthNumberFromDate(THE_24_TH_JUNE_2020_AT_9_AM.toLocalDate()) + 1, 2020));
     }
 
 
@@ -130,17 +124,17 @@ class UserEventServiceIntegrationTest {
 
         //GIVEN: 2 user
         final String samToken = getAdminAccessToken();
-        var sam = create(samToken);
+        final var sam = create(samToken);
         create(getUserAccessToken());
 
         //WHEN: an eventTemplateRequest is created with SAM as an attendee
-        EventTemplateRequest newEventTemplate = generateTestEventRequest(eventName, sam.getId());
+        final EventTemplateRequest newEventTemplate = dataTestProvider.generateEventTemplateRequest(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, sam.getId());
         create(newEventTemplate, samToken);
 
         //THEN isUserAvailableForDates return true for dates that are not overlapping the test event
-        LocalDateTime dateBefore = newEventTemplate.getStartDateTime().minusDays(1);
-        LocalDateTime endDateBefore = newEventTemplate.getEndDateTime().minusDays(1);
-        assertTrue(userEventService.isUserAvailableForDates(sam.getId(),dateBefore,endDateBefore));
+        final LocalDateTime dateBefore = newEventTemplate.getStartDateTime().minusDays(1);
+        final LocalDateTime endDateBefore = newEventTemplate.getEndDateTime().minusDays(1);
+        assertTrue(userEventService.isUserAvailableForDates(sam.getId(), dateBefore, endDateBefore));
     }
 
     @Test
@@ -150,17 +144,17 @@ class UserEventServiceIntegrationTest {
 
         //GIVEN: 2 user
         final String samToken = getAdminAccessToken();
-        var sam = create(samToken);
+        final var sam = create(samToken);
         create(getUserAccessToken());
 
         //WHEN: an eventTemplateRequest is created with SAM as an attendee
-        EventTemplateRequest newEventTemplate = generateTestEventRequest(eventName, sam.getId());
+        final EventTemplateRequest newEventTemplate = dataTestProvider.generateEventTemplateRequest(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, sam.getId());
         create(newEventTemplate, samToken);
 
         //THEN isUserAvailableForDates return true for dates that are not overlapping the test event
-        LocalDateTime dateAfter = newEventTemplate.getStartDateTime().plusDays(1);
-        LocalDateTime endDateAfter = newEventTemplate.getEndDateTime().plusDays(1);
-        assertTrue(userEventService.isUserAvailableForDates(sam.getId(),dateAfter,endDateAfter));
+        final LocalDateTime dateAfter = newEventTemplate.getStartDateTime().plusDays(1);
+        final LocalDateTime endDateAfter = newEventTemplate.getEndDateTime().plusDays(1);
+        assertTrue(userEventService.isUserAvailableForDates(sam.getId(), dateAfter, endDateAfter));
     }
 
     @Test
@@ -170,17 +164,17 @@ class UserEventServiceIntegrationTest {
 
         //GIVEN: 2 user
         final String samToken = getAdminAccessToken();
-        var sam = create(samToken);
+        final var sam = create(samToken);
         create(getUserAccessToken());
 
         //WHEN: an eventTemplateRequest is created with SAM as an attendee
-        EventTemplateRequest newEventTemplate = generateTestEventRequest(eventName, sam.getId());
+        final EventTemplateRequest newEventTemplate = dataTestProvider.generateEventTemplateRequest(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, sam.getId());
         create(newEventTemplate, samToken);
 
         //THEN isUserAvailableForDates returns true as the endDate is just one hour after the previous event
-        LocalDateTime dateAfter = newEventTemplate.getStartDateTime();
-        LocalDateTime endDateAfter = newEventTemplate.getEndDateTime().minusHours(1);
-        assertFalse(userEventService.isUserAvailableForDates(sam.getId(),dateAfter,endDateAfter));
+        final LocalDateTime dateAfter = newEventTemplate.getStartDateTime();
+        final LocalDateTime endDateAfter = newEventTemplate.getEndDateTime().minusHours(1);
+        assertFalse(userEventService.isUserAvailableForDates(sam.getId(), dateAfter, endDateAfter));
     }
 
     @Test
@@ -190,17 +184,17 @@ class UserEventServiceIntegrationTest {
 
         //GIVEN: 2 user
         final String samToken = getAdminAccessToken();
-        var sam = create(samToken);
+        final var sam = create(samToken);
         create(getUserAccessToken());
 
         //WHEN: an eventTemplateRequest is created with SAM as an attendee
-        EventTemplateRequest newEventTemplate = generateTestEventRequest(eventName, sam.getId());
+        final EventTemplateRequest newEventTemplate = dataTestProvider.generateEventTemplateRequest(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, sam.getId());
         create(newEventTemplate, samToken);
 
         //THEN isUserAvailableForDates as the new Event start and end one hour before the event stored in DB
-        LocalDateTime startBefore = newEventTemplate.getStartDateTime().minusHours(1);
-        LocalDateTime endBefore = newEventTemplate.getEndDateTime().minusHours(1);
-        assertFalse(userEventService.isUserAvailableForDates(sam.getId(),startBefore,endBefore));
+        final LocalDateTime startBefore = newEventTemplate.getStartDateTime().minusHours(1);
+        final LocalDateTime endBefore = newEventTemplate.getEndDateTime().minusHours(1);
+        assertFalse(userEventService.isUserAvailableForDates(sam.getId(), startBefore, endBefore));
     }
 
     @Test
@@ -210,16 +204,16 @@ class UserEventServiceIntegrationTest {
 
         //GIVEN: 2 user
         final String samToken = getAdminAccessToken();
-        var sam = create(samToken);
+        final var sam = create(samToken);
         create(getUserAccessToken());
 
         //WHEN: an eventTemplateRequest is created with SAM as an attendee
-        EventTemplateRequest newEventTemplate = generateTestEventRequest(eventName, sam.getId());
+        final EventTemplateRequest newEventTemplate = dataTestProvider.generateEventTemplateRequest(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, sam.getId());
         create(newEventTemplate, samToken);
 
         //THEN isUserAvailableForDates as the new Event start and end one hour before the event stored in DB
-        LocalDateTime startBefore = newEventTemplate.getStartDateTime().plusHours(1);
-        LocalDateTime endBefore = newEventTemplate.getEndDateTime().plusHours(1);
-        assertFalse(userEventService.isUserAvailableForDates(sam.getId(),startBefore,endBefore));
+        final LocalDateTime startBefore = newEventTemplate.getStartDateTime().plusHours(1);
+        final LocalDateTime endBefore = newEventTemplate.getEndDateTime().plusHours(1);
+        assertFalse(userEventService.isUserAvailableForDates(sam.getId(), startBefore, endBefore));
     }
 }

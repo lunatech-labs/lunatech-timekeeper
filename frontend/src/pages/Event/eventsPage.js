@@ -16,7 +16,7 @@
 
 import React from 'react';
 import MainPage from '../MainPage/MainPage';
-import EventsList from '../../components/Events/EventsList';
+import EventsNavBar from '../../components/Events/EventsNavBar';
 import {useKeycloak} from '@react-keycloak/web';
 import {Link} from 'react-router-dom';
 
@@ -27,10 +27,10 @@ const EventsPage = () => {
   const actions = isAdmin && <Link id="btnAddEvent" className="tk_Btn tk_BtnPrimary" key='addLink' to={'/events/new'}>Add event</Link>;
   return (
     <MainPage
-      title="Events"
+      title="List of events"
       actions={actions}
     >
-      <EventsList />
+      <EventsNavBar/>
     </MainPage>
   );
 };

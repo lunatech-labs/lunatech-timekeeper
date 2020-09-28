@@ -17,15 +17,12 @@
 package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
-import fr.lunatech.timekeeper.services.requests.ClientRequest;
-import fr.lunatech.timekeeper.services.requests.ProjectRequest;
-import fr.lunatech.timekeeper.services.requests.TimeEntryRequest;
-import fr.lunatech.timekeeper.services.requests.TimeSheetRequest;
+import fr.lunatech.timekeeper.services.requests.*;
 import fr.lunatech.timekeeper.services.responses.*;
+import fr.lunatech.timekeeper.testcontainers.KeycloakTestResource;
 import fr.lunatech.timekeeper.timeutils.PublicHoliday;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
 import io.quarkus.test.common.QuarkusTestResource;
-import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterEach;
@@ -39,24 +36,24 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getAdminAccessToken;
-import static fr.lunatech.timekeeper.resources.KeycloakTestResource.getUserAccessToken;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
+import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getAdminAccessToken;
+import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getUserAccessToken;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
-@QuarkusTestResource(H2DatabaseTestResource.class)
+
 @QuarkusTestResource(KeycloakTestResource.class)
 @Tag("integration")
-class PersonalTimesheetsResourceTest {
+class PersonalResourceTest {
 
+    private final LocalDate START_DATE = LocalDate.now();
     @Inject
     TimeKeeperTestUtils timeKeeperTestUtils;
-
     @Inject
     Flyway flyway;
 
@@ -65,8 +62,6 @@ class PersonalTimesheetsResourceTest {
         flyway.clean();
         flyway.migrate();
     }
-
-    private final LocalDate START_DATE = LocalDate.now();
 
     @Test
     void shouldReturnEmptyWeekResponseIfUserNotMemberOfProject() {
@@ -166,9 +161,9 @@ class PersonalTimesheetsResourceTest {
         LocalDateTime notIncludedDayDateTime = LocalDateTime.of(2020, 6, 28, 9, 0);
         TimeEntryRequest notIncludedDay = new TimeEntryRequest("Today, I did this test", notIncludedDayDateTime, 8);
 
-        TimeSheetResponse.TimeEntryResponse entryResponseOnFirstDateExpected = new TimeSheetResponse.TimeEntryResponse(1L, "Today, I did this test", firstDateTime, 8);
-        TimeSheetResponse.TimeEntryResponse entryResponseOnLastDateExpected = new TimeSheetResponse.TimeEntryResponse(2L, "Today, I did this test", lastDateTime, 8);
-        TimeSheetResponse.TimeEntryResponse includedDayResponse = new TimeSheetResponse.TimeEntryResponse(3L, "Today, I did this test", includedDayDateTime, 8);
+        TimeSheetResponse.TimeEntryResponse entryResponseOnFirstDateExpected = new TimeSheetResponse.TimeEntryResponse(1L, "Today, I did this test", firstDateTime, 8L);
+        TimeSheetResponse.TimeEntryResponse entryResponseOnLastDateExpected = new TimeSheetResponse.TimeEntryResponse(2L, "Today, I did this test", lastDateTime, 8L);
+        TimeSheetResponse.TimeEntryResponse includedDayResponse = new TimeSheetResponse.TimeEntryResponse(3L, "Today, I did this test", includedDayDateTime, 8L);
         var timeEntriesExpected = List.of(entryResponseOnFirstDateExpected,
                 entryResponseOnLastDateExpected,
                 includedDayResponse);
@@ -276,8 +271,8 @@ class PersonalTimesheetsResourceTest {
         create(1L, jimmyEntry1, jimmyToken);
         create(1L, jimmyEntry2, jimmyToken);
 
-        TimeSheetResponse.TimeEntryResponse jimmyEntryDay1Response = new TimeSheetResponse.TimeEntryResponse(1L, commentDay, startDay1, 8);
-        TimeSheetResponse.TimeEntryResponse jimmyEntryDay2Response = new TimeSheetResponse.TimeEntryResponse(2L, commentDay, startDay2, 8);
+        TimeSheetResponse.TimeEntryResponse jimmyEntryDay1Response = new TimeSheetResponse.TimeEntryResponse(1L, commentDay, startDay1, 8L);
+        TimeSheetResponse.TimeEntryResponse jimmyEntryDay2Response = new TimeSheetResponse.TimeEntryResponse(2L, commentDay, startDay2, 8L);
 
         final var timesheet = new TimeSheetResponse(1L, projectResponse, jimmy.getId(), TimeUnit.HOURLY, true, null, 10, TimeUnit.DAY.toString(), List.of(jimmyEntryDay1Response, jimmyEntryDay2Response), 8L, START_DATE);
         WeekResponse response = new WeekResponse(LocalDate.of(2020, 6, 15), Collections.emptyList(), List.of(timesheet), new ArrayList<>());

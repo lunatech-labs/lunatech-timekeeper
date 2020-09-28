@@ -14,13 +14,5 @@
  * limitations under the License.
  */
 
-/*
- * This Auxillary functional component can be used as HOC (higher order component).
- * It useful to place adjacent JSX elements without extra <div> element
- */
-
-import React from "react";
-
-const aux = (props) => props.children;
-
-export default aux;
+create unique index idx_event_unique_same_name_same_day
+    ON event_template(name, date_trunc('day',startdatetime),date_trunc('day',enddatetime));

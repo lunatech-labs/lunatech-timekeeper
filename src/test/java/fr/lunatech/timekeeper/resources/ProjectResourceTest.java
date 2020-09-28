@@ -22,9 +22,9 @@ import fr.lunatech.timekeeper.services.requests.ClientRequest;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
+import fr.lunatech.timekeeper.testcontainers.KeycloakTestResource;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
 import io.quarkus.test.common.QuarkusTestResource;
-import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.AfterEach;
@@ -38,13 +38,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static fr.lunatech.timekeeper.resources.KeycloakTestResource.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ProjectDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TimeSheetPerProjectPerUserDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.putValidation;
+import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getAdminAccessToken;
+import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getUserAccessToken;
+import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getUser2AccessToken;
 import static io.restassured.RestAssured.given;
 import static java.util.Collections.emptyList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -53,7 +55,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
-@QuarkusTestResource(H2DatabaseTestResource.class)
+
 @QuarkusTestResource(KeycloakTestResource.class)
 @Tag("integration")
 class ProjectResourceTest {
@@ -214,8 +216,8 @@ class ProjectResourceTest {
         final var updatedProject = new ProjectRequest("Some Project Updated", true, "some description", client1.getId(), true, projectUserRequests, 1L);
 
         final var expectedProjectUsers = List.of(
-                new ProjectResponse.ProjectUserResponse(sam.getId(), true, sam.getName(), sam.getPicture()),
-                new ProjectResponse.ProjectUserResponse(jimmy.getId(), true, jimmy.getName(), jimmy.getPicture())
+                new ProjectResponse.ProjectUserResponse(jimmy.getId(), true, jimmy.getName(), jimmy.getPicture()),
+                new ProjectResponse.ProjectUserResponse(sam.getId(), true, sam.getName(), sam.getPicture())
         );
 
         final var expectedUpdatedProject = new ProjectResponse(projectCreated.getId()
@@ -287,7 +289,7 @@ class ProjectResourceTest {
         //Create the project
         final String adminToken = getAdminAccessToken();
         final String userToken = getUserAccessToken();
-        final var sam = create(adminToken);
+        create(adminToken);
         final var projectRequest = new ProjectRequest("Some Project", true, "some description", null, true, Collections.emptyList(), 1L);
         final var projectCreated = create(projectRequest, adminToken);
         update(ProjectDef.uriPlusId(projectCreated.getId())+"/join", userToken).statusCode(is(NO_CONTENT.getStatusCode()));
@@ -330,8 +332,8 @@ class ProjectResourceTest {
                 , 1L);
 
         final var expectedProjectUsers = List.of(
-                new ProjectResponse.ProjectUserResponse(sam.getId(), true, sam.getName(), sam.getPicture())
-                , new ProjectResponse.ProjectUserResponse(jimmy.getId(), false, jimmy.getName(), jimmy.getPicture())
+                 new ProjectResponse.ProjectUserResponse(jimmy.getId(), false, jimmy.getName(), jimmy.getPicture())
+                , new ProjectResponse.ProjectUserResponse(sam.getId(), true, sam.getName(), sam.getPicture())
         );
         final var expectedProject = new ProjectResponse(project10.getId()
                 , updatedProjectWithTwoUsers.getName()
@@ -432,7 +434,7 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
 
-        var sam = create(adminToken);
+        create(adminToken);
         var jimmy = create(jimmyToken);
         final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
 
@@ -491,8 +493,8 @@ class ProjectResourceTest {
                 , 1L);
 
         final var expectedProjectUsers = List.of(
-                new ProjectResponse.ProjectUserResponse(sam.getId(), true, sam.getName(), sam.getPicture())
-                , new ProjectResponse.ProjectUserResponse(jimmy.getId(), false, jimmy.getName(), jimmy.getPicture())
+                 new ProjectResponse.ProjectUserResponse(jimmy.getId(), false, jimmy.getName(), jimmy.getPicture())
+                , new ProjectResponse.ProjectUserResponse(sam.getId(), true, sam.getName(), sam.getPicture())
         );
         final var expectedProject = new ProjectResponse(project.getId()
                 , updatedProjectWithTwoUsers.getName()

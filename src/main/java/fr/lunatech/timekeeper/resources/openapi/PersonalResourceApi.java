@@ -27,7 +27,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 @Path("/my")
-public interface PersonalTimesheetsResourceApi {
+public interface PersonalResourceApi {
 
     @GET
     @Path("/{year}/month")
@@ -76,5 +76,4 @@ public interface PersonalTimesheetsResourceApi {
     })
     WeekResponse getWeek(@PathParam("year") Integer year,
                          @QueryParam("weekNumber") Integer weekNumber);
-
 }

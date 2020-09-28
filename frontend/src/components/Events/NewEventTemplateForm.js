@@ -42,8 +42,8 @@ const NewEventTemplateForm = () => {
     // eventType: formData.eventType : Shouldn't be sent while the backend is not implemented
   });
   const usersResponse = useTimeKeeperAPI('/api/users');
-  const eventsResponse = useTimeKeeperAPI('/api/events');
-  const timeKeeperAPIPost = useTimeKeeperAPIPost('/api/events', (form => form) , setEventTemplateCreated, formDataToEventRequest);
+  const eventsResponse = useTimeKeeperAPI('/api/users');
+  const timeKeeperAPIPost = useTimeKeeperAPIPost('/api/events-template', (form => form), setEventTemplateCreated, formDataToEventRequest);
 
   const [form] = Form.useForm();
 
@@ -64,9 +64,9 @@ const NewEventTemplateForm = () => {
 
   if (eventTemplateCreated) {
     return (
-        <React.Fragment>
-          <Redirect to="/events"/>
-        </React.Fragment>
+      <React.Fragment>
+        <Redirect to="/events"/>
+      </React.Fragment>
     );
   }
 
@@ -112,137 +112,137 @@ const NewEventTemplateForm = () => {
   if(eventsResponse.data && usersResponse.data){
     return (
 
-        <Form
-            id="tk_Form"
-            layout="vertical"
-            initialValues={initialValues}
-            onFinish={timeKeeperAPIPost.run}
-            form={form}
-        >
-          {timeKeeperAPIPost.error &&
+      <Form
+        id="tk_Form"
+        layout="vertical"
+        initialValues={initialValues}
+        onFinish={timeKeeperAPIPost.run}
+        form={form}
+      >
+        {timeKeeperAPIPost.error &&
           <Alert
-              message="Unable to save the new Event"
-              description={timeKeeperAPIPost.error.data.message}
-              type="error"
-              closable
-              style={{marginBottom: 10}}
+            message="Unable to save the new Event"
+            description={timeKeeperAPIPost.error.data.message}
+            type="error"
+            closable
+            style={{marginBottom: 10}}
           />}
-          <div className="tk_CardLg">
-            <Row gutter={16}>
-              <Col className="gutter-row" span={12}>
-                <TitleSection title="Information"/>
-                <Form.Item
-                    label="Event type:"
-                    name="eventType"
-                    hasFeedback
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                >
-                  <Radio.Group>
-                    <Radio.Button value="COMPANY_EVENT">Company event</Radio.Button>
-                    <Radio.Button value="USER_EVENT" disabled>User event</Radio.Button>
-                  </Radio.Group>
-                </Form.Item>
-                <Form.Item
-                    label="Name :"
-                    name="name"
-                    hasFeedback
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                >
-                  <Input
-                      placeholder="Event's name"
-                  />
-                </Form.Item>
-                <Form.Item
-                    label="Description :"
-                    name="description"
-                >
-                  <TextArea
-                      rows={4}
-                      placeholder="A short description about this event"
-                  />
-                </Form.Item>
+        <div className="tk_CardLg">
+          <Row gutter={16}>
+            <Col className="gutter-row" span={12}>
+              <TitleSection title="Information"/>
+              <Form.Item
+                label="Event type:"
+                name="eventType"
+                hasFeedback
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Radio.Group>
+                  <Radio.Button value="COMPANY_EVENT">Company event</Radio.Button>
+                  <Radio.Button value="USER_EVENT" disabled>User event</Radio.Button>
+                </Radio.Group>
+              </Form.Item>
+              <Form.Item
+                label="Name :"
+                name="name"
+                hasFeedback
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Input
+                  placeholder="Event's name"
+                />
+              </Form.Item>
+              <Form.Item
+                label="Description :"
+                name="description"
+              >
+                <TextArea
+                  rows={4}
+                  placeholder="A short description about this event"
+                />
+              </Form.Item>
 
-                <Form.Item
-                    label="Date and duration"
-                    name="eventDateTime"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                >
+              <Form.Item
+                label="Date and duration"
+                name="eventDateTime"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
 
-                  <RangePicker
-                      disabledDate={disabledDate}
-                      disabledTime={disabledTime}
-                      showTime={{
-                        hideDisabledOptions: true
-                      }}
-                      format="YYYY-MM-DD HH:mm"
-                      className="tk_RangePicker"
-                  />
-                </Form.Item>
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <TitleSection title="Users"/>
-                <Form.Item
-                    label="Select users :"
-                    name="usersSelected"
-                >
-                  <UserTreeData users={sortListByName(usersResponse.data)} usersSelected={usersSelected} setUsersSelected={setUsersSelected}/>
-                </Form.Item>
-              </Col>
-            </Row>
-            <Space className="tk_JcFe" size="middle" align="center">
-              <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={'/events'}>Cancel</Link>
-              <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Submit</Button>
-            </Space>
-          </div>
-        </Form>
+                <RangePicker
+                  disabledDate={disabledDate}
+                  disabledTime={disabledTime}
+                  showTime={{
+                    hideDisabledOptions: true
+                  }}
+                  format="YYYY-MM-DD HH:mm"
+                  className="tk_RangePicker"
+                />
+              </Form.Item>
+            </Col>
+            <Col className="gutter-row" span={12}>
+              <TitleSection title="Users"/>
+              <Form.Item
+                label="Select users :"
+                name="usersSelected"
+              >
+                <UserTreeData users={sortListByName(usersResponse.data)} usersSelected={usersSelected} setUsersSelected={setUsersSelected}/>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Space className="tk_JcFe" size="middle" align="center">
+            <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={'/events'}>Cancel</Link>
+            <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Submit</Button>
+          </Space>
+        </div>
+      </Form>
     );
   }
 
   if (eventsResponse.loading || usersResponse.loading) {
     return (
-        <React.Fragment>
-          <Spin size="large">
-            <Form
-                labelCol={{span: 4}}
-                wrapperCol={{span: 14}}
-                layout="horizontal"
-            >
-              <Form.Item label="Name" name="name">
-                <Input placeholder="Loading data from server..."/>
-              </Form.Item>
-              <Form.Item label="Description" name="description">
-                <TextArea
-                    rows={4}
-                    placeholder="Loading data from server..."
-                />
-              </Form.Item>
-            </Form>
-          </Spin>
+      <React.Fragment>
+        <Spin size="large">
+          <Form
+            labelCol={{span: 4}}
+            wrapperCol={{span: 14}}
+            layout="horizontal"
+          >
+            <Form.Item label="Name" name="name">
+              <Input placeholder="Loading data from server..."/>
+            </Form.Item>
+            <Form.Item label="Description" name="description">
+              <TextArea
+                rows={4}
+                placeholder="Loading data from server..."
+              />
+            </Form.Item>
+          </Form>
+        </Spin>
 
-        </React.Fragment>
+      </React.Fragment>
     );
   }
 
   if (eventsResponse.error || usersResponse.error) {
     return (
-        <React.Fragment>
-          <Alert title='Server error'
-                 message='Failed to load the data'
-                 type='error'
-          />
-        </React.Fragment>
+      <React.Fragment>
+        <Alert title='Server error'
+          message='Failed to load the data'
+          type='error'
+        />
+      </React.Fragment>
     );
   }
 

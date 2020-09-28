@@ -28,6 +28,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -37,7 +38,7 @@ import java.util.List;
 
 import static javax.ws.rs.core.HttpHeaders.LOCATION;
 
-@Path("/events")
+@Path("/events-template")
 public interface EventTemplateResourceApi {
 
     @GET
@@ -55,6 +56,7 @@ public interface EventTemplateResourceApi {
     EventTemplateResponse getEventById(@PathParam("id") Long id);
 
     @GET
+    @RolesAllowed({"admin"})
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Retrieve all eventTemplates",
             description = "Retrieve the list of existing eventTemplates for you organization. Each event also returns the list of current attendees or participants.")

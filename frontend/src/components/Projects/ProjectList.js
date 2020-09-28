@@ -225,11 +225,13 @@ const ProjectList = () => {
             </Collapse>
           ]}
         >
-          <a href={`/projects/${item.id}`}>
-            <Meta
-              description={item.description}
-            />
-          </a>
+          {
+            <div className="descriptionBox">
+              <a className="descriptionLink" href={`/projects/${item.id}`}>
+                <Meta description={item.description}/>
+              </a>
+            </div>
+          }
         </Card>
       </List.Item>
     )}
