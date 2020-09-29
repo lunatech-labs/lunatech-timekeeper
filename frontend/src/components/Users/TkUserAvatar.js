@@ -18,6 +18,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {Avatar} from 'antd';
 import UserOutlined from '@ant-design/icons/lib/icons/UserOutlined';
+import './TkUserAvatar.less';
 
 const genNameColor = (name) => '#' + intToRGB(hashCode(name));
 const hashCode = (str) => { // java String#hashCode
@@ -29,8 +30,8 @@ const hashCode = (str) => { // java String#hashCode
 };
 const intToRGB = (i) =>{
   const c = (i & 0x00FFFFFF)
-    .toString(16)
-    .toUpperCase();
+      .toString(16)
+      .toUpperCase();
   return '00000'.substring(0, 6 - c.length) + c;
 };
 
