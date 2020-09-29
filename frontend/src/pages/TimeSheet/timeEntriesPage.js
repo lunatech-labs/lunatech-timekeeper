@@ -201,7 +201,6 @@ const TimeEntriesPage = () => {
     />;
   };
 
-  console.log('firstDay', datas.firstDayOfWeek);
   return (
     <MainPage title="Time entries">
       <Modal
