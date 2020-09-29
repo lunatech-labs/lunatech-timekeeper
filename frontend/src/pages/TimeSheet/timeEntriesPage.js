@@ -50,16 +50,17 @@ const computeData = (timeSheets) => Object.entries(groupBy(timeSheets.flatMap(({
 });
 
 const TimeEntriesPage = () => {
-  let history = useHistory();
-  let location = useLocation();
+  const history = useHistory();
+  const location = useLocation();
   const [calendarMode, setCalendarMode] = useState('week');
   const firstDayOfCurrentWeek = moment().utc().startOf('week');
+  const [contextDate, setContextDate] = useState(firstDayOfCurrentWeek);
   const today = () => firstDayOfCurrentWeek.clone();
   const [prefixWeekUrl, setPrefixWeekUrl] = useState(() => {
     if (location.search) {
       let searchParams = queryString.parse(location.search);
       if (searchParams.weekNumber && searchParams.year) {
-        return searchParams.year + '?weekNumber='+searchParams.weekNumber;
+        return searchParams.year + '?weekNumber=' + searchParams.weekNumber;
       }
       if (searchParams.weekNumber) {
         return '2020?weekNumber='+searchParams.weekNumber;
@@ -200,6 +201,7 @@ const TimeEntriesPage = () => {
     />;
   };
 
+  console.log('firstDay', datas.firstDayOfWeek);
   return (
     <MainPage title="Time entries">
       <Modal
@@ -217,7 +219,8 @@ const TimeEntriesPage = () => {
       {
         calendarMode === 'week' ?
           <WeekCalendar
-            firstDay={datas.firstDayOfWeek}
+            onDateChange={setContextDate}
+            firstDay={contextDate}
             disabledWeekEnd={true}
             hiddenButtons={false}
             onPanelChange={(id, start) => setPrefixWeekUrl(start.year() + '?weekNumber=' + start.isoWeek())}
@@ -241,6 +244,8 @@ const TimeEntriesPage = () => {
             warningCardPredicate={hasWarnNoEntryInPastDay}
           /> :
           <MonthCalendar
+            contextDate={contextDate}
+            onDateChange={(date) => setContextDate(date.utc().startOf('week'))}
             onClickButton={onClickAddTask}
             days={datas.days}
             dateCellRender={(data, date) => {

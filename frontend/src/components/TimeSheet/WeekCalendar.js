@@ -47,7 +47,7 @@ const computeWeekRanges = (selectedDay) => {
   return {
     weekNumber: selectedDay.isoWeek(),
     weekRange: weekRanges,
-    weekRangeMap: _.keyBy(weekRanges, 'id'),
+    weekRangeMap: _.keyBy(weekRangeOfDate(moment().utc().startOf('week'), 1).concat(weekRanges), 'id'),
     weekNumberCurrent: moment().utc().startOf('week').week()
   };
 };
@@ -55,7 +55,8 @@ const computeWeekRanges = (selectedDay) => {
 const WeekCalendar = (props) => {
   const publicHolidays = props.publicHolidays;
   const userEvents = props.userEvents;
-  const [weekSelected, setWeekSelected] = useState(props.firstDay.isoWeek());
+  const weekSelected = props.firstDay.isoWeek();
+  const setWeekSelected = (weekNumber) => props.onDateChange(moment().isoWeek(weekNumber).startOf('week'));
   const [weekRanges, setWeekRanges] = useState(computeWeekRanges(props.firstDay));
   const {onPanelChange} = props;
   const history = useHistory();
@@ -237,6 +238,7 @@ WeekCalendar.propTypes = {
   dateFormat: PropTypes.string,
   headerDateFormat: PropTypes.string,
   disabledWeekEnd: PropTypes.bool,
+  onDateChange: PropTypes.func.isRequired,
   firstDay: PropTypes.object.isRequired,
   days: PropTypes.arrayOf(
     PropTypes.shape({
