@@ -58,7 +58,7 @@ const EventsList = ({endPoint}) => {
     return (
       <React.Fragment>
         <Alert title='Server error' message='Failed to load the list of events' type='error'
-               description='Unable to fetch the list of Events from the server'
+          description='Unable to fetch the list of Events from the server'
         />
       </React.Fragment>
     );
@@ -122,7 +122,7 @@ const EventsList = ({endPoint}) => {
     return (
       <Dropdown overlay={menu(item)} key="members">
         <Button className="tk_Link_People" type="link"
-                onClick={e => e.preventDefault()}>{item.attendees.length}{' people'}</Button>
+          onClick={e => e.preventDefault()}>{item.attendees.length}{' people'}</Button>
       </Dropdown>
     );
   };
@@ -168,7 +168,7 @@ const EventsList = ({endPoint}) => {
           <div className="tk_Search_Input">
             <AutoComplete onSearch={onSearch}>
               <Input data-cy="searchClientBox" size="large" placeholder="Search in events..." allowClear
-                     prefix={<SearchOutlined/>}/>
+                prefix={<SearchOutlined/>}/>
             </AutoComplete>
           </div>
         </div>
@@ -199,7 +199,7 @@ const EventsList = ({endPoint}) => {
                   <div className="tk_CardEvent_People">
                     <div>
                       <EventMembersPictures key={`event-member-picture-${item.id}`}
-                                            membersIds={item.attendees.map(user => user.userId)}/>
+                        membersIds={item.attendees.map(user => user.userId)}/>
                     </div>
                     {displayMembersButton(item)}
                   </div>
