@@ -48,7 +48,7 @@ const EventMemberTag = ({ member }) => {
   const user = usersResponse.data.filter(user => user.id === member.userId);
   return (
     <div className="tk_EventMember_Display">
-      <TkUserAvatar name={user[0].name} picture={user[0].picture} style={{top: "-10%"}}/>
+      <TkUserAvatar name={user[0].name} picture={user[0].picture}/>
       <p>{user[0].name}</p>
     </div>
   );

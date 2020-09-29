@@ -18,6 +18,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {Avatar} from 'antd';
 import UserOutlined from '@ant-design/icons/lib/icons/UserOutlined';
+import './TkUserAvatar.less';
 
 const genNameColor = (name) => '#' + intToRGB(hashCode(name));
 const hashCode = (str) => { // java String#hashCode
@@ -40,11 +41,7 @@ const TkUserAvatar = ({ name,picture }) => {
     return <Avatar src={picture}/>;
   }else if (name){
     // return first letter of the name in Avatar (google style with background color based on name value)
-    return <Avatar className={'tk_user_avatar'} style={{
-      backgroundColor: genNameColor(name),
-      fontSize: 'large',
-      fontFamily:'HelveticaNeue-Light,Helvetica Neue Light,Helvetica Neue,Helvetica, Arial,Lucida Grande, sans-serif'
-    }}>{name.substr(0, 1)}</Avatar>;
+    return <Avatar className={'tk_user_avatar'}>{name.substr(0, 1)}</Avatar>;
   }else{
     // return an icon in Avatar
     return <Avatar icon={<UserOutlined />}/>;
