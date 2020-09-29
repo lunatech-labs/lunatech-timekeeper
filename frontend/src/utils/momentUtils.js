@@ -75,7 +75,7 @@ export const renderRange = (start, end) => {
 export const weekRangeOfDate = (firstDay, numberOfWeek) => {
   const startOfCurrentWeek = firstDay || moment.utc().startOf('week');
   return [...Array(numberOfWeek).keys()].map(i => {
-    const toAdd = i - 7;
+    const toAdd = i - Math.trunc(numberOfWeek / 2);
     const start = startOfCurrentWeek.clone().add(toAdd, 'week');
     const end = start.clone().endOf('week');
     return {
