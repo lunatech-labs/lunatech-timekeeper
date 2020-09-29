@@ -42,7 +42,9 @@ const TkUserAvatar = ({ name,picture }) => {
   }else if (name){
     // return first letter of the name in Avatar (google style with background color based on name value)
     return <Avatar className={'tk_user_avatar'} style={{
-      backgroundColor: genNameColor(name)
+      backgroundColor: genNameColor(name),
+      fontSize: 'large',
+      fontFamily:'HelveticaNeue-Light,Helvetica Neue Light,Helvetica Neue,Helvetica, Arial,Lucida Grande, sans-serif'
     }}>{name.substr(0, 1)}</Avatar>;
   }else{
     // return an icon in Avatar
