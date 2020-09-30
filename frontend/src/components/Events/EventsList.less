@@ -66,27 +66,34 @@
           .mixin_Flexbox_Basis();
           justify-content: flex-end;
           margin-bottom: 5px;
-          span {
+          > span {
             display: none;
             height: 20px;
             width: 20px;
+            span {
+              line-height: 20px;
+              font-size: 12px;
+              display: flex;
+              justify-content: center;
+            }
             &:first-child {
-              display: block;
-              z-index: 3;
+              display: flex;
+              z-index: 4;
             }
             &:nth-child(2) {
-              display: block;
+              display: flex;
+              margin-left: -10px;
+              z-index: 3;
+            }
+            &:nth-child(3) {
+              display: flex;
               margin-left: -10px;
               z-index: 2;
             }
-            &:nth-child(3) {
-              display: block;
-              margin-left: -10px;
-              z-index: 1;
-            }
             &:nth-child(4) {
-              display: block;
+              display: flex;
               margin-left: -10px;
+              z-index: 1
             }
           }
         }
