@@ -17,7 +17,7 @@
 import React from 'react';
 import './EventMemberTag.less';
 import PropTypes from 'prop-types';
-import {Alert, Avatar, Spin} from 'antd';
+import {Alert, Spin} from 'antd';
 import {useTimeKeeperAPI} from '../../utils/services';
 import TkUserAvatar from '../Users/TkUserAvatar';
 
