@@ -72,7 +72,7 @@ public class DataTestProvider {
 
 
     // the backend reverse order of the user ID and the generated userEvent id
-    public UserEventResponse generateExpectedUserEventResponse(String eventName, LocalDateTime start, LocalDateTime end, Long expectedID, User user) {
+    public UserEventResponse generateExpectedUserEventResponse(String eventName, LocalDateTime start, LocalDateTime end, Long expectedID, User user, User creator) {
         final var userEvent = new UserEvent(
                 expectedID,
                 start,
@@ -80,16 +80,18 @@ public class DataTestProvider {
                 eventName,
                 EVENT_DESCRIPTION,
                 EventType.PERSONAL,
-                user
+                user,
+                creator
         );
         return bind(userEvent);
     }
 
-    public Tuple2<UserEventRequest, UserEventResponse> generateUserEventTuple(String eventName, LocalDateTime start, LocalDateTime end, Long expectedTemplateId, Long userId) {
+    public Tuple2<UserEventRequest, UserEventResponse> generateUserEventTuple(String eventName, LocalDateTime start, LocalDateTime end, Long expectedTemplateId, Long userId, Long creatorId) {
         final var user = generateUser(userId).stream().findFirst().orElseThrow(NotFoundException::new);
+        final var creator = generateUser(creatorId).stream().findFirst().orElseThrow(NotFoundException::new);
         return Tuple.of(
                 generateUserEventRequest(eventName, start, end, userId),
-                generateExpectedUserEventResponse(eventName, start, end, expectedTemplateId, user)
+                generateExpectedUserEventResponse(eventName, start, end, expectedTemplateId, user, creator)
         );
     }
 

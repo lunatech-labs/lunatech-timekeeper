@@ -63,6 +63,11 @@ public class UserEvent extends PanacheEntityBase {
     @JoinColumn(name = "eventtemplate_id")
     public EventTemplate eventTemplate;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "creator_id")
+    @NotNull
+    public User creator;
+
     public UserEvent() {
 
     }
@@ -73,7 +78,8 @@ public class UserEvent extends PanacheEntityBase {
                      String name,
                      String description,
                      EventType type,
-                     User user
+                     User user,
+                     User creator
     ) {
         this.id = id;
         this.startDateTime = startDateTime;
@@ -82,6 +88,7 @@ public class UserEvent extends PanacheEntityBase {
         this.description = description;
         this.eventType = type;
         this.owner = user;
+        this.creator = creator;
     }
 
     @Null

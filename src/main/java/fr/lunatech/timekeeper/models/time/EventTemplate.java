@@ -17,6 +17,7 @@
 package fr.lunatech.timekeeper.models.time;
 
 import fr.lunatech.timekeeper.models.Organization;
+import fr.lunatech.timekeeper.models.User;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
@@ -56,6 +57,11 @@ public class EventTemplate extends PanacheEntityBase {
 
     @Null
     public LocalDateTime endDateTime;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "creator_id")
+    @NotNull
+    public User creator;
 
     @Override
     public String toString() {
