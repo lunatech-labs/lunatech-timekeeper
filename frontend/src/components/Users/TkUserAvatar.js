@@ -16,15 +16,18 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import _get from 'lodash/get';
+import _isNull from 'lodash/isNull'
 import {Avatar} from 'antd';
 import UserOutlined from '@ant-design/icons/lib/icons/UserOutlined';
 import './TkUserAvatar.less';
 
-const genNameColor = (name) => '#' + intToRGB(hashCode(name));
+export const genNameColor = (name) => '#' + intToRGB(hashCode(name));
 const hashCode = (str) => { // java String#hashCode
   let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  const chars = _get({"str": _isNull(str) ? undefined : str}, "str", "")
+  for (let i = 0; i < chars.length; i++) {
+    hash = chars.charCodeAt(i) + ((hash << 5) - hash);
   }
   return hash;
 };
