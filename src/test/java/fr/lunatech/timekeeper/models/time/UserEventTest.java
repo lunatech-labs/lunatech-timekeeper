@@ -92,6 +92,7 @@ class UserEventTest {
         userEvent.startDateTime = LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS);
         userEvent.endDateTime = LocalDate.of(2020, 6, 17).atTime(12, 0).truncatedTo(ChronoUnit.HOURS);
         userEvent.owner = user;
+        userEvent.creator = user;
         transaction.begin();
         userEvent.persistAndFlush();
         transaction.commit();
