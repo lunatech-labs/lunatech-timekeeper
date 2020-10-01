@@ -19,6 +19,7 @@ import './EventMemberTag.less';
 import PropTypes from 'prop-types';
 import {Alert, Avatar, Spin} from 'antd';
 import {useTimeKeeperAPI} from '../../utils/services';
+import {genNameColor} from '../Users/TkUserAvatar';
 
 const EventMembersPictures = ({membersIds}) => {
   const usersResponse = useTimeKeeperAPI('/api/users');
@@ -49,7 +50,10 @@ const EventMembersPictures = ({membersIds}) => {
 
   const displayAvatar = (users) => {
     return users.map(user => {
-      return <Avatar key={`avatar-user-${user[0].id}`} src={user[0].picture} />;
+      return user[0] !== undefined && user[0].id !== undefined ?
+        <Avatar style={{
+          backgroundColor: genNameColor(user[0].name)
+        }} key={`avatar-user-${user[0].id}`} src={user[0].picture}>{user[0].name.substr(0, 1)}</Avatar> :<div> </div>;
     });
   };
 

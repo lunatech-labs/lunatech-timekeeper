@@ -147,7 +147,7 @@ test('renderRange with same day', () => {
 
 // eslint-disable-next-line
 test('weekRangeOfDate with a specified firstDay', () => {
-  const firstDay = moment.utc('2020-07-23');
+  const firstDay = moment.utc('2020-07-20');
   const numberOfWeeks = 7;
   const result = weekRangeOfDate(firstDay, numberOfWeeks);
 
@@ -155,17 +155,17 @@ test('weekRangeOfDate with a specified firstDay', () => {
     expect(result).toHaveLength(7);
 
   // eslint-disable-next-line
-  expect(result[0].id).toBe(23);
+  expect(result[0].id).toBe(27);
   // eslint-disable-next-line
-  expect(result[0].start.isSame(moment.utc('2020-06-04'))).toBe(true);
+  expect(result[0].start.isSame(moment.utc('2020-06-29'))).toBe(true);
   // eslint-disable-next-line
-  expect(result[0].end.format()).toBe('2020-06-06T23:59:59Z'); // saturday
+  expect(result[0].end.format()).toBe('2020-07-04T23:59:59Z');
   // eslint-disable-next-line
-  expect(result[0].end.isSame(moment.utc('2020-06-06'),'year')).toBe(true);
+  expect(result[0].end.isSame(moment.utc('2020-07-04'), 'year')).toBe(true);
   // eslint-disable-next-line
-  expect(result[0].end.isSame(moment.utc('2020-06-06'),'month')).toBe(true);
+  expect(result[0].end.isSame(moment.utc('2020-07-04'), 'month')).toBe(true);
   // eslint-disable-next-line
-  expect(result[0].end.isSame(moment.utc('2020-06-06'),'day')).toBe(true);
+  expect(result[0].end.isSame(moment.utc('2020-07-04'), 'day')).toBe(true);
 });
 
 // eslint-disable-next-line
@@ -175,17 +175,17 @@ test('weekRangeOfDate with a specified firstDay as monday', () => {
   const result = weekRangeOfDate(firstDay, numberOfWeeks);
 
   // eslint-disable-next-line
-    expect(result).toHaveLength(7);
+  expect(result).toHaveLength(7);
 
   //expect(result).toBe([]);
 
   // eslint-disable-next-line
-  expect(result[0].id).toBe(23);
+  expect(result[0].id).toBe(27);
   // eslint-disable-next-line
-  expect(result[0].start.isSame(moment.utc('2020-06-01'))).toBe(true); // monday
+  expect(result[0].start.isSame(moment.utc('2020-06-29'))).toBe(true); // monday
   //expect(result[0].end.isSame(moment.utc("2020-06-07"))).toBe(true); // saturday
   // eslint-disable-next-line
-  expect(result[0].end.format()).toBe('2020-06-06T23:59:59Z'); // saturday
+  expect(result[0].end.format()).toBe('2020-07-04T23:59:59Z'); // saturday
 });
 
 // eslint-disable-next-line
