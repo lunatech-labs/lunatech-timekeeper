@@ -49,7 +49,7 @@ const EditEventTemplateForm = () => {
   });
   const currentEventId = eventIdSlug.params.id;
 
-  const eventsResponse = useTimeKeeperAPI('/api/events/');
+  const eventsResponse = useTimeKeeperAPI('/api/events-template/');
   const usersResponse = useTimeKeeperAPI('/api/users/');
 
   useEffect(() => {
@@ -62,7 +62,7 @@ const EditEventTemplateForm = () => {
     }
   }, [eventsResponse.data, currentEventId]);
 
-  const timeKeeperAPIPut = useTimeKeeperAPIPut('/api/events/' + currentEventId, (form=>form), setEventTemplateUpdated, formDataToEventRequest);
+  const timeKeeperAPIPut = useTimeKeeperAPIPut('/api/events-template/' + currentEventId, (form => form), setEventTemplateUpdated, formDataToEventRequest);
 
   const [form] = Form.useForm();
 
@@ -81,7 +81,7 @@ const EditEventTemplateForm = () => {
     );
   }
 
-  const disabledDate = (current) => {
+  const disabledDate = () => {
     // Can not select days before today and today
     //return current && current < moment().endOf('day');
     return false;

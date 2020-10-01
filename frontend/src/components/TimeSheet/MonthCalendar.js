@@ -79,7 +79,6 @@ const SelectMonth = ({value, onChange}) => {
     </Select>
   );
 };
-
 SelectMonth.propTypes = {
   value: PropTypes.object.isRequired, // moment
   onChange: PropTypes.func.isRequired
@@ -101,8 +100,7 @@ MonthNavigator.propTypes = {
 
 
 const MonthCalendar = (props) => {
-  const publicHolidays = props.publicHolidays;
-  const userEvents = props.userEvents;
+  const {publicHolidays, userEvents, contextDate, onDateChange} = props;
 
   const isDisabled = (dateAsMoment) => {
     if(_.isObjectLike(dateAsMoment)) {
@@ -173,6 +171,8 @@ const MonthCalendar = (props) => {
     <div id="tk_MonthCalendar">
       <ConfigProvider locale={en_GB}>
         <Calendar
+          value={contextDate}
+          onChange={onDateChange}
           headerRender={({value, onChange}) => {
             const onChangeCustom = (date) => {
               onChange(date);
@@ -180,9 +180,9 @@ const MonthCalendar = (props) => {
             };
             return (
               <div id="tk_MonthCalendar_Head">
-                <MonthNavigator value={value} onChange={onChangeCustom} />
+                <MonthNavigator value={value} onChange={onChangeCustom}/>
                 <div>
-                  <SelectMonth value={value} onChange={onChangeCustom} />
+                  <SelectMonth value={value} onChange={onChangeCustom}/>
                   <SelectYear value={value} onChange={onChangeCustom} />
                 </div>
               </div>);
@@ -202,6 +202,8 @@ const MonthCalendar = (props) => {
 };
 
 MonthCalendar.propTypes = {
+  contextDate: PropTypes.object.isRequired,
+  onDateChange: PropTypes.func.isRequired,
   dateCellRender: PropTypes.func.isRequired, //(data, date, disabled) => node
   disabledWeekEnd: PropTypes.bool,
   days: PropTypes.arrayOf(

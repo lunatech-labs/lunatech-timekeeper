@@ -31,8 +31,9 @@ const getLogoURL = (item) => {
 };
 
 const ProjectClientHeader = (props) => {
+  const grey = props.makeItGrey ? 'tk_UnlimitedField tk_ProjectClientHeader' : 'tk_ProjectClientHeader';
   return (
-    <div className='tk_ProjectClientHeader'>
+    <div className={grey}>
       <Avatar src={getLogoURL(props.project)} shape={'square'} size="large"/>
       <p>{props.project.name}</p>
       <Divider type="vertical"/>
@@ -45,8 +46,8 @@ ProjectClientHeader.propTypes = {
   project: PropTypes.shape({
     name: PropTypes.string,
     client: PropTypes.object
-  })
+  }),
+  makeItGrey: PropTypes.bool.isRequired
 };
-
 
 export default ProjectClientHeader;

@@ -15,7 +15,7 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import { useHistory } from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 import {Button, Select, Tag} from 'antd';
 import CardWeekCalendar from '../Card/CardWeekCalendar';
 import {
@@ -47,14 +47,16 @@ const computeWeekRanges = (selectedDay) => {
   return {
     weekNumber: selectedDay.isoWeek(),
     weekRange: weekRanges,
-    weekRangeMap:  _.keyBy(weekRanges,'id')
+    weekRangeMap: _.keyBy(weekRangeOfDate(moment().utc().startOf('week'), 1).concat(weekRanges), 'id'),
+    weekNumberCurrent: moment().utc().startOf('week').week()
   };
 };
 
 const WeekCalendar = (props) => {
   const publicHolidays = props.publicHolidays;
   const userEvents = props.userEvents;
-  const [weekSelected, setWeekSelected] = useState(props.firstDay.isoWeek());
+  const weekSelected = props.firstDay.isoWeek();
+  const setWeekSelected = (weekNumber) => props.onDateChange(moment().isoWeek(weekNumber).startOf('week'));
   const [weekRanges, setWeekRanges] = useState(computeWeekRanges(props.firstDay));
   const {onPanelChange} = props;
   const history = useHistory();
@@ -109,11 +111,22 @@ const WeekCalendar = (props) => {
   };
 
   const WeekNavigatorSelect = () =>
-    <Select data-cy='selectWeekNavigator' onChange={id => setWeekSelected(id)} defaultValue={0} value={weekSelected}>
+    <Select
+      data-cy='selectWeekNavigator'
+      onChange={id => setWeekSelected(id)}
+      defaultValue={0}
+      value={weekSelected}
+      dropdownRender={menu => (
+        <div>
+          <div className={'tk_Select_CurrentWeek'} onClick={() => setWeekSelected(weekRanges.weekNumberCurrent)}>Current
+            Week
+          </div>
+          {menu}
+        </div>)}>
       {weekRanges.weekRange.map(({id, start, end}) => {
         return (
           <Select.Option className={`${start.isSame(moment(), 'week') ? 'tk_CurrentWeekSelect' : ''}`}
-            key={`date-range-${id}`} value={id} disabled={id === weekSelected}>
+                         key={`date-range-${id}`} value={id} disabled={id === weekSelected}>
             {renderRange(start, end)}
           </Select.Option>
         );
@@ -225,6 +238,7 @@ WeekCalendar.propTypes = {
   dateFormat: PropTypes.string,
   headerDateFormat: PropTypes.string,
   disabledWeekEnd: PropTypes.bool,
+  onDateChange: PropTypes.func.isRequired,
   firstDay: PropTypes.object.isRequired,
   days: PropTypes.arrayOf(
     PropTypes.shape({

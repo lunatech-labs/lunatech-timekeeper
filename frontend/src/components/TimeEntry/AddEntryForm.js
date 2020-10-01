@@ -21,7 +21,7 @@ import PropTypes from 'prop-types';
 import TitleSection from '../Title/TitleSection';
 import './AddEntryForm.less';
 import SelectHoursComponent from './SelectHoursComponent';
-import {isTimeSheetDisabled} from '../../utils/timesheetUtils';
+import {isTimeSheetDisabled, filteredProjects} from '../../utils/timesheetUtils';
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -138,12 +138,16 @@ const AddEntryForm = ({date, form, timeSheets, onSuccess, onCancel, numberOfHour
         <Form.Item label="Description:" name="comment" rules={[{required: true}]}>
           <TextArea rows={2} placeholder="What did you work on ?"/>
         </Form.Item>
-
         <Form.Item label="Select a project:" name="timeSheetId" rules={[{required: true}]}>
           <Select>
             <Option value={null}/>
-            {timeSheets.map(timeSheet => <Option disabled={isTimeSheetDisabled(timeSheet, date, numberOfHoursForDay)} key={`select-timesheet-${timeSheet.id}`}
-              value={timeSheet.id}>{timeSheet.project.name}</Option>)}
+            {
+              filteredProjects(timeSheets, date).map(timeSheet =>
+                <Option disabled={isTimeSheetDisabled(timeSheet, date, numberOfHoursForDay)}
+                  key={`select-timesheet-${timeSheet.id}`}
+                  value={timeSheet.id}>{timeSheet.project.name}
+                </Option> )
+            }
           </Select>
         </Form.Item>
 

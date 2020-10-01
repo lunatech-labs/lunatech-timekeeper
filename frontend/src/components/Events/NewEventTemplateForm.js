@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {sortListByName, useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
-import {Alert, Button, Col, Form, Input, message, Row, Space, Spin, DatePicker, Radio} from 'antd';
+import {Alert, Button, Col, Form, Input, message, Row, Space, Spin, DatePicker, Radio, Select} from 'antd';
 import './NewEventTemplateForm.less';
 import '../../components/Button/BtnGeneral.less';
 import {Link, Redirect} from 'react-router-dom';
@@ -25,25 +25,39 @@ import moment from 'moment';
 import UserTreeData from './UserTreeData';
 import _ from 'lodash';
 import 'moment/locale/en-gb';
+import {UserContext} from '../../context/UserContext';
 
 const {TextArea} = Input;
 const { RangePicker } = DatePicker;
+const {Option} = Select;
+
+const USER_EVENTS = ['Vacations', 'Sickness', 'Maternity/Paternity leave', 'Family event'];
 
 const NewEventTemplateForm = () => {
+  const {currentUser} = useContext(UserContext);
   const [eventTemplateCreated, setEventTemplateCreated] = useState(false);
   const [usersSelected, setUsersSelected] = useState([]);
 
-  const formDataToEventRequest = (formData) => ({
+  const companyEventFormData = (formData) => ({
     name: formData.name,
     description: formData.description,
     startDateTime: formData.eventDateTime[0],
     endDateTime: formData.eventDateTime[1],
-    attendees: usersSelected,
-    // eventType: formData.eventType : Shouldn't be sent while the backend is not implemented
+    attendees: usersSelected
+  });
+
+  const userEventFormData = (formData) => ({
+    name: formData.name,
+    description: formData.description,
+    startDateTime: formData.eventDateTime[0],
+    endDateTime: formData.eventDateTime[1],
+    userId: currentUser.id,
+    eventType: 'PERSONAL'
   });
   const usersResponse = useTimeKeeperAPI('/api/users');
-  const eventsResponse = useTimeKeeperAPI('/api/events');
-  const timeKeeperAPIPost = useTimeKeeperAPIPost('/api/events', (form => form) , setEventTemplateCreated, formDataToEventRequest);
+  const eventsResponse = useTimeKeeperAPI('/api/users');
+  const apiCallCompanyEventPOST = useTimeKeeperAPIPost('/api/events-template', (form => form), setEventTemplateCreated, companyEventFormData);
+  const apiCallUserEventPOST = useTimeKeeperAPIPost('/api/user-events', (form => form), setEventTemplateCreated, userEventFormData);
 
   const [form] = Form.useForm();
 
@@ -52,7 +66,8 @@ const NewEventTemplateForm = () => {
     description: '',
     eventDateTime: [moment.utc('9:00 AM', 'LT'), moment.utc('9:00 AM', 'LT')],
     attendees: [],
-    eventType: 'COMPANY_EVENT'
+    eventType: 'COMPANY',
+    eventName: ''
   };
 
   useEffect(() => {
@@ -72,7 +87,7 @@ const NewEventTemplateForm = () => {
 
   const disabledDate = (current) => {
     // Can not select days before today and today
-    return current && current < moment().subtract(1, 'days').endOf('day');
+    return current && current < moment().subtract(1,'days').endOf('day');
   };
 
   function disabledTime(time, type) {
@@ -109,140 +124,153 @@ const NewEventTemplateForm = () => {
       },
     };
   }
+
   if(eventsResponse.data && usersResponse.data){
     return (
-
-        <Form
-            id="tk_Form"
-            layout="vertical"
-            initialValues={initialValues}
-            onFinish={timeKeeperAPIPost.run}
-            form={form}
-        >
-          {timeKeeperAPIPost.error &&
+      <Form
+        id="tk_Form"
+        layout="vertical"
+        initialValues={initialValues}
+        onFinish={(form.eventType === 'COMPANY') ? apiCallCompanyEventPOST.run : apiCallUserEventPOST.run}
+        form={form}
+      >
+        {apiCallCompanyEventPOST.error &&
           <Alert
-              message="Unable to save the new Event"
-              description={timeKeeperAPIPost.error.data.message}
-              type="error"
-              closable
-              style={{marginBottom: 10}}
+            message="Unable to save the new Event"
+            description={apiCallCompanyEventPOST.error.data.message}
+            type="error"
+            closable
+            style={{marginBottom: 10}}
           />}
-          <div className="tk_CardLg">
-            <Row gutter={16}>
-              <Col className="gutter-row" span={12}>
-                <TitleSection title="Information"/>
-                <Form.Item
-                    label="Event type:"
-                    name="eventType"
-                    hasFeedback
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                >
-                  <Radio.Group>
-                    <Radio.Button value="COMPANY_EVENT">Company event</Radio.Button>
-                    <Radio.Button value="USER_EVENT" disabled>User event</Radio.Button>
-                  </Radio.Group>
-                </Form.Item>
-                <Form.Item
-                    label="Name :"
-                    name="name"
-                    hasFeedback
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                >
-                  <Input
-                      placeholder="Event's name"
-                  />
-                </Form.Item>
-                <Form.Item
-                    label="Description :"
-                    name="description"
-                >
-                  <TextArea
-                      rows={4}
-                      placeholder="A short description about this event"
-                  />
-                </Form.Item>
+        <div className="tk_CardLg">
+          <Row gutter={16}>
+            <Col className="gutter-row" span={12}>
+              <TitleSection title="Information"/>
 
-                <Form.Item
-                    label="Date and duration"
-                    name="eventDateTime"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                >
+              <Form.Item label="Event type:" name="eventType" rules={[{required: true}]}>
+                <Radio.Group>
+                  <Radio.Button value="COMPANY">Company event</Radio.Button>
+                  <Radio.Button value="PERSONAL">User event</Radio.Button>
+                </Radio.Group>
+              </Form.Item>
 
-                  <RangePicker
-                      disabledDate={disabledDate}
-                      disabledTime={disabledTime}
-                      showTime={{
-                        hideDisabledOptions: true
-                      }}
-                      format="DD-MM-YYYY HH:mm"
-                      className="tk_RangePicker"
-                  />
-                </Form.Item>
-              </Col>
-              <Col className="gutter-row" span={12}>
-                <TitleSection title="Users"/>
-                <Form.Item
-                    label="Select users :"
-                    name="usersSelected"
-                >
-                  <UserTreeData users={sortListByName(usersResponse.data)} usersSelected={usersSelected} setUsersSelected={setUsersSelected}/>
-                </Form.Item>
-              </Col>
-            </Row>
-            <Space className="tk_JcFe" size="middle" align="center">
-              <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={'/events'}>Cancel</Link>
-              <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Submit</Button>
-            </Space>
-          </div>
-        </Form>
+              <Form.Item shouldUpdate={(prevValues, curValues) => prevValues.eventType !== curValues.eventType || prevValues.eventName !== curValues.eventName}>
+                {({getFieldValue}) => {
+                  switch (getFieldValue('eventType')) {
+                    case 'PERSONAL':
+                      return (
+                        <Form.Item
+                          name="name"
+                          label="Events"
+                          rules={[{required: true}]}
+                        >
+                          <Select>{USER_EVENTS.map(i =>
+                            <Option key={`option-event-${i}`} value={i}>{i}</Option>)}
+                          </Select>
+                        </Form.Item>
+                      );
+                    case 'COMPANY':
+                      return (
+                        <Form.Item
+                          name="name"
+                          label="Events"
+                          rules={[{required: true}]}
+                        >
+                          <Input placeholder="Please enter event's name" type="text"/>
+                        </Form.Item>
+                      );
+                    default:
+                      return (<div></div>);
+                  }
+                }}
+              </Form.Item>
+
+              <Form.Item
+                label="Description :"
+                name="description"
+              >
+                <TextArea
+                  rows={4}
+                  placeholder="A short description about this event"
+                />
+              </Form.Item>
+
+              <Form.Item
+                label="Date and duration"
+                name="eventDateTime"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+
+                <RangePicker
+                  disabledDate={disabledDate}
+                  disabledTime={disabledTime}
+                  showTime={{
+                    hideDisabledOptions: true
+                  }}
+                  format="DD-MM-YYYY HH:mm"
+                  className="tk_RangePicker"
+                />
+              </Form.Item>
+            </Col>
+
+            <Col className="gutter-row" span={12}>
+              <TitleSection title="Users"/>
+              <Form.Item
+                label="Select users :"
+                name="usersSelected"
+              >
+                <UserTreeData users={sortListByName(usersResponse.data)} usersSelected={usersSelected} setUsersSelected={setUsersSelected}/>
+              </Form.Item>
+            </Col>
+
+          </Row>
+
+          <Space className="tk_JcFe" size="middle" align="center">
+            <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={'/events'}>Cancel</Link>
+            <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Submit</Button>
+          </Space>
+        </div>
+      </Form>
     );
   }
 
   if (eventsResponse.loading || usersResponse.loading) {
     return (
-        <React.Fragment>
-          <Spin size="large">
-            <Form
-                labelCol={{span: 4}}
-                wrapperCol={{span: 14}}
-                layout="horizontal"
-            >
-              <Form.Item label="Name" name="name">
-                <Input placeholder="Loading data from server..."/>
-              </Form.Item>
-              <Form.Item label="Description" name="description">
-                <TextArea
-                    rows={4}
-                    placeholder="Loading data from server..."
-                />
-              </Form.Item>
-            </Form>
-          </Spin>
+      <React.Fragment>
+        <Spin size="large">
+          <Form
+            labelCol={{span: 4}}
+            wrapperCol={{span: 14}}
+            layout="horizontal"
+          >
+            <Form.Item label="Name" name="name">
+              <Input placeholder="Loading data from server..."/>
+            </Form.Item>
+            <Form.Item label="Description" name="description">
+              <TextArea
+                rows={4}
+                placeholder="Loading data from server..."
+              />
+            </Form.Item>
+          </Form>
+        </Spin>
 
-        </React.Fragment>
+      </React.Fragment>
     );
   }
 
   if (eventsResponse.error || usersResponse.error) {
     return (
-        <React.Fragment>
-          <Alert title='Server error'
-                 message='Failed to load the data'
-                 type='error'
-          />
-        </React.Fragment>
+      <React.Fragment>
+        <Alert title='Server error'
+          message='Failed to load the data'
+          type='error'
+        />
+      </React.Fragment>
     );
   }
 

@@ -17,8 +17,9 @@
 import React from 'react';
 import './EventMemberTag.less';
 import PropTypes from 'prop-types';
-import {Alert, Avatar, Spin} from 'antd';
+import {Alert, Spin} from 'antd';
 import {useTimeKeeperAPI} from '../../utils/services';
+import TkUserAvatar from '../Users/TkUserAvatar';
 
 const EventMemberTag = ({ member }) => {
   const usersResponse = useTimeKeeperAPI('/api/users');
@@ -44,11 +45,10 @@ const EventMemberTag = ({ member }) => {
       </React.Fragment>
     );
   }
-
   const user = usersResponse.data.filter(user => user.id === member.userId);
   return (
     <div className="tk_EventMember_Display">
-      <Avatar src={user[0].picture}/>
+      <TkUserAvatar name={user[0].name} picture={user[0].picture}/>
       <p>{user[0].name}</p>
     </div>
   );

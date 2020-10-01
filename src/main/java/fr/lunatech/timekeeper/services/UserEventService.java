@@ -3,7 +3,7 @@ package fr.lunatech.timekeeper.services;
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.EventTemplate;
 import fr.lunatech.timekeeper.models.time.UserEvent;
-import fr.lunatech.timekeeper.services.requests.EventTemplateRequest;
+import fr.lunatech.timekeeper.services.requests.UserEventRequest;
 import fr.lunatech.timekeeper.services.responses.UserEventResponse;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -12,12 +12,14 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ApplicationScoped
 public class UserEventService {
@@ -35,11 +37,23 @@ public class UserEventService {
         return getEventsByUser(ownerId, monthNumber, year, TimeKeeperDateUtils::getMonthNumberFromDate);
     }
 
+    public Optional<UserEventResponse> getUserEventById(Long id, AuthenticationContext context) { //NOSONAR
+        return UserEvent.<UserEvent>findByIdOptional(id) //NOSONAR
+                .map(UserEventResponse::bind);
+    }
+
+    public List<UserEventResponse> getAllPersonalEventsForAnUser(Long ownerId, AuthenticationContext context) { //NOSONAR
+        final var maybeParam = Optional.ofNullable(ownerId);
+        Stream<UserEvent> stream = maybeParam.isPresent() ? UserEvent.stream("owner_id=?1", ownerId) : UserEvent.streamAll(); //NOSONAR
+        return stream.map(UserEventResponse::bind)
+                .collect(Collectors.toList());
+    }
+
     protected List<UserEventResponse> getEventsByUser(Long ownerId, Integer monthNumber, Integer year, ToIntFunction<LocalDate> getWeekOfMonthNumberFromDate) {
         logger.debug("getEventsForUser {}", ownerId);
         return UserEvent.<UserEvent>stream("owner_id=?1", ownerId) //NOSONAR
                 .filter(userEvent -> isUserEventInWeekOrMonthNumber(userEvent, monthNumber, year, getWeekOfMonthNumberFromDate))
-                .map(UserEventResponse::bind)
+                .map(UserEventResponse::bind) //NOSONAR
                 .collect(Collectors.toList());
     }
 
@@ -62,7 +76,7 @@ public class UserEventService {
     }
 
     public Long createOrUpdateFromEventTemplate(EventTemplate eventTemplate,
-                                                List<EventTemplateRequest.UserEventRequest> userEventRequests,
+                                                List<UserEventRequest> userEventRequests,
                                                 AuthenticationContext ctx) {
         // Here we delete any userEvent that was previously created with this template.
         // If you remove a user from a template, it will delete the associated userEvent
@@ -91,6 +105,21 @@ public class UserEventService {
     }
 
     /**
+     * add uservent rules
+     *
+     * @param request
+     * @param ctx
+     * @return
+     */
+    @Transactional
+    public Optional<Long> create(UserEventRequest request, AuthenticationContext ctx) {
+        logger.debug("Create a new user event with {}, {}", request, ctx);
+        final UserEvent userEvent = request.unbind(userService::findById, ctx);
+        userEvent.persistAndFlush();
+        return Optional.of(userEvent.id);
+    }
+
+    /**
      * Returns true if the specified user is available for the specified date range
      *
      * @param userId        cannot be null
@@ -111,5 +140,11 @@ public class UserEventService {
         // Please not that it is on purpose that we check that the localEndDateTime is strictly lower than thestartdatetime
         maybeOneEvent = UserEvent.<UserEvent>stream("owner_id=?1 and startdatetime<?2 and enddatetime>=?3", userId, localEndDateTime, startDateTime).findFirst(); //NOSONAR
         return maybeOneEvent.isEmpty();
+    }
+
+    public List<UserEventResponse> listAllEventUser(AuthenticationContext context) { //NOSONAR
+        try (final Stream<UserEvent> userEvent = UserEvent.streamAll()) { //NOSONAR
+            return userEvent.map(UserEventResponse::bind).collect(Collectors.toList());//NOSONAR
+        }
     }
 }
