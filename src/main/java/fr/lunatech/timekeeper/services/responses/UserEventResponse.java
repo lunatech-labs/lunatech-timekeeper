@@ -37,6 +37,7 @@ public class UserEventResponse {
     private String date;
     private String eventType;
     private String duration;
+    private Long creatorId;
 
     //wrap into a list it helps to re-use a component in the front part
     private List<Attendee> attendees;
@@ -60,6 +61,7 @@ public class UserEventResponse {
         userEventResponse.name = event.name;
         userEventResponse.description = event.description;
         userEventResponse.attendees = List.of(Attendee.bind(event.owner));
+        userEventResponse.creatorId = event.creator.getId();
         return checkParameters(event, userEventResponse);
     }
 
@@ -259,6 +261,10 @@ public class UserEventResponse {
                 ", eventType='" + eventType + '\'' +
                 ", duration='" + duration + '\'' +
                 '}';
+    }
+
+    public Long getCreatorId() {
+        return creatorId;
     }
 
     public static class EventUserDayResponse {
