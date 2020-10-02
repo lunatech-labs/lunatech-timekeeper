@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and test frontend
     steps:
-      - uses: actions/checkout@v2.3.2
+      - uses: actions/checkout@v2.3.3
       - uses: bahmutov/npm-install@HEAD
         with:
           working-directory: ./frontend
