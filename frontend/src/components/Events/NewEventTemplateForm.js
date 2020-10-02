@@ -16,7 +16,7 @@
 
 import React, {useContext, useEffect, useState} from 'react';
 import {sortListByName, useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
-import {Alert, Button, Col, Form, Input, message, Row, Space, Spin, DatePicker, Radio, Select} from 'antd';
+import {Alert, Button, Col, DatePicker, Form, Input, message, Radio, Row, Select, Space, Spin} from 'antd';
 import './NewEventTemplateForm.less';
 import '../../components/Button/BtnGeneral.less';
 import {Link, Redirect} from 'react-router-dom';
@@ -27,7 +27,6 @@ import _ from 'lodash';
 import 'moment/locale/en-gb';
 import {UserContext} from '../../context/UserContext';
 import PropTypes from "prop-types";
-import MainPage from "../../pages/MainPage/MainPage";
 
 const {TextArea} = Input;
 const { RangePicker } = DatePicker;
@@ -74,9 +73,7 @@ const NewEventTemplateForm = ({eventType, ...rest}) => {
   };
 
   useEffect(() => {
-    console.log(currentEventType)
     if (!eventTemplateCreated) {
-      console.log("here")
       return;
     }
     message.success('Event was created');
@@ -89,11 +86,6 @@ const NewEventTemplateForm = ({eventType, ...rest}) => {
       </React.Fragment>
     );
   }
-
-  // useEffect(() => {
-  //   console.log(currentEventType)
-  // })
-  const shouldShowUsers = () => currentEventType === "COMPANY";
 
   const disabledDate = (current) => {
     // Can not select days before today and today
