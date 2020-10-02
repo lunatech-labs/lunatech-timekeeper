@@ -142,7 +142,6 @@ const NewEventTemplateForm = ({eventType, ...rest}) => {
       {
         const out = prevValues.eventType !== curValues.eventType || prevValues.eventName !== curValues.eventName
         if(out === true) {
-          console.log("on shouldUpdate: " + currentEventType)
           setCurrentEventType(curValues.eventType)
         }
         return out
