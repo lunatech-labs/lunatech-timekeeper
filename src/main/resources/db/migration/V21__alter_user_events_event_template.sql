@@ -25,3 +25,5 @@ ALTER TABLE user_events
             references users
             on delete set null;
 
+UPDATE user_events
+SET creator_id = 1;
