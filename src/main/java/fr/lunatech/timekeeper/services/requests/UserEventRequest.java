@@ -67,13 +67,15 @@ public class UserEventRequest {
             @NotNull AuthenticationContext ctx
     ) {
         final var userEvent = new UserEvent();
+        final var user = findUser.apply(getUserId(), ctx)
+                .orElseThrow(() -> new IllegalEntityStateException(String.format("Unknown User. userId=%s", getUserId())));
         userEvent.name = this.name;
         userEvent.description = this.description;
         userEvent.eventType = EventType.PERSONAL;
         userEvent.startDateTime = this.startDateTime;
         userEvent.endDateTime = this.endDateTime;
-        userEvent.owner = findUser.apply(getUserId(), ctx)
-                .orElseThrow(() -> new IllegalEntityStateException(String.format("Unknown User. userId=%s", getUserId())));
+        userEvent.owner = user;
+        userEvent.creator = user;
         return userEvent;
     }
 
@@ -98,6 +100,7 @@ public class UserEventRequest {
         userEvent.endDateTime = eventTemplate.endDateTime;
         userEvent.owner = findUser.apply(getUserId(), ctx)
                 .orElseThrow(() -> new IllegalEntityStateException(String.format("Unknown User. userId=%s", getUserId())));
+        userEvent.creator = eventTemplate.creator;
         userEvent.eventTemplate = eventTemplate;
         return userEvent;
     }
