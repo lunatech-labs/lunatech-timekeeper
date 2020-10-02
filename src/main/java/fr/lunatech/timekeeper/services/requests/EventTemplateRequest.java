@@ -18,14 +18,18 @@ package fr.lunatech.timekeeper.services.requests;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.EventTemplate;
 import fr.lunatech.timekeeper.services.AuthenticationContext;
+import fr.lunatech.timekeeper.services.exceptions.IllegalEntityStateException;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateFormat;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.BiFunction;
 
 public final class EventTemplateRequest {
 
@@ -62,6 +66,7 @@ public final class EventTemplateRequest {
 
     public EventTemplate unbind(
             @NotNull EventTemplate eventTemplate,
+            @NotNull BiFunction<Long, AuthenticationContext, Optional<User>> findUser,
             @NotNull AuthenticationContext ctx
     ) {
         eventTemplate.organization = ctx.getOrganization();
@@ -69,11 +74,13 @@ public final class EventTemplateRequest {
         eventTemplate.description = getDescription();
         eventTemplate.startDateTime = getStartDateTime();
         eventTemplate.endDateTime = getEndDateTime();
+        eventTemplate.creator = findUser.apply(ctx.getUserId(), ctx)
+                .orElseThrow(() -> new IllegalEntityStateException(String.format("Unknown User. userId=%s", ctx.getUserId())));
         return eventTemplate;
     }
 
-    public EventTemplate unbind(@NotNull AuthenticationContext ctx) {
-        return unbind(new EventTemplate(), ctx);
+    public EventTemplate unbind(@NotNull BiFunction<Long, AuthenticationContext, Optional<User>> findUser, @NotNull AuthenticationContext ctx) {
+        return unbind(new EventTemplate(), findUser, ctx);
     }
 
     public String getName() {

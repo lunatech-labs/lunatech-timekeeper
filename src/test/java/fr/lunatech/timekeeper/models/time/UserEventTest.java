@@ -92,6 +92,7 @@ class UserEventTest {
         userEvent.startDateTime = LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS);
         userEvent.endDateTime = LocalDate.of(2020, 6, 17).atTime(12, 0).truncatedTo(ChronoUnit.HOURS);
         userEvent.owner = user;
+        userEvent.creator = user;
         transaction.begin();
         userEvent.persistAndFlush();
         transaction.commit();
@@ -187,5 +188,67 @@ class UserEventTest {
         assertEquals(1L, userEventFromDBAfterDelete.id);
         assertEquals("Hackbreakfast2", userEventFromDBAfterDelete.name);
         assertNull(userEventFromDBAfterDelete.eventTemplate);
+    }
+
+    @Test
+    void shouldNotDeleteUserEventIfAssociatedCreatorUserIsDeleted() throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+        final String adminToken = getAdminAccessToken();
+        final String userAccessToken = getUserAccessToken();
+
+        final var client = create(new ClientRequest("NewClient UET2", "One super client for test"), adminToken);
+        final var project = create(new ProjectRequest("Some Project 2", true, "Test 1,2,1,2", client.getId(), true, emptyList(), 1L), userAccessToken);
+
+        getValidation(ProjectDef.uriPlusId(project.getId()), userAccessToken).body(is(timeKeeperTestUtils.toJson(project))).statusCode(is(OK.getStatusCode()));
+
+        // We use Panache directly to manipulate and test the DB
+        Organization organisation = Organization.findAll().firstResult();
+        assertNotNull(organisation);
+
+        User user = User.findById(1L);
+        assertNotNull(user);
+
+        final UserEvent userEvent = new UserEvent();
+        userEvent.id = null;
+        userEvent.eventType = EventType.COMPANY;
+        userEvent.name = "Hackbreakfast2";
+        userEvent.description = "A great company event";
+        userEvent.startDateTime = LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS);
+        userEvent.endDateTime = LocalDate.of(2020, 6, 17).atTime(12, 0).truncatedTo(ChronoUnit.HOURS);
+        userEvent.owner = user;
+        userEvent.creator = user;
+
+        transaction.begin();
+        userEvent.persistAndFlush();
+        transaction.commit();
+
+        // Retrieve the userEvent
+        transaction.begin();
+        assertEquals(1, UserEvent.count());
+        UserEvent userEventBefore = UserEvent.findById(1L);
+        assertNotNull(userEventBefore);
+        assertEquals(1L, userEventBefore.id);
+        assertEquals("Hackbreakfast2", userEventBefore.name);
+        transaction.commit();
+
+        transaction.begin();
+        UserEvent userEventFromDBBeforeDelete = UserEvent.findById(1L);
+        transaction.commit();
+
+        assertEquals(1L, userEventFromDBBeforeDelete.creator.id);
+
+        // Delete all Users
+        transaction.begin();
+        User.deleteAll();
+        transaction.commit();
+        // Check that the userEvent is not deleted if we delete the EventTemplate (Note : this is arguable...)
+        transaction.begin();
+        UserEvent userEventFromDBAfterDelete = UserEvent.findById(1L);
+        transaction.commit();
+
+        assertNotNull(userEventFromDBAfterDelete);
+        assertEquals(1L, userEventFromDBAfterDelete.id);
+        assertEquals("Hackbreakfast2", userEventFromDBAfterDelete.name);
+        assertNull(userEventFromDBAfterDelete.eventTemplate);
+        assertNull(userEventFromDBAfterDelete.creator);
     }
 }

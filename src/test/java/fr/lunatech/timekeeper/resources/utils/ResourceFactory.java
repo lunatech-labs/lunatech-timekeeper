@@ -58,11 +58,15 @@ public class ResourceFactory {
         return InternalResourceUtils.createResource(timeEntryRequest, TimeEntryDef.uriWithArgs(timeSheetId), token);
     }
 
+    public static ValidatableResponse update(UserEventRequest request, String token) {
+        return update(request, UserEventsDef.uri, token);
+    }
+
     public static <P> ValidatableResponse update(P request, String uri, String token) {
         return InternalResourceUtils.updateResource(request, uri, token);
     }
 
     public static <P> ValidatableResponse update(String uri, String token) {
-       return InternalResourceUtils.updateResource(uri, token);
+        return InternalResourceUtils.updateResource(uri, token);
     }
 }

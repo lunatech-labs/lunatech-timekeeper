@@ -37,6 +37,7 @@ import static fr.lunatech.timekeeper.resources.utils.DataTestProvider.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.PersonnalUserEventsDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.UserEventsDef;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
+import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
 import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getAdminAccessToken;
 import static javax.ws.rs.core.Response.Status.OK;
@@ -67,7 +68,7 @@ class UserEventResourceTest {
         final var sam = create(adminToken);
         final var eventName = dataTestProvider.generateRandomEventName();
         final Tuple2<UserEventRequest, UserEventResponse> userEventTuple1 =
-                dataTestProvider.generateUserEventTuple(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, 1L, sam.getId());
+                dataTestProvider.generateUserEventTuple(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, 1L, sam.getId(), sam.getId());
         final var response = create(userEventTuple1._1, adminToken);
         getValidation(
                 UserEventsDef.uriPlusId(response.getId()), adminToken
@@ -84,9 +85,9 @@ class UserEventResourceTest {
         final var anotherEventName = dataTestProvider.generateRandomEventName();
 
         final Tuple2<UserEventRequest, UserEventResponse> userEventTuple1 =
-                dataTestProvider.generateUserEventTuple(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, 1L, sam.getId());
+                dataTestProvider.generateUserEventTuple(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, 1L, sam.getId(), sam.getId());
         final Tuple2<UserEventRequest, UserEventResponse> userEventTuple2 =
-                dataTestProvider.generateUserEventTuple(anotherEventName, THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_6_PM, 2L, sam.getId());
+                dataTestProvider.generateUserEventTuple(anotherEventName, THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_6_PM, 2L, sam.getId(), sam.getId());
         create(userEventTuple1._1, adminToken);
         create(userEventTuple2._1, adminToken);
         getValidation(
@@ -100,16 +101,39 @@ class UserEventResourceTest {
     void shouldListUserEventCreatedByAnAdmin() {
         final String adminToken = getAdminAccessToken();
         final String userToken = getAdminAccessToken();
-        create(adminToken);
+        final var sam = create(adminToken);
         final var jimmy = create(userToken);
         final var eventName = dataTestProvider.generateRandomEventName();
         final var anotherEventName = dataTestProvider.generateRandomEventName();
         final Tuple2<UserEventRequest, UserEventResponse> userEventTuple1 =
-                dataTestProvider.generateUserEventTuple(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, 1L, jimmy.getId());
+                dataTestProvider.generateUserEventTuple(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, 1L, jimmy.getId(), sam.getId());
         final Tuple2<UserEventRequest, UserEventResponse> userEventTuple2 =
-                dataTestProvider.generateUserEventTuple(anotherEventName, THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_6_PM, 2L, jimmy.getId());
+                dataTestProvider.generateUserEventTuple(anotherEventName, THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_6_PM, 2L, jimmy.getId(), sam.getId());
         create(userEventTuple1._1, adminToken);
         create(userEventTuple2._1, adminToken);
+        getValidation(
+                PersonnalUserEventsDef.uriWithMultiId(jimmy.getId()), userToken
+        ).body(
+                Matchers.is(timeKeeperTestUtils.listOfTasJson(userEventTuple1._2, userEventTuple2._2))
+        ).statusCode(CoreMatchers.is(OK.getStatusCode()));
+    }
+
+    @Test
+    void shouldUpdateUserEventCreatorByAnAdmin() {
+        final String adminToken = getAdminAccessToken();
+        final String userToken = getAdminAccessToken();
+        final var sam = create(adminToken);
+        final var jimmy = create(userToken);
+        final var eventName = dataTestProvider.generateRandomEventName();
+        final var anotherEventName = dataTestProvider.generateRandomEventName();
+        final Tuple2<UserEventRequest, UserEventResponse> userEventTuple1 =
+                dataTestProvider.generateUserEventTuple(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, 1L, jimmy.getId(), jimmy.getId());
+        final var userEventRequest = dataTestProvider.generateUserEventRequest(anotherEventName, THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_6_PM, jimmy.getId());
+        final Tuple2<UserEventRequest, UserEventResponse> userEventTuple2 =
+                dataTestProvider.generateUserEventTuple(anotherEventName, THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_6_PM, 2L, jimmy.getId(), sam.getId());
+        create(userEventTuple1._1, adminToken);
+        create(userEventRequest, userToken);
+        update(userEventTuple2._1, adminToken);
         getValidation(
                 PersonnalUserEventsDef.uriWithMultiId(jimmy.getId()), userToken
         ).body(

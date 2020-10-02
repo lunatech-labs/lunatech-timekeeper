@@ -22,6 +22,7 @@ class UserEventResponseTest {
         userEvent.description = "Event description";
         userEvent.startDateTime = null;
         userEvent.owner = user;
+        userEvent.creator = user;
         var response = UserEventResponse.createFromUserEvent(userEvent);
 
         assertNull(response.getStartDateTime());
@@ -39,6 +40,7 @@ class UserEventResponseTest {
         userEvent.description = "Event description";
         userEvent.startDateTime = LocalDateTime.of(2020, 03, 16, 9, 0, 0);
         userEvent.owner = user;
+        userEvent.creator = user;
         var response = UserEventResponse.createFromUserEvent(userEvent);
 
         assertEquals("2020-03-16T09:00:00", response.getStartDateTime());
@@ -56,6 +58,7 @@ class UserEventResponseTest {
         userEvent.description = "Event description";
         userEvent.endDateTime = null;
         userEvent.owner = user;
+        userEvent.creator = user;
         var response = UserEventResponse.createFromUserEvent(userEvent);
 
         assertNull(response.getEndDateTime());
@@ -73,6 +76,7 @@ class UserEventResponseTest {
         userEvent.description = "Event description";
         userEvent.endDateTime = LocalDateTime.of(2020, 03, 16, 17, 0, 0);
         userEvent.owner = user;
+        userEvent.creator = user;
         var response = UserEventResponse.createFromUserEvent(userEvent);
 
         assertEquals("2020-03-16T17:00:00", response.getEndDateTime());
@@ -91,6 +95,7 @@ class UserEventResponseTest {
         userEvent.startDateTime = LocalDateTime.of(2020, 03, 16, 9, 0, 0);
         userEvent.endDateTime = LocalDateTime.of(2020, 03, 16, 17, 0, 0);
         userEvent.owner = user;
+        userEvent.creator = user;
         var response = UserEventResponse.createFromUserEvent(userEvent);
 
         assertEquals("2020-03-16T09:00:00", response.getStartDateTime());
@@ -110,6 +115,7 @@ class UserEventResponseTest {
         userEvent.description = "Event description";
         userEvent.eventType = EventType.COMPANY;
         userEvent.owner = user;
+        userEvent.creator = user;
         var response = UserEventResponse.createFromUserEvent(userEvent);
 
         assertEquals("COMPANY", response.getEventType());
@@ -125,6 +131,7 @@ class UserEventResponseTest {
         userEvent.description = "Event description";
         userEvent.eventType = EventType.PERSONAL;
         userEvent.owner = user;
+        userEvent.creator = user;
         var response = UserEventResponse.createFromUserEvent(userEvent);
 
         assertEquals("PERSONAL", response.getEventType());
@@ -141,6 +148,7 @@ class UserEventResponseTest {
         userEvent.startDateTime = LocalDateTime.of(2020, 03, 16, 9, 0, 0);
         userEvent.endDateTime = LocalDateTime.of(2020, 03, 17, 17, 0, 0);
         userEvent.owner = user;
+        userEvent.creator = user;
         var response = UserEventResponse.createFromUserEvent(userEvent);
 
         assertEquals("2020-03-16T09:00:00", response.getStartDateTime());
@@ -161,6 +169,7 @@ class UserEventResponseTest {
         userEvent.startDateTime = LocalDateTime.of(2020, 3, 16, 9, 0, 0);
         userEvent.endDateTime = LocalDateTime.of(2020, 3, 18, 17, 0, 0);
         userEvent.owner = user;
+        userEvent.creator = user;
         var response = UserEventResponse.createFromUserEvent(userEvent);
 
         assertEquals("2020-03-16T09:00:00", response.getStartDateTime());
@@ -181,6 +190,7 @@ class UserEventResponseTest {
         userEvent.startDateTime = LocalDateTime.of(2020, 10, 16, 9, 0, 0);
         userEvent.endDateTime = LocalDateTime.of(2019, 3, 18, 0, 0, 0);
         userEvent.owner = user;
+        userEvent.creator = user;
         assertThrows(IllegalArgumentException.class, () -> UserEventResponse.createFromUserEvent(userEvent));
     }
 }
