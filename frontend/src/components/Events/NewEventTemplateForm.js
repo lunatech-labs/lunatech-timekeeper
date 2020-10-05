@@ -149,7 +149,6 @@ const NewEventTemplateForm = ({eventType, ...rest}) => {
         {() => {
           switch (currentEventType) {
             case 'PERSONAL':
-              // setCurrentEventType("PERSONAL")
               return (
                   <Form.Item
                       name="name"
@@ -162,7 +161,6 @@ const NewEventTemplateForm = ({eventType, ...rest}) => {
                   </Form.Item>
               );
             case 'COMPANY':
-              // setCurrentEventType("COMPANY")
               return (
                   <Form.Item
                       name="name"
@@ -242,7 +240,7 @@ const NewEventTemplateForm = ({eventType, ...rest}) => {
           id="tk_Form"
           layout="vertical"
           initialValues={initialValues}
-          onFinish={(form.eventType === 'COMPANY') ? apiCallCompanyEventPOST.run : apiCallUserEventPOST.run}
+          onFinish={(currentEventType === 'COMPANY') ? apiCallCompanyEventPOST.run : apiCallUserEventPOST.run}
           form={form}
         >
           {apiCallCompanyEventPOST.error &&
