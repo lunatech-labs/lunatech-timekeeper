@@ -44,6 +44,10 @@ const EventsList = ({endPoint}) => {
 
   const onSearch = searchText => setSearchValue(searchText);
 
+  const isUserEvent = (endPoint) => {
+    return endPoint !== '/api/events-template' && endPoint !== '/api/user-events';
+  };
+
   if (eventsResponse.loading) {
     return (
       <React.Fragment>
@@ -103,14 +107,15 @@ const EventsList = ({endPoint}) => {
     );
   };
 
-  const dropdownCardAction = (item, isAdmin) => (
+  const dropdownCardAction = (item, isAdmin, userEvent) => (
     <Menu>
       {isAdmin &&
       <Menu.Item key="edit">
-        <a href={`/events/${item.id}/edit`}><EditFilled/>Edit</a>
+        {/*The edition link is disabled for userevents cards*/}
+        { userEvent ? <a href='#' className='tk_Link_Disabled'><EditFilled/>Edit</a> : <a href={`/events/${item.id}/edit`}><EditFilled/>Edit</a>}
       </Menu.Item>}
       <Menu.Item key="copy">
-        <a href={'#'}><CopyOutlined/>Copy</a>
+        <a href={'#'} className='tk_Link_Disabled'><CopyOutlined/>Copy</a>
       </Menu.Item>
     </Menu>
   );
@@ -184,7 +189,7 @@ const EventsList = ({endPoint}) => {
               bordered={false}
               title={item.name}
               extra={[
-                <Dropdown key={`ant-dropdown-${item.id}`} overlay={dropdownCardAction(item, isAdmin)}>
+                <Dropdown key={`ant-dropdown-${item.id}`} overlay={dropdownCardAction(item, isAdmin, isUserEvent(endPoint))}>
                   <a className="ant-dropdown-link" onClick={e => e.preventDefault()}><EllipsisOutlined/></a>
                 </Dropdown>,
               ]}

@@ -22,7 +22,7 @@ import NewEventTemplateForm from '../../components/Events/NewEventTemplateForm';
 const NewEventTemplatePage = () => {
   return (
     <MainPage title="Create new event">
-      <NewEventTemplateForm eventType={"COMPANY"}/>
+      <NewEventTemplateForm eventType={'COMPANY'}/>
     </MainPage>
   );
 };
