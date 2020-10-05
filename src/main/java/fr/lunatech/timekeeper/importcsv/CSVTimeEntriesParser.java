@@ -17,39 +17,25 @@
 package fr.lunatech.timekeeper.importcsv;
 
 
-<<<<<<< Updated upstream
-import fr.lunatech.timekeeper.models.Client;
-import fr.lunatech.timekeeper.models.Organization;
-import fr.lunatech.timekeeper.models.Project;
-import io.smallrye.mutiny.tuples.Tuple2;
-import io.smallrye.mutiny.tuples.Tuple3;
-=======
 import com.google.common.collect.Lists;
 import fr.lunatech.timekeeper.models.*;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
-import io.smallrye.mutiny.tuples.Tuple4;
 import io.smallrye.mutiny.tuples.Tuple2;
->>>>>>> Stashed changes
+import io.smallrye.mutiny.tuples.Tuple4;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.transaction.Transactional;
-<<<<<<< Updated upstream
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-=======
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
->>>>>>> Stashed changes
 import java.util.stream.Collectors;
 
 @Singleton
@@ -59,47 +45,30 @@ public class CSVTimeEntriesParser {
     private static Logger logger = LoggerFactory.getLogger(CSVTimeEntriesParser.class);
 
     public String importEntries(List<ImportedTimeEntry> entries) {
-<<<<<<< Updated upstream
-        var clients = entries.stream().map(ImportedTimeEntry::getClient).distinct().collect(Collectors.toList());
-        updateOrCreateClients(clients);
-
-=======
         // Step 1 : Client
         var clients = entries.stream().map(ImportedTimeEntry::getClient).distinct().collect(Collectors.toList());
         updateOrCreateClients(clients);
 
         // Step 2 : Projects for each Client
->>>>>>> Stashed changes
         var projects = entries
                 .stream()
                 .map(entry -> Tuple2.of(entry.getProject(), entry.getClient()))
                 .distinct()
                 .collect(Collectors.toMap(Tuple2::getItem1, Tuple2::getItem2));
-<<<<<<< Updated upstream
-        updateOrCreateProjects(projects);
-
-        var members = entries
-                .stream()
-                .map(entry -> Tuple3.of(entry.getEmail(), entry.getProject(), entry.getClient()))
-=======
 
         updateOrCreateProjects(projects);
 
         // Step 3 : members of each Project
         var members = entries
                 .stream()
-                .map(entry -> Tuple4.of(entry.getEmail(),entry.getUser(), entry.getProject(), entry.getClient()))
->>>>>>> Stashed changes
+                .map(entry -> Tuple4.of(entry.getEmail(), entry.getUser(), entry.getProject(), entry.getClient()))
                 .collect(Collectors.toList());
 
         checkUserMembership(members);
 
-<<<<<<< Updated upstream
-=======
         // Step 4 : time Entry
         inserOrUpdateTimeEntries(entries);
 
->>>>>>> Stashed changes
         if (logger.isDebugEnabled()) {
             logger.debug(String.format("Total number of entries: %d", entries.size()));
             logger.debug(String.format("Number of clients: %d", clients.size()));
@@ -162,17 +131,10 @@ public class CSVTimeEntriesParser {
     }
 
     @Transactional
-<<<<<<< Updated upstream
-    protected void checkUserMembership(List<Tuple3<String, String, String>> userEmailAndProjectName) {
-        Organization defaultOrganization = Organization.findById(1L); // NOSONAR
-
-        userEmailAndProjectName.stream().forEach(entry -> {
-            logger.debug("userEmail:" + entry.getItem1() + " project:" + entry.getItem2() + " client:" + entry.getItem3());
-        });
-    }
-=======
     protected void checkUserMembership(List<Tuple4<String, String, String, String>> userEmailAndProjectName) {
         Organization defaultOrganization = Organization.findById(1L); // NOSONAR
+
+        // TODO il faut que je fasse l'update lorsque la Timeentry existe déjà...
 
         userEmailAndProjectName.stream().forEach(entry -> {
 
@@ -235,7 +197,6 @@ public class CSVTimeEntriesParser {
         return email.trim().toLowerCase();
     }
 
-
     @Transactional
     protected void inserOrUpdateTimeEntries(List<ImportedTimeEntry> timeEntries) {
         timeEntries.stream().forEach(importedTimeEntry -> {
@@ -244,13 +205,13 @@ public class CSVTimeEntriesParser {
             String clientName = importedTimeEntry.getClient();
             String userEmail = importedTimeEntry.getEmail();
 
-            if(projectName.isBlank()){
+            if (projectName.isBlank()) {
                 logger.error("Cannot create a TimeEntry cause project is empty");
                 logger.error("importedTimeEntry =>" + importedTimeEntry);
                 return;
             }
 
-            logger.debug("--> project="+projectName+" client="+clientName+" user="+userEmail);
+            logger.debug("--> project=" + projectName + " client=" + clientName + " user=" + userEmail);
 
             Optional<Project> maybeProject = Project.find("name", projectName).firstResultOptional();
 
@@ -259,9 +220,9 @@ public class CSVTimeEntriesParser {
                     Optional<User> maybeUser = User.find("email", userEmail).firstResultOptional();
                     if (maybeUser.isPresent()) {
 
-                        Optional<TimeSheet> maybeTimeSheet = TimeSheet.find("user_id=? and project_id=?",maybeUser.get().id,maybeProject.get().id).firstResultOptional();
+                        Optional<TimeSheet> maybeTimeSheet = TimeSheet.find("user_id=?1 and project_id=?2", maybeUser.get().id, maybeProject.get().id).firstResultOptional();
 
-                        if(maybeTimeSheet.isEmpty()) {
+                        if (maybeTimeSheet.isEmpty()) {
                             logger.warn("Create a TimeSheet for user=" + userEmail + " and project=" + projectName);
                             TimeSheet ts = new TimeSheet();
                             ts.owner = maybeUser.get();
@@ -280,11 +241,24 @@ public class CSVTimeEntriesParser {
                         }
 
                         TimeEntry timeEntry = new TimeEntry();
-                        timeEntry.timeSheet=maybeTimeSheet.get();
+                        timeEntry.timeSheet = maybeTimeSheet.get();
                         timeEntry.comment = importedTimeEntry.getDescription();
+                        if(timeEntry.comment==null || timeEntry.comment.isBlank()){
+                            timeEntry.comment = "Worked on project " + StringUtils.abbreviate(maybeProject.get().name,50);
+                        }
                         timeEntry.startDateTime = parseToLocalDateTime(importedTimeEntry.getStartDate(), importedTimeEntry.getStartTime());
                         timeEntry.endDateTime = parseToLocalDateTime(importedTimeEntry.getEnddDate(), importedTimeEntry.getEndTime());
-                        timeEntry.persistAndFlush();
+                        if(timeEntry.getRoundedNumberOfHours()==0){
+                            logger.warn("--- Fixed a timeEntry to 1h min");
+                            timeEntry.endDateTime = timeEntry.startDateTime.plusHours(1);
+                        }
+                        try {
+                            timeEntry.persistAndFlush();
+                        }catch (javax.persistence.PersistenceException e){
+                            logger.error("Cannot persist a timeEntry");
+                            logger.error("TimeEntry=" + timeEntry);
+                            logger.error(e.getMessage());
+                        }
 
                     } else {
                         logger.warn("User " + userEmail + " not found");
@@ -295,24 +269,22 @@ public class CSVTimeEntriesParser {
             } else {
                 logger.warn("Project not found name=[" + projectName + "]");
             }
-            System.out.println("Found maybeProject " + maybeProject);
         });
     }
 
-      protected LocalDateTime parseToLocalDateTime(String date, String time){
-        if(date==null || date.isBlank()) {
+    protected LocalDateTime parseToLocalDateTime(String date, String time) {
+        if (date == null || date.isBlank()) {
             throw new IllegalArgumentException("Cannot parse a null date");
         }
-        if(time==null || time.isBlank()) {
+        if (time == null || time.isBlank()) {
             throw new IllegalArgumentException("Cannot parse a null time");
         }
-        LocalDate dateUpdated = LocalDate.parse(date,DateTimeFormatter.ISO_LOCAL_DATE);
+        LocalDate dateUpdated = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
 
-        LocalTime timeUpdated = LocalTime.parse ( time );
+        LocalTime timeUpdated = LocalTime.parse(time);
 
         LocalDateTime localDateTime = LocalDateTime.of(dateUpdated, timeUpdated);
         return localDateTime;
     }
 
->>>>>>> Stashed changes
 }
