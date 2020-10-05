@@ -26,7 +26,7 @@ import UserTreeData from './UserTreeData';
 import _ from 'lodash';
 import 'moment/locale/en-gb';
 import {UserContext} from '../../context/UserContext';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
 const {TextArea} = Input;
 const { RangePicker } = DatePicker;
@@ -38,7 +38,7 @@ const NewEventTemplateForm = ({eventType, ...rest}) => {
   const {currentUser} = useContext(UserContext);
   const [eventTemplateCreated, setEventTemplateCreated] = useState(false);
   const [usersSelected, setUsersSelected] = useState([]);
-  const [currentEventType, setCurrentEventType] = useState(eventType)
+  const [currentEventType, setCurrentEventType] = useState(eventType);
 
   const companyEventFormData = (formData) => ({
     name: formData.name,
@@ -140,35 +140,35 @@ const NewEventTemplateForm = ({eventType, ...rest}) => {
 
       <Form.Item shouldUpdate={(prevValues, curValues) =>
       {
-        const out = prevValues.eventType !== curValues.eventType || prevValues.eventName !== curValues.eventName
+        const out = prevValues.eventType !== curValues.eventType || prevValues.eventName !== curValues.eventName;
         if(out === true) {
-          setCurrentEventType(curValues.eventType)
+          setCurrentEventType(curValues.eventType);
         }
-        return out
+        return out;
       }}>
         {() => {
           switch (currentEventType) {
             case 'PERSONAL':
               return (
-                  <Form.Item
-                      name="name"
-                      label="Events"
-                      rules={[{required: true}]}
-                  >
-                    <Select>{USER_EVENTS.map(i =>
-                        <Option key={`option-event-${i}`} value={i}>{i}</Option>)}
-                    </Select>
-                  </Form.Item>
+                <Form.Item
+                  name="name"
+                  label="Events"
+                  rules={[{required: true}]}
+                >
+                  <Select>{USER_EVENTS.map(i =>
+                    <Option key={`option-event-${i}`} value={i}>{i}</Option>)}
+                  </Select>
+                </Form.Item>
               );
             case 'COMPANY':
               return (
-                  <Form.Item
-                      name="name"
-                      label="Events"
-                      rules={[{required: true}]}
-                  >
-                    <Input placeholder="Please enter event's name" type="text"/>
-                  </Form.Item>
+                <Form.Item
+                  name="name"
+                  label="Events"
+                  rules={[{required: true}]}
+                >
+                  <Input placeholder="Please enter event's name" type="text"/>
+                </Form.Item>
               );
             default:
               return (<div></div>);
@@ -177,73 +177,73 @@ const NewEventTemplateForm = ({eventType, ...rest}) => {
       </Form.Item>
 
       <Form.Item
-          label="Description :"
-          name="description"
+        label="Description :"
+        name="description"
       >
         <TextArea
-            rows={4}
-            placeholder="A short description about this event"
+          rows={4}
+          placeholder="A short description about this event"
         />
       </Form.Item>
 
       <Form.Item
-          label="Date and duration"
-          name="eventDateTime"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
+        label="Date and duration"
+        name="eventDateTime"
+        rules={[
+          {
+            required: true,
+          },
+        ]}
       >
 
         <RangePicker
-            disabledDate={disabledDate}
-            disabledTime={disabledTime}
-            showTime={{
-              hideDisabledOptions: true
-            }}
-            format="DD-MM-YYYY HH:mm"
-            className="tk_RangePicker"
+          disabledDate={disabledDate}
+          disabledTime={disabledTime}
+          showTime={{
+            hideDisabledOptions: true
+          }}
+          format="DD-MM-YYYY HH:mm"
+          className="tk_RangePicker"
         />
       </Form.Item>
     </Col>);
-  }
+  };
 
   const userColumn = () => {
     return (<Col className="gutter-row" span={12}>
       <TitleSection title="Users"/>
       <Form.Item
-          label="Select users :"
-          name="usersSelected"
+        label="Select users :"
+        name="usersSelected"
       >
         <UserTreeData users={sortListByName(usersResponse.data)} usersSelected={usersSelected} setUsersSelected={setUsersSelected}/>
       </Form.Item>
     </Col>);
-  }
+  };
 
   const renderColumns = () => {
-    if(currentEventType === "COMPANY") {
+    if(currentEventType === 'COMPANY') {
       return (
-          <React.Fragment>
-            {eventColumn()}
-            {userColumn()}
-          </React.Fragment>
-      )
+        <React.Fragment>
+          {eventColumn()}
+          {userColumn()}
+        </React.Fragment>
+      );
     } else {
-      return eventColumn()
+      return eventColumn();
     }
-  }
+  };
 
   if(eventsResponse.data && usersResponse.data){
-      return (
-        <Form
-          id="tk_Form"
-          layout="vertical"
-          initialValues={initialValues}
-          onFinish={(currentEventType === 'COMPANY') ? apiCallCompanyEventPOST.run : apiCallUserEventPOST.run}
-          form={form}
-        >
-          {apiCallCompanyEventPOST.error &&
+    return (
+      <Form
+        id="tk_Form"
+        layout="vertical"
+        initialValues={initialValues}
+        onFinish={(currentEventType === 'COMPANY') ? apiCallCompanyEventPOST.run : apiCallUserEventPOST.run}
+        form={form}
+      >
+        {apiCallCompanyEventPOST.error &&
             <Alert
               message="Unable to save the new Event"
               description={apiCallCompanyEventPOST.error.data.message}
@@ -251,18 +251,18 @@ const NewEventTemplateForm = ({eventType, ...rest}) => {
               closable
               style={{marginBottom: 10}}
             />}
-          <div className="tk_CardLg">
-            <Row gutter={16}>
-              {renderColumns()}
-            </Row>
+        <div className="tk_CardLg">
+          <Row gutter={16}>
+            {renderColumns()}
+          </Row>
 
-            <Space className="tk_JcFe" size="middle" align="center">
-              <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={'/events'}>Cancel</Link>
-              <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Submit</Button>
-            </Space>
-          </div>
-        </Form>
-      );
+          <Space className="tk_JcFe" size="middle" align="center">
+            <Link id="tk_Btn" className="tk_BtnSecondary" key="cancelLink" to={'/events'}>Cancel</Link>
+            <Button id="tk_Btn" className="tk_BtnPrimary" htmlType="submit">Submit</Button>
+          </Space>
+        </div>
+      </Form>
+    );
   }
 
   if (eventsResponse.loading || usersResponse.loading) {
