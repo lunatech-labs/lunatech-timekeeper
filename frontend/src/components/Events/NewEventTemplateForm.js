@@ -34,7 +34,7 @@ const {Option} = Select;
 
 const USER_EVENTS = ['Vacations', 'Sickness', 'Maternity/Paternity leave', 'Family event'];
 
-const NewEventTemplateForm = ({eventType, ...rest}) => {
+const NewEventTemplateForm = ({eventType}) => {
   const {currentUser} = useContext(UserContext);
   const [eventTemplateCreated, setEventTemplateCreated] = useState(false);
   const [usersSelected, setUsersSelected] = useState([]);
