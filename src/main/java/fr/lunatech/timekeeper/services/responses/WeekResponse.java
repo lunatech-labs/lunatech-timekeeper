@@ -17,10 +17,12 @@
 package fr.lunatech.timekeeper.services.responses;
 
 import fr.lunatech.timekeeper.models.time.TimeSheet;
+import fr.lunatech.timekeeper.services.WeekService;
 import fr.lunatech.timekeeper.timeutils.PublicHoliday;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 import fr.lunatech.timekeeper.timeutils.Week;
 
+import javax.inject.Inject;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -29,6 +31,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public final class WeekResponse {
+
+    @Inject WeekService weekService;
 
     private final LocalDate firstDayOfWeek;
 
@@ -85,5 +89,9 @@ public final class WeekResponse {
 
     public List<PublicHoliday> getPublicHolidays() {
         return Collections.unmodifiableList(publicHolidays);
+    }
+
+    public Boolean hasCompletedHours(Long userId, LocalDate date){
+        return weekService.getWorkingHoursForASpecificDay(date, userId, getSheets(), getUserEvents()) > 8;
     }
 }

@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.ToIntFunction;
@@ -142,7 +143,13 @@ public class UserEventService {
         return maybeOneEvent.isEmpty();
     }
 
-    public List<UserEventResponse> listAllEventUser(AuthenticationContext context) { //NOSONAR
+    /**
+     * Returns a list of all userEvents
+     * 
+     * @param context use to filter events by organization
+     * @return the list of userEvents
+     */
+    public List<UserEventResponse> listAllEventUser(AuthenticationContext context){ //NOSONAR
         try (final Stream<UserEvent> userEvent = UserEvent.streamAll()) { //NOSONAR
             return userEvent.map(UserEventResponse::bind).collect(Collectors.toList());//NOSONAR
         }

@@ -20,10 +20,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.IsoFields;
-import java.time.temporal.TemporalAdjusters;
-import java.time.temporal.TemporalField;
-import java.time.temporal.WeekFields;
+import java.time.temporal.*;
 import java.util.function.Predicate;
 
 /**
@@ -117,12 +114,30 @@ public class TimeKeeperDateUtils {
     }
 
     /**
+     * Returns a LocalDate from an ISO_LOCAL_DATE String
+     * @param dateString
+     * @return a localDate
+     */
+    public static LocalDate formatToLocalDate(final String dateString){
+        return LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE);
+    }
+
+    /**
      * Returns a formatted DateTime as ISO LOCAL DATE_TIME
      * @param dateTime
-     * @return
+     * @return a String
      */
     public static String formatToString(final LocalDateTime dateTime) {
         return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(dateTime);
+    }
+
+    /**
+     * Returns a LocalDateTime from an ISO_LOCAL_DATE_TIME String
+     * @param dateString
+     * @return a localDateTime
+     */
+    public static LocalDateTime formatToLocalDateTime(final String dateString){
+        return LocalDateTime.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
     /**
@@ -142,4 +157,16 @@ public class TimeKeeperDateUtils {
         return inputDate -> inputDate.isAfter(firstDayOfFirstWeek.minusDays(1)) && inputDate.isBefore(lastDayOfLastWeek.plusDays(1));
     }
 
+    /**
+     * Returns the number of minutes between two LocalDateTime
+     * @param start
+     * @param end
+     * @return a long that represents the number of minutes between the two dates
+     */
+    public static Long getDuration(LocalDateTime start, LocalDateTime end, ChronoUnit unit){
+        if(start.isAfter(end)){
+            throw new IllegalArgumentException("EndDateTime must be after startDateTime");
+        }
+        return start.until(end, unit);
+    }
 }
