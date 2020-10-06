@@ -22,6 +22,8 @@ import org.junit.jupiter.api.Test;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -429,5 +431,210 @@ class TimeKeeperDateUtilsTest {
         assertEquals(
                 LocalDate.of(2020,6,11),
                 TimeKeeperDateUtils.formatToLocalDate(date));
+    }
+
+    @Test
+    void shouldCompute0Hours() {
+        assertEquals(0L,
+                TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
+                        LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS)
+                )
+        );
+    }
+
+    @Test
+    void shouldCompute3BusinessHours() {
+        assertEquals(3L,
+                TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
+                        LocalDate.of(2020, 6, 17).atTime(12, 0).truncatedTo(ChronoUnit.HOURS)
+                )
+        );
+    }
+
+    @Test
+    void shouldCompute8BusinessHours() {
+        assertEquals(8L,
+                TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
+                        LocalDate.of(2020, 6, 17).atTime(17, 0).truncatedTo(ChronoUnit.HOURS)
+                )
+        );
+    }
+
+    @Test
+    void shouldCompute12BusinessHours() {
+        assertEquals(12L,
+                TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
+                        LocalDate.of(2020, 6, 18).atTime(13, 0).truncatedTo(ChronoUnit.HOURS)
+                )
+        );
+    }
+
+    @Test
+    void shouldCompute16BusinessHours() {
+        assertEquals(16L,
+                TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
+                        LocalDate.of(2020, 6, 18).atTime(17, 0).truncatedTo(ChronoUnit.HOURS)
+                )
+        );
+    }
+
+    @Test
+    void shouldCompute40BusinessHours() {
+        assertEquals(40L,
+                TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 15).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
+                        LocalDate.of(2020, 6, 19).atTime(17, 0).truncatedTo(ChronoUnit.HOURS)
+                )
+        );
+    }
+
+    @Test
+    void shouldCompute5BusinessDaysIgnoringWeekends() {
+        assertEquals(40L,
+                TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
+                        LocalDate.of(2020, 6, 23).atTime(17, 0).truncatedTo(ChronoUnit.HOURS)
+                )
+        );
+    }
+
+    @Test
+    void shouldCompute5LongBusinessDaysIgnoringWeekends() {
+        final LocalTime START_OF_DAY = LocalTime.parse("09:00:00",
+                DateTimeFormatter.ISO_TIME);
+
+        final LocalTime END_OF_DAY = LocalTime.parse("18:00:00",
+                DateTimeFormatter.ISO_TIME);
+
+        assertEquals(45L,
+                TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
+                        LocalDate.of(2020, 6, 23).atTime(18, 0).truncatedTo(ChronoUnit.HOURS),
+                        START_OF_DAY,
+                        END_OF_DAY
+                )
+        );
+    }
+
+    @Test
+    void shouldIgnoreBastilleDay() {
+        final LocalTime START_OF_DAY = LocalTime.parse("09:00:00",
+                DateTimeFormatter.ISO_TIME);
+
+        final LocalTime END_OF_DAY = LocalTime.parse("17:00:00",
+                DateTimeFormatter.ISO_TIME);
+
+        assertEquals(0L, TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 7, 14).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
+                LocalDate.of(2020, 7, 14).atTime(17, 0).truncatedTo(ChronoUnit.HOURS))
+        );
+    }
+
+    @Test
+    void shouldCompute3BusinessDaysIgnoringBastilleDay() {
+        assertEquals(16L, TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 7, 13).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
+                LocalDate.of(2020, 7, 15).atTime(17, 0).truncatedTo(ChronoUnit.HOURS)
+                )
+        );
+    }
+
+    @Test
+    void shouldCompute5BusinessDaysIgnoringWeekendsAndBastilleDay() {
+        assertEquals(40L, TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 7, 10).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
+                LocalDate.of(2020, 7, 17).atTime(17, 0).truncatedTo(ChronoUnit.HOURS))
+        );
+    }
+
+    @Test
+    void shouldComputeTwo3HoursDays() {
+        final LocalTime START_OF_DAY = LocalTime.parse("09:00:00",
+                DateTimeFormatter.ISO_TIME);
+
+        final LocalTime END_OF_DAY = LocalTime.parse("12:00:00",
+                DateTimeFormatter.ISO_TIME);
+
+        assertEquals(6L, TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
+                LocalDate.of(2020, 6, 18).atTime(12, 0).truncatedTo(ChronoUnit.HOURS),
+                START_OF_DAY,
+                END_OF_DAY)
+        );
+    }
+
+    @Test
+    void shouldNotComputeTwo3HoursDaysEndOfDay() {
+        final LocalTime START_OF_DAY = LocalTime.parse("09:00:00",
+                DateTimeFormatter.ISO_TIME);
+
+        final LocalTime END_OF_DAY = LocalTime.parse("12:00:00",
+                DateTimeFormatter.ISO_TIME);
+
+        assertNull(TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
+                LocalDate.of(2020, 6, 18).atTime(18, 0).truncatedTo(ChronoUnit.HOURS),
+                START_OF_DAY,
+                END_OF_DAY)
+        );
+    }
+
+    @Test
+    void shouldNotComputeTwo3HoursDaysBeginningOfDay() {
+        final LocalTime START_OF_DAY = LocalTime.parse("09:00:00",
+                DateTimeFormatter.ISO_TIME);
+
+        final LocalTime END_OF_DAY = LocalTime.parse("12:00:00",
+                DateTimeFormatter.ISO_TIME);
+
+        assertNull(TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(8, 0).truncatedTo(ChronoUnit.HOURS),
+                LocalDate.of(2020, 6, 17).atTime(12, 0).truncatedTo(ChronoUnit.HOURS),
+                START_OF_DAY,
+                END_OF_DAY)
+        );
+    }
+
+    @Test
+    void shouldComputeTwo5HoursDays() {
+        final LocalTime START_OF_DAY = LocalTime.parse("09:00:00",
+                DateTimeFormatter.ISO_TIME);
+
+        final LocalTime END_OF_DAY = LocalTime.parse("14:00:00",
+                DateTimeFormatter.ISO_TIME);
+
+        assertEquals(10L, TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
+                LocalDate.of(2020, 6, 18).atTime(14, 0).truncatedTo(ChronoUnit.HOURS),
+                START_OF_DAY,
+                END_OF_DAY)
+        );
+    }
+
+    @Test
+    void shouldNotComputeTwo5HoursDaysEndOfDay() {
+        final LocalTime START_OF_DAY = LocalTime.parse("09:00:00",
+                DateTimeFormatter.ISO_TIME);
+
+        final LocalTime END_OF_DAY = LocalTime.parse("14:00:00",
+                DateTimeFormatter.ISO_TIME);
+
+        assertNull(TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
+                LocalDate.of(2020, 6, 18).atTime(18, 0).truncatedTo(ChronoUnit.HOURS),
+                START_OF_DAY,
+                END_OF_DAY)
+        );
+    }
+
+    @Test
+    void shouldNotComputeTwo5HoursDaysBeginningOfDay() {
+        final LocalTime START_OF_DAY = LocalTime.parse("09:00:00",
+                DateTimeFormatter.ISO_TIME);
+
+        final LocalTime END_OF_DAY = LocalTime.parse("14:00:00",
+                DateTimeFormatter.ISO_TIME);
+
+        assertNull(TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(8, 0).truncatedTo(ChronoUnit.HOURS),
+                LocalDate.of(2020, 6, 17).atTime(12, 0).truncatedTo(ChronoUnit.HOURS),
+                START_OF_DAY,
+                END_OF_DAY)
+        );
+    }
+
+    @Test
+    void shouldNotComputeHourseBridgingAWeekends() {
+        assertEquals(2L, TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 7, 17).atTime(16, 0).truncatedTo(ChronoUnit.HOURS),
+                LocalDate.of(2020, 7, 20).atTime(10, 0).truncatedTo(ChronoUnit.HOURS))
+        );
     }
 }

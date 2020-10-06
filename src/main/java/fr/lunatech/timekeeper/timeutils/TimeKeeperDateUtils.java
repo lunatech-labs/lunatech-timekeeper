@@ -19,14 +19,27 @@ package fr.lunatech.timekeeper.timeutils;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.*;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @author created by N.Martignole, Lunatech, on 2020-06-10.
  */
 public class TimeKeeperDateUtils {
+
+    private final static LocalTime START_OF_DAY = LocalTime.parse("09:00:00",
+            DateTimeFormatter.ISO_TIME);
+
+    private final static LocalTime END_OF_DAY = LocalTime.parse("17:00:00",
+            DateTimeFormatter.ISO_TIME);
+
+    private final static CalendarFR2020 calendar = CalendarFR2020.getInstance();
 
     private TimeKeeperDateUtils(){ }
 
@@ -168,5 +181,71 @@ public class TimeKeeperDateUtils {
             throw new IllegalArgumentException("EndDateTime must be after startDateTime");
         }
         return start.until(end, unit);
+    }
+
+    /**
+     * todo
+     * @param start
+     * @param end
+     * @return
+     */
+    private static List<Integer> getBusinessDaysBetween(LocalDate start, LocalDate end) {
+        List<Integer> businessDays = calendar.getBusinessDays()
+                .stream()
+                .map(day -> day.getDayOfYear())
+                .collect(Collectors.toList());
+
+        if(start.getYear() != end.getYear()) {
+            // todo handle years beyond 2020
+            return Collections.EMPTY_LIST;
+        }
+        return IntStream.rangeClosed(start.getDayOfYear(), end.getDayOfYear())
+                .boxed() //.collect(Collectors.toList())
+                .filter(day -> businessDays.contains(day))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Compute the total number of business hours between two LocalDateTimes, assuming a start time
+     * of 09:00 and a finish time of 17:00
+     * @param startDateTime todo
+     * @param endDateTime todo
+     * @return todo
+     */
+    public static Long computeTotalNumberOfHours(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        return computeTotalNumberOfHours(startDateTime, endDateTime, START_OF_DAY, END_OF_DAY);
+    }
+
+    /**
+     * Compute the total number of business hours between two LocalDateTimes
+     * @param startDateTime todo
+     * @param endDateTime todo
+     * @param startOfDay todo
+     * @param endOfDay todo
+     * @return todo
+     */
+    public static Long computeTotalNumberOfHours(LocalDateTime startDateTime,
+            LocalDateTime endDateTime,
+            LocalTime startOfDay,
+            LocalTime endOfDay) {
+        if(startDateTime == null || endDateTime == null
+                || endDateTime.isBefore(startDateTime)
+                || startDateTime.getHour() < startOfDay.getHour() || startDateTime.getHour() > endOfDay.getHour()
+                || endDateTime.getHour() < startOfDay.getHour() || endDateTime.getHour() > endOfDay.getHour()
+        ) {
+            //todo throw exception
+            return null;
+        }
+
+        // hours from start to end of day
+        // + (days until end * hours in a day)
+        // - hours from end to end of day
+        final long hoursFromStartToEndOfDay = endOfDay.getHour() - startDateTime.toLocalTime().getHour();
+        final long days = getBusinessDaysBetween(startDateTime.toLocalDate(), endDateTime.toLocalDate()).size() - 1; //todo remove weekends and public holidays
+        final long hoursFromEndToEndOfDay = endOfDay.getHour() - endDateTime.toLocalTime().getHour();
+
+        return hoursFromStartToEndOfDay
+                + (days * (endOfDay.getHour() - startOfDay.getHour()))
+                - hoursFromEndToEndOfDay;
     }
 }
