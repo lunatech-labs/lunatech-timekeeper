@@ -18,15 +18,12 @@ package fr.lunatech.timekeeper.services;
 
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
-import fr.lunatech.timekeeper.services.responses.UserEventResponse;
 import fr.lunatech.timekeeper.services.responses.WeekResponse;
 import fr.lunatech.timekeeper.timeutils.CalendarFactory;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

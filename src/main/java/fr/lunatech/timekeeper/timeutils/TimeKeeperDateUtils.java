@@ -33,12 +33,10 @@ import java.util.stream.IntStream;
  */
 public class TimeKeeperDateUtils {
 
-    private final static int SHIFT = 1;
-
-    private final static LocalTime START_OF_DAY = LocalTime.parse("09:00:00",
+    private static final LocalTime START_OF_DAY = LocalTime.parse("09:00:00",
             DateTimeFormatter.ISO_TIME);
 
-    private final static LocalTime END_OF_DAY = LocalTime.parse("17:00:00",
+    private static final LocalTime END_OF_DAY = LocalTime.parse("17:00:00",
             DateTimeFormatter.ISO_TIME);
 
     private TimeKeeperDateUtils() {
@@ -245,9 +243,10 @@ public class TimeKeeperDateUtils {
         }
 
         final int businessDays = getBusinessDays(startDateTime.toLocalDate(), endDateTime.toLocalDate()).size();
-        final long hoursFromStartToEndOfDay = endOfDay.getHour() - startDateTime.toLocalTime().getHour();
-        final long hoursFromEndToEndOfDay = endOfDay.getHour() - endDateTime.toLocalTime().getHour();
-        return hoursFromStartToEndOfDay
+        final int hoursFromStartToEndOfDay = endOfDay.getHour() - startDateTime.toLocalTime().getHour();
+        final int hoursFromEndToEndOfDay = endOfDay.getHour() - endDateTime.toLocalTime().getHour();
+
+        return (long) hoursFromStartToEndOfDay
                 + ((businessDays - 1) * (endOfDay.getHour() - startOfDay.getHour()))
                 - hoursFromEndToEndOfDay;
     }

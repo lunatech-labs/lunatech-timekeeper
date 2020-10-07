@@ -59,7 +59,7 @@ public class CalendarFR2021 implements Calendar {
     }
 
     public List<PublicHoliday> getPublicHolidaysForWeekNumber(final Integer weekNumber) {
-        TimeKeeperDateUtils.validateWeek(weekNumber, 2020);
+        TimeKeeperDateUtils.validateWeek(weekNumber, 2021);
         return publicHolidays.stream()
                 .filter(p -> TimeKeeperDateUtils.getWeekNumberFromDate(p.date).equals(weekNumber))
                 .collect(Collectors.toList());
@@ -68,7 +68,7 @@ public class CalendarFR2021 implements Calendar {
 
     public List<PublicHoliday> getPublicHolidaysForMonthNumber(final Integer monthNumber) {
         TimeKeeperDateUtils.validateMonth(monthNumber);
-        Predicate<LocalDate> isValidDate = TimeKeeperDateUtils.isIncludedInSixWeeksFromMonth(2020, monthNumber);
+        Predicate<LocalDate> isValidDate = TimeKeeperDateUtils.isIncludedInSixWeeksFromMonth(2021, monthNumber);
         return publicHolidays.stream()
                 .filter(p -> isValidDate.test(p.date))
                 .collect(Collectors.toList());

@@ -8,6 +8,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class WeekUtils {
+
+    private WeekUtils() {}
+
     /**
      * Returns the duration of working hours for a Specific Day
      *
