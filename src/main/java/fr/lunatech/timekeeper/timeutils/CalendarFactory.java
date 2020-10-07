@@ -31,10 +31,10 @@ public class CalendarFactory {
         if (locale.equalsIgnoreCase("FR") && year == 2020) {
             return CalendarFR2020.getInstance();
         }
-        if(locale.equalsIgnoreCase("FR") && year == 2021){
+        if (locale.equalsIgnoreCase("FR") && year == 2021) {
             return CalendarFR2021.getInstance();
         }
-        if(logger.isErrorEnabled()) {
+        if (logger.isErrorEnabled()) {
             logger.error(String.format("Calendar not implemented for locale=%s and year=%d", locale, year));
         }
         throw new CalendarNotFoundException("Calendar not available for this locale and this year");
