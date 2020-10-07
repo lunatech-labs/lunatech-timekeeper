@@ -183,30 +183,30 @@ public class TimeKeeperDateUtils {
     /**
      * Returns the number of minutes between two LocalDateTime
      *
-     * @param start
-     * @param end
+     * @param from
+     * @param to
      * @return a long that represents the number of minutes between the two dates
      */
-    public static Long getDuration(LocalDateTime start, LocalDateTime end, ChronoUnit unit) {
-        if (start.isAfter(end)) {
+    public static Long getDuration(LocalDateTime from, LocalDateTime to, ChronoUnit unit) {
+        if (from.isAfter(to)) {
             throw new IllegalArgumentException("EndDateTime must be after startDateTime");
         }
-        return start.until(end, unit);
+        return from.until(to, unit);
     }
 
     /**
      * Get the business days between two LocalDate
      *
-     * @param start is a LocalDate
-     * @param end   is a LocalDate
+     * @param from is a LocalDate
+     * @param to   is a LocalDate
      * @return the business days between two LocalDate as a List of LocalDate
      */
-    private static List<LocalDate> getBusinessDaysBetween(LocalDate start, LocalDate end) {
-        return IntStream.rangeClosed(start.getYear(), end.getYear())
+    private static List<LocalDate> getBusinessDays(LocalDate from, LocalDate to) {
+        return IntStream.rangeClosed(from.getYear(), to.getYear())
                 .boxed()
                 .map(year -> CalendarFactory.instanceFor("FR", year))
                 .flatMap(calendar -> calendar.getBusinessDays().stream())
-                .filter(date -> date.isAfter(start) && date.isBefore(end) || date.equals(start) || date.equals(end))
+                .filter(date -> date.isAfter(from) && date.isBefore(to) || date.equals(from) || date.equals(to))
                 .collect(Collectors.toList());
     }
 
@@ -244,11 +244,11 @@ public class TimeKeeperDateUtils {
             throw new IllegalArgumentException("StartDateTime must be before EndDateTime and in the business hours range");
         }
 
-        final int days = getBusinessDaysBetween(startDateTime.toLocalDate(), endDateTime.toLocalDate()).size() - SHIFT;
+        final int businessDays = getBusinessDays(startDateTime.toLocalDate(), endDateTime.toLocalDate()).size();
         final long hoursFromStartToEndOfDay = endOfDay.getHour() - startDateTime.toLocalTime().getHour();
         final long hoursFromEndToEndOfDay = endOfDay.getHour() - endDateTime.toLocalTime().getHour();
         return hoursFromStartToEndOfDay
-                + (days * (endOfDay.getHour() - startOfDay.getHour()))
+                + ((businessDays - 1) * (endOfDay.getHour() - startOfDay.getHour()))
                 - hoursFromEndToEndOfDay;
     }
 }
