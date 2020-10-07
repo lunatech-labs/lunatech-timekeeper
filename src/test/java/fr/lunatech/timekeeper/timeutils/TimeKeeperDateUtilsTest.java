@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -563,12 +564,12 @@ class TimeKeeperDateUtilsTest {
 
         final LocalTime END_OF_DAY = LocalTime.parse("12:00:00",
                 DateTimeFormatter.ISO_TIME);
-
-        assertNull(TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
-                LocalDate.of(2020, 6, 18).atTime(18, 0).truncatedTo(ChronoUnit.HOURS),
-                START_OF_DAY,
-                END_OF_DAY)
-        );
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
+                    LocalDate.of(2020, 6, 18).atTime(18, 0).truncatedTo(ChronoUnit.HOURS),
+                    START_OF_DAY,
+                    END_OF_DAY);
+        });
     }
 
     @Test
@@ -578,12 +579,12 @@ class TimeKeeperDateUtilsTest {
 
         final LocalTime END_OF_DAY = LocalTime.parse("12:00:00",
                 DateTimeFormatter.ISO_TIME);
-
-        assertNull(TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(8, 0).truncatedTo(ChronoUnit.HOURS),
-                LocalDate.of(2020, 6, 17).atTime(12, 0).truncatedTo(ChronoUnit.HOURS),
-                START_OF_DAY,
-                END_OF_DAY)
-        );
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(8, 0).truncatedTo(ChronoUnit.HOURS),
+                    LocalDate.of(2020, 6, 17).atTime(12, 0).truncatedTo(ChronoUnit.HOURS),
+                    START_OF_DAY,
+                    END_OF_DAY);
+        });
     }
 
     @Test
@@ -608,12 +609,13 @@ class TimeKeeperDateUtilsTest {
 
         final LocalTime END_OF_DAY = LocalTime.parse("14:00:00",
                 DateTimeFormatter.ISO_TIME);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
+                    LocalDate.of(2020, 6, 18).atTime(18, 0).truncatedTo(ChronoUnit.HOURS),
+                    START_OF_DAY,
+                    END_OF_DAY);
+        });
 
-        assertNull(TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
-                LocalDate.of(2020, 6, 18).atTime(18, 0).truncatedTo(ChronoUnit.HOURS),
-                START_OF_DAY,
-                END_OF_DAY)
-        );
     }
 
     @Test
@@ -624,17 +626,31 @@ class TimeKeeperDateUtilsTest {
         final LocalTime END_OF_DAY = LocalTime.parse("14:00:00",
                 DateTimeFormatter.ISO_TIME);
 
-        assertNull(TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(8, 0).truncatedTo(ChronoUnit.HOURS),
-                LocalDate.of(2020, 6, 17).atTime(12, 0).truncatedTo(ChronoUnit.HOURS),
-                START_OF_DAY,
-                END_OF_DAY)
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(8, 0).truncatedTo(ChronoUnit.HOURS),
+                    LocalDate.of(2020, 6, 17).atTime(12, 0).truncatedTo(ChronoUnit.HOURS),
+                    START_OF_DAY,
+                    END_OF_DAY);
+        });
+    }
+
+    @Test
+    void shouldNotComputeHoursBridgingAWeekends() {
+        assertEquals(2L, TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 7, 17).atTime(16, 0).truncatedTo(ChronoUnit.HOURS),
+                LocalDate.of(2020, 7, 20).atTime(10, 0).truncatedTo(ChronoUnit.HOURS))
         );
     }
 
     @Test
-    void shouldNotComputeHourseBridgingAWeekends() {
-        assertEquals(2L, TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 7, 17).atTime(16, 0).truncatedTo(ChronoUnit.HOURS),
-                LocalDate.of(2020, 7, 20).atTime(10, 0).truncatedTo(ChronoUnit.HOURS))
+    void shouldReturnAnEmptyListIfTheTwoDateAreNotInTheSameYear(){
+        final LocalTime START_OF_DAY = LocalTime.parse("09:00:00",
+                DateTimeFormatter.ISO_TIME);
+
+        final LocalTime END_OF_DAY = LocalTime.parse("17:00:00",
+                DateTimeFormatter.ISO_TIME);
+
+        assertEquals(0L, TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 12, 29).atTime(16, 0).truncatedTo(ChronoUnit.HOURS),
+                LocalDate.of(2021, 1, 3).atTime(10, 0).truncatedTo(ChronoUnit.HOURS))
         );
     }
 }

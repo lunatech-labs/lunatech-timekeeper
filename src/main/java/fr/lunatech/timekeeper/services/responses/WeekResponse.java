@@ -91,7 +91,7 @@ public final class WeekResponse {
         return Collections.unmodifiableList(publicHolidays);
     }
 
-    public Boolean hasCompletedHours(Long userId, LocalDate date){
+    public Boolean hasCompletedHoursForADay(Long userId, LocalDate date){
         return weekService.getWorkingHoursForASpecificDay(date, userId, getSheets(), getUserEvents()) > 8;
     }
 }
