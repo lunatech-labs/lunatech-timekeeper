@@ -1,4 +1,4 @@
-package fr.lunatech.timekeeper.services;
+package fr.lunatech.timekeeper.timeutils;
 
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.EventType;
@@ -6,7 +6,6 @@ import fr.lunatech.timekeeper.models.time.UserEvent;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import fr.lunatech.timekeeper.services.responses.UserEventResponse;
-import fr.lunatech.timekeeper.timeutils.TimeUnit;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -16,9 +15,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class WeekServiceTest {
-
-    WeekService weekService = new WeekService();
+class WeekUtilsTest {
 
     @Test
     void getTimeEntriesDurationOfOneTimeEntryForASpecificDay() {
@@ -44,7 +41,7 @@ class WeekServiceTest {
                 null);
         assertEquals(
                 1L,
-                weekService.getTimeEntriesDurationForASpecificDay(date, user.getId(), List.of(timeSheetResponse)));
+                WeekUtils.getTimeEntriesDurationForASpecificDay(date, user.getId(), List.of(timeSheetResponse)));
     }
 
     @Test
@@ -81,7 +78,7 @@ class WeekServiceTest {
                 null);
         assertEquals(
                 7L,
-                weekService.getTimeEntriesDurationForASpecificDay(date, user.getId(), List.of(timeSheetResponse)));
+                WeekUtils.getTimeEntriesDurationForASpecificDay(date, user.getId(), List.of(timeSheetResponse)));
     }
 
     @Test
@@ -131,7 +128,7 @@ class WeekServiceTest {
                 null);
         assertEquals(
                 4L,
-                weekService.getTimeEntriesDurationForASpecificDay(date, user.getId(), List.of(timeSheetResponse, timeSheetResponse2)));
+                WeekUtils.getTimeEntriesDurationForASpecificDay(date, user.getId(), List.of(timeSheetResponse, timeSheetResponse2)));
     }
 
     @Test
@@ -168,7 +165,7 @@ class WeekServiceTest {
                 null);
         assertEquals(
                 4L,
-                weekService.getTimeEntriesDurationForASpecificDay(date, user.getId(), List.of(timeSheetResponse)));
+                WeekUtils.getTimeEntriesDurationForASpecificDay(date, user.getId(), List.of(timeSheetResponse)));
     }
 
     @Test
@@ -187,7 +184,7 @@ class WeekServiceTest {
         );
         UserEventResponse userEventResponse = UserEventResponse.bind(userEvent);
         assertEquals(8L,
-                weekService.getUserEventsDurationForASpecificDay(date, user.getId(), List.of(userEventResponse)));
+                WeekUtils.getUserEventsDurationForASpecificDay(date, user.getId(), List.of(userEventResponse)));
     }
 
     @Test
@@ -206,7 +203,7 @@ class WeekServiceTest {
         );
         UserEventResponse userEventResponse = UserEventResponse.bind(userEvent);
         assertEquals(2L,
-                weekService.getUserEventsDurationForASpecificDay(date, user.getId(), List.of(userEventResponse)));
+                WeekUtils.getUserEventsDurationForASpecificDay(date, user.getId(), List.of(userEventResponse)));
     }
 
     @Test
@@ -225,7 +222,7 @@ class WeekServiceTest {
         );
         UserEventResponse userEventResponse = UserEventResponse.bind(userEvent);
         assertEquals(8L,
-                weekService.getUserEventsDurationForASpecificDay(date, user.getId(), List.of(userEventResponse)));
+                WeekUtils.getUserEventsDurationForASpecificDay(date, user.getId(), List.of(userEventResponse)));
     }
 
     @Test
@@ -255,7 +252,7 @@ class WeekServiceTest {
         UserEventResponse userEventResponse = UserEventResponse.bind(userEvent);
         UserEventResponse userEventResponse2 = UserEventResponse.bind(userEvent2);
         assertEquals(4L,
-                weekService.getUserEventsDurationForASpecificDay(date, user.getId(), List.of(userEventResponse, userEventResponse2)));
+                WeekUtils.getUserEventsDurationForASpecificDay(date, user.getId(), List.of(userEventResponse, userEventResponse2)));
     }
 
     @Test
@@ -286,13 +283,13 @@ class WeekServiceTest {
         UserEventResponse userEventResponse = UserEventResponse.bind(userEvent);
         UserEventResponse userEventResponse2 = UserEventResponse.bind(userEvent2);
         assertEquals(2L,
-                weekService.getUserEventsDurationForASpecificDay(date, user.getId(), List.of(userEventResponse, userEventResponse2)));
+                WeekUtils.getUserEventsDurationForASpecificDay(date, user.getId(), List.of(userEventResponse, userEventResponse2)));
         assertEquals(1L,
-                weekService.getUserEventsDurationForASpecificDay(date, user2.getId(), List.of(userEventResponse, userEventResponse2)));
+                WeekUtils.getUserEventsDurationForASpecificDay(date, user2.getId(), List.of(userEventResponse, userEventResponse2)));
     }
 
     @Test
-    void shouldReturn8HoursOfTimeEntriesAndUserEvent(){
+    void shouldReturn8HoursOfTimeEntriesAndUserEvent() {
         LocalDate date = LocalDate.of(2020, 10, 6);
         User user = new User(0L, "", "", "", "");
         ProjectResponse projectResponse = new ProjectResponse(1L, "name", false, "description", null, null, true, 0L);
@@ -324,11 +321,11 @@ class WeekServiceTest {
                 List.of(timeEntry1),
                 null,
                 null);
-        assertEquals(8L, weekService.getWorkingHoursForASpecificDay(date,user.getId(),List.of(timeSheetResponse),List.of(userEventResponse)));
+        assertEquals(8L, WeekUtils.getWorkingHoursForASpecificDay(date, user.getId(), List.of(timeSheetResponse), List.of(userEventResponse)));
     }
 
     @Test
-    void shouldReturn8HoursOfTimeEntriesAndMultipleDaysUserEvent(){
+    void shouldReturn8HoursOfTimeEntriesAndMultipleDaysUserEvent() {
         LocalDate date = LocalDate.of(2020, 10, 6);
         User user = new User(0L, "", "", "", "");
         ProjectResponse projectResponse = new ProjectResponse(1L, "name", false, "description", null, null, true, 0L);
@@ -360,11 +357,11 @@ class WeekServiceTest {
                 List.of(timeEntry1),
                 null,
                 null);
-        assertEquals(8L, weekService.getWorkingHoursForASpecificDay(date,user.getId(),List.of(timeSheetResponse),List.of(userEventResponse)));
+        assertEquals(8L, WeekUtils.getWorkingHoursForASpecificDay(date, user.getId(), List.of(timeSheetResponse), List.of(userEventResponse)));
     }
 
     @Test
-    void shouldReturn8HoursOfMultipleTimeEntriesForMultipleUsersAndMultipleDaysUserEvent(){
+    void shouldReturn8HoursOfMultipleTimeEntriesForMultipleUsersAndMultipleDaysUserEvent() {
         LocalDate date = LocalDate.of(2020, 10, 6);
         User user = new User(0L, "", "", "", "");
         User user2 = new User(6L, "", "", "", "");
@@ -425,12 +422,12 @@ class WeekServiceTest {
                 List.of(timeEntry2),
                 null,
                 null);
-        assertEquals(8L, weekService.getWorkingHoursForASpecificDay(date,user.getId(),List.of(timeSheetResponse, timeSheetResponse2),List.of(userEventResponse, userEventResponse2)));
-        assertEquals(6L, weekService.getWorkingHoursForASpecificDay(date,user2.getId(),List.of(timeSheetResponse, timeSheetResponse2),List.of(userEventResponse, userEventResponse2)));
+        assertEquals(8L, WeekUtils.getWorkingHoursForASpecificDay(date, user.getId(), List.of(timeSheetResponse, timeSheetResponse2), List.of(userEventResponse, userEventResponse2)));
+        assertEquals(6L, WeekUtils.getWorkingHoursForASpecificDay(date, user2.getId(), List.of(timeSheetResponse, timeSheetResponse2), List.of(userEventResponse, userEventResponse2)));
     }
 
     @Test
-    void shouldReturn4HoursOfTimeEntriesAndNoUserEvent(){
+    void shouldReturn4HoursOfTimeEntriesAndNoUserEvent() {
         LocalDate date = LocalDate.of(2020, 10, 6);
         User user = new User(0L, "", "", "", "");
         ProjectResponse projectResponse = new ProjectResponse(1L, "name", false, "description", null, null, true, 0L);
@@ -451,11 +448,11 @@ class WeekServiceTest {
                 List.of(timeEntry1),
                 null,
                 null);
-        assertEquals(4L, weekService.getWorkingHoursForASpecificDay(date,user.getId(),List.of(timeSheetResponse), Collections.emptyList()));
+        assertEquals(4L, WeekUtils.getWorkingHoursForASpecificDay(date, user.getId(), List.of(timeSheetResponse), Collections.emptyList()));
     }
 
     @Test
-    void shouldReturn4HoursOfUserEventAndNoTimeEntry(){
+    void shouldReturn4HoursOfUserEventAndNoTimeEntry() {
         LocalDate date = LocalDate.of(2020, 10, 6);
         User user = new User(0L, "", "", "", "");
         ProjectResponse projectResponse = new ProjectResponse(1L, "name", false, "description", null, null, true, 0L);
@@ -470,6 +467,6 @@ class WeekServiceTest {
                 user
         );
         UserEventResponse userEventResponse = UserEventResponse.bind(userEvent);
-        assertEquals(4L, weekService.getWorkingHoursForASpecificDay(date,user.getId(),Collections.emptyList(),List.of(userEventResponse)));
+        assertEquals(4L, WeekUtils.getWorkingHoursForASpecificDay(date, user.getId(), Collections.emptyList(), List.of(userEventResponse)));
     }
 }

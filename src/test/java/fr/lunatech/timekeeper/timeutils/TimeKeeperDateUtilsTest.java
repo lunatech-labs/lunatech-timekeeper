@@ -16,6 +16,7 @@
 
 package fr.lunatech.timekeeper.timeutils;
 
+import fr.lunatech.timekeeper.services.exceptions.CalendarNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +26,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -335,102 +335,102 @@ class TimeKeeperDateUtilsTest {
     }
 
     @Test
-    void shouldReturnTheRightStringForLLocalDateTime(){
-        LocalDateTime dateTime = LocalDateTime.of(2020,10,06,9,0,0);
+    void shouldReturnTheRightStringForLLocalDateTime() {
+        LocalDateTime dateTime = LocalDateTime.of(2020, 10, 06, 9, 0, 0);
         assertEquals("2020-10-06T09:00:00", TimeKeeperDateUtils.formatToString(dateTime));
     }
 
     @Test
-    void shouldReturn60Minutes(){
-        LocalDateTime start = LocalDateTime.of(2020,10,06,9,0);
-        LocalDateTime end = LocalDateTime.of(2020,10,06,10,0);
+    void shouldReturn60Minutes() {
+        LocalDateTime start = LocalDateTime.of(2020, 10, 06, 9, 0);
+        LocalDateTime end = LocalDateTime.of(2020, 10, 06, 10, 0);
         assertEquals(60L, TimeKeeperDateUtils.getDuration(start, end, ChronoUnit.MINUTES));
     }
 
     @Test
-    void shouldReturn480Minutes(){
-        LocalDateTime start = LocalDateTime.of(2020,10,06,9,0);
-        LocalDateTime end = LocalDateTime.of(2020,10,06,17,0);
+    void shouldReturn480Minutes() {
+        LocalDateTime start = LocalDateTime.of(2020, 10, 06, 9, 0);
+        LocalDateTime end = LocalDateTime.of(2020, 10, 06, 17, 0);
         assertEquals(480L, TimeKeeperDateUtils.getDuration(start, end, ChronoUnit.MINUTES));
     }
 
     @Test
-    void shouldReturn1Hour(){
-        LocalDateTime start = LocalDateTime.of(2020,10,06,9,0);
-        LocalDateTime end = LocalDateTime.of(2020,10,06,10,0);
+    void shouldReturn1Hour() {
+        LocalDateTime start = LocalDateTime.of(2020, 10, 06, 9, 0);
+        LocalDateTime end = LocalDateTime.of(2020, 10, 06, 10, 0);
         assertEquals(1L, TimeKeeperDateUtils.getDuration(start, end, ChronoUnit.HOURS));
     }
 
     @Test
-    void shouldReturn8Hours(){
-        LocalDateTime start = LocalDateTime.of(2020,10,06,9,0);
-        LocalDateTime end = LocalDateTime.of(2020,10,06,17,0);
+    void shouldReturn8Hours() {
+        LocalDateTime start = LocalDateTime.of(2020, 10, 06, 9, 0);
+        LocalDateTime end = LocalDateTime.of(2020, 10, 06, 17, 0);
         assertEquals(8L, TimeKeeperDateUtils.getDuration(start, end, ChronoUnit.HOURS));
     }
 
     @Test
-    void shouldThrowAnErrorIfStartIsAfterEnd(){
-        LocalDateTime start = LocalDateTime.of(2020,10,06,10,0);
-        LocalDateTime end = LocalDateTime.of(2020,10,06,9,0);
+    void shouldThrowAnErrorIfStartIsAfterEnd() {
+        LocalDateTime start = LocalDateTime.of(2020, 10, 06, 10, 0);
+        LocalDateTime end = LocalDateTime.of(2020, 10, 06, 9, 0);
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             TimeKeeperDateUtils.getDuration(start, end, ChronoUnit.MINUTES);
         });
     }
 
     @Test
-    void shouldReturn0IfStartEqualsEnd(){
-        LocalDateTime start = LocalDateTime.of(2020,10,06,9,0);
-        LocalDateTime end = LocalDateTime.of(2020,10,06,9,0);
+    void shouldReturn0IfStartEqualsEnd() {
+        LocalDateTime start = LocalDateTime.of(2020, 10, 06, 9, 0);
+        LocalDateTime end = LocalDateTime.of(2020, 10, 06, 9, 0);
         assertEquals(0L, TimeKeeperDateUtils.getDuration(start, end, ChronoUnit.MINUTES));
     }
 
     @Test
-    void shouldReturnTrueIfItsSameWeekAndSameYear(){
-        LocalDate date1 = LocalDate.of(2020,10,6);
-        LocalDate date2 = LocalDate.of(2020,10,8);
-        assertTrue(TimeKeeperDateUtils.isSameWeekAndYear(date1,date2));
+    void shouldReturnTrueIfItsSameWeekAndSameYear() {
+        LocalDate date1 = LocalDate.of(2020, 10, 6);
+        LocalDate date2 = LocalDate.of(2020, 10, 8);
+        assertTrue(TimeKeeperDateUtils.isSameWeekAndYear(date1, date2));
     }
 
     @Test
-    void shouldReturnFalseIfItsDifferentYearAndWeek(){
-        LocalDate date1 = LocalDate.of(2020,10,6);
-        LocalDate date2 = LocalDate.of(2021,10,20);
-        assertFalse(TimeKeeperDateUtils.isSameWeekAndYear(date1,date2));
+    void shouldReturnFalseIfItsDifferentYearAndWeek() {
+        LocalDate date1 = LocalDate.of(2020, 10, 6);
+        LocalDate date2 = LocalDate.of(2021, 10, 20);
+        assertFalse(TimeKeeperDateUtils.isSameWeekAndYear(date1, date2));
     }
 
     @Test
-    void shouldReturnFalseIfItsSameWeekButDifferentYear(){
-        LocalDate date1 = LocalDate.of(2020,10,6);
-        LocalDate date2 = LocalDate.of(2021,10,8);
-        assertFalse(TimeKeeperDateUtils.isSameWeekAndYear(date1,date2));
+    void shouldReturnFalseIfItsSameWeekButDifferentYear() {
+        LocalDate date1 = LocalDate.of(2020, 10, 6);
+        LocalDate date2 = LocalDate.of(2021, 10, 8);
+        assertFalse(TimeKeeperDateUtils.isSameWeekAndYear(date1, date2));
     }
 
     @Test
-    void shouldReturnFalseIfItsSameYearButDifferentWeek(){
-        LocalDate date1 = LocalDate.of(2020,10,6);
-        LocalDate date2 = LocalDate.of(2020,10,20);
-        assertFalse(TimeKeeperDateUtils.isSameWeekAndYear(date1,date2));
+    void shouldReturnFalseIfItsSameYearButDifferentWeek() {
+        LocalDate date1 = LocalDate.of(2020, 10, 6);
+        LocalDate date2 = LocalDate.of(2020, 10, 20);
+        assertFalse(TimeKeeperDateUtils.isSameWeekAndYear(date1, date2));
     }
 
     @Test
-    void shouldReturn1ForJanuary(){
-        LocalDate date = LocalDate.of(2020,01,20);
+    void shouldReturn1ForJanuary() {
+        LocalDate date = LocalDate.of(2020, 01, 20);
         assertEquals(1, TimeKeeperDateUtils.getMonthNumberFromDate(date));
     }
 
     @Test
-    void shouldReturnALocalDateTimeFromAString(){
+    void shouldReturnALocalDateTimeFromAString() {
         String date = "2020-10-06T09:00:00";
         assertEquals(
-                LocalDateTime.of(2020,10,6,9,0,0),
+                LocalDateTime.of(2020, 10, 6, 9, 0, 0),
                 TimeKeeperDateUtils.formatToLocalDateTime(date));
     }
 
     @Test
-    void shouldReturnALocalDateFromAString(){
+    void shouldReturnALocalDateFromAString() {
         String date = "2020-06-11";
         assertEquals(
-                LocalDate.of(2020,6,11),
+                LocalDate.of(2020, 6, 11),
                 TimeKeeperDateUtils.formatToLocalDate(date));
     }
 
@@ -516,12 +516,6 @@ class TimeKeeperDateUtilsTest {
 
     @Test
     void shouldIgnoreBastilleDay() {
-        final LocalTime START_OF_DAY = LocalTime.parse("09:00:00",
-                DateTimeFormatter.ISO_TIME);
-
-        final LocalTime END_OF_DAY = LocalTime.parse("17:00:00",
-                DateTimeFormatter.ISO_TIME);
-
         assertEquals(0L, TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 7, 14).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
                 LocalDate.of(2020, 7, 14).atTime(17, 0).truncatedTo(ChronoUnit.HOURS))
         );
@@ -642,15 +636,16 @@ class TimeKeeperDateUtilsTest {
     }
 
     @Test
-    void shouldReturnAnEmptyListIfTheTwoDateAreNotInTheSameYear(){
-        final LocalTime START_OF_DAY = LocalTime.parse("09:00:00",
-                DateTimeFormatter.ISO_TIME);
+    void shouldThrowAnExceptionIfOneIsNotDefined() {
+        Assertions.assertThrows(CalendarNotFoundException.class, () -> {
+            TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2019, 12, 29).atTime(16, 0).truncatedTo(ChronoUnit.HOURS),
+                    LocalDate.of(2020, 1, 3).atTime(10, 0).truncatedTo(ChronoUnit.HOURS));
+        });
+    }
 
-        final LocalTime END_OF_DAY = LocalTime.parse("17:00:00",
-                DateTimeFormatter.ISO_TIME);
-
-        assertEquals(0L, TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 12, 29).atTime(16, 0).truncatedTo(ChronoUnit.HOURS),
-                LocalDate.of(2021, 1, 3).atTime(10, 0).truncatedTo(ChronoUnit.HOURS))
-        );
+    @Test
+    void shouldReturn2HoursForAnEventBridgingNewYear() {
+        assertEquals(2L, TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 12, 31).atTime(16, 0).truncatedTo(ChronoUnit.HOURS),
+                LocalDate.of(2021, 1, 4).atTime(10, 0).truncatedTo(ChronoUnit.HOURS)));
     }
 }

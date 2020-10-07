@@ -22,7 +22,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.*;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -33,6 +32,8 @@ import java.util.stream.IntStream;
  * @author created by N.Martignole, Lunatech, on 2020-06-10.
  */
 public class TimeKeeperDateUtils {
+
+    private final static int SHIFT = 1;
 
     private final static LocalTime START_OF_DAY = LocalTime.parse("09:00:00",
             DateTimeFormatter.ISO_TIME);
@@ -198,21 +199,14 @@ public class TimeKeeperDateUtils {
      *
      * @param start is a LocalDate
      * @param end   is a LocalDate
-     * @return the business days between two LocalDate as a List of Integer
+     * @return the business days between two LocalDate as a List of LocalDate
      */
-    private static List<Integer> getBusinessDaysBetween(LocalDate start, LocalDate end, Calendar calendar) {
-        List<Integer> businessDays = calendar.getBusinessDays()
-                .stream()
-                .map(day -> day.getDayOfYear())
-                .collect(Collectors.toList());
-
-        if (start.getYear() != end.getYear()) {
-            // todo handle years beyond 2020
-            return Collections.EMPTY_LIST;
-        }
-        return IntStream.rangeClosed(start.getDayOfYear(), end.getDayOfYear())
+    private static List<LocalDate> getBusinessDaysBetween(LocalDate start, LocalDate end) {
+        return IntStream.rangeClosed(start.getYear(), end.getYear())
                 .boxed()
-                .filter(day -> businessDays.contains(day))
+                .map(year -> CalendarFactory.instanceFor("FR", year))
+                .flatMap(calendar -> calendar.getBusinessDays().stream())
+                .filter(date -> date.isAfter(start) && date.isBefore(end) || date.equals(start) || date.equals(end))
                 .collect(Collectors.toList());
     }
 
@@ -250,14 +244,7 @@ public class TimeKeeperDateUtils {
             throw new IllegalArgumentException("StartDateTime must be before EndDateTime and in the business hours range");
         }
 
-        final int days = getBusinessDaysBetween(startDateTime.toLocalDate(), endDateTime.toLocalDate(), CalendarFR2020.getInstance()).size() - 1;
-        // return an empty list if the start and end are not in the same year, so we return 0 as duration
-        if (days < 0) {
-            return 0L;
-        }
-        // hours from start to end of day
-        // + (days until end * hours in a day) - 1 because the firstDay is taking into account
-        // - hours from end to end of day
+        final int days = getBusinessDaysBetween(startDateTime.toLocalDate(), endDateTime.toLocalDate()).size() - SHIFT;
         final long hoursFromStartToEndOfDay = endOfDay.getHour() - startDateTime.toLocalTime().getHour();
         final long hoursFromEndToEndOfDay = endOfDay.getHour() - endDateTime.toLocalTime().getHour();
         return hoursFromStartToEndOfDay
