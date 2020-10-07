@@ -532,12 +532,11 @@ class TimeKeeperDateUtilsTest {
 
         final LocalTime END_OF_DAY = LocalTime.parse("12:00:00",
                 DateTimeFormatter.ISO_TIME);
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
-                    LocalDate.of(2020, 6, 18).atTime(18, 0).truncatedTo(ChronoUnit.HOURS),
-                    START_OF_DAY,
-                    END_OF_DAY);
-        });
+
+        final LocalDateTime from = LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS);
+        final LocalDateTime to = LocalDate.of(2020, 6, 18).atTime(18, 0).truncatedTo(ChronoUnit.HOURS);
+        Assertions.assertThrows(IllegalArgumentException.class, () ->
+            TimeKeeperDateUtils.computeTotalNumberOfHours(from, to, START_OF_DAY, END_OF_DAY));
     }
 
     @Test
@@ -547,12 +546,11 @@ class TimeKeeperDateUtilsTest {
 
         final LocalTime END_OF_DAY = LocalTime.parse("12:00:00",
                 DateTimeFormatter.ISO_TIME);
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(8, 0).truncatedTo(ChronoUnit.HOURS),
-                    LocalDate.of(2020, 6, 17).atTime(12, 0).truncatedTo(ChronoUnit.HOURS),
-                    START_OF_DAY,
-                    END_OF_DAY);
-        });
+
+        final LocalDateTime from = LocalDate.of(2020, 6, 17).atTime(8, 0).truncatedTo(ChronoUnit.HOURS);
+        final LocalDateTime to = LocalDate.of(2020, 6, 17).atTime(12, 0).truncatedTo(ChronoUnit.HOURS);
+        Assertions.assertThrows(IllegalArgumentException.class, () ->
+                TimeKeeperDateUtils.computeTotalNumberOfHours(from, to, START_OF_DAY, END_OF_DAY));
     }
 
     @Test
@@ -577,12 +575,10 @@ class TimeKeeperDateUtilsTest {
 
         final LocalTime END_OF_DAY = LocalTime.parse("14:00:00",
                 DateTimeFormatter.ISO_TIME);
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            TimeKeeperDateUtils.computeTotalNumberOfHours(LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS),
-                    LocalDate.of(2020, 6, 18).atTime(18, 0).truncatedTo(ChronoUnit.HOURS),
-                    START_OF_DAY,
-                    END_OF_DAY);
-        });
+        final LocalDateTime from = LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS);
+        final LocalDateTime to = LocalDate.of(2020, 6, 18).atTime(18, 0).truncatedTo(ChronoUnit.HOURS);
+        Assertions.assertThrows(IllegalArgumentException.class, () ->
+                TimeKeeperDateUtils.computeTotalNumberOfHours(from, to, START_OF_DAY, END_OF_DAY));
 
     }
 
