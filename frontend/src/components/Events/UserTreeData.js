@@ -94,7 +94,7 @@ const UserTreeData = ({users, usersSelected, setUsersSelected, eventType}) => {
           ...rowSelection
         }}
         dataSource={dataWithKey}
-        scroll={{ y: 240 }}
+        scroll={{ y: 460 }}
         pagination={false}
         className="tk_UserTreeData"
       />

@@ -238,9 +238,9 @@ const NewEventTemplateForm = ({eventType}) => {
         name="userType"
         initialValue="myself"
       >
-        <Radio.Group onChange={onChangeUserRadioButton}>
-          <Radio value="myself">Myself</Radio>
-          <Radio value="otherUser">Other user</Radio>
+        <Radio.Group onChange={onChangeUserRadioButton} className="tk_UserEvent_Radio_Button">
+            <Radio value="myself">Myself</Radio>
+            <Radio value="otherUser">Other user</Radio>
         </Radio.Group>
       </Form.Item>
       {(userEventUserType === 'otherUser') ?
