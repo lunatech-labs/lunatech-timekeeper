@@ -88,10 +88,13 @@ const EventsList = ({endPoint}) => {
         moment().month(filterDate).isBetween(startDateTime, endDateTime)
     );
   });
+
+  const mineToShow = (event) => (isUserEvent(endPoint) && filterCreator === 'Mine') ? isCreator(event) : true;
+
   // Sort events by startDateTime order (DESC) && filter with searchValue
   const eventsOrdered = _.orderBy(eventsResponse.data.filter(event => event.name.toLowerCase().includes(searchValue.toLowerCase())), (userEvent) => {
     return moment(userEvent.startDateTime).utc();
-  }, 'desc').filter(event => (isUserEvent(endPoint) && filterCreator === 'Mine') ? isCreator(event) : true);
+  }, 'desc').filter(mineToShow);
 
   // Filter events by month
   const eventsFilter = () => {
@@ -166,25 +169,28 @@ const EventsList = ({endPoint}) => {
   const filterCreatorMenu = (
     <Menu className="tk_Filter_Creator" onClick={({key}) => setFilterCreator(key)}>
       <Menu.Item key="Mine">
-                Mine
+          Mine
+      </Menu.Item>
+      <Menu.Item key="All">
+          All
       </Menu.Item>
     </Menu>
   );
 
   const filterComponent = (
     <React.Fragment>
-        {
-            isUserEvent(endPoint) ?
-                <React.Fragment>
-                    <p>Creator :</p>
-                    <Dropdown overlay={filterCreatorMenu}>
-                        <Button type="link" className="ant-dropdown-link">
-                            {filterCreator} <DownOutlined/>
-                        </Button>
-                    </Dropdown>
-                </React.Fragment>
-             : ""
-        }
+      {
+        isUserEvent(endPoint) ?
+          <React.Fragment>
+            <p>Creator :</p>
+            <Dropdown overlay={filterCreatorMenu}>
+              <Button type="link" className="ant-dropdown-link">
+                {filterCreator} <DownOutlined/>
+              </Button>
+            </Dropdown>
+          </React.Fragment>
+          : ''
+      }
       <p>Month :</p>
       <Dropdown overlay={filterDateMenu}>
         <Button type="link" className="ant-dropdown-link">
