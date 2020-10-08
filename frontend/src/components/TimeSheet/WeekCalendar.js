@@ -126,7 +126,7 @@ const WeekCalendar = (props) => {
       {weekRanges.weekRange.map(({id, start, end}) => {
         return (
           <Select.Option className={`${start.isSame(moment(), 'week') ? 'tk_CurrentWeekSelect' : ''}`}
-                         key={`date-range-${id}`} value={id} disabled={id === weekSelected}>
+            key={`date-range-${id}`} value={id} disabled={id === weekSelected}>
             {renderRange(start, end)}
           </Select.Option>
         );
