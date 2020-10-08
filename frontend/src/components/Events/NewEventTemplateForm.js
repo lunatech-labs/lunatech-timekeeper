@@ -48,7 +48,7 @@ const NewEventTemplateForm = ({eventType}) => {
     endDateTime: formData.eventDateTime[1],
     attendees: usersSelected
   });
-  console.log(usersSelected);
+
   const userEventFormData = (formData) => ({
     name: formData.name,
     description: formData.description,
@@ -224,6 +224,9 @@ const NewEventTemplateForm = ({eventType}) => {
   };
 
   const onChangeUserRadioButton = (value) => {
+    if(value.target.value === 'myself') {
+      setUsersSelected([]);
+    }
     setUserEventUserType(value.target.value);
   };
 
