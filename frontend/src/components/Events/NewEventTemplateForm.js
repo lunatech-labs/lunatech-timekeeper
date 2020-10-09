@@ -18,6 +18,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {sortListByName, useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
 import {Alert, Button, Col, DatePicker, Form, Input, message, Radio, Row, Select, Space, Spin} from 'antd';
 import './NewEventTemplateForm.less';
+import EventDateAndHoursPicker from "./EventDateAndHoursPicker";
 import '../../components/Button/BtnGeneral.less';
 import {Link, Redirect} from 'react-router-dom';
 import TitleSection from '../../components/Title/TitleSection';
@@ -134,38 +135,11 @@ const NewEventTemplateForm = ({eventType}) => {
       case 'COMPANY':
         return (
           <React.Fragment>
-            {companyDatePicker('First day:', 'Number of hours')}
-            {companyDatePicker('Last day:', 'Number of hours')}
+            <EventDateAndHoursPicker dateLabel="First day" hoursLabel="Number of hours"/>
+            <EventDateAndHoursPicker dateLabel="Last day" hoursLabel="Number of hours"/>
           </React.Fragment>
         );
     }
-  };
-
-  const companyDatePicker = (dateLabel, hoursLabel) => {
-    return (
-      <div className="tk_DateAndHours">
-        <Row>
-          <Form.Item
-            label={dateLabel}
-            rules={[{required: true}]}
-          >
-            <DatePicker
-              className="tk_DatePicker"
-            />
-          </Form.Item>
-          <Form.Item
-            label={hoursLabel}
-            rules={[{required: true}]}
-          >
-            <Select className="tk_HoursSelect"
-              showSearch
-            >
-              {_.range(1, 9, 1).map(i => <Option key={`option-hour-${i}`} value={i} >{i}</Option>)};
-            </Select>
-          </Form.Item>
-        </Row>
-      </div>
-    );
   };
 
   const dateRangePicker = () => {
