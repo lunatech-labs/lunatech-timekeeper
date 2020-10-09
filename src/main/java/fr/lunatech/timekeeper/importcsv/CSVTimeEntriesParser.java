@@ -90,7 +90,7 @@ public class CSVTimeEntriesParser {
                 logger.debug(String.format("Create client [%s]", clientName));
                 Client c = new Client();
                 c.name = clientName;
-                c.description = "Imported from Toggl";
+                c.description = "Imported from CSV file";
                 c.organization = defaultOrganization;
                 c.projects = Collections.emptyList();
                 c.persistAndFlush();
@@ -120,8 +120,9 @@ public class CSVTimeEntriesParser {
                     project.organization = defaultOrganization;
                     project.billable = true;
                     project.client = maybeClient.get();
-                    project.description = "Imported from Toggl";
+                    project.description = "Imported from CSV File";
                     project.version = 1L;
+                    project.persistAndFlush();
                     project.persistAndFlush();
                 }
             } else {
@@ -247,7 +248,7 @@ public class CSVTimeEntriesParser {
                             timeEntry.comment = "Worked on project " + StringUtils.abbreviate(maybeProject.get().name,50);
                         }
                         timeEntry.startDateTime = parseToLocalDateTime(importedTimeEntry.getStartDate(), importedTimeEntry.getStartTime());
-                        timeEntry.endDateTime = parseToLocalDateTime(importedTimeEntry.getEnddDate(), importedTimeEntry.getEndTime());
+                        timeEntry.endDateTime = parseToLocalDateTime(importedTimeEntry.getEndDate(), importedTimeEntry.getEndTime());
                         if(timeEntry.getRoundedNumberOfHours()==0){
                             logger.warn("--- Fixed a timeEntry to 1h min");
                             timeEntry.endDateTime = timeEntry.startDateTime.plusHours(1);

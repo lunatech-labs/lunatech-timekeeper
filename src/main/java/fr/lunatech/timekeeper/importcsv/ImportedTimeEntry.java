@@ -40,7 +40,7 @@ public class ImportedTimeEntry {
     @DataField(pos = 9)
     private String startTime;
     @DataField(pos = 10)
-    private String enddDate;
+    private String endDate;
     @DataField(pos = 11)
     private String endTime;
     @DataField(pos = 12)
@@ -143,12 +143,12 @@ public class ImportedTimeEntry {
         this.tags = tags;
     }
 
-    public String getEnddDate() {
-        return enddDate;
+    public String getEndDate() {
+        return endDate;
     }
 
-    public void setEnddDate(String enddDate) {
-        this.enddDate = enddDate;
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 
     public String getEndTime() {
