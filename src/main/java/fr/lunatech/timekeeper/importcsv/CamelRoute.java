@@ -39,7 +39,6 @@ public class CamelRoute extends EndpointRouteBuilder {
                 .unmarshal(bindy)
                 .bean(CSVTimeEntriesParser.class, "importEntries")
                 .to("log:done")
-
         ;
     }
 }

@@ -67,7 +67,7 @@ public class CSVTimeEntriesParser {
         checkUserMembership(members);
 
         // Step 4 : time Entry
-        inserOrUpdateTimeEntries(entries);
+        insertOrUpdateTimeEntries(entries);
 
         if (logger.isDebugEnabled()) {
             logger.debug(String.format("Total number of entries: %d", entries.size()));
@@ -122,7 +122,6 @@ public class CSVTimeEntriesParser {
                     project.client = maybeClient.get();
                     project.description = "Imported from CSV File";
                     project.version = 1L;
-                    project.persistAndFlush();
                     project.persistAndFlush();
                 }
             } else {
@@ -199,7 +198,7 @@ public class CSVTimeEntriesParser {
     }
 
     @Transactional
-    protected void inserOrUpdateTimeEntries(List<ImportedTimeEntry> timeEntries) {
+    protected void insertOrUpdateTimeEntries(List<ImportedTimeEntry> timeEntries) {
         timeEntries.stream().forEach(importedTimeEntry -> {
 
             String projectName = importedTimeEntry.getProject();
