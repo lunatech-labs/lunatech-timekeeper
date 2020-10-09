@@ -127,6 +127,68 @@ const NewEventTemplateForm = ({eventType}) => {
     };
   }
 
+  const getDatePicker = () => {
+    switch (currentEventType) {
+      case 'PERSONAL':
+        return dateRangePicker();
+      case 'COMPANY':
+        return (
+          <React.Fragment>
+            {companyDatePicker('First day:', 'Number of hours')}
+            {companyDatePicker('Last day:', 'Number of hours')}
+          </React.Fragment>
+        );
+    }
+  };
+
+  const companyDatePicker = (dateLabel, hoursLabel) => {
+    return (
+      <div className="tk_DateAndHours">
+        <Row>
+          <Form.Item
+            label={dateLabel}
+            rules={[{required: true}]}
+          >
+            <DatePicker
+              className="tk_DatePicker"
+            />
+          </Form.Item>
+          <Form.Item
+            label={hoursLabel}
+            rules={[{required: true}]}
+          >
+            <Select className="tk_HoursSelect"
+              showSearch
+            >
+              {_.range(1, 9, 1).map(i => <Option key={`option-hour-${i}`} value={i} >{i}</Option>)};
+            </Select>
+          </Form.Item>
+        </Row>
+      </div>
+    );
+  };
+
+  const dateRangePicker = () => {
+    console.log('PERSONAL');
+    return (
+      <Form.Item
+        label="Date and duration"
+        name="eventDateTime"
+        rules={[{required: true}]}
+      >
+        <RangePicker
+          disabledDate={disabledDate}
+          disabledTime={disabledTime}
+          showTime={{
+            hideDisabledOptions: true
+          }}
+          format="DD-MM-YYYY HH:mm"
+          className="tk_RangePicker"
+        />
+      </Form.Item>
+    );
+  };
+
   const eventColumn = () => {
     return (<Col className="gutter-row" span={12}>
       <TitleSection title="Information"/>
@@ -171,7 +233,7 @@ const NewEventTemplateForm = ({eventType}) => {
                 </Form.Item>
               );
             default:
-              return (<div></div>);
+              return "";
           }
         }}
       </Form.Item>
@@ -186,26 +248,8 @@ const NewEventTemplateForm = ({eventType}) => {
         />
       </Form.Item>
 
-      <Form.Item
-        label="Date and duration"
-        name="eventDateTime"
-        rules={[
-          {
-            required: true,
-          },
-        ]}
-      >
+      {getDatePicker()}
 
-        <RangePicker
-          disabledDate={disabledDate}
-          disabledTime={disabledTime}
-          showTime={{
-            hideDisabledOptions: true
-          }}
-          format="DD-MM-YYYY HH:mm"
-          className="tk_RangePicker"
-        />
-      </Form.Item>
     </Col>);
   };
 
