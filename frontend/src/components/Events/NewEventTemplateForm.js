@@ -23,10 +23,11 @@ import '../../components/Button/BtnGeneral.less';
 import {Link, Redirect} from 'react-router-dom';
 import TitleSection from '../../components/Title/TitleSection';
 import moment from 'moment';
-import UserTreeData from './UserTreeData';
 import _ from 'lodash';
 import 'moment/locale/en-gb';
 import {UserContext} from '../../context/UserContext';
+import EventTypeIcon from './EventTypeIcon'
+import UserTreeData from "./UserTreeData";
 import PropTypes from 'prop-types';
 
 const {TextArea} = Input;
@@ -169,8 +170,8 @@ const NewEventTemplateForm = ({eventType}) => {
 
       <Form.Item label="Event type:" name="eventType" rules={[{required: true}]}>
         <Radio.Group>
-          <Radio.Button value="COMPANY">Company event</Radio.Button>
-          <Radio.Button value="PERSONAL">User event</Radio.Button>
+          <Radio.Button value="COMPANY" className="tk_EventType_RadioButton"><EventTypeIcon iconName="BankOutlined" text="Company Event" /></Radio.Button>
+          <Radio.Button value="PERSONAL" className="tk_EventType_RadioButton"><EventTypeIcon iconName="UserOutlined" text="Personal Event" /></Radio.Button>
         </Radio.Group>
       </Form.Item>
 
