@@ -18,18 +18,19 @@
 
 .tk_DateAndHours {
   .ant-form-item {
-    width: 49%;
-    &:first-child {
-      margin-right: 2%;
+    width: 100%;
+    &:last-child {
+      align-self: center;
     }
   }
   .tk_DatePicker {
-    width: 100%;
+    width: 98%;
+    height: 40px;
     &:hover {
       .ant-picker-clear {
         background-color: @tk_DarkGray;
       }
-      border: 1px solid rgba(145, 145, 160, 0.8)!important;
+      border: 1px solid rgba(145, 145, 160, 0.8);
     }
     .ant-picker-input {
       input {
@@ -41,19 +42,6 @@
         background-color: @tk_DarkGray;
       }
       background-color: @tk_DarkGray;
-    }
-  }
-  .tk_HoursSelect {
-    width: 100% !important;
-    height: 50px !important;
-    span {
-      height: 50px !important;
-    }
-    .ant-select-selector {
-      height: 50px !important;
-    }
-    .ant-select-selection-search-input {
-      border: none !important;
     }
   }
 }

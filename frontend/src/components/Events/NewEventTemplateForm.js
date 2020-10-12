@@ -18,7 +18,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {sortListByName, useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
 import {Alert, Button, Col, DatePicker, Form, Input, message, Radio, Row, Select, Space, Spin} from 'antd';
 import './NewEventTemplateForm.less';
-import EventDateAndHoursPicker from "./EventDateAndHoursPicker";
+import EventDateAndHoursPicker from './EventDateAndHoursPicker';
 import '../../components/Button/BtnGeneral.less';
 import {Link, Redirect} from 'react-router-dom';
 import TitleSection from '../../components/Title/TitleSection';
@@ -26,8 +26,8 @@ import moment from 'moment';
 import _ from 'lodash';
 import 'moment/locale/en-gb';
 import {UserContext} from '../../context/UserContext';
-import EventTypeIcon from './EventTypeIcon'
-import UserTreeData from "./UserTreeData";
+import EventTypeIcon from './EventTypeIcon';
+import UserTreeData from './UserTreeData';
 import PropTypes from 'prop-types';
 
 const {TextArea} = Input;
@@ -210,7 +210,7 @@ const NewEventTemplateForm = ({eventType}) => {
                 </Form.Item>
               );
             default:
-              return "";
+              return '';
           }
         }}
       </Form.Item>

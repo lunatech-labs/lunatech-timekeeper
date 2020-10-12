@@ -14,41 +14,41 @@
  * limitations under the License.
  */
 
-import React from "react";
-import {Row} from "antd";
-import {UserOutlined, BankOutlined} from "@ant-design/icons";
+import React from 'react';
+import {Row} from 'antd';
+import {UserOutlined, BankOutlined} from '@ant-design/icons';
 import PropTypes from 'prop-types';
 
 const EventTypeIcon = ({iconName, text}) => {
-    if(iconName === 'UserOutlined'){
-        return (
-            <React.Fragment>
-                <Row>
-                    <UserOutlined />
-                </Row>
-                <Row>
-                    {text}
-                </Row>
-            </React.Fragment>
-        )
-    }
-    if(iconName === 'BankOutlined'){
-        return (
-            <React.Fragment>
-                <Row>
-                    <BankOutlined />
-                </Row>
-                <Row>
-                    {text}
-                </Row>
-            </React.Fragment>
-        )
-    }
-}
+  if(iconName === 'UserOutlined'){
+    return (
+      <React.Fragment>
+        <Row>
+          <UserOutlined />
+        </Row>
+        <Row>
+          {text}
+        </Row>
+      </React.Fragment>
+    );
+  }
+  if(iconName === 'BankOutlined'){
+    return (
+      <React.Fragment>
+        <Row>
+          <BankOutlined />
+        </Row>
+        <Row>
+          {text}
+        </Row>
+      </React.Fragment>
+    );
+  }
+};
 
 EventTypeIcon.propTypes = {
-    iconName: PropTypes.string,
-    text: PropTypes.string
+  iconName: PropTypes.string,
+  text: PropTypes.string
 };
 
 export default EventTypeIcon;

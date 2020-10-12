@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import {DatePicker, Form, Row, Select} from 'antd';
+import {DatePicker, Col, Form, Row, Select} from 'antd';
 import './EventDateAndHoursPicker.less';
 import '../../components/Button/BtnGeneral.less';
 import _ from 'lodash';
@@ -24,9 +24,10 @@ import PropTypes from 'prop-types';
 
 const EventDateAndHoursPicker = ({dateLabel, hoursLabel}) => {
   const {Option} = Select;
-    return (
-      <div className="tk_DateAndHours">
-        <Row>
+  return (
+    <div className="tk_DateAndHours">
+      <Row>
+        <Col span={12} order={1}>
           <Form.Item
             label={dateLabel}
             rules={[{required: true}]}
@@ -35,19 +36,20 @@ const EventDateAndHoursPicker = ({dateLabel, hoursLabel}) => {
               className="tk_DatePicker"
             />
           </Form.Item>
+        </Col>
+        <Col span={12} order={2}>
           <Form.Item
             label={hoursLabel}
             rules={[{required: true}]}
           >
-            <Select className="tk_HoursSelect"
-              showSearch
-            >
+            <Select>
               {_.range(1, 9, 1).map(i => <Option key={`option-hour-${i}`} value={i} >{i}</Option>)};
             </Select>
           </Form.Item>
-        </Row>
-      </div>
-    );
+        </Col>
+      </Row>
+    </div>
+  );
 };
 
 EventDateAndHoursPicker.propTypes = {
