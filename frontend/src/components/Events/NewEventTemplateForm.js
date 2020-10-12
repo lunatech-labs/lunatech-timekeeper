@@ -171,9 +171,19 @@ const NewEventTemplateForm = ({eventType}) => {
       <TitleSection title="Information"/>
 
       <Form.Item label="Event type:" name="eventType" rules={[{required: true}]}>
-        <Radio.Group>
-          <Radio.Button value="COMPANY" className="tk_EventType_RadioButton"><EventTypeIcon iconName="BankOutlined" text="Company Event" /></Radio.Button>
-          <Radio.Button value="PERSONAL" className="tk_EventType_RadioButton"><EventTypeIcon iconName="UserOutlined" text="Personal Event" /></Radio.Button>
+        <Radio.Group className="tk_EventType_RadioGroup">
+          <Row gutter={[16, 16]}>
+            <Col span={12} order={1}>
+              <Radio.Button value="COMPANY" className="tk_EventType_RadioButton" style={{height: 100}}>
+                <EventTypeIcon iconName="BankOutlined" text="Company Event" />
+              </Radio.Button>
+            </Col>
+            <Col span={12} order={1}>
+              <Radio.Button value="PERSONAL" className="tk_EventType_RadioButton"  style={{height: 100}}>
+                <EventTypeIcon iconName="UserOutlined" text="Personal Event" />
+              </Radio.Button>
+            </Col>
+          </Row>
         </Radio.Group>
       </Form.Item>
 

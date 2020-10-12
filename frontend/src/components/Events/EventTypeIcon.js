@@ -20,28 +20,26 @@ import {UserOutlined, BankOutlined} from '@ant-design/icons';
 import PropTypes from 'prop-types';
 
 const EventTypeIcon = ({iconName, text}) => {
+
+    /*
+    style={{flexDirection: "column",
+          justifyContent: "space-between",
+          alignItems: "center"}}
+     */
   if(iconName === 'UserOutlined'){
     return (
-      <React.Fragment>
-        <Row>
-          <UserOutlined />
-        </Row>
-        <Row>
-          {text}
-        </Row>
-      </React.Fragment>
+      <div>
+        <UserOutlined />
+        <p>{text}</p>
+      </div>
     );
   }
   if(iconName === 'BankOutlined'){
     return (
-      <React.Fragment>
-        <Row>
-          <BankOutlined />
-        </Row>
-        <Row>
-          {text}
-        </Row>
-      </React.Fragment>
+      <div>
+        <BankOutlined />
+        <p>{text}</p>
+      </div>
     );
   }
 };
