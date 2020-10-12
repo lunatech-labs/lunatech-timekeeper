@@ -20,7 +20,7 @@ import PropTypes from 'prop-types';
 import './UserTreeData.less';
 import TkUserAvatar from '../Users/TkUserAvatar';
 
-const UserTreeData = ({users, usersSelected, setUsersSelected}) => {
+const UserTreeData = ({users, usersSelected, setUsersSelected, eventType}) => {
   const renderUser = (id, name, picture) => {
     return (
       <div key={`user-row-tree-data-${id}`}>
@@ -31,6 +31,15 @@ const UserTreeData = ({users, usersSelected, setUsersSelected}) => {
   };
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [rowSelectionType, setRowSelectionType] = useState('checkbox');
+
+  useEffect(() => {
+    if(eventType){
+      (eventType === 'userEvent') ? setRowSelectionType('radio') : setRowSelectionType('checkbox');
+    }
+  }, [eventType]);
+
+
   useEffect(()=> {
     if(usersSelected){
       setSelectedRowKeys(usersSelected.map(user => `event-user-row-${user.userId}`));
@@ -65,17 +74,27 @@ const UserTreeData = ({users, usersSelected, setUsersSelected}) => {
       }));
     },
   };
+
   return (
     <div>
-      <span style={{ marginLeft: 8 }}>
-        {hasSelected !== 0 ? `${hasSelected} selected` : ''}
-      </span>
-      <span id="tk_Select_All_Text">Select All</span>
+      {(eventType === 'userEvent')?
+        '' :
+        <div>
+          <span style={{ marginLeft: 8 }}>
+            {hasSelected !== 0 ? `${hasSelected} selected` : ''}
+          </span>
+          <span id="tk_Select_All_Text">Select All</span>
+        </div>
+      }
+
       <Table
         columns={columns}
-        rowSelection={{...rowSelection}}
+        rowSelection={{
+          type: rowSelectionType,
+          ...rowSelection
+        }}
         dataSource={dataWithKey}
-        scroll={{ y: 240 }}
+        scroll={{ y: 460 }}
         pagination={false}
         className="tk_UserTreeData"
       />
@@ -85,7 +104,8 @@ const UserTreeData = ({users, usersSelected, setUsersSelected}) => {
 UserTreeData.propTypes = {
   users: PropTypes.array.isRequired,
   usersSelected: PropTypes.array.isRequired,
-  setUsersSelected: PropTypes.func.isRequired
+  setUsersSelected: PropTypes.func.isRequired,
+  eventType: PropTypes.string.isRequired
 };
 
 export default UserTreeData;

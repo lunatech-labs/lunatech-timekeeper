@@ -128,7 +128,7 @@ class UserEventResourceTest {
         final var anotherEventName = dataTestProvider.generateRandomEventName();
         final Tuple2<UserEventRequest, UserEventResponse> userEventTuple1 =
                 dataTestProvider.generateUserEventTuple(eventName, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, 1L, jimmy.getId(), jimmy.getId());
-        final var userEventRequest = dataTestProvider.generateUserEventRequest(anotherEventName, THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_6_PM, jimmy.getId());
+        final var userEventRequest = dataTestProvider.generateUserEventRequest(anotherEventName, THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_6_PM, jimmy.getId(), jimmy.getId());
         final Tuple2<UserEventRequest, UserEventResponse> userEventTuple2 =
                 dataTestProvider.generateUserEventTuple(anotherEventName, THE_18_TH_JULY_2020_AT_10_AM, THE_18_TH_JULY_2020_AT_6_PM, 2L, jimmy.getId(), sam.getId());
         create(userEventTuple1._1, adminToken);

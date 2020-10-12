@@ -41,6 +41,7 @@ const NewEventTemplateForm = ({eventType}) => {
   const [eventTemplateCreated, setEventTemplateCreated] = useState(false);
   const [usersSelected, setUsersSelected] = useState([]);
   const [currentEventType, setCurrentEventType] = useState(eventType);
+  const [userEventUserType, setUserEventUserType] = useState('myself');
 
   const companyEventFormData = (formData) => ({
     name: formData.name,
@@ -55,7 +56,8 @@ const NewEventTemplateForm = ({eventType}) => {
     description: formData.description,
     startDateTime: formData.eventDateTime[0],
     endDateTime: formData.eventDateTime[1],
-    userId: currentUser.id,
+    userId: _.get(usersSelected[0], 'userId', currentUser.id),
+    creatorId: currentUser.id,
     eventType: 'PERSONAL'
   });
   const usersResponse = useTimeKeeperAPI('/api/users');
@@ -235,8 +237,39 @@ const NewEventTemplateForm = ({eventType}) => {
         label="Select users :"
         name="usersSelected"
       >
-        <UserTreeData users={sortListByName(usersResponse.data)} usersSelected={usersSelected} setUsersSelected={setUsersSelected}/>
+        <UserTreeData users={sortListByName(usersResponse.data)} usersSelected={usersSelected} setUsersSelected={setUsersSelected} eventType="companyEvent"/>
       </Form.Item>
+    </Col>);
+  };
+
+  const onChangeUserRadioButton = (value) => {
+    if(value.target.value === 'myself') {
+      setUsersSelected([]);
+    }
+    setUserEventUserType(value.target.value);
+  };
+
+  const userEventColumn = () => {
+    return (<Col className="gutter-row" span={12}>
+      <TitleSection title="Users"/>
+      <Form.Item
+        label="User Type :"
+        name="userType"
+        initialValue="myself"
+      >
+        <Radio.Group onChange={onChangeUserRadioButton} className="tk_UserEvent_Radio_Button">
+          <Radio value="myself">Myself</Radio>
+          <Radio value="otherUser">Other user</Radio>
+        </Radio.Group>
+      </Form.Item>
+      {(userEventUserType === 'otherUser') ?
+        <Form.Item
+          label="Select single user :"
+          name="usersSelected"
+        >
+          <UserTreeData users={sortListByName(usersResponse.data)} usersSelected={usersSelected} setUsersSelected={setUsersSelected} eventType="userEvent"/>
+        </Form.Item>: ''}
+
     </Col>);
   };
 
@@ -249,7 +282,12 @@ const NewEventTemplateForm = ({eventType}) => {
         </React.Fragment>
       );
     } else {
-      return eventColumn();
+      return (
+        <React.Fragment>
+          {eventColumn()}
+          {userEventColumn()}
+        </React.Fragment>
+      );
     }
   };
 
