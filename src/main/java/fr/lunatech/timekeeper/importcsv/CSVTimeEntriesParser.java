@@ -47,7 +47,7 @@ public class CSVTimeEntriesParser {
     public String importEntries(List<ImportedTimeEntry> entries) {
         // Step 1 : Client
         var clients = entries.stream().map(ImportedTimeEntry::getClient).distinct().collect(Collectors.toList());
-        updateOrCreateClients(clients);
+        createClients(clients);
 
         // Step 2 : Projects for each Client
         var projects = entries
@@ -79,7 +79,7 @@ public class CSVTimeEntriesParser {
     }
 
     @Transactional
-    protected void updateOrCreateClients(List<String> clients) {
+    protected void createClients(List<String> clients) {
         Organization defaultOrganization = Organization.findById(1L);//NOSONAR
 
         clients.stream().filter(clientName -> !clientName.isBlank()).forEach(clientName -> {
