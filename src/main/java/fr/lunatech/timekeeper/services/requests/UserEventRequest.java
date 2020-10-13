@@ -39,11 +39,15 @@ public class UserEventRequest {
     @Enumerated(EnumType.STRING)
     private EventType eventType;
 
+    @NotNull
+    private final Long creatorId;
 
     public UserEventRequest(
-            @NotNull Long userId
+            @NotNull Long userId,
+            @NotNull Long creatorId
     ) {
         this.userId = userId;
+        this.creatorId = creatorId;
     }
 
     @JsonCreator
@@ -52,13 +56,15 @@ public class UserEventRequest {
             @NotBlank String name,
             @NotNull String description,
             @NotNull LocalDateTime startDateTime,
-            @NotNull LocalDateTime endDateTime
+            @NotNull LocalDateTime endDateTime,
+            @NotNull Long creatorId
     ) {
         this.userId = userId;
         this.name = name;
         this.description = description;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
+        this.creatorId = creatorId;
     }
 
 
@@ -67,15 +73,17 @@ public class UserEventRequest {
             @NotNull AuthenticationContext ctx
     ) {
         final var userEvent = new UserEvent();
-        final var user = findUser.apply(getUserId(), ctx)
-                .orElseThrow(() -> new IllegalEntityStateException(String.format("Unknown User. userId=%s", getUserId())));
+        final var owner = findUser.apply(getUserId(), ctx)
+                .orElseThrow(() -> new IllegalEntityStateException(String.format("Unknown Owner. userId=%s", getUserId())));
+        final var creator = findUser.apply(getCreatorId(), ctx)
+                .orElseThrow(() -> new IllegalEntityStateException(String.format("Unknown Creator. userId=%s", getCreatorId())));
         userEvent.name = this.name;
         userEvent.description = this.description;
         userEvent.eventType = EventType.PERSONAL;
         userEvent.startDateTime = this.startDateTime;
         userEvent.endDateTime = this.endDateTime;
-        userEvent.owner = user;
-        userEvent.creator = user;
+        userEvent.owner = owner;
+        userEvent.creator = creator;
         return userEvent;
     }
 
@@ -109,6 +117,10 @@ public class UserEventRequest {
         return userId;
     }
 
+    public Long getCreatorId() {
+        return creatorId;
+    }
+
     @Override
     public String toString() {
         return "UserEventRequest{" +
@@ -117,6 +129,7 @@ public class UserEventRequest {
                 ", description='" + description + '\'' +
                 ", startDateTime=" + startDateTime +
                 ", endDateTime=" + endDateTime +
+                ", creatorId=" + creatorId +
                 '}';
     }
 

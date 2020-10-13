@@ -46,7 +46,7 @@ public class DataTestProvider {
                 end,
                 Arrays.stream(usersId)
                         .sorted(Comparator.comparingLong(value -> (long) value))
-                        .map(UserEventRequest::new)
+                        .map(value -> new UserEventRequest(value.longValue(), value.longValue()))
                         .collect(Collectors.toList())
         );
     }
@@ -60,13 +60,14 @@ public class DataTestProvider {
         );
     }
 
-    public UserEventRequest generateUserEventRequest(String eventName, LocalDateTime start, LocalDateTime end, Long userId) {
+    public UserEventRequest generateUserEventRequest(String eventName, LocalDateTime start, LocalDateTime end, Long userId, Long creatorId) {
         return new UserEventRequest(
                 userId,
                 eventName,
                 EVENT_DESCRIPTION,
                 start,
-                end
+                end,
+                creatorId
         );
     }
 
@@ -90,7 +91,7 @@ public class DataTestProvider {
         final var user = generateUser(userId).stream().findFirst().orElseThrow(NotFoundException::new);
         final var creator = generateUser(creatorId).stream().findFirst().orElseThrow(NotFoundException::new);
         return Tuple.of(
-                generateUserEventRequest(eventName, start, end, userId),
+                generateUserEventRequest(eventName, start, end, userId, creatorId),
                 generateExpectedUserEventResponse(eventName, start, end, expectedTemplateId, user, creator)
         );
     }
