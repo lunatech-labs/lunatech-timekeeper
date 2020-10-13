@@ -16,6 +16,7 @@
 
 package fr.lunatech.timekeeper.models.time;
 
+import fr.lunatech.timekeeper.models.Organization;
 import fr.lunatech.timekeeper.models.User;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
@@ -68,6 +69,10 @@ public class UserEvent extends PanacheEntityBase {
     @NotNull
     public User creator;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "organization_id")
+    public Organization organization;
+
     public UserEvent() {
 
     }
@@ -79,7 +84,8 @@ public class UserEvent extends PanacheEntityBase {
                      String description,
                      EventType type,
                      User user,
-                     User creator
+                     User creator,
+                     Organization organization
     ) {
         this.id = id;
         this.startDateTime = startDateTime;
@@ -89,6 +95,7 @@ public class UserEvent extends PanacheEntityBase {
         this.eventType = type;
         this.owner = user;
         this.creator = creator;
+        this.organization = organization;
     }
 
     @Null
@@ -109,6 +116,7 @@ public class UserEvent extends PanacheEntityBase {
                 ", startDateTime=" + startDateTime +
                 ", endDateTime=" + endDateTime +
                 ", owner=" + owner.getFullName() +
+                ", organizationId=" + creator.getOrganization().id +
                 '}';
     }
 }
