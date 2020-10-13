@@ -16,11 +16,6 @@
 
 @import '../../main.less';
 
-.tk_EventDuration_RadioButton {
-  width: 100%;
-  height: @picker-text-height !important;
-}
-
 .tk_EventType_RadioGroup {
   width: 100%;
   > div {
@@ -40,6 +35,7 @@
       }
       .tk_EventType_RadioButton.ant-radio-button-wrapper-checked {
         border-color: @tk_Red!important;
+        &:hover {color: @tk_Red;}
       }
     }
   }
@@ -69,7 +65,3 @@
 .tk_UserEvent_Radio_Button {
   label:first-child {padding-right: 40px;}
 }
-
-
-
-
