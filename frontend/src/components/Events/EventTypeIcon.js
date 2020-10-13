@@ -17,12 +17,12 @@
 import React from 'react';
 import {UserOutlined, BankOutlined} from '@ant-design/icons';
 import PropTypes from 'prop-types';
+import './EvenTypeIcon.less';
 
 const EventTypeIcon = ({iconName, text}) => {
-
   if(iconName === 'UserOutlined'){
     return (
-      <div>
+      <div class="tk_EventType_InnerChoice"> 
         <UserOutlined />
         <p>{text}</p>
       </div>
@@ -30,7 +30,7 @@ const EventTypeIcon = ({iconName, text}) => {
   }
   if(iconName === 'BankOutlined'){
     return (
-      <div>
+      <div class="tk_EventType_InnerChoice"> 
         <BankOutlined />
         <p>{text}</p>
       </div>

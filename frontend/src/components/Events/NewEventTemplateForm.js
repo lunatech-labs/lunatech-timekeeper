@@ -17,7 +17,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {sortListByName, useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
 import {Alert, Button, Col, DatePicker, Form, Input, message, Radio, Row, Select, Space, Spin} from 'antd';
-import './NewEventTemplateForm.less';
 import EventDateAndHoursPicker from './EventDateAndHoursPicker';
 import '../../components/Button/BtnGeneral.less';
 import {Link, Redirect} from 'react-router-dom';
@@ -29,6 +28,7 @@ import {UserContext} from '../../context/UserContext';
 import EventTypeIcon from './EventTypeIcon';
 import UserTreeData from './UserTreeData';
 import PropTypes from 'prop-types';
+import './NewEventTemplateForm.less';
 
 const {TextArea} = Input;
 const { RangePicker } = DatePicker;
@@ -195,19 +195,20 @@ const NewEventTemplateForm = ({eventType}) => {
   };
 
   const eventColumn = () => {
-    return (<Col className="gutter-row" span={12}>
+    return (
+    <Col className="gutter-row" span={12}>
       <TitleSection title="Information"/>
 
       <Form.Item label="Event type:" name="eventType" rules={[{required: true}]}>
         <Radio.Group className="tk_EventType_RadioGroup">
-          <Row gutter={[16, 16]}>
-            <Col span={12} order={1}>
-              <Radio.Button value="COMPANY" className="tk_EventType_RadioButton" style={{height: 100}}>
+          <Row>
+            <Col span={12}>
+              <Radio.Button value="COMPANY" className="tk_EventType_RadioButton">
                 <EventTypeIcon iconName="BankOutlined" text="Company Event" />
               </Radio.Button>
             </Col>
-            <Col span={12} order={1}>
-              <Radio.Button value="PERSONAL" className="tk_EventType_RadioButton"  style={{height: 100}}>
+            <Col span={12}>
+              <Radio.Button value="PERSONAL" className="tk_EventType_RadioButton">
                 <EventTypeIcon iconName="UserOutlined" text="Personal Event" />
               </Radio.Button>
             </Col>
