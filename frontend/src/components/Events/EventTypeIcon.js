@@ -15,17 +15,11 @@
  */
 
 import React from 'react';
-import {Row} from 'antd';
 import {UserOutlined, BankOutlined} from '@ant-design/icons';
 import PropTypes from 'prop-types';
 
 const EventTypeIcon = ({iconName, text}) => {
 
-    /*
-    style={{flexDirection: "column",
-          justifyContent: "space-between",
-          alignItems: "center"}}
-     */
   if(iconName === 'UserOutlined'){
     return (
       <div>

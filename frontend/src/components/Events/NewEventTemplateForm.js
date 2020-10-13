@@ -41,25 +41,44 @@ const NewEventTemplateForm = ({eventType}) => {
   const [eventTemplateCreated, setEventTemplateCreated] = useState(false);
   const [usersSelected, setUsersSelected] = useState([]);
   const [currentEventType, setCurrentEventType] = useState(eventType);
+  const [isMultiDay, setIsMultiDay] = useState(false);
   const [userEventUserType, setUserEventUserType] = useState('myself');
 
-  const companyEventFormData = (formData) => ({
-    name: formData.name,
-    description: formData.description,
-    startDateTime: formData.eventDateTime[0],
-    endDateTime: formData.eventDateTime[1],
-    attendees: usersSelected
-  });
+  const companyEventFormData = (formData) => {
+    const start = moment(formData.firstDay)
+      .startOf('day')
+      .add(17 - _.get(formData, 'firstDayDuration', 0), 'hours')
+      .utc(true);
 
-  const userEventFormData = (formData) => ({
-    name: formData.name,
-    description: formData.description,
-    startDateTime: formData.eventDateTime[0],
-    endDateTime: formData.eventDateTime[1],
-    userId: _.get(usersSelected[0], 'userId', currentUser.id),
-    creatorId: currentUser.id,
-    eventType: 'PERSONAL'
-  });
+    const end = isMultiDay ? moment(formData.lastDay)
+      .startOf('day')
+      .add(9 + _.get(formData, 'lastDayDuration', 0), 'hours')
+      .utc(true)
+      : moment(formData.lastDay)
+        .startOf('day')
+        .add(17, 'hours')
+        .utc(true);
+
+    return {
+      name: formData.name,
+      description: formData.description,
+      startDateTime: start,
+      endDateTime: end,
+      attendees: usersSelected
+    };
+  };
+
+  const userEventFormData = (formData) => {
+    return {
+      name: formData.name,
+      description: formData.description,
+      startDateTime: formData.eventDateTime[0],
+      endDateTime: formData.eventDateTime[1],
+      userId: _.get(usersSelected[0], 'userId', currentUser.id),
+      creatorId: currentUser.id,
+      eventType: 'PERSONAL'
+    };
+  };
   const usersResponse = useTimeKeeperAPI('/api/users');
   const eventsResponse = useTimeKeeperAPI('/api/users');
   const apiCallCompanyEventPOST = useTimeKeeperAPIPost('/api/events-template', (form => form), setEventTemplateCreated, companyEventFormData);
@@ -73,6 +92,7 @@ const NewEventTemplateForm = ({eventType}) => {
     eventDateTime: [moment.utc('9:00 AM', 'LT'), moment.utc('9:00 AM', 'LT')],
     attendees: [],
     eventType: currentEventType,
+    isMultiDay: false,
     eventName: ''
   };
 
@@ -138,15 +158,23 @@ const NewEventTemplateForm = ({eventType}) => {
       case 'COMPANY':
         return (
           <React.Fragment>
-            <EventDateAndHoursPicker dateLabel="First day" hoursLabel="Number of hours"/>
-            <EventDateAndHoursPicker dateLabel="Last day" hoursLabel="Number of hours"/>
+            <EventDateAndHoursPicker
+              dateLabel="First day"
+              dateName="firstDay"
+              hoursLabel="Number of hours"
+              hoursName="firstDayDuration"
+            />
+            {isMultiDay ? <EventDateAndHoursPicker
+              dateLabel="Last day"
+              dateName="lastDay"
+              hoursLabel="Number of hours"
+              hoursName="lastDayDuration"/> : <></>}
           </React.Fragment>
         );
     }
   };
 
   const dateRangePicker = () => {
-    console.log('PERSONAL');
     return (
       <Form.Item
         label="Date and duration"
@@ -235,9 +263,38 @@ const NewEventTemplateForm = ({eventType}) => {
         />
       </Form.Item>
 
-      {getDatePicker()}
+      <Form.Item initialValue={isMultiDay} label="Duration:" name="duration" rules={[{required: true}]}>
+        <Radio.Group onChange={onChangeDuration} className="tk_EventType_RadioGroup">
+          <Row gutter={[16, 16]}>
+            <Col span={12} order={1}>
+              <Radio.Button value={false} className="tk_EventDuration_RadioButton">
+                <div>
+                  <p>One day</p>
+                </div>
+              </Radio.Button>
+            </Col>
+            <Col span={12} order={1}>
+              <Radio.Button value={true} className="tk_EventDuration_RadioButton">
+                <div>
+                  <p>Multiple days</p>
+                </div>
+              </Radio.Button>
+            </Col>
+          </Row>
+        </Radio.Group>
+      </Form.Item>
+
+      <Form.Item rules={[{required: true}]}>
+        {getDatePicker()}
+      </Form.Item>
 
     </Col>);
+  };
+
+  const onChangeDuration = (value) => {
+    if(value.target.value !== isMultiDay) {
+      setIsMultiDay(value.target.value);
+    }
   };
 
   const userColumn = () => {

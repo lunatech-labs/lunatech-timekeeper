@@ -22,7 +22,7 @@ import _ from 'lodash';
 import 'moment/locale/en-gb';
 import PropTypes from 'prop-types';
 
-const EventDateAndHoursPicker = ({dateLabel, hoursLabel}) => {
+const EventDateAndHoursPicker = ({dateLabel, dateName, hoursLabel, hoursName}) => {
   const {Option} = Select;
   return (
     <div className="tk_DateAndHours">
@@ -30,6 +30,7 @@ const EventDateAndHoursPicker = ({dateLabel, hoursLabel}) => {
         <Col span={12} order={1}>
           <Form.Item
             label={dateLabel}
+            name={dateName}
             rules={[{required: true}]}
           >
             <DatePicker
@@ -40,6 +41,7 @@ const EventDateAndHoursPicker = ({dateLabel, hoursLabel}) => {
         <Col span={12} order={2}>
           <Form.Item
             label={hoursLabel}
+            name={hoursName}
             rules={[{required: true}]}
           >
             <Select>
@@ -54,7 +56,9 @@ const EventDateAndHoursPicker = ({dateLabel, hoursLabel}) => {
 
 EventDateAndHoursPicker.propTypes = {
   dateLabel: PropTypes.string,
-  hoursLabel: PropTypes.string
+  dateName: PropTypes.string,
+  hoursLabel: PropTypes.string,
+  hoursName: PropTypes.string
 };
 
 export default EventDateAndHoursPicker;
