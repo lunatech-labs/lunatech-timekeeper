@@ -22,7 +22,7 @@ import './EvenTypeIcon.less';
 const EventTypeIcon = ({iconName, text}) => {
   if(iconName === 'UserOutlined'){
     return (
-      <div class="tk_EventType_InnerChoice"> 
+      <div className="tk_EventType_InnerChoice">
         <UserOutlined />
         <p>{text}</p>
       </div>
@@ -30,7 +30,7 @@ const EventTypeIcon = ({iconName, text}) => {
   }
   if(iconName === 'BankOutlined'){
     return (
-      <div class="tk_EventType_InnerChoice"> 
+      <div className="tk_EventType_InnerChoice">
         <BankOutlined />
         <p>{text}</p>
       </div>

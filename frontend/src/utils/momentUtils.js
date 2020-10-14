@@ -16,6 +16,7 @@
 
 import moment from 'moment';
 import _ from 'lodash';
+import Holidays from 'date-holidays';
 
 // Render a range of date with the year
 // same month, same year => 22 - 25 May 2020
@@ -150,3 +151,40 @@ export const computeNumberOfHours = (start, end) => {
 
 // Moment gives the month number with the index starting from 0
 export const getIsoMonth = (m) => m.month() + 1;
+
+/**
+ * Returns an array of new moments starting with a clone of 'start' and ending with a clone of 'end'
+ * @param start moment
+ * @param end moment
+ * @param locale country code a string e.g 'FR' for France or 'GB' for Great Britain
+ * @returns array of new moments starting with a clone of 'start' and ending with a clone of 'end'
+ */
+export const getBusinessDays = (start, end, locale) => {
+  if(_.isNull(start) || _.isNull(end)) {
+    return [];
+  }
+
+  const holidays = new Holidays();
+  if(_.isNull(holidays.getCountries(locale)))
+  {
+    console.warn(locale + ' is not supported');
+    return [];
+  }
+
+  holidays.init(locale);
+  const diffDays = end.diff(start, 'days');
+  if(diffDays < 0) {
+    console.warn('`end` is before `start`. Returning empty result. Please provide a `start` that is before `end`');
+    return [];
+  }
+  if(diffDays === 0)
+    return [start.clone()]
+      .filter(isNotWeekEnd)
+      .filter(day => holidays.isHoliday(day.toDate()) === false);
+
+  return Array.from(Array(diffDays).keys())
+    .map((currElement, index) => start.clone().add(index, 'days'))
+    .concat(end.clone().add(0, 'days').startOf('day'))
+    .filter(isNotWeekEnd)
+    .filter(day => holidays.isHoliday(day.toDate()) === false);
+};
