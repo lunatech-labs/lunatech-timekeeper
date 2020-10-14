@@ -116,7 +116,7 @@ public class UserEvent extends PanacheEntityBase {
                 ", startDateTime=" + startDateTime +
                 ", endDateTime=" + endDateTime +
                 ", owner=" + owner.getFullName() +
-                ", organization=" + creator.getOrganization().name +
+                ", organization=" + organization.name +
                 '}';
     }
 }
