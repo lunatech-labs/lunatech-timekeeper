@@ -111,6 +111,7 @@ public class UserEventRequest {
                 .orElseThrow(() -> new IllegalEntityStateException(String.format("Unknown User. userId=%s", getUserId())));
         userEvent.creator = eventTemplate.creator;
         userEvent.eventTemplate = eventTemplate;
+        userEvent.organization = eventTemplate.creator.getOrganization();
         return userEvent;
     }
 
