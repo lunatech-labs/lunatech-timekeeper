@@ -164,7 +164,8 @@ const NewEventTemplateForm = ({eventType}) => {
               hoursLabel="Number of hours"
               hoursName="firstDayDuration"
             />
-            {isMultiDay ? <EventDateAndHoursPicker
+            {
+              isMultiDay ? <EventDateAndHoursPicker
               dateLabel="Last day"
               dateName="lastDay"
               hoursLabel="Number of hours"
@@ -265,17 +266,17 @@ const NewEventTemplateForm = ({eventType}) => {
       </Form.Item>
 
       <Form.Item initialValue={isMultiDay} label="Duration:" name="duration" rules={[{required: true}]}>
-        <Radio.Group onChange={onChangeDuration} className="tk_EventType_RadioGroup">
-          <Row gutter={[16, 16]}>
-            <Col span={12} order={1}>
-              <Radio.Button value={false} className="tk_EventDuration_RadioButton">
+        <Radio.Group onChange={onChangeMultiDay} className="tk_EventType_RadioGroup">
+          <Row>
+            <Col span={12}>
+              <Radio.Button value={false} className="tk_EventType_RadioButton" style={{height: 40, paddingTop:12}}>
                 <div>
                   <p>One day</p>
                 </div>
               </Radio.Button>
             </Col>
-            <Col span={12} order={1}>
-              <Radio.Button value={true} className="tk_EventDuration_RadioButton">
+            <Col span={12}>
+              <Radio.Button value={true} className="tk_EventType_RadioButton" style={{height: 40, paddingTop:12}}>
                 <div>
                   <p>Multiple days</p>
                 </div>
