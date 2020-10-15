@@ -31,6 +31,10 @@ const ShowTimeSheet = ({project, member}) => {
   const {data, error, loading} = useTimeKeeperAPI(`/api/projects/${project.id}/users/${member.id}`);
   const [selectedTimeSheet, setSelectedTimeSheet] = useState();
 
+  const displayDaysLeft = (timeSheet) => {
+    return timeSheet.leftOver ? timeSheet.leftOver : timeSheet.leftOver === 0 ? timeSheet.leftOver : 'Unlimited';
+  };
+
   const TimeSheet = ({timeSheet}) => {
     return (
       <div className="tk_ModalGen">
@@ -42,7 +46,7 @@ const ShowTimeSheet = ({project, member}) => {
           <div className="tk_ModalTopBody">
             <div className="tk_ModalTopProject">
               <ProjectClientHeader project={project}/>
-              <p><FieldTimeOutlined/>Days left: {timeSheet.leftOver ? timeSheet.leftOver : 'Unlimited'}</p>
+              <p><FieldTimeOutlined/>Days left: {displayDaysLeft(timeSheet)}</p>
             </div>
             <ProjectMemberTag member={member}/>
             <Row gutter={32}>
