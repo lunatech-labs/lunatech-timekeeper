@@ -141,15 +141,16 @@ const TimeEntriesPage = () => {
 
   const convertDateTimeToDate = (dateTime) => moment(moment(dateTime).format('YYYY-MM-DD'), 'YYYY-MM-DD');
 
+  const getEventsOnDate = (date) => userEvents.filter(userEvent =>
+    date.isBetween(
+      convertDateTimeToDate(userEvent.startDateTime).subtract(1, 'second'),
+      convertDateTimeToDate(userEvent.endDateTime).add(1, 'day')
+    )
+  );
+
   // A day without entries in the past should be displayed with "warn" design
   const hasWarnNoEntryInPastDay = (date, day) => {
-    const listOfEventOnTheDate = userEvents.filter(userEvent =>
-      date.isBetween(
-        convertDateTimeToDate(userEvent.startDateTime).subtract(1, 'second'),
-        convertDateTimeToDate(userEvent.endDateTime).add(1, 'day')
-      )
-    );
-    const hasEventOnThisDate = listOfEventOnTheDate.length > 0;
+    const hasEventOnThisDate = getEventsOnDate(date).length > 0;
     return moment().subtract('1', 'days').isAfter(date) && !day && !hasEventOnThisDate;
   };
 
