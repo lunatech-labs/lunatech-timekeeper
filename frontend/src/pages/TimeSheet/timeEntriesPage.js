@@ -139,10 +139,18 @@ const TimeEntriesPage = () => {
   const openModal = () => setVisibleEntryModal(true);
   const closeModal = () => setVisibleEntryModal(false);
 
+  const convertDateTimeToDate = (dateTime) => moment(moment(dateTime).format('YYYY-MM-DD'), 'YYYY-MM-DD');
 
   // A day without entries in the past should be displayed with "warn" design
   const hasWarnNoEntryInPastDay = (date, day) => {
-    return moment().subtract('1', 'days').isAfter(date) && !day;
+    const listOfEventOnTheDate = userEvents.filter(userEvent =>
+      date.isBetween(
+        convertDateTimeToDate(userEvent.startDateTime).subtract(1, 'second'),
+        convertDateTimeToDate(userEvent.endDateTime).add(1, 'day')
+      )
+    );
+    const hasEventOnThisDate = listOfEventOnTheDate.length > 0;
+    return moment().subtract('1', 'days').isAfter(date) && !day && !hasEventOnThisDate;
   };
 
   const onClickAddTask = (e, m) => {
