@@ -6,6 +6,7 @@ import fr.lunatech.timekeeper.services.responses.UserEventResponse;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WeekUtils {
 
@@ -38,17 +39,12 @@ public class WeekUtils {
      * @return a Long that is the duration of TimeEntries in hours.
      */
     public static Long getTimeEntriesDurationForASpecificDay(LocalDate date, Long userId, List<TimeSheetResponse> sheets) {
-        return sheets.stream().map(timeSheetResponse -> {
-            if (timeSheetResponse.ownerId.equals(userId)) {
-                return timeSheetResponse.entries.stream().map(timeEntryResponse -> {
-                    if (date.equals(timeEntryResponse.getStartDateTime().toLocalDate())) {
-                        return timeEntryResponse.numberOfHours;
-                    }
-                    return 0L;
-                }).reduce(0L, Long::sum);
-            }
-            return 0L;
-        }).reduce(0L, Long::sum);
+        return sheets.stream()
+                .filter(timeSheetResponse -> timeSheetResponse.ownerId.equals(userId))
+                .flatMap(timeSheetResponse -> timeSheetResponse.entries.stream())
+                .filter(i -> date.equals(i.getStartDateTime().toLocalDate()))
+                .map(i -> i.numberOfHours)
+                .reduce(0L, Long::sum);
     }
 
     /**
@@ -60,19 +56,12 @@ public class WeekUtils {
      * @return a Long that is the duration of UserEvents in hours.
      */
     public static Long getUserEventsDurationForASpecificDay(LocalDate date, Long userId, List<UserEventResponse> userEvents) {
-        return userEvents.stream().map(userEvent -> {
-            if (userEvent.getAttendees().stream().anyMatch(attendee -> attendee.getUserId().equals(userId))) {
-                return userEvent.getEventUserDaysResponse()
-                        .stream()
-                        .map(userEventDay -> {
-                            if (TimeKeeperDateUtils.formatToLocalDate(userEventDay.getDate()).equals(date)) {
-                                return TimeKeeperDateUtils.getDuration(TimeKeeperDateUtils.formatToLocalDateTime(userEventDay.getStartDateTime()),
-                                        TimeKeeperDateUtils.formatToLocalDateTime(userEventDay.getEndDateTime()), ChronoUnit.HOURS);
-                            }
-                            return 0L;
-                        }).reduce(0L, Long::sum);
-            }
-            return 0L;
-        }).reduce(0L, Long::sum);
+        return userEvents.stream()
+                .filter(userEvent -> userEvent.getAttendees().stream().anyMatch(attendee -> attendee.getUserId().equals(userId)))
+                .flatMap(userEvent -> userEvent.getEventUserDaysResponse().stream())
+                .filter(day -> TimeKeeperDateUtils.formatToLocalDate(day.getDate()).equals(date))
+                .map(userEventDay -> TimeKeeperDateUtils.getDuration(TimeKeeperDateUtils.formatToLocalDateTime(userEventDay.getStartDateTime()),
+                        TimeKeeperDateUtils.formatToLocalDateTime(userEventDay.getEndDateTime()), ChronoUnit.HOURS))
+                .reduce(0L, Long::sum);
     }
 }
