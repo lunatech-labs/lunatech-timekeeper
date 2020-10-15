@@ -180,7 +180,8 @@ class WeekUtilsTest {
                 "",
                 EventType.PERSONAL,
                 user,
-                user
+                user,
+                user.getOrganization()
         );
         UserEventResponse userEventResponse = UserEventResponse.bind(userEvent);
         assertEquals(8L,
@@ -199,7 +200,8 @@ class WeekUtilsTest {
                 "",
                 EventType.PERSONAL,
                 user,
-                user
+                user,
+                user.getOrganization()
         );
         UserEventResponse userEventResponse = UserEventResponse.bind(userEvent);
         assertEquals(2L,
@@ -218,7 +220,8 @@ class WeekUtilsTest {
                 "",
                 EventType.PERSONAL,
                 user,
-                user
+                user,
+                user.getOrganization()
         );
         UserEventResponse userEventResponse = UserEventResponse.bind(userEvent);
         assertEquals(8L,
@@ -237,7 +240,8 @@ class WeekUtilsTest {
                 "",
                 EventType.PERSONAL,
                 user,
-                user
+                user,
+                user.getOrganization()
         );
         final UserEvent userEvent2 = new UserEvent(
                 2L,
@@ -247,7 +251,8 @@ class WeekUtilsTest {
                 "",
                 EventType.PERSONAL,
                 user,
-                user
+                user,
+                user.getOrganization()
         );
         UserEventResponse userEventResponse = UserEventResponse.bind(userEvent);
         UserEventResponse userEventResponse2 = UserEventResponse.bind(userEvent2);
@@ -268,7 +273,8 @@ class WeekUtilsTest {
                 "",
                 EventType.PERSONAL,
                 user,
-                user
+                user,
+                user.getOrganization()
         );
         final UserEvent userEvent2 = new UserEvent(
                 2L,
@@ -278,7 +284,8 @@ class WeekUtilsTest {
                 "",
                 EventType.PERSONAL,
                 user2,
-                user2
+                user2,
+                user2.getOrganization()
         );
         UserEventResponse userEventResponse = UserEventResponse.bind(userEvent);
         UserEventResponse userEventResponse2 = UserEventResponse.bind(userEvent2);
@@ -301,7 +308,8 @@ class WeekUtilsTest {
                 "",
                 EventType.PERSONAL,
                 user,
-                user
+                user,
+                user.getOrganization()
         );
         UserEventResponse userEventResponse = UserEventResponse.bind(userEvent);
         TimeSheetResponse.TimeEntryResponse timeEntry1 = new TimeSheetResponse.TimeEntryResponse(
@@ -337,7 +345,8 @@ class WeekUtilsTest {
                 "",
                 EventType.PERSONAL,
                 user,
-                user
+                user,
+                user.getOrganization()
         );
         UserEventResponse userEventResponse = UserEventResponse.bind(userEvent);
         TimeSheetResponse.TimeEntryResponse timeEntry1 = new TimeSheetResponse.TimeEntryResponse(
@@ -374,7 +383,8 @@ class WeekUtilsTest {
                 "",
                 EventType.PERSONAL,
                 user,
-                user
+                user,
+                user.getOrganization()
         );
         final UserEvent userEvent2 = new UserEvent(
                 2L,
@@ -384,7 +394,8 @@ class WeekUtilsTest {
                 "",
                 EventType.PERSONAL,
                 user2,
-                user2
+                user2,
+                user2.getOrganization()
         );
         UserEventResponse userEventResponse = UserEventResponse.bind(userEvent);
         UserEventResponse userEventResponse2 = UserEventResponse.bind(userEvent2);
@@ -464,7 +475,8 @@ class WeekUtilsTest {
                 "",
                 EventType.PERSONAL,
                 user,
-                user
+                user,
+                user.getOrganization()
         );
         UserEventResponse userEventResponse = UserEventResponse.bind(userEvent);
         assertEquals(4L, WeekUtils.getWorkingHoursForASpecificDay(date, user.getId(), Collections.emptyList(), List.of(userEventResponse)));
