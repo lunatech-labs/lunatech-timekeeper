@@ -129,7 +129,7 @@ const MonthCalendar = (props) => {
     }
   };
 
-  const MonthCardComponent = ({item}) => {
+  const MonthCardComponent = ({item, userEvents}) => {
     let associatedData =  findData(item);
     const className = !(props.disabledWeekEnd && (isWeekEnd(item) || isPublicHoliday(item) ) ) && (props.warningCardPredicate && props.warningCardPredicate(item, associatedData && associatedData.data)) ?
       'tk_CardMonthCalendar_Body_With_Warn' : '';
@@ -142,12 +142,12 @@ const MonthCalendar = (props) => {
       }
 
     if(!isDisabled(item)){
-      if(associatedData && associatedData.date && totalHoursPerDay(associatedData.data) >= 8) {
+      if(associatedData && associatedData.date && totalHoursPerDay(userEvents, associatedData.date, associatedData.data) >= 8) {
         return (
-          <div className={className}>
+          <React.Fragment>
             <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>
-            {props.dateCellRender(associatedData.data, associatedData.date, associatedData.disabled)}
-          </div>
+            <span>{props.dateCellRender(associatedData.data, associatedData.date, associatedData.disabled)}</span>
+          </React.Fragment>
         );
       }
       return <div className={className}>
@@ -195,7 +195,7 @@ const MonthCalendar = (props) => {
           }}
           dateCellRender={dateAsMoment => {
             return (
-              <MonthCardComponent item={dateAsMoment}/>
+              <MonthCardComponent item={dateAsMoment} userEvents={userEvents}/>
             );
           }}
         />
