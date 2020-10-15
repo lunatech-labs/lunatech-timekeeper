@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {useTimeKeeperAPI} from '../../utils/services';
 import {Alert, AutoComplete, Button, Card, Dropdown, List, Menu, Spin} from 'antd';
 import CalendarOutlined from '@ant-design/icons/lib/icons/CalendarOutlined';
@@ -32,20 +32,27 @@ import Input from 'antd/lib/input';
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined';
 import DownOutlined from '@ant-design/icons/lib/icons/DownOutlined';
 import PropTypes from 'prop-types';
+import {UserContext} from '../../context/UserContext';
 
 const EventsList = ({endPoint}) => {
   const [keycloak] = useKeycloak();
   const isAdmin = keycloak.hasRealmRole('admin');
   const eventsResponse = useTimeKeeperAPI(endPoint);
+  const {currentUser} = useContext(UserContext);
 
-  const [filterText, setFilterText] = useState('All');
+  const [filterDate, setFilterDate] = useState('All');
+  const [filterCreator, setFilterCreator] = useState('Mine');
   const [searchValue, setSearchValue] = useState('');
 
 
   const onSearch = searchText => setSearchValue(searchText);
 
-  const isUserEvent = (endPoint) => {
+  const isPersonalEvent = (endPoint) => {
     return endPoint !== '/api/events-template' && endPoint !== '/api/user-events';
+  };
+
+  const isUserEvent = (endPoint) => {
+    return endPoint === '/api/user-events';
   };
 
   if (eventsResponse.loading) {
@@ -68,24 +75,30 @@ const EventsList = ({endPoint}) => {
     );
   }
 
+  const isCreator = (event) => {
+    return event.creatorId === currentUser.id;
+  };
+
   const getEventsFiltered = () => eventsOrdered.filter(event => {
     const startDateTime = moment(event.startDateTime);
     const endDateTime = moment(event.endDateTime);
     return (
-      startDateTime.format('MMMM') === filterText ||
-      endDateTime.format('MMMM') === filterText ||
-      moment().month(filterText).isBetween(startDateTime, endDateTime)
+      startDateTime.format('MMMM') === filterDate ||
+        endDateTime.format('MMMM') === filterDate ||
+        moment().month(filterDate).isBetween(startDateTime, endDateTime)
     );
   });
+
+  const mineToShow = (event) => (isUserEvent(endPoint) && filterCreator === 'Mine') ? isCreator(event) : true;
 
   // Sort events by startDateTime order (DESC) && filter with searchValue
   const eventsOrdered = _.orderBy(eventsResponse.data.filter(event => event.name.toLowerCase().includes(searchValue.toLowerCase())), (userEvent) => {
     return moment(userEvent.startDateTime).utc();
-  }, 'desc');
+  }, 'desc').filter(mineToShow);
 
   // Filter events by month
   const eventsFilter = () => {
-    switch (filterText) {
+    switch (filterDate) {
       case 'All':
         return eventsOrdered;
       default:
@@ -136,8 +149,8 @@ const EventsList = ({endPoint}) => {
     return moment(date, 'YYYY-MM-DD-HH:mm:ss.SSS\'Z\'').utc().format('LLL');
   };
 
-  const filterMenu = (
-    <Menu className="tk_Filter_Month" onClick={({key}) => setFilterText(key)}>
+  const filterDateMenu = (
+    <Menu className="tk_Filter_Month" onClick={({key}) => setFilterDate(key)}>
       <Menu.Item key="All">
         All
       </Menu.Item>
@@ -153,12 +166,35 @@ const EventsList = ({endPoint}) => {
     </Menu>
   );
 
+  const filterCreatorMenu = (
+    <Menu className="tk_Filter_Creator" onClick={({key}) => setFilterCreator(key)}>
+      <Menu.Item key="Mine">
+          Mine
+      </Menu.Item>
+      <Menu.Item key="All">
+          All
+      </Menu.Item>
+    </Menu>
+  );
+
   const filterComponent = (
     <React.Fragment>
+      {
+        isUserEvent(endPoint) ?
+          <React.Fragment>
+            <p>Creator :</p>
+            <Dropdown overlay={filterCreatorMenu}>
+              <Button type="link" className="ant-dropdown-link">
+                {filterCreator} <DownOutlined/>
+              </Button>
+            </Dropdown>
+          </React.Fragment>
+          : ''
+      }
       <p>Month :</p>
-      <Dropdown overlay={filterMenu}>
+      <Dropdown overlay={filterDateMenu}>
         <Button type="link" className="ant-dropdown-link">
-          {filterText} <DownOutlined/>
+          {filterDate} <DownOutlined/>
         </Button>
       </Dropdown>
     </React.Fragment>
@@ -189,7 +225,7 @@ const EventsList = ({endPoint}) => {
               bordered={false}
               title={item.name}
               extra={[
-                <Dropdown key={`ant-dropdown-${item.id}`} overlay={dropdownCardAction(item, isAdmin, isUserEvent(endPoint))}>
+                <Dropdown key={`ant-dropdown-${item.id}`} overlay={dropdownCardAction(item, isAdmin, isPersonalEvent(endPoint))}>
                   <a className="ant-dropdown-link" onClick={e => e.preventDefault()}><EllipsisOutlined/></a>
                 </Dropdown>,
               ]}
