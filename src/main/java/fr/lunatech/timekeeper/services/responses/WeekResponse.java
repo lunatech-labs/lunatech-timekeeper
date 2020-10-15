@@ -20,6 +20,7 @@ import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.timeutils.PublicHoliday;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 import fr.lunatech.timekeeper.timeutils.Week;
+import fr.lunatech.timekeeper.timeutils.WeekUtils;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -85,5 +86,9 @@ public final class WeekResponse {
 
     public List<PublicHoliday> getPublicHolidays() {
         return Collections.unmodifiableList(publicHolidays);
+    }
+
+    public Boolean hasCompletedHoursForADay(Long userId, LocalDate date) {
+        return WeekUtils.getWorkingHoursForASpecificDay(date, userId, sheets, userEvents) > 8;
     }
 }

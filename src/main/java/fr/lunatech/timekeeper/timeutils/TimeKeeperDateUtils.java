@@ -19,31 +19,42 @@ package fr.lunatech.timekeeper.timeutils;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.IsoFields;
-import java.time.temporal.TemporalAdjusters;
-import java.time.temporal.TemporalField;
-import java.time.temporal.WeekFields;
+import java.time.temporal.*;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @author created by N.Martignole, Lunatech, on 2020-06-10.
  */
 public class TimeKeeperDateUtils {
 
-    private TimeKeeperDateUtils(){ }
+    private static final LocalTime START_OF_DAY = LocalTime.parse("09:00:00",
+            DateTimeFormatter.ISO_TIME);
 
-    public static void validateYear(final Integer year){
-        if(year < 1970) throw new IllegalStateException("year should be after 1970 due to TimeStamp limitation");
+    private static final LocalTime END_OF_DAY = LocalTime.parse("17:00:00",
+            DateTimeFormatter.ISO_TIME);
+
+    private TimeKeeperDateUtils() {
     }
 
-    public static void validateMonth(final Integer monthNumber){
-        if(monthNumber<1 || monthNumber>12) throw new IllegalStateException("monthnumber must be an Int value in range 1 to 12");
+    public static void validateYear(final Integer year) {
+        if (year < 1970) throw new IllegalStateException("year should be after 1970 due to TimeStamp limitation");
     }
 
-    public static void validateWeek(final Integer weekNumber, final Integer year){
+    public static void validateMonth(final Integer monthNumber) {
+        if (monthNumber < 1 || monthNumber > 12)
+            throw new IllegalStateException("monthnumber must be an Int value in range 1 to 12");
+    }
+
+    public static void validateWeek(final Integer weekNumber, final Integer year) {
         Integer lastWeekNumber = getWeekNumberFromDate(LocalDate.of(year, 12, 28));
-        if(weekNumber<1 || weekNumber>lastWeekNumber) throw new IllegalStateException("weeknumber must be an Int value in range 1 to "+ lastWeekNumber);
+        if (weekNumber < 1 || weekNumber > lastWeekNumber)
+            throw new IllegalStateException("weeknumber must be an Int value in range 1 to " + lastWeekNumber);
     }
 
     /**
@@ -55,7 +66,7 @@ public class TimeKeeperDateUtils {
     public static LocalDate getFirstDayOfWeekFromWeekNumber(final Integer year, final Integer weekNumber) {
         validateYear(year);
         validateWeek(weekNumber, year);
-        return LocalDate.of(year,1,1)
+        return LocalDate.of(year, 1, 1)
                 .with(IsoFields.WEEK_OF_WEEK_BASED_YEAR, weekNumber)
                 .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
     }
@@ -84,6 +95,7 @@ public class TimeKeeperDateUtils {
 
     /**
      * Returns the weekNumber between 1 to 53 from a LocalDate
+     *
      * @param date is a valid LocalDate, no TimeZone
      * @return a weekNumber as Integer
      */
@@ -94,6 +106,7 @@ public class TimeKeeperDateUtils {
 
     /**
      * Returns the monthNumber between 1 to 12 from LocalDate
+     *
      * @param date
      * @return a monthNumber as Integer
      */
@@ -109,25 +122,48 @@ public class TimeKeeperDateUtils {
 
     /**
      * Format and return the date as a String
+     *
      * @param date is a valid date
      * @return a String ISO LOCAL DATE
      */
-    public static String formatToString(final LocalDate date){
+    public static String formatToString(final LocalDate date) {
         return DateTimeFormatter.ISO_LOCAL_DATE.format(date);
     }
 
     /**
+     * Returns a LocalDate from an ISO_LOCAL_DATE String
+     *
+     * @param dateString
+     * @return a localDate
+     */
+    public static LocalDate formatToLocalDate(final String dateString) {
+        return LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE);
+    }
+
+    /**
      * Returns a formatted DateTime as ISO LOCAL DATE_TIME
+     *
      * @param dateTime
-     * @return
+     * @return a String
      */
     public static String formatToString(final LocalDateTime dateTime) {
         return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(dateTime);
     }
 
     /**
+     * Returns a LocalDateTime from an ISO_LOCAL_DATE_TIME String
+     *
+     * @param dateString
+     * @return a localDateTime
+     */
+    public static LocalDateTime formatToLocalDateTime(final String dateString) {
+        return LocalDateTime.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+    }
+
+    /**
      * Return a predicate that test if the input date is included in the six weeks of the month
      * The calendars view usually displays six weeks for the month view
+     *
      * @param year
      * @param monthNumber
      * @return a predicate to test if the input date is included in the six weeks of the month
@@ -142,4 +178,76 @@ public class TimeKeeperDateUtils {
         return inputDate -> inputDate.isAfter(firstDayOfFirstWeek.minusDays(1)) && inputDate.isBefore(lastDayOfLastWeek.plusDays(1));
     }
 
+    /**
+     * Returns the number of minutes between two LocalDateTime
+     *
+     * @param from
+     * @param to
+     * @return a long that represents the number of minutes between the two dates
+     */
+    public static Long getDuration(LocalDateTime from, LocalDateTime to, ChronoUnit unit) {
+        if (from.isAfter(to)) {
+            throw new IllegalArgumentException("EndDateTime must be after startDateTime");
+        }
+        return from.until(to, unit);
+    }
+
+    /**
+     * Get the business days between two LocalDate
+     *
+     * @param from is a LocalDate
+     * @param to   is a LocalDate
+     * @return the business days between two LocalDate as a List of LocalDate
+     */
+    private static List<LocalDate> getBusinessDays(LocalDate from, LocalDate to) {
+        return IntStream.rangeClosed(from.getYear(), to.getYear())
+                .boxed()
+                .map(year -> CalendarFactory.instanceFor("FR", year))
+                .flatMap(calendar -> calendar.getBusinessDays().stream())
+                .filter(date -> date.isAfter(from) && date.isBefore(to) || date.equals(from) || date.equals(to))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Compute the total number of business hours between two LocalDateTimes, assuming a start time
+     * of 09:00 and a finish time of 17:00
+     *
+     * @param startDateTime is a localDateTime
+     * @param endDateTime   is a localDateTime
+     * @return the total of business hours between two LocalDateTimes as a Long
+     */
+    public static Long computeTotalNumberOfHours(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        return computeTotalNumberOfHours(startDateTime, endDateTime, START_OF_DAY, END_OF_DAY);
+    }
+
+    /**
+     * Compute the total number of business hours between two LocalDateTimes
+     *
+     * @param startDateTime is a localDateTime
+     * @param endDateTime   is a localDateTime
+     * @param startOfDay    is a localTime
+     * @param endOfDay      is a localTime
+     * @return the total number of business hours between two LocalDateTimes as a Long
+     */
+    public static Long computeTotalNumberOfHours(LocalDateTime startDateTime,
+                                                 LocalDateTime endDateTime,
+                                                 LocalTime startOfDay,
+                                                 LocalTime endOfDay) {
+        Objects.requireNonNull(startDateTime, "StartDateTime should not be null");
+        Objects.requireNonNull(endDateTime, "EndDateTime should not be null");
+        if (endDateTime.isBefore(startDateTime)
+                || startDateTime.getHour() < startOfDay.getHour() || startDateTime.getHour() > endOfDay.getHour()
+                || endDateTime.getHour() < startOfDay.getHour() || endDateTime.getHour() > endOfDay.getHour()
+        ) {
+            throw new IllegalArgumentException("StartDateTime must be before EndDateTime and in the business hours range");
+        }
+
+        final int businessDays = getBusinessDays(startDateTime.toLocalDate(), endDateTime.toLocalDate()).size();
+        final int hoursFromStartToEndOfDay = endOfDay.getHour() - startDateTime.toLocalTime().getHour();
+        final int hoursFromEndToEndOfDay = endOfDay.getHour() - endDateTime.toLocalTime().getHour();
+
+        return (long) hoursFromStartToEndOfDay
+                + ((businessDays - 1) * (endOfDay.getHour() - startOfDay.getHour()))
+                - hoursFromEndToEndOfDay;
+    }
 }
