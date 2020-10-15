@@ -15,17 +15,19 @@
  */
 
 import React from 'react';
-import './EventMemberTag.less';
+import './EventDuration.less';
 import PropTypes from 'prop-types';
 import momentPropTypes from 'react-moment-proptypes';
 import {getBusinessDays} from '../../utils/momentUtils';
 import _ from 'lodash';
 import moment from 'moment';
+import humanizeDuration from 'humanize-duration';
+import {Col, Row} from 'antd';
 
 const EventDuration = ({startDate, startDateHours, endDate, endDateHours, locale}) => {
 
   const computeDuration = (startDate, startDateHours, endDate, endDateHours, locale) => {
-    //Single day logic
+    //Single day
     if(!_.isNull(startDate) && startDateHours > 0 && (_.isNull(endDate) || endDateHours < 1)) {
       const start = moment(startDate);
       const days = getBusinessDays(start, start, locale);
@@ -34,6 +36,7 @@ const EventDuration = ({startDate, startDateHours, endDate, endDateHours, locale
       return day.length === 1 ? startDateHours : 0;
     }
 
+    //Multi day
     if(!_.isNull(startDate) && startDateHours > 0 && !_.isNull(endDate) && endDateHours > 0) {
       const start = moment(startDate).utc(true);
       const end = moment(endDate).utc(true);
@@ -56,13 +59,23 @@ const EventDuration = ({startDate, startDateHours, endDate, endDateHours, locale
     return -1;
   };
 
-  const duration = computeDuration(startDate, startDateHours, endDate, endDateHours, locale);
+  const duration = moment.duration(computeDuration(startDate, startDateHours, endDate, endDateHours, locale), 'hours')
+    .asHours();
+
   if(duration > 0) {
     return (
-      <React.Fragment>
-        <div>Duration of your event:</div>
-        <div>{duration}</div>
-      </React.Fragment>
+      <Row className="tk_EventDuration_Text">
+        <Col span={12}>
+          <div>Duration of your event:</div>
+        </Col>
+        <Col span={12}>
+          <div id="tk_EventDuration_Result">{humanizeDuration(duration, { units: ['w', 'd', 'h'],
+            unitMeasures: { w: 40, d: 8, h: 1 },
+            conjunction: ' & ',
+            serialComma: false
+          })}</div>
+        </Col>
+      </Row>
     );
   } else {
     return (<div/>);
