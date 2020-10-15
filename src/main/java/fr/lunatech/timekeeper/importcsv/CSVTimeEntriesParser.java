@@ -113,27 +113,27 @@ public class CSVTimeEntriesParser {
                 }).collect(Collectors.toList());
     }
 
-    public List<Project> computeProjectUser(List<ImportedTimeEntry> importedTimeEntries, Long organizationId) {
-        Organization defaultOrganization = Organization.findById(organizationId); // NOSONAR
-        return importedTimeEntries.stream()
-                .filter(entry -> Optional.ofNullable(updateEmailToOrganization(entry.getEmail(), defaultOrganization)).isPresent()
-                        && Optional.ofNullable(updateEmailToOrganization(entry.getUser(), defaultOrganization)).isPresent()
-                        && Optional.ofNullable(updateEmailToOrganization(entry.getProject(), defaultOrganization)).isPresent()
-                        && Optional.ofNullable(updateEmailToOrganization(entry.getClient(), defaultOrganization)).isPresent())
-                .flatMap(entry -> {
-                    String correctEmail = updateEmailToOrganization(entry.getEmail(), defaultOrganization);
-                    String projectName = entry.getProject();
-                    String clientName = entry.getClient();
-
-                    Optional<User> maybeUser = User.find("email", correctEmail).firstResultOptional(); // NOSONAR
-                    Optional<Project> maybeProject = Project.find("name", projectName).firstResultOptional(); // NOSONAR
-                    return maybeProject.map(project -> (project.client.name.equals(clientName)
-                            && project.users.stream().noneMatch(u -> u.user.email.equals(correctEmail))) ?
-                            maybeUser.map(user -> addProjectUserInProject(project, user)) : Optional.empty()
-                    );
-                }
-                ).collect(Collectors.toList());
-    }
+//    public List<Project> computeProjectUser(List<ImportedTimeEntry> importedTimeEntries, Long organizationId) {
+//        Organization defaultOrganization = Organization.findById(organizationId); // NOSONAR
+//        return importedTimeEntries.stream()
+//                .filter(entry -> Optional.ofNullable(updateEmailToOrganization(entry.getEmail(), defaultOrganization)).isPresent()
+//                        && Optional.ofNullable(updateEmailToOrganization(entry.getUser(), defaultOrganization)).isPresent()
+//                        && Optional.ofNullable(updateEmailToOrganization(entry.getProject(), defaultOrganization)).isPresent()
+//                        && Optional.ofNullable(updateEmailToOrganization(entry.getClient(), defaultOrganization)).isPresent())
+//                .map(entry -> {
+//                    String correctEmail = updateEmailToOrganization(entry.getEmail(), defaultOrganization);
+//                    String projectName = entry.getProject();
+//                    String clientName = entry.getClient();
+//
+//                    Optional<User> maybeUser = User.find("email", correctEmail).firstResultOptional(); // NOSONAR
+//                    Optional<Project> maybeProject = Project.find("name", projectName).firstResultOptional(); // NOSONAR
+//                    return maybeProject.map(project -> (project.client.name.equals(clientName)
+//                            && project.users.stream().noneMatch(u -> u.user.email.equals(correctEmail))) ?
+//                            maybeUser.map(user -> addProjectUserInProject(project, user)) : Optional.empty()
+//                    );
+//                }
+//                ).collect(Collectors.toList());
+//    }
 
     private Project addProjectUserInProject(Project project, User user){
         logger.info("Add user [" + user.email + " as member of project [" + project.name + "]");
