@@ -17,6 +17,7 @@
 package fr.lunatech.timekeeper.models.time;
 
 import fr.lunatech.timekeeper.models.User;
+import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
@@ -97,6 +98,11 @@ public class UserEvent extends PanacheEntityBase {
             return null;
         }
         return startDateTime.toLocalDate();
+    }
+
+    @Null
+    public Long getTotalNumberOfHours() {
+        return TimeKeeperDateUtils.computeTotalNumberOfHours(startDateTime, endDateTime);
     }
 
     @Override
