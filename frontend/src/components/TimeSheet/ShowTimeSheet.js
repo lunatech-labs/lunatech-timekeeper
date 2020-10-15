@@ -32,7 +32,7 @@ const ShowTimeSheet = ({project, member}) => {
   const [selectedTimeSheet, setSelectedTimeSheet] = useState();
 
   const displayDaysLeft = (timeSheet) => {
-    return timeSheet.leftOver ? timeSheet.leftOver : timeSheet.leftOver === 0 ? timeSheet.leftOver : 'Unlimited';
+    return timeSheet.leftOver || timeSheet.leftOver === 0 ? timeSheet.leftOver : 'Unlimited';
   };
 
   const TimeSheet = ({timeSheet}) => {
