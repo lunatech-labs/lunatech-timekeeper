@@ -62,6 +62,23 @@ const EventDuration = ({startDate, startDateHours, endDate, endDateHours, locale
   const duration = moment.duration(computeDuration(startDate, startDateHours, endDate, endDateHours, locale), 'hours')
     .asHours();
 
+  const durationHumanized = () => {
+    const str = humanizeDuration(duration, { units: ['w', 'd', 'h'],
+      unitMeasures: { w: 40, d: 8, h: 1 },
+      conjunction: ' & ',
+      serialComma: false
+    }).split('&')
+    if(str.length > 1) {
+      return (<Row className="tk_EventDuration_Flex">
+        <Col className="tk_EventDuration_Human">{str[0]}</Col>
+        <Col id="tk_EventDuration_Ampersand">&</Col>
+        <Col className="tk_EventDuration_Human">{str[1]}</Col>
+        </Row>)
+    } else {
+      return (<p>{str[0]}</p>)
+    }
+  }
+
   if(duration > 0) {
     return (
       <Row className="tk_EventDuration_Text">
@@ -69,11 +86,7 @@ const EventDuration = ({startDate, startDateHours, endDate, endDateHours, locale
           <div>Duration of your event:</div>
         </Col>
         <Col span={12}>
-          <div id="tk_EventDuration_Result">{humanizeDuration(duration, { units: ['w', 'd', 'h'],
-            unitMeasures: { w: 40, d: 8, h: 1 },
-            conjunction: ' & ',
-            serialComma: false
-          })}</div>
+          <div>{durationHumanized()}</div>
         </Col>
       </Row>
     );
