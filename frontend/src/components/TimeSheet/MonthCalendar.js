@@ -134,6 +134,13 @@ const MonthCalendar = (props) => {
     const className = !(props.disabledWeekEnd && (isWeekEnd(item) || isPublicHoliday(item) ) ) && (props.warningCardPredicate && props.warningCardPredicate(item, associatedData && associatedData.data)) ?
       'tk_CardMonthCalendar_Body_With_Warn' : '';
 
+    if (isPublicHoliday(item, publicHolidays)) {
+          return <React.Fragment>
+                      <Tag className="tk_Tag_Public_Holiday"><InfoCircleOutlined/> Public holiday</Tag>
+                      <div className='tk_CardMonthCalendar_Body'/>
+                 </React.Fragment>
+      }
+
     if(!isDisabled(item)){
       if(associatedData && associatedData.date && totalHoursPerDay(userEvents, associatedData.date, associatedData.data) >= 8) {
         return (
@@ -155,10 +162,6 @@ const MonthCalendar = (props) => {
         {associatedData && associatedData.data && props.dateCellRender(associatedData.data, associatedData.date, associatedData.disabled)}
         {renderUserEvents(userEvents, item)}
       </div>;
-    }
-
-    if(isPublicHoliday(item)){
-      return <Tag className="tk_Tag_Public_Holiday"><InfoCircleOutlined /> Public holiday</Tag>;
     }
 
     return <div className='tk_CardMonthCalendar_Body'/>;
