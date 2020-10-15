@@ -137,10 +137,10 @@ const MonthCalendar = (props) => {
     if(!isDisabled(item)){
       if(associatedData && associatedData.date && totalHoursPerDay(userEvents, associatedData.date, associatedData.data) >= 8) {
         return (
-            <React.Fragment>
-                <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>
-                <span>{props.dateCellRender(associatedData.data, associatedData.date, associatedData.disabled)}</span>
-            </React.Fragment>
+          <React.Fragment>
+            <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>
+            <span>{props.dateCellRender(associatedData.data, associatedData.date, associatedData.disabled)}</span>
+          </React.Fragment>
         );
       }
       return <div className={className}>
