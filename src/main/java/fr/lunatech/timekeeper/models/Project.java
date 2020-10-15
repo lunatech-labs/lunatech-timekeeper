@@ -65,6 +65,19 @@ public class Project extends PanacheEntityBase {
     @Version
     public Long version;
 
+    public Project() {
+    }
+
+    public Project(@NotNull Organization organization, @Null Client client, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull Boolean publicAccess, Long version) {
+        this.organization = organization;
+        this.client = client;
+        this.name = name;
+        this.billable = billable;
+        this.description = description;
+        this.publicAccess = publicAccess;
+        this.version = version;
+    }
+
     public Optional<ProjectUser> getUser(Long userId) {
         return ofNullable(users)
                 .flatMap(projectUsers -> projectUsers

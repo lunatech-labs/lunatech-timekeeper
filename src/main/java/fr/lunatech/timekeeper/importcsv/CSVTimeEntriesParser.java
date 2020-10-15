@@ -22,7 +22,6 @@ import fr.lunatech.timekeeper.models.*;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
-import io.smallrye.mutiny.tuples.Tuple2;
 import io.smallrye.mutiny.tuples.Tuple4;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -35,99 +34,136 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Singleton
 @Named("CSVTimeEntriesParserBean")
 public class CSVTimeEntriesParser {
 
-    private static Logger logger = LoggerFactory.getLogger(CSVTimeEntriesParser.class);
+    private static final Logger logger = LoggerFactory.getLogger(CSVTimeEntriesParser.class);
+
+    public List<Client> computeClients(List<ImportedTimeEntry> importedTimeEntries, Long organizationId) {
+        Organization defaultOrganization = Organization.findById(organizationId);//NOSONAR
+        return importedTimeEntries.stream()
+                .map(ImportedTimeEntry::getClient)
+                .distinct()
+                .filter(clientName -> !clientName.isBlank())
+                .filter(clientName -> Client.find("name", clientName).firstResultOptional().isEmpty())
+                .map(clientName -> {
+                    logger.debug(String.format("Create client [%s]", clientName));
+                    return new Client(
+                            clientName,
+                            "Imported from CSV file",
+                            defaultOrganization,
+                            Collections.emptyList()
+                    );
+                }).collect(Collectors.toList());
+    }
+
+    public List<Project> computeProjects(List<ImportedTimeEntry> importedTimeEntries, Long organizationId) {
+        Organization defaultOrganization = Organization.findById(organizationId);//NOSONAR
+        return importedTimeEntries.stream()
+                .filter(entry -> Optional.ofNullable(entry.getClient()).isPresent())
+                .filter(entry -> Optional.ofNullable(entry.getProject()).isPresent())
+                .filter(entry -> Project.find("name", entry.getProject()).firstResultOptional().isEmpty()) //NOSONAR
+                .flatMap(entry -> {
+                    Optional<Client> maybeClient = Client.find("name", entry.getClient()).firstResultOptional(); // NOSONAR
+                    return maybeClient.map(clientName -> new Project(
+                            defaultOrganization,
+                            clientName,
+                            entry.getProject(),
+                            true,
+                            "Imported from CSV File",
+                            true,
+                            1L)
+                    ).stream();
+                }).collect(Collectors.toList());
+    }
+
+    public List<User> computeUsers(List<ImportedTimeEntry> importedTimeEntries, Long organizationId) {
+        Organization defaultOrganization = Organization.findById(organizationId); // NOSONAR
+        return importedTimeEntries.stream()
+                .filter(entry -> Optional.ofNullable(entry.getEmail()).isPresent())
+                .filter(entry -> Optional.ofNullable(entry.getUser()).isPresent())
+                .filter(entry -> {
+                    String correctEmail = updateEmailToOrganization(entry.getEmail(), defaultOrganization);
+                    return User.find("email", correctEmail).firstResultOptional().isEmpty();
+                })
+                .map(entry -> {
+                    String correctEmail = updateEmailToOrganization(entry.getEmail(), defaultOrganization);
+                    String userName = entry.getUser();
+
+                    User newUser = new User();
+                    //TODO Method factory
+                    newUser.email = correctEmail;
+                    if (userName.contains(" ")) {
+                        newUser.firstName = userName.substring(0, userName.indexOf(" "));
+                        newUser.lastName = userName.substring(userName.indexOf(" ") + 1);
+                    } else {
+                        newUser.lastName = userName;
+                    }
+                    newUser.organization = defaultOrganization;
+                    newUser.profiles = new ArrayList<>(1);
+                    newUser.profiles.add(Profile.USER);
+                    return newUser;
+                }).collect(Collectors.toList());
+    }
+
+    public List<Project> computeProjectUser(List<ImportedTimeEntry> importedTimeEntries, Long organizationId) {
+        Organization defaultOrganization = Organization.findById(organizationId); // NOSONAR
+        return importedTimeEntries.stream()
+                .filter(entry -> Optional.ofNullable(updateEmailToOrganization(entry.getEmail(), defaultOrganization)).isPresent()
+                        && Optional.ofNullable(updateEmailToOrganization(entry.getUser(), defaultOrganization)).isPresent()
+                        && Optional.ofNullable(updateEmailToOrganization(entry.getProject(), defaultOrganization)).isPresent()
+                        && Optional.ofNullable(updateEmailToOrganization(entry.getClient(), defaultOrganization)).isPresent())
+                .flatMap(entry -> {
+                    String correctEmail = updateEmailToOrganization(entry.getEmail(), defaultOrganization);
+                    String projectName = entry.getProject();
+                    String clientName = entry.getClient();
+
+                    Optional<User> maybeUser = User.find("email", correctEmail).firstResultOptional(); // NOSONAR
+                    Optional<Project> maybeProject = Project.find("name", projectName).firstResultOptional(); // NOSONAR
+                    return maybeProject.map(project -> (project.client.name.equals(clientName)
+                            && project.users.stream().noneMatch(u -> u.user.email.equals(correctEmail))) ?
+                            maybeUser.map(user -> addProjectUserInProject(project, user)) : Optional.empty()
+                    );
+                }
+                ).collect(Collectors.toList());
+    }
+
+    private Project addProjectUserInProject(Project project, User user){
+        logger.info("Add user [" + user.email + " as member of project [" + project.name + "]");
+        ProjectUser projectUser = new ProjectUser();
+        projectUser.user = user;
+        projectUser.manager = false;
+        projectUser.project = project;
+        project.users.add(projectUser);
+        return project;
+    }
 
     public String importEntries(List<ImportedTimeEntry> entries) {
-        // Step 1 : Client
-        var clients = entries.stream().map(ImportedTimeEntry::getClient).distinct().collect(Collectors.toList());
-        createClients(clients);
-
-        // Step 2 : Projects for each Client
-        var projects = entries
-                .stream()
-                .map(entry -> Tuple2.of(entry.getProject(), entry.getClient()))
-                .distinct()
-                .collect(Collectors.toMap(Tuple2::getItem1, Tuple2::getItem2));
-
-        updateOrCreateProjects(projects);
-
         // Step 3 : members of each Project
         var members = entries
                 .stream()
                 .map(entry -> Tuple4.of(entry.getEmail(), entry.getUser(), entry.getProject(), entry.getClient()))
                 .collect(Collectors.toList());
+//
+//        checkUserMembership(members);
+//
+//        // Step 4 : time Entry
+//        insertOrUpdateTimeEntries(entries);
 
-        checkUserMembership(members);
-
-        // Step 4 : time Entry
-        insertOrUpdateTimeEntries(entries);
-
-        if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Total number of entries: %d", entries.size()));
-            logger.debug(String.format("Number of clients: %d", clients.size()));
-            logger.debug(String.format("Number of projects : %d", projects.size()));
-        }
+//        if (logger.isDebugEnabled()) {
+//            logger.debug(String.format("Total number of entries: %d", entries.size()));
+//            logger.debug(String.format("Number of clients: %d", clients.size()));
+//            logger.debug(String.format("Number of projects : %d", projects.size()));
+//        }
 
         return "ok";
-    }
-
-    @Transactional
-    protected void createClients(List<String> clients) {
-        Organization defaultOrganization = Organization.findById(1L);//NOSONAR
-
-        clients.stream().filter(clientName -> !clientName.isBlank()).forEach(clientName -> {
-            Optional<Client> maybeClient = Client.find("name", clientName).firstResultOptional(); // NOSONAR
-            if (maybeClient.isPresent()) {
-                logger.debug(String.format("Skip existing client [%s]", maybeClient.get().name));
-            } else {
-                logger.debug(String.format("Create client [%s]", clientName));
-                Client c = new Client();
-                c.name = clientName;
-                c.description = "Imported from CSV file";
-                c.organization = defaultOrganization;
-                c.projects = Collections.emptyList();
-                c.persistAndFlush();
-            }
-        });
-    }
-
-    @Transactional
-    protected void updateOrCreateProjects(Map<String, String> clientsAndProjects) {
-        Organization defaultOrganization = Organization.findById(1L); // NOSONAR
-
-        clientsAndProjects.entrySet().stream().filter(projectAndClient -> !projectAndClient.getKey().isBlank()).forEach(projectAndClient -> {
-
-            String projectName = projectAndClient.getKey();
-            String clientName = projectAndClient.getValue();
-
-            Optional<Client> maybeClient = Client.find("name", clientName).firstResultOptional(); // NOSONAR
-
-            if (maybeClient.isPresent()) {
-                Optional<Project> maybeProject = Project.find("name", projectName).firstResultOptional(); // NOSONAR
-                if (maybeProject.isPresent()) {
-                    logger.debug(String.format("Skip existing project [%s]", maybeProject.get().name));
-                } else {
-                    Project project = new Project();
-                    project.name = projectName;
-                    project.publicAccess = true;
-                    project.organization = defaultOrganization;
-                    project.billable = true;
-                    project.client = maybeClient.get();
-                    project.description = "Imported from CSV File";
-                    project.version = 1L;
-                    project.persistAndFlush();
-                }
-            } else {
-                logger.warn(String.format("Client not found, cannot import project %s", projectName));
-            }
-        });
     }
 
     @Transactional
@@ -243,18 +279,18 @@ public class CSVTimeEntriesParser {
                         TimeEntry timeEntry = new TimeEntry();
                         timeEntry.timeSheet = maybeTimeSheet.get();
                         timeEntry.comment = importedTimeEntry.getDescription();
-                        if(timeEntry.comment==null || timeEntry.comment.isBlank()){
-                            timeEntry.comment = "Worked on project " + StringUtils.abbreviate(maybeProject.get().name,50);
+                        if (timeEntry.comment == null || timeEntry.comment.isBlank()) {
+                            timeEntry.comment = "Worked on project " + StringUtils.abbreviate(maybeProject.get().name, 50);
                         }
                         timeEntry.startDateTime = parseToLocalDateTime(importedTimeEntry.getStartDate(), importedTimeEntry.getStartTime());
                         timeEntry.endDateTime = parseToLocalDateTime(importedTimeEntry.getEndDate(), importedTimeEntry.getEndTime());
-                        if(timeEntry.getRoundedNumberOfHours()==0){
+                        if (timeEntry.getRoundedNumberOfHours() == 0) {
                             logger.warn("--- Fixed a timeEntry to 1h min");
                             timeEntry.endDateTime = timeEntry.startDateTime.plusHours(1);
                         }
                         try {
                             timeEntry.persistAndFlush();
-                        }catch (javax.persistence.PersistenceException e){
+                        } catch (javax.persistence.PersistenceException e) {
                             logger.error("Cannot persist a timeEntry");
                             logger.error("TimeEntry=" + timeEntry);
                             logger.error(e.getMessage());

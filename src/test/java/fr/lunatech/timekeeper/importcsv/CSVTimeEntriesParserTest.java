@@ -21,6 +21,8 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -80,6 +82,5 @@ class CSVTimeEntriesParserTest {
 
         assertEquals("toto@lunatech.fr", tested.updateEmailToOrganization(" Toto@donothing.com ", organization));
     }
-
 
 }
