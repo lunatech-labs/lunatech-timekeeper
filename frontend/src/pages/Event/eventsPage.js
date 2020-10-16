@@ -17,14 +17,11 @@
 import React from 'react';
 import MainPage from '../MainPage/MainPage';
 import EventsNavBar from '../../components/Events/EventsNavBar';
-import {useKeycloak} from '@react-keycloak/web';
 import {Link} from 'react-router-dom';
 
 
 const EventsPage = () => {
-  const [keycloak] = useKeycloak();
-  const isAdmin = keycloak.hasRealmRole('admin');
-  const actions = isAdmin && <Link id="btnAddEvent" className="tk_Btn tk_BtnPrimary" key='addLink' to={'/events/new'}>Add event</Link>;
+  const actions = <Link id="btnAddEvent" className="tk_Btn tk_BtnPrimary" key='addLink' to={'/events/new'}>Add event</Link>;
   return (
     <MainPage
       title="List of events"
