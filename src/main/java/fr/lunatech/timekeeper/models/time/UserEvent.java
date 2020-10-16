@@ -16,7 +16,9 @@
 
 package fr.lunatech.timekeeper.models.time;
 
+import fr.lunatech.timekeeper.models.Organization;
 import fr.lunatech.timekeeper.models.User;
+import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
@@ -63,6 +65,15 @@ public class UserEvent extends PanacheEntityBase {
     @JoinColumn(name = "eventtemplate_id")
     public EventTemplate eventTemplate;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "creator_id")
+    @NotNull
+    public User creator;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "organization_id")
+    public Organization organization;
+
     public UserEvent() {
 
     }
@@ -73,7 +84,9 @@ public class UserEvent extends PanacheEntityBase {
                      String name,
                      String description,
                      EventType type,
-                     User user
+                     User user,
+                     User creator,
+                     Organization organization
     ) {
         this.id = id;
         this.startDateTime = startDateTime;
@@ -82,6 +95,8 @@ public class UserEvent extends PanacheEntityBase {
         this.description = description;
         this.eventType = type;
         this.owner = user;
+        this.creator = creator;
+        this.organization = organization;
     }
 
     @Null
@@ -90,6 +105,11 @@ public class UserEvent extends PanacheEntityBase {
             return null;
         }
         return startDateTime.toLocalDate();
+    }
+
+    @Null
+    public Long getTotalNumberOfHours() {
+        return TimeKeeperDateUtils.computeTotalNumberOfHours(startDateTime, endDateTime);
     }
 
     @Override
@@ -102,6 +122,7 @@ public class UserEvent extends PanacheEntityBase {
                 ", startDateTime=" + startDateTime +
                 ", endDateTime=" + endDateTime +
                 ", owner=" + owner.getFullName() +
+                ", organization=" + organization.name +
                 '}';
     }
 }

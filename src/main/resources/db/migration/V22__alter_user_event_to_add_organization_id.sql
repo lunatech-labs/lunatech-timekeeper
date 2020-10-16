@@ -14,20 +14,6 @@
  * limitations under the License.
  */
 
-@import '../../main.less';
+ALTER TABLE user_events DROP COLUMN IF EXISTS organization_id;
 
-.tk_EventMember_Display {
-  .mixin_Flexbox_Basis();
-  span {
-    margin-right: 8px;
-    height: 20px;
-    width: 20px;
-    span {
-      height: 5px;
-    }
-  }
-  p {
-    margin-bottom: 0;
-    font-size: 12px;
-  }
-}
+ALTER TABLE user_events ADD COLUMN organization_id int8 constraint fk_user_events_organization_id references organizations on delete set null;

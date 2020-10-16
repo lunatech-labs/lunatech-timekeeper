@@ -79,7 +79,6 @@ const SelectMonth = ({value, onChange}) => {
     </Select>
   );
 };
-
 SelectMonth.propTypes = {
   value: PropTypes.object.isRequired, // moment
   onChange: PropTypes.func.isRequired
@@ -101,8 +100,7 @@ MonthNavigator.propTypes = {
 
 
 const MonthCalendar = (props) => {
-  const publicHolidays = props.publicHolidays;
-  const userEvents = props.userEvents;
+  const {publicHolidays, userEvents, contextDate, onDateChange} = props;
 
   const isDisabled = (dateAsMoment) => {
     if(_.isObjectLike(dateAsMoment)) {
@@ -131,18 +129,25 @@ const MonthCalendar = (props) => {
     }
   };
 
-  const MonthCardComponent = ({item}) => {
+  const MonthCardComponent = ({item, userEvents}) => {
     let associatedData =  findData(item);
     const className = !(props.disabledWeekEnd && (isWeekEnd(item) || isPublicHoliday(item) ) ) && (props.warningCardPredicate && props.warningCardPredicate(item, associatedData && associatedData.data)) ?
       'tk_CardMonthCalendar_Body_With_Warn' : '';
 
+    if (isPublicHoliday(item, publicHolidays)) {
+          return <React.Fragment>
+                      <Tag className="tk_Tag_Public_Holiday"><InfoCircleOutlined/> Public holiday</Tag>
+                      <div className='tk_CardMonthCalendar_Body'/>
+                 </React.Fragment>
+      }
+
     if(!isDisabled(item)){
-      if(associatedData && associatedData.date && totalHoursPerDay(associatedData.data) >= 8) {
+      if(associatedData && associatedData.date && totalHoursPerDay(userEvents, associatedData.date, associatedData.data) >= 8) {
         return (
-          <div className={className}>
+          <React.Fragment>
             <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>
-            {props.dateCellRender(associatedData.data, associatedData.date, associatedData.disabled)}
-          </div>
+            <span>{props.dateCellRender(associatedData.data, associatedData.date, associatedData.disabled)}</span>
+          </React.Fragment>
         );
       }
       return <div className={className}>
@@ -159,10 +164,6 @@ const MonthCalendar = (props) => {
       </div>;
     }
 
-    if(isPublicHoliday(item)){
-      return <Tag className="tk_Tag_Public_Holiday"><InfoCircleOutlined /> Public holiday</Tag>;
-    }
-
     return <div className='tk_CardMonthCalendar_Body'/>;
   };
   MonthCardComponent.propTypes = {
@@ -173,6 +174,8 @@ const MonthCalendar = (props) => {
     <div id="tk_MonthCalendar">
       <ConfigProvider locale={en_GB}>
         <Calendar
+          value={contextDate}
+          onChange={onDateChange}
           headerRender={({value, onChange}) => {
             const onChangeCustom = (date) => {
               onChange(date);
@@ -180,9 +183,9 @@ const MonthCalendar = (props) => {
             };
             return (
               <div id="tk_MonthCalendar_Head">
-                <MonthNavigator value={value} onChange={onChangeCustom} />
+                <MonthNavigator value={value} onChange={onChangeCustom}/>
                 <div>
-                  <SelectMonth value={value} onChange={onChangeCustom} />
+                  <SelectMonth value={value} onChange={onChangeCustom}/>
                   <SelectYear value={value} onChange={onChangeCustom} />
                 </div>
               </div>);
@@ -192,7 +195,7 @@ const MonthCalendar = (props) => {
           }}
           dateCellRender={dateAsMoment => {
             return (
-              <MonthCardComponent item={dateAsMoment}/>
+              <MonthCardComponent item={dateAsMoment} userEvents={userEvents}/>
             );
           }}
         />
@@ -202,6 +205,8 @@ const MonthCalendar = (props) => {
 };
 
 MonthCalendar.propTypes = {
+  contextDate: PropTypes.object.isRequired,
+  onDateChange: PropTypes.func.isRequired,
   dateCellRender: PropTypes.func.isRequired, //(data, date, disabled) => node
   disabledWeekEnd: PropTypes.bool,
   days: PropTypes.arrayOf(

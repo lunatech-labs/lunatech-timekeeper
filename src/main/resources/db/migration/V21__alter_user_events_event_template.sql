@@ -13,21 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+ALTER TABLE event_template
+    ADD COLUMN creator_id bigint
+        constraint fk_user_events_to_users
+            references users
+            on delete set null;
 
-@import '../../main.less';
+ALTER TABLE user_events
+    ADD COLUMN creator_id bigint
+        constraint fk_user_events_to_users_owner
+            references users
+            on delete set null;
 
-.tk_EventMember_Display {
-  .mixin_Flexbox_Basis();
-  span {
-    margin-right: 8px;
-    height: 20px;
-    width: 20px;
-    span {
-      height: 5px;
-    }
-  }
-  p {
-    margin-bottom: 0;
-    font-size: 12px;
-  }
-}
+UPDATE user_events
+SET creator_id = 1;

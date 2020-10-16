@@ -75,7 +75,7 @@ export const renderRange = (start, end) => {
 export const weekRangeOfDate = (firstDay, numberOfWeek) => {
   const startOfCurrentWeek = firstDay || moment.utc().startOf('week');
   return [...Array(numberOfWeek).keys()].map(i => {
-    const toAdd = i - 7;
+    const toAdd = i - Math.trunc(numberOfWeek / 2);
     const start = startOfCurrentWeek.clone().add(toAdd, 'week');
     const end = start.clone().endOf('week');
     return {
@@ -120,10 +120,10 @@ export const totalHoursPerDay = (userEvents, date, timeEntries) => {
 // Returns true if the date is a publicHolidays
 export const isPublicHoliday = (date, publicHolidays) => {
   if(date) {
-    const res = _.find(publicHolidays, function(d){
-      if(d.date){
+    const res = _.find(publicHolidays, function(publicHoliday){
+      if(publicHoliday.date){
         const formatted = date.format('YYYY-MM-DD');
-        const isSameDate = formatted.localeCompare(d.date);
+        const isSameDate = formatted.localeCompare(publicHoliday.date);
         return isSameDate === 0;
       }
       return false;

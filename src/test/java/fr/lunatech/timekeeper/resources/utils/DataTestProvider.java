@@ -46,7 +46,7 @@ public class DataTestProvider {
                 end,
                 Arrays.stream(usersId)
                         .sorted(Comparator.comparingLong(value -> (long) value))
-                        .map(UserEventRequest::new)
+                        .map(value -> new UserEventRequest(value.longValue(), value.longValue()))
                         .collect(Collectors.toList())
         );
     }
@@ -60,19 +60,20 @@ public class DataTestProvider {
         );
     }
 
-    public UserEventRequest generateUserEventRequest(String eventName, LocalDateTime start, LocalDateTime end, Long userId) {
+    public UserEventRequest generateUserEventRequest(String eventName, LocalDateTime start, LocalDateTime end, Long userId, Long creatorId) {
         return new UserEventRequest(
                 userId,
                 eventName,
                 EVENT_DESCRIPTION,
                 start,
-                end
+                end,
+                creatorId
         );
     }
 
 
     // the backend reverse order of the user ID and the generated userEvent id
-    public UserEventResponse generateExpectedUserEventResponse(String eventName, LocalDateTime start, LocalDateTime end, Long expectedID, User user) {
+    public UserEventResponse generateExpectedUserEventResponse(String eventName, LocalDateTime start, LocalDateTime end, Long expectedID, User user, User creator) {
         final var userEvent = new UserEvent(
                 expectedID,
                 start,
@@ -80,16 +81,19 @@ public class DataTestProvider {
                 eventName,
                 EVENT_DESCRIPTION,
                 EventType.PERSONAL,
-                user
+                user,
+                creator,
+                creator.organization
         );
         return bind(userEvent);
     }
 
-    public Tuple2<UserEventRequest, UserEventResponse> generateUserEventTuple(String eventName, LocalDateTime start, LocalDateTime end, Long expectedTemplateId, Long userId) {
+    public Tuple2<UserEventRequest, UserEventResponse> generateUserEventTuple(String eventName, LocalDateTime start, LocalDateTime end, Long expectedTemplateId, Long userId, Long creatorId) {
         final var user = generateUser(userId).stream().findFirst().orElseThrow(NotFoundException::new);
+        final var creator = generateUser(creatorId).stream().findFirst().orElseThrow(NotFoundException::new);
         return Tuple.of(
-                generateUserEventRequest(eventName, start, end, userId),
-                generateExpectedUserEventResponse(eventName, start, end, expectedTemplateId, user)
+                generateUserEventRequest(eventName, start, end, userId, creatorId),
+                generateExpectedUserEventResponse(eventName, start, end, expectedTemplateId, user, creator)
         );
     }
 

@@ -50,16 +50,17 @@ const computeData = (timeSheets) => Object.entries(groupBy(timeSheets.flatMap(({
 });
 
 const TimeEntriesPage = () => {
-  let history = useHistory();
-  let location = useLocation();
+  const history = useHistory();
+  const location = useLocation();
   const [calendarMode, setCalendarMode] = useState('week');
-  const firstDayOfCurrentWeek = moment().utc().startOf('week').add(1, 'day');
+  const firstDayOfCurrentWeek = moment().utc().startOf('week');
+  const [contextDate, setContextDate] = useState(firstDayOfCurrentWeek);
   const today = () => firstDayOfCurrentWeek.clone();
   const [prefixWeekUrl, setPrefixWeekUrl] = useState(() => {
     if (location.search) {
       let searchParams = queryString.parse(location.search);
       if (searchParams.weekNumber && searchParams.year) {
-        return searchParams.year + '?weekNumber='+searchParams.weekNumber;
+        return searchParams.year + '?weekNumber=' + searchParams.weekNumber;
       }
       if (searchParams.weekNumber) {
         return '2020?weekNumber='+searchParams.weekNumber;
@@ -138,10 +139,19 @@ const TimeEntriesPage = () => {
   const openModal = () => setVisibleEntryModal(true);
   const closeModal = () => setVisibleEntryModal(false);
 
+  const convertDateTimeToDate = (dateTime) => moment(moment(dateTime).format('YYYY-MM-DD'), 'YYYY-MM-DD');
+
+  const getEventsOnDate = (date) => userEvents.filter(userEvent =>
+    date.isBetween(
+      convertDateTimeToDate(userEvent.startDateTime).subtract(1, 'second'),
+      convertDateTimeToDate(userEvent.endDateTime).add(1, 'day')
+    )
+  );
 
   // A day without entries in the past should be displayed with "warn" design
   const hasWarnNoEntryInPastDay = (date, day) => {
-    return moment().subtract('1', 'days').isAfter(date) && !day;
+    const hasEventOnThisDate = getEventsOnDate(date).length > 0;
+    return moment().subtract('1', 'days').isAfter(date) && !day && !hasEventOnThisDate;
   };
 
   const onClickAddTask = (e, m) => {
@@ -217,7 +227,8 @@ const TimeEntriesPage = () => {
       {
         calendarMode === 'week' ?
           <WeekCalendar
-            firstDay={datas.firstDayOfWeek}
+            onDateChange={setContextDate}
+            firstDay={contextDate}
             disabledWeekEnd={true}
             hiddenButtons={false}
             onPanelChange={(id, start) => setPrefixWeekUrl(start.year() + '?weekNumber=' + start.isoWeek())}
@@ -241,6 +252,8 @@ const TimeEntriesPage = () => {
             warningCardPredicate={hasWarnNoEntryInPastDay}
           /> :
           <MonthCalendar
+            contextDate={contextDate}
+            onDateChange={(date) => setContextDate(date.utc().startOf('week'))}
             onClickButton={onClickAddTask}
             days={datas.days}
             dateCellRender={(data, date) => {

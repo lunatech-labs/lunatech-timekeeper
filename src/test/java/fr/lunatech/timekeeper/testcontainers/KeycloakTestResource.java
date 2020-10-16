@@ -38,7 +38,7 @@ public class KeycloakTestResource implements QuarkusTestResourceLifecycleManager
     private static final String KEYCLOAK_SECRET = "secret-123456789";
 
     // Mount keycloak docker image
-    private static final GenericContainer KEYCLOAK = new FixedHostPortGenericContainer("jboss/keycloak")
+    private static final GenericContainer KEYCLOAK = new FixedHostPortGenericContainer("jboss/keycloak:11.0.2")
             .withFixedExposedPort(8180, 8080)
             .withEnv("DB_VENDOR", "H2")
             .withEnv("KEYCLOAK_USER", "admin")

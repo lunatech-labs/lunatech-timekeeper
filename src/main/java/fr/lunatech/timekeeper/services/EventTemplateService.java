@@ -43,6 +43,9 @@ public class EventTemplateService {
     @Inject
     UserEventService userEventService;
 
+    @Inject
+    UserService userService;
+
     public Optional<EventTemplateResponse> getById(Long id, AuthenticationContext context) {
         return EventTemplate.<EventTemplate>findByIdOptional(id) //NOSONAR
                 .filter(context::canAccess)
@@ -74,7 +77,7 @@ public class EventTemplateService {
     @Transactional
     public Optional<Long> create(EventTemplateRequest request, AuthenticationContext ctx) {
         logger.debug("Create a new event template with {}, {}", request, ctx);
-        final EventTemplate eventTemplate = request.unbind(ctx);
+        final EventTemplate eventTemplate = request.unbind(userService::findById, ctx);
 
         if (request.getStartDateTime() == null) {
             throw new CreateResourceException("Cannot create an EventTemplate if startDateTime is null");
@@ -136,7 +139,7 @@ public class EventTemplateService {
 
         return maybeEvent.map(event -> {
             // actually update the event
-            EventTemplate eventTemplateUpdated = request.unbind(event, ctx);
+            EventTemplate eventTemplateUpdated = request.unbind(event, userService::findById, ctx);
 
             try {
                 eventTemplateUpdated.persistAndFlush();
