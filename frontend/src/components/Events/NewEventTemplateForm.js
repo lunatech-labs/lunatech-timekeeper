@@ -229,7 +229,6 @@ const NewEventTemplateForm = ({eventType}) => {
           </Radio.Group>
         </Form.Item>
 
-        // eslint-disable-line no-empty
         <span className="tk_EventForm_Delimiter"/>
 
         <Form.Item shouldUpdate={(prevValues, curValues) =>
