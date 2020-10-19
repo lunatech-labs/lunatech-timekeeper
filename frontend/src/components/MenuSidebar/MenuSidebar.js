@@ -63,12 +63,12 @@ const MenuSidebar = (props) => {
           <span>Projects</span>
         </Link>
       </Menu.Item>
-      <Menu.Item className="tk_MenuItem" key="/users">
+      {isAdmin && <Menu.Item className="tk_MenuItem" key="/users">
         <Link id="linkUsers" to="/users">
           <TeamOutlined/>
           <span>Users</span>
         </Link>
-      </Menu.Item>
+      </Menu.Item>}
       <Menu.Item className="tk_MenuItem" key="/events">
         <Link id="linkEvents" to="/events">
           <CalendarOutlined/>
