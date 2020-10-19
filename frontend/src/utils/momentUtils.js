@@ -121,10 +121,10 @@ export const totalHoursPerDay = (userEvents, date, timeEntries) => {
 // Returns true if the date is a publicHolidays
 export const isPublicHoliday = (date, publicHolidays) => {
   if(date) {
-    const res = _.find(publicHolidays, function(d){
-      if(d.date){
+    const res = _.find(publicHolidays, function(publicHoliday){
+      if(publicHoliday.date){
         const formatted = date.format('YYYY-MM-DD');
-        const isSameDate = formatted.localeCompare(d.date);
+        const isSameDate = formatted.localeCompare(publicHoliday.date);
         return isSameDate === 0;
       }
       return false;
