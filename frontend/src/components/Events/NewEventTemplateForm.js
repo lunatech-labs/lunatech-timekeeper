@@ -59,7 +59,7 @@ const NewEventTemplateForm = ({eventType}) => {
       .startOf('day')
       .add(9 + _.get(formData, 'lastDayDuration', 0), 'hours')
       .utc(true)
-      : moment(formData.lastDay)
+      : moment(formData.firstDay)
         .startOf('day')
         .add(17, 'hours')
         .utc(true);
@@ -78,7 +78,7 @@ const NewEventTemplateForm = ({eventType}) => {
       name: formData.name,
       description: formData.description,
       startDateTime: formData.eventDateTime[0],
-      endDateTime: formData.eventDateTime[1],
+      endDateTime: _.get(formData.eventDateTime, '[1]', formData.eventDateTime[0]),
       userId: _.get(usersSelected[0], 'userId', currentUser.id),
       creatorId: currentUser.id,
       eventType: 'PERSONAL'
@@ -179,6 +179,7 @@ const NewEventTemplateForm = ({eventType}) => {
                 hoursName="lastDayDuration"
                 onDateChange={onEndDateChange}
                 onHoursChange={onEndHoursChange}
+                marginTop={15}
               /> : <></>
             }
           </React.Fragment>
@@ -228,6 +229,9 @@ const NewEventTemplateForm = ({eventType}) => {
           </Radio.Group>
         </Form.Item>
 
+        // eslint-disable-line no-empty
+        <span className="tk_EventForm_Delimiter"/>
+
         <Form.Item shouldUpdate={(prevValues, curValues) =>
         {
           const out = prevValues.eventType !== curValues.eventType || prevValues.eventName !== curValues.eventName;
@@ -276,6 +280,8 @@ const NewEventTemplateForm = ({eventType}) => {
           />
         </Form.Item>
 
+        <span className="tk_EventForm_Delimiter"/>
+
         <Form.Item initialValue={isMultiDay} label="Duration:" name="duration" rules={[{required: true}]}>
           <Radio.Group onChange={onChangeMultiDay} className="tk_EventType_RadioGroup">
             <Row>
@@ -297,9 +303,12 @@ const NewEventTemplateForm = ({eventType}) => {
           </Radio.Group>
         </Form.Item>
 
-        <Form.Item rules={[{required: true}]}>
-          {getDatePicker(onStartDateChange, onStartHoursChange, onEndDateChange, onEndHoursChange)}
-        </Form.Item>
+        <span className="tk_EventForm_Delimiter"/>
+
+
+        {getDatePicker(onStartDateChange, onStartHoursChange, onEndDateChange, onEndHoursChange)}
+
+        <span className="tk_EventForm_Delimiter"/>
 
         {renderEventDurationComponent()}
 
@@ -312,7 +321,7 @@ const NewEventTemplateForm = ({eventType}) => {
         startDate={moment(startDate).utc(true)}
         startDateHours={startDateHours}
         endDate={moment(startDate).utc(true)}
-        endDateHours={endDateHours}
+        endDateHours={0}
         locale={'FR'}/>;
     } else if (isMultiDay && !_.isNull(startDate) && !_.isNull(endDate) && endDateHours > 0) {
       return <EventDuration
