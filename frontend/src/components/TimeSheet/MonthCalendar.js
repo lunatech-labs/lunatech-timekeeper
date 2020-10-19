@@ -129,18 +129,25 @@ const MonthCalendar = (props) => {
     }
   };
 
-  const MonthCardComponent = ({item}) => {
+  const MonthCardComponent = ({item, userEvents}) => {
     let associatedData =  findData(item);
     const className = !(props.disabledWeekEnd && (isWeekEnd(item) || isPublicHoliday(item) ) ) && (props.warningCardPredicate && props.warningCardPredicate(item, associatedData && associatedData.data)) ?
       'tk_CardMonthCalendar_Body_With_Warn' : '';
 
+    if (isPublicHoliday(item, publicHolidays)) {
+          return <React.Fragment>
+                      <Tag className="tk_Tag_Public_Holiday"><InfoCircleOutlined/> Public holiday</Tag>
+                      <div className='tk_CardMonthCalendar_Body'/>
+                 </React.Fragment>
+      }
+
     if(!isDisabled(item)){
-      if(associatedData && associatedData.date && totalHoursPerDay(associatedData.data) >= 8) {
+      if(associatedData && associatedData.date && totalHoursPerDay(userEvents, associatedData.date, associatedData.data) >= 8) {
         return (
-          <div className={className}>
+          <React.Fragment>
             <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>
-            {props.dateCellRender(associatedData.data, associatedData.date, associatedData.disabled)}
-          </div>
+            <span>{props.dateCellRender(associatedData.data, associatedData.date, associatedData.disabled)}</span>
+          </React.Fragment>
         );
       }
       return <div className={className}>
@@ -155,10 +162,6 @@ const MonthCalendar = (props) => {
         {associatedData && associatedData.data && props.dateCellRender(associatedData.data, associatedData.date, associatedData.disabled)}
         {renderUserEvents(userEvents, item)}
       </div>;
-    }
-
-    if(isPublicHoliday(item)){
-      return <Tag className="tk_Tag_Public_Holiday"><InfoCircleOutlined /> Public holiday</Tag>;
     }
 
     return <div className='tk_CardMonthCalendar_Body'/>;
@@ -192,7 +195,7 @@ const MonthCalendar = (props) => {
           }}
           dateCellRender={dateAsMoment => {
             return (
-              <MonthCardComponent item={dateAsMoment}/>
+              <MonthCardComponent item={dateAsMoment} userEvents={userEvents}/>
             );
           }}
         />

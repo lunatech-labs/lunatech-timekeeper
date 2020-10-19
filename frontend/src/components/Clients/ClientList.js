@@ -122,10 +122,12 @@ const ClientList = () => {
                       dataSource={sortListByName(item.projects)}
                       renderItem={projectItem => (
                         <List.Item>
-                          <CardXs>
-                            <p>{projectItem.name}</p>
-                            <Tag id="tk_UsersTag" icon={<UserOutlined />}>{projectItem.userCount}</Tag>
-                          </CardXs>
+                          <a href={`/projects/${projectItem.id}`}>
+                            <CardXs>
+                              <p>{projectItem.name}</p>
+                              <Tag id="tk_UsersTag" icon={<UserOutlined />}>{projectItem.userCount}</Tag>
+                            </CardXs>
+                          </a>
                         </List.Item>
                       )}
                     />

@@ -82,7 +82,8 @@ public class DataTestProvider {
                 EVENT_DESCRIPTION,
                 EventType.PERSONAL,
                 user,
-                creator
+                creator,
+                creator.organization
         );
         return bind(userEvent);
     }

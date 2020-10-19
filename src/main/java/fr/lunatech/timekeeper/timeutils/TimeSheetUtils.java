@@ -16,6 +16,7 @@
 
 package fr.lunatech.timekeeper.timeutils;
 
+import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 
 public class TimeSheetUtils {
@@ -34,7 +35,7 @@ public class TimeSheetUtils {
             }
 
             long consumedHours = sheet.entries.stream()
-                    .mapToLong(timeEntry -> timeEntry.getRoundedNumberOfHours())
+                    .mapToLong(TimeEntry::getRoundedNumberOfHours)
                     .sum();
 
             // Compute what's left based on durationUnit type (see constant)
