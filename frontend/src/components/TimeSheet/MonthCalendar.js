@@ -135,11 +135,11 @@ const MonthCalendar = (props) => {
       'tk_CardMonthCalendar_Body_With_Warn' : '';
 
     if (isPublicHoliday(item, publicHolidays)) {
-          return <React.Fragment>
-                      <Tag className="tk_Tag_Public_Holiday"><InfoCircleOutlined/> Public holiday</Tag>
-                      <div className='tk_CardMonthCalendar_Body'/>
-                 </React.Fragment>
-      }
+      return <React.Fragment>
+        <Tag className="tk_Tag_Public_Holiday"><InfoCircleOutlined/> Public holiday</Tag>
+        <div className='tk_CardMonthCalendar_Body'/>
+      </React.Fragment>;
+    }
 
     if(!isDisabled(item)){
       if(associatedData && associatedData.date && totalHoursPerDay(userEvents, associatedData.date, associatedData.data) >= 8) {

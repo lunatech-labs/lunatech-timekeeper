@@ -22,7 +22,7 @@ import _ from 'lodash';
 import 'moment/locale/en-gb';
 import PropTypes from 'prop-types';
 
-const EventDateAndHoursPicker = ({dateLabel, dateName, hoursLabel, hoursName, onDateChange, onHoursChange, marginTop}) => {
+const EventDateAndHoursPicker = ({dateLabel, dateName, hoursLabel, hoursName, onDateChange, onHoursChange, disabledDate, marginTop}) => {
   const {Option} = Select;
   return (
     <div className="tk_DateAndHours" style={{marginTop: marginTop}}>
@@ -34,6 +34,7 @@ const EventDateAndHoursPicker = ({dateLabel, dateName, hoursLabel, hoursName, on
             rules={[{required: true}]}
           >
             <DatePicker
+              disabledDate={disabledDate}
               className="tk_DatePicker"
               onChange={onDateChange}
             />
@@ -62,6 +63,7 @@ EventDateAndHoursPicker.propTypes = {
   hoursName: PropTypes.string,
   onDateChange: PropTypes.func,
   onHoursChange: PropTypes.func,
+  disabledDate: PropTypes.func,
   marginTop: PropTypes.number
 };
 

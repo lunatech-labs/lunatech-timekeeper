@@ -170,6 +170,11 @@ const NewEventTemplateForm = ({eventType}) => {
               hoursName="firstDayDuration"
               onDateChange={onStartDateChange}
               onHoursChange={onStartHoursChange}
+              disabledDate={(current) => {
+                if(isMultiDay && !_.isNull(endDate)) {
+                  return current && current > moment(endDate).subtract(1,'days').endOf('day');
+                }
+              }}
             />
             {
               isMultiDay ? <EventDateAndHoursPicker
@@ -180,6 +185,7 @@ const NewEventTemplateForm = ({eventType}) => {
                 onDateChange={onEndDateChange}
                 onHoursChange={onEndHoursChange}
                 marginTop={15}
+                disabledDate={(current) => current && current < moment(startDate).endOf('day')}
               /> : <></>
             }
           </React.Fragment>
