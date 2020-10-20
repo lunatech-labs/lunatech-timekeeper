@@ -16,6 +16,7 @@
 
 package fr.lunatech.timekeeper.models;
 
+import com.google.common.base.Objects;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
@@ -64,5 +65,22 @@ public class Client extends PanacheEntityBase {
                 ", description='" + description + '\'' +
                 ", nb of projects=" + projects.size() +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Client)) return false;
+        Client client = (Client) o;
+        return Objects.equal(id, client.id) &&
+                Objects.equal(organization, client.organization) &&
+                Objects.equal(name, client.name) &&
+                Objects.equal(description, client.description) &&
+                Objects.equal(projects, client.projects);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id, organization, name, description, projects);
     }
 }

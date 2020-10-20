@@ -16,6 +16,7 @@
 
 package fr.lunatech.timekeeper.models;
 
+import com.google.common.base.Objects;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
@@ -23,6 +24,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -59,6 +61,21 @@ public class User extends PanacheEntityBase {
     @NotNull
     public List<ProjectUser> projects;
 
+    public static User createUserForImport(String email, String userName, Organization organization){
+        var newUser = new User();
+        newUser.email = email;
+        if (userName.contains(" ")) {
+            newUser.firstName = userName.substring(0, userName.indexOf(" "));
+            newUser.lastName = userName.substring(userName.indexOf(" ") + 1);
+        } else {
+            newUser.lastName = userName;
+        }
+        newUser.organization = organization;
+        newUser.profiles = new ArrayList<>(1);
+        newUser.profiles.add(Profile.USER);
+        return newUser;
+    }
+
     public User() {
 
     }
@@ -70,7 +87,6 @@ public class User extends PanacheEntityBase {
         this.email = email;
         this.picture = picture;
     }
-
 
     public String getFullName() {
         return firstName + " " + lastName;
@@ -108,4 +124,37 @@ public class User extends PanacheEntityBase {
         return projects;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", organization=" + organization +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", picture='" + picture + '\'' +
+                ", profiles=" + profiles +
+                ", projects=" + projects +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return Objects.equal(getId(), user.getId()) &&
+                Objects.equal(getOrganization(), user.getOrganization()) &&
+                Objects.equal(getFirstName(), user.getFirstName()) &&
+                Objects.equal(getLastName(), user.getLastName()) &&
+                Objects.equal(getEmail(), user.getEmail()) &&
+                Objects.equal(getPicture(), user.getPicture()) &&
+                Objects.equal(getProfiles(), user.getProfiles()) &&
+                Objects.equal(getProjects(), user.getProjects());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId(), getOrganization(), getFirstName(), getLastName(), getEmail(), getPicture(), getProfiles(), getProjects());
+    }
 }

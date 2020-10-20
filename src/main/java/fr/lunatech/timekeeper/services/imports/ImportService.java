@@ -22,13 +22,12 @@ public class ImportService {
     }
 
     @Transactional
-    public void persistProjects(List<Project> projects){
-        projects.forEach(PanacheEntityBase::persistAndFlush);
-    }
-
-    @Transactional
     public void persistUsers(List<User> users){
         users.forEach(PanacheEntityBase::persistAndFlush);
     }
 
+    @Transactional
+    public void persistProjects(List<Project> projects){
+        projects.forEach(PanacheEntityBase::persistAndFlush);
+    }
 }
