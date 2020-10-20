@@ -15,14 +15,20 @@
  */
 
 import React, {useState} from 'react';
-import {Alert, AutoComplete, Spin, Table} from 'antd';
+import {Alert, Button, Collapse, List, Spin, Space, AutoComplete, Table} from 'antd';
 import {sortListByName, useTimeKeeperAPI} from '../../utils/services';
 import './UserList.less';
-import Button from 'antd/lib/button';
 import TagMember from '../Tag/TagMember';
 import TkUserAvatar from './TkUserAvatar';
 import Input from 'antd/lib/input';
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined';
+import FolderOpenOutlined from '@ant-design/icons/lib/icons/FolderOpenOutlined'
+import Pluralize from '../Pluralize/Pluralize'
+import CardXs from '../Card/CardXs'
+import FolderFilled from '@ant-design/icons/lib/icons/FolderFilled'
+
+
+const {Panel} = Collapse;
 
 const UserList = () => {
   const usersResponse = useTimeKeeperAPI('/api/users');
@@ -71,16 +77,35 @@ const UserList = () => {
       render: (value) => value.join(', ')
     },
     {
-      title: 'Project',
+      title: 'Member on',
+      width: 300,
       dataIndex: 'projects',
       key: 'project',
-      render: (value) => value.map(v => <div key={`project-${v.name}-${v.userId}`}>{v.name}</div>)
-    },
-    {
-      title: 'Role',
-      dataIndex: 'projects',
-      key: 'projects',
-      render: (value) => value.map(v => <div key={`role-${v.name}-${v.userId}`}>{<TagMember isManager={v.manager} />}</div>)
+      render: (value) =>
+      {
+        if(value.length === 0) {
+         return <Panel id="tk_ProjectNoCollapse" header={<Space size="small"><FolderFilled />{'No project'}</Space>} key="1"/>;
+        } else {
+          return  <Collapse bordered={false} expandIconPosition={'right'} key="projects">
+            <Panel header={<Space size="small"><FolderOpenOutlined /><Pluralize label="project" size={value.length} /></Space>} key="1">
+              <List
+                id={'tk_ClientProjects'}
+                dataSource={sortListByName(value)}
+                renderItem={value => (
+                  <List.Item>
+                    <a href={`/projects/${value.id}`}>
+                      <CardXs>
+                        <p>{value.name}</p>
+                        <TagMember isManager={value.manager} />
+                      </CardXs>
+                    </a>
+                  </List.Item>
+                )}
+              />
+            </Panel>
+          </Collapse>
+        }
+      }
     }
   ];
 
