@@ -22,10 +22,10 @@ import TagMember from '../Tag/TagMember';
 import TkUserAvatar from './TkUserAvatar';
 import Input from 'antd/lib/input';
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined';
-import FolderOpenOutlined from '@ant-design/icons/lib/icons/FolderOpenOutlined'
-import Pluralize from '../Pluralize/Pluralize'
-import CardXs from '../Card/CardXs'
-import FolderFilled from '@ant-design/icons/lib/icons/FolderFilled'
+import FolderOpenOutlined from '@ant-design/icons/lib/icons/FolderOpenOutlined';
+import Pluralize from '../Pluralize/Pluralize';
+import CardXs from '../Card/CardXs';
+import FolderFilled from '@ant-design/icons/lib/icons/FolderFilled';
 
 
 const {Panel} = Collapse;
@@ -84,7 +84,7 @@ const UserList = () => {
       render: (value) =>
       {
         if(value.length === 0) {
-         return <Panel id="tk_ProjectNoCollapse" header={<Space size="small"><FolderFilled />{'No project'}</Space>} key="1"/>;
+          return <Panel id="tk_ProjectNoCollapse" header={<Space size="small"><FolderFilled />{'No project'}</Space>} key="1"/>;
         } else {
           return  <Collapse bordered={false} expandIconPosition={'right'} key="projects">
             <Panel header={<Space size="small"><FolderOpenOutlined /><Pluralize label="project" size={value.length} /></Space>} key="1">
@@ -103,7 +103,7 @@ const UserList = () => {
                 )}
               />
             </Panel>
-          </Collapse>
+          </Collapse>;
         }
       }
     }
