@@ -194,7 +194,12 @@
             <artifactId>camel-quarkus-file</artifactId>
             <version>${camel.quarkus.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>3.0.6</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
     <build>

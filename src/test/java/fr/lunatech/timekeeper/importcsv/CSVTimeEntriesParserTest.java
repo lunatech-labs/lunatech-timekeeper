@@ -17,15 +17,18 @@
 package fr.lunatech.timekeeper.importcsv;
 
 import fr.lunatech.timekeeper.models.Organization;
+import fr.lunatech.timekeeper.models.Project;
+import fr.lunatech.timekeeper.models.ProjectUser;
+import fr.lunatech.timekeeper.models.User;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class CSVTimeEntriesParserTest {
 
@@ -81,6 +84,105 @@ class CSVTimeEntriesParserTest {
         organization.clients = new ArrayList<>();
 
         assertEquals("toto@lunatech.fr", tested.updateEmailToOrganization(" Toto@donothing.com ", organization));
+    }
+
+    @Test
+    void shouldReturnFalseForAnEmptyListOfProjects(){
+        CSVTimeEntriesParser tested = new CSVTimeEntriesParser();
+        List<Project> projects = Collections.emptyList();
+        Project project = new Project();
+        project.name = "Project";
+        assertTrue(tested.isNotProjectInList(projects, project));
+    }
+
+    @Test
+    void shouldReturnTrueIfProjectIsInProjectList(){
+        CSVTimeEntriesParser tested = new CSVTimeEntriesParser();
+        Project project = new Project();
+        project.name = "Project";
+        Project project2 = new Project();
+        project2.name = "Project 2";
+        Project project3 = new Project();
+        project3.name = "Project 3";
+        Project project4 = new Project();
+        project4.name = "Project 4";
+
+        List<Project> projects = Arrays.asList(project,project2,project3, project3);
+
+        Project projectToCheck = new Project();
+        projectToCheck.name = "Project";
+
+        assertFalse(tested.isNotProjectInList(projects, projectToCheck));
+    }
+
+    @Test
+    void shouldReturnFalseIfProjectIsNotInProjectList(){
+        CSVTimeEntriesParser tested = new CSVTimeEntriesParser();
+        Project project = new Project();
+        project.name = "Project 1";
+        Project project2 = new Project();
+        project2.name = "Project 2";
+        Project project3 = new Project();
+        project3.name = "Project 3";
+        Project project4 = new Project();
+        project4.name = "Project 4";
+
+        List<Project> projects = Arrays.asList(project,project2,project3, project3);
+
+        Project projectToCheck = new Project();
+        projectToCheck.name = "Project";
+
+        assertTrue(tested.isNotProjectInList(projects, projectToCheck));
+    }
+
+    @Test
+    void shouldReturnTrueIfUserIsNotInProject(){
+        CSVTimeEntriesParser tested = new CSVTimeEntriesParser();
+
+        Organization organization = new Organization();
+        organization.id = 1L;
+        organization.name = "Lunatech France";
+        organization.tokenName = "lunatech.fr";
+        organization.projects = new ArrayList<>();
+        organization.users = new ArrayList<>();
+        organization.clients = new ArrayList<>();
+
+        User userForProject = User.createUserForImport("john.doe@lunatech.fr", "John Doe", organization);
+
+        Project project = new Project();
+        project.name = "Project";
+
+        ProjectUser projectUser = new ProjectUser(project, userForProject, false);
+        project.users = Arrays.asList(projectUser);
+
+        User user = User.createUserForImport("jane.doe@lunatech.fr", "Jane Doe", organization);
+
+        assertTrue(tested.isNotAUserProject(project, user));
+    }
+
+    @Test
+    void shouldReturnFalseIfUserIsInProject(){
+        CSVTimeEntriesParser tested = new CSVTimeEntriesParser();
+
+        Organization organization = new Organization();
+        organization.id = 1L;
+        organization.name = "Lunatech France";
+        organization.tokenName = "lunatech.fr";
+        organization.projects = new ArrayList<>();
+        organization.users = new ArrayList<>();
+        organization.clients = new ArrayList<>();
+
+        User userForProject = User.createUserForImport("john.doe@lunatech.fr", "John Doe", organization);
+
+        Project project = new Project();
+        project.name = "Project";
+
+        ProjectUser projectUser = new ProjectUser(project, userForProject, false);
+        project.users = Arrays.asList(projectUser);
+
+        User user = User.createUserForImport("john.doe@lunatech.fr", "John Doe", organization);
+
+        assertFalse(tested.isNotAUserProject(project, user));
     }
 
 }

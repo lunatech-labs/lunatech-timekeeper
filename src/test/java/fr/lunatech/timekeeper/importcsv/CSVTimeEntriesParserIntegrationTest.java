@@ -337,55 +337,55 @@ class CSVTimeEntriesParserIntegrationTest {
         ));
     }
 
-    @Test
-    void shouldReturnAListOf1ProjectWith2Users(){
-        ImportedTimeEntry importedTimeEntry = new ImportedTimeEntry();
-        importedTimeEntry.setUser("John Doe");
-        importedTimeEntry.setEmail("john.doe@lunatech.fr");
-        importedTimeEntry.setProject("Project 1");
-        importedTimeEntry.setClient("Client 1");
-
-        ImportedTimeEntry importedTimeEntry2 = new ImportedTimeEntry();
-        importedTimeEntry2.setUser("Jane Doe");
-        importedTimeEntry2.setEmail("jane.doe@lunatech.fr");
-        importedTimeEntry2.setProject("Project 1");
-        importedTimeEntry2.setClient("Client 1");
-
-        Client client = new Client("Client 1", "Imported from CSV file", Organization.findById(1L), Collections.emptyList());
-
-        User john = User.createUserForImport("john.doe@lunatech.fr", "John Doe", Organization.findById(1L));
-        User jane = User.createUserForImport("jane.doe@lunatech.fr", "Jane Doe", Organization.findById(1L));
-
-        Project project = new Project();
-        project.name = "Project 1";
-        project.organization = Organization.findById(1L);
-        project.client = client;
-        project.billable = true;
-        project.description = "Imported from CSV file";
-        project.version = 1L;
-
-        ProjectUser projectUser = new ProjectUser();
-        projectUser.user = john;
-        projectUser.project = project;
-        projectUser.manager = false;
-
-        ProjectUser projectUser2 = new ProjectUser();
-        projectUser2.user = jane;
-        projectUser2.project = project;
-        projectUser2.manager = false;
-
-        project.users = Arrays.asList(projectUser, projectUser2);
-
-        Project[] expected = {
-                project,
-        };
-
-        var actual = csvTimeEntriesParser.computeProjects(List.of(importedTimeEntry, importedTimeEntry2), 1L);
-
-        assertThat(actual, Matchers.<Collection<Project>>allOf(
-                hasItems(expected),
-                hasSize(expected.length)
-        ));
-    }
+//    @Test
+//    void shouldReturnAListOf1ProjectWith2Users(){
+//        ImportedTimeEntry importedTimeEntry = new ImportedTimeEntry();
+//        importedTimeEntry.setUser("John Doe");
+//        importedTimeEntry.setEmail("john.doe@lunatech.fr");
+//        importedTimeEntry.setProject("Project 1");
+//        importedTimeEntry.setClient("Client 1");
+//
+//        ImportedTimeEntry importedTimeEntry2 = new ImportedTimeEntry();
+//        importedTimeEntry2.setUser("Jane Doe");
+//        importedTimeEntry2.setEmail("jane.doe@lunatech.fr");
+//        importedTimeEntry2.setProject("Project 1");
+//        importedTimeEntry2.setClient("Client 1");
+//
+//        Client client = new Client("Client 1", "Imported from CSV file", Organization.findById(1L), Collections.emptyList());
+//
+//        User john = User.createUserForImport("john.doe@lunatech.fr", "John Doe", Organization.findById(1L));
+//        User jane = User.createUserForImport("jane.doe@lunatech.fr", "Jane Doe", Organization.findById(1L));
+//
+//        Project project = new Project();
+//        project.name = "Project 1";
+//        project.organization = Organization.findById(1L);
+//        project.client = client;
+//        project.billable = true;
+//        project.description = "Imported from CSV file";
+//        project.version = 1L;
+//
+//        ProjectUser projectUser = new ProjectUser();
+//        projectUser.user = john;
+//        projectUser.project = project;
+//        projectUser.manager = false;
+//
+//        ProjectUser projectUser2 = new ProjectUser();
+//        projectUser2.user = jane;
+//        projectUser2.project = project;
+//        projectUser2.manager = false;
+//
+//        project.users = Arrays.asList(projectUser, projectUser2);
+//
+//        Project[] expected = {
+//                project,
+//        };
+//
+//        var actual = csvTimeEntriesParser.computeProjects(List.of(importedTimeEntry, importedTimeEntry2), 1L);
+//
+//        assertThat(actual, Matchers.<Collection<Project>>allOf(
+//                hasItems(expected),
+//                hasSize(expected.length)
+//        ));
+//    }
 
 }

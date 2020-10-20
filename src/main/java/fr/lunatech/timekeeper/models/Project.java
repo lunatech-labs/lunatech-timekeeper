@@ -68,13 +68,14 @@ public class Project extends PanacheEntityBase {
     public Project() {
     }
 
-    public Project(@NotNull Organization organization, @Null Client client, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull Boolean publicAccess, Long version) {
+    public Project(@NotNull Organization organization, @Null Client client, @NotBlank String name, @NotNull Boolean billable, @NotNull String description, @NotNull Boolean publicAccess, List<ProjectUser> users,Long version) {
         this.organization = organization;
         this.client = client;
         this.name = name;
         this.billable = billable;
         this.description = description;
         this.publicAccess = publicAccess;
+        this.users = users;
         this.version = version;
     }
 
@@ -111,5 +112,26 @@ public class Project extends PanacheEntityBase {
                 ", client=" + client +
                 ", users=" + users +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Project)) return false;
+        Project project = (Project) o;
+        return com.google.common.base.Objects.equal(id, project.id) &&
+                com.google.common.base.Objects.equal(organization, project.organization) &&
+                com.google.common.base.Objects.equal(client, project.client) &&
+                com.google.common.base.Objects.equal(name, project.name) &&
+                com.google.common.base.Objects.equal(getBillable(), project.getBillable()) &&
+                com.google.common.base.Objects.equal(description, project.description) &&
+                com.google.common.base.Objects.equal(publicAccess, project.publicAccess) &&
+                com.google.common.base.Objects.equal(users, project.users) &&
+                com.google.common.base.Objects.equal(version, project.version);
+    }
+
+    @Override
+    public int hashCode() {
+        return com.google.common.base.Objects.hashCode(id, organization, client, name, getBillable(), description, publicAccess, users, version);
     }
 }

@@ -16,6 +16,7 @@
 
 package fr.lunatech.timekeeper.models;
 
+import com.google.common.base.Objects;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
@@ -41,4 +42,28 @@ public class ProjectUser extends PanacheEntityBase {
     @NotNull
     public Boolean manager;
 
+    public ProjectUser() {
+    }
+
+    public ProjectUser(@NotNull Project project, @NotNull User user, @NotNull Boolean manager) {
+        this.project = project;
+        this.user = user;
+        this.manager = manager;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ProjectUser)) return false;
+        ProjectUser that = (ProjectUser) o;
+        return Objects.equal(id, that.id) &&
+                Objects.equal(project, that.project) &&
+                Objects.equal(user, that.user) &&
+                Objects.equal(manager, that.manager);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id, project, user, manager);
+    }
 }
