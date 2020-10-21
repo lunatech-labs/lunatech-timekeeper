@@ -32,7 +32,7 @@ import './NewEventTemplateForm.less';
 import EventDuration from './EventDuration';
 import EventDatePickerFormItem from './EventDatePickerFormItem';
 import EventHoursDropDownFormItem from './EventHoursDropDownFormItem';
-import EventHoursRadioGroupFormItem from './EventHoursRadioGroupFormItem';
+import EventHoursRadioGroupFormItem, {EventHoursRadioGroupValues} from './EventHoursRadioGroupFormItem';
 
 const {TextArea} = Input;
 const {Option} = Select;
@@ -88,7 +88,7 @@ const NewEventTemplateForm = ({eventType}) => {
       endDateTime: formDataMapping.end(formData, isMultiDay),
       userId: _.get(usersSelected[0], 'userId', currentUser.id),
       creatorId: currentUser.id,
-      eventType: 'PERSONAL'
+      eventType: EventTypes.PERSONAL
     };
   };
 
@@ -107,6 +107,11 @@ const NewEventTemplateForm = ({eventType}) => {
     eventType: currentEventType,
     isMultiDay: false,
     eventName: ''
+  };
+
+  const EventTypes = {
+    PERSONAL: 'PERSONAL',
+    COMPANY: 'COMPANY'
   };
 
   useEffect(() => {
@@ -133,6 +138,7 @@ const NewEventTemplateForm = ({eventType}) => {
           name="firstDay"
           onChange={onStartDateChange}
           isRequired={true}
+          message="When is the start of this event?"
           disabledDates={(current) => {
             if(isMultiDay && !_.isNull(endDate)) {
               return current && current > moment(endDate).subtract(1,'days').endOf('day');
@@ -143,7 +149,12 @@ const NewEventTemplateForm = ({eventType}) => {
     };
     const startHoursPicker = () => {
       return (
-        <EventHoursDropDownFormItem label="Number of hours" name="firstDayDuration" isRequired={true} onChange={onStartHoursChange}/>
+        <EventHoursDropDownFormItem
+          label="Number of hours"
+          name="firstDayDuration"
+          isRequired={true}
+          message="Choose how many hours"
+          onChange={onStartHoursChange}/>
       );
     };
     const endDatePicker = () => {
@@ -153,38 +164,58 @@ const NewEventTemplateForm = ({eventType}) => {
           name="lastDay"
           onChange={onEndDateChange}
           isRequired={true}
+          message="When is the end of this event?"
           disabledDates={(current) => current && current < moment(startDate).endOf('day')}
         />
       );
     };
     const endHoursPicker = () => {
       return (
-        <EventHoursDropDownFormItem label="Number of hours" name="lastDayDuration" isRequired={true} onChange={onEndHoursChange}/>
+        <EventHoursDropDownFormItem
+          label="Number of hours"
+          name="lastDayDuration"
+          isRequired={true}
+          message="Choose how many hours"
+          onChange={onEndHoursChange}/>
       );
     };
 
     switch (currentEventType) {
-      case 'PERSONAL':
+      case EventTypes.PERSONAL:
         return (
           <div className="tk_DateAndHoursGen">
             <EventDateAndHoursPicker
               cssClass="tk_DateAndHours"
               datePicker={startDatePicker()}
               hoursPicker={
-                <EventHoursRadioGroupFormItem label="Duration:" name="firstDayDuration" isRequired={true} onChange={onStartRadioHoursChange}/>
+                <EventHoursRadioGroupFormItem
+                  label="Duration:"
+                  name="firstDayDuration"
+                  isRequired={true}
+                  message="Please choose chunk of day"
+                  onChange={onStartRadioHoursChange}
+                  value={_.includes(EventHoursRadioGroupValues, startDateHours) ? startDateHours : null}
+                />
               }/>
             {
               isMultiDay ? <EventDateAndHoursPicker
                 cssClass="tk_DateAndHours"
                 datePicker={endDatePicker()}
                 hoursPicker={
-                  <EventHoursRadioGroupFormItem label="Duration:" name="lastDayDuration" isRequired={true} onChange={onEndRadioHoursChange}/>
+                  <EventHoursRadioGroupFormItem
+                    label="Duration:"
+                    name="lastDayDuration"
+                    isRequired={true}
+                    message="Please choose chunk of day"
+                    onChange={onEndRadioHoursChange}
+                    value={_.includes(EventHoursRadioGroupValues, endDateHours) ? endDateHours : null}
+                  />
                 }
               />
                 : <></>
             }
           </div>);
-      case 'COMPANY':
+      case EventTypes.COMPANY:
         return (
           <div className="tk_DateAndHoursGen">
             <EventDateAndHoursPicker
@@ -196,7 +227,6 @@ const NewEventTemplateForm = ({eventType}) => {
                 cssClass="tk_DateAndHours"
                 datePicker={endDatePicker()}
                 hoursPicker={endHoursPicker()}
-                // style={{marginTop: 24}}
               />
                 : <></>
             }
@@ -233,13 +263,23 @@ const NewEventTemplateForm = ({eventType}) => {
         {
           const out = prevValues.eventType !== curValues.eventType || prevValues.eventName !== curValues.eventName;
           if(out === true) {
+            if(_.isEqual(curValues.eventType, EventTypes.PERSONAL)) {
+              if(!_.includes(EventHoursRadioGroupValues, startDateHours)) {
+                form.resetFields(['firstDayDuration', [null]]);
+                setStartDateHours(0);
+              }
+              if(!_.includes(EventHoursRadioGroupValues, endDateHours)) {
+                form.resetFields(['lastDayDuration', [null]]);
+                setEndDateHours(0);
+              }
+            }
             setCurrentEventType(curValues.eventType);
           }
           return out;
         }}>
           {() => {
             switch (currentEventType) {
-              case 'PERSONAL':
+              case EventTypes.PERSONAL:
                 return (
                   <Form.Item
                     name="name"
@@ -251,7 +291,7 @@ const NewEventTemplateForm = ({eventType}) => {
                     </Select>
                   </Form.Item>
                 );
-              case 'COMPANY':
+              case EventTypes.COMPANY:
                 return (
                   <Form.Item
                     name="name"
@@ -321,39 +361,29 @@ const NewEventTemplateForm = ({eventType}) => {
         endDateHours={0}
         locale={'FR'}/>;
     } else if (isMultiDay && !_.isNull(startDate) && !_.isNull(endDate) && endDateHours > 0) {
-      return <EventDuration
-        startDate={moment(startDate).utc(true)}
-        startDateHours={startDateHours}
-        endDate={moment(endDate).utc(true)}
-        endDateHours={endDateHours}
-        locale={'FR'}/>;
+      // only show duration if the event type is COMPANY, or
+      // if the start and end hours values are all included in EventHoursRadioGroupValues
+      if(_.isEqual(currentEventType, EventTypes.COMPANY)
+          || (_.includes(EventHoursRadioGroupValues, startDateHours) && _.includes(EventHoursRadioGroupValues, endDateHours))) {
+        return <EventDuration
+          startDate={moment(startDate).utc(true)}
+          startDateHours={startDateHours}
+          endDate={moment(endDate).utc(true)}
+          endDateHours={endDateHours}
+          locale={'FR'}/>;
+      } else {
+        return <div/>;
+      }
     } else {
       return <div/>;
     }
   };
 
-  const onStartDateChange = (value) => {
-    setStartDate(moment(value).startOf('day'));
-  };
-
-  const onStartHoursChange = (value) => {
-    setStartDateHours(value);
-  };
-
-  const onEndDateChange = (value) => {
-    setEndDate(moment(value).startOf('day'));
-  };
-
-  const onEndHoursChange = (value) => {
-    setEndDateHours(value);
-  };
-
-  const onChangeMultiDay = (value) => {
-    if(value.target.value !== isMultiDay) {
-      setIsMultiDay(value.target.value);
-    }
-  };
-
+  const onStartDateChange = (value) => setStartDate(moment(value).startOf('day'));
+  const onStartHoursChange = (value) => setStartDateHours(value);
+  const onEndDateChange = (value) => setEndDate(moment(value).startOf('day'));
+  const onEndHoursChange = (value) => setEndDateHours(value);
+  const onChangeMultiDay = (value) => setIsMultiDay(value.target.value);
   const onStartRadioHoursChange = (value) => setStartDateHours(value.target.value);
   const onEndRadioHoursChange = (value) => setEndDateHours(value.target.value);
 

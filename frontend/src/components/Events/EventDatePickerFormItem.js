@@ -18,11 +18,11 @@ import {DatePicker, Form} from 'antd';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const EventDatePickerFormItem = ({label, name, isRequired, onChange, disabledDates}) => {
+const EventDatePickerFormItem = ({label, name, isRequired, message, onChange, disabledDates}) => {
   return (<Form.Item
     label={label}
     name={name}
-    rules={[{required: isRequired}]}
+    rules={[{required: isRequired, message: message}]}
   >
     <DatePicker
       disabledDate={disabledDates}
@@ -35,7 +35,8 @@ EventDatePickerFormItem.propTypes = {
   label: PropTypes.string,
   name: PropTypes.string,
   isRequired: PropTypes.bool,
+  message: PropTypes.string,
   onChange: PropTypes.func,
-  disabledDate: PropTypes.func
+  disabledDates: PropTypes.func
 };
 export default EventDatePickerFormItem;

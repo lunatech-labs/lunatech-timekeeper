@@ -17,18 +17,22 @@
 import {Form, Radio} from 'antd';
 import React from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import {Durations} from '../../utils/configUtils';
 
-const EventHoursRadioGroupFormItem = ({label, name, isRequired, onChange}) => {
+export const EventHoursRadioGroupValues = [Durations.HALF_DAY, Durations.DAY];
+
+const EventHoursRadioGroupFormItem = ({label, name, isRequired, message, onChange, value}) => {
   return (
     <Form.Item
       label={label}
       name={name}
-      rules={[{required: isRequired}]}
+      rules={[{required: isRequired, message: message}]}
+      value={value}
     >
       <Radio.Group onChange={onChange} className="tk_UserEvent_Radio_Button">
-        <Radio value={Durations.DAY}>Day</Radio>
-        <Radio value={Durations.HALF_DAY}>Half day</Radio>
+        {_.isEqual(value, Durations.DAY) ? <Radio value={Durations.DAY} checked={true}>Day</Radio> : <Radio value={Durations.DAY} checked={false}>Day</Radio>}
+        {_.isEqual(value, Durations.HALF_DAY) ? <Radio value={Durations.HALF_DAY} checked={true}>Half day</Radio> : <Radio value={Durations.HALF_DAY} checked={false}>Half day</Radio>}
       </Radio.Group>
     </Form.Item>
   );
@@ -38,7 +42,9 @@ EventHoursRadioGroupFormItem.propTypes = {
   label: PropTypes.string,
   name: PropTypes.string,
   isRequired: PropTypes.bool,
-  onChange: PropTypes.func
+  message: PropTypes.string,
+  onChange: PropTypes.func,
+  value: PropTypes.number
 };
 
 export default EventHoursRadioGroupFormItem;

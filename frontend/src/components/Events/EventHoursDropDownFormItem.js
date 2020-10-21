@@ -19,12 +19,12 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const EventHoursDropDownFormItem = ({label, name, isRequired, onChange}) => {
+const EventHoursDropDownFormItem = ({label, name, isRequired, message, onChange}) => {
   return (
     <Form.Item
       label={label}
       name={name}
-      rules={[{required: isRequired}]}
+      rules={[{required: isRequired, message: message}]}
     >
       <Select onChange={onChange}>
         {_.range(1, 9, 1).map(i => <Select.Option key={`option-hour-${i}`} value={i} >{i}</Select.Option>)};
@@ -37,6 +37,7 @@ EventHoursDropDownFormItem.propTypes = {
   label: PropTypes.string,
   name: PropTypes.string,
   isRequired: PropTypes.bool,
+  message: PropTypes.string,
   onChange: PropTypes.func
 };
 
