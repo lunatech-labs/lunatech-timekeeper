@@ -50,20 +50,14 @@ public class Organization extends PanacheEntityBase {
     public List<Project> clients;
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Organization)) return false;
-        Organization that = (Organization) o;
-        return Objects.equal(id, that.id) &&
-                Objects.equal(name, that.name) &&
-                Objects.equal(tokenName, that.tokenName) &&
-                Objects.equal(users, that.users) &&
-                Objects.equal(projects, that.projects) &&
-                Objects.equal(clients, that.clients);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id, name, tokenName, users, projects, clients);
+    public String toString() {
+        return "Organization{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", tokenName='" + tokenName + '\'' +
+                ", users=" + users +
+                ", projects=" + projects +
+                ", clients=" + clients +
+                '}';
     }
 }

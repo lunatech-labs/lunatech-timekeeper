@@ -19,17 +19,11 @@ package fr.lunatech.timekeeper.importcsv;
 
 import com.google.common.collect.Lists;
 import fr.lunatech.timekeeper.models.*;
-import fr.lunatech.timekeeper.models.time.TimeEntry;
-import fr.lunatech.timekeeper.models.time.TimeSheet;
-import fr.lunatech.timekeeper.timeutils.TimeUnit;
-import io.smallrye.mutiny.tuples.Tuple4;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -56,7 +50,7 @@ public class CSVTimeEntriesParser {
                             clientName,
                             "Imported from CSV file",
                             defaultOrganization,
-                            Collections.emptyList()
+                            Lists.newArrayList()
                     );
                 }).collect(Collectors.toList());
     }
@@ -76,36 +70,40 @@ public class CSVTimeEntriesParser {
                 }).collect(Collectors.toList());
     }
 
-//    public List<Project> computeProjects(List<ImportedTimeEntry> importedTimeEntries, Long organizationId) {
+    public List<Project> computeProjects(List<ImportedTimeEntry> importedTimeEntries, Long organizationId) {
 //        Organization defaultOrganization = Organization.findById(organizationId);//NOSONAR
-//
-//        //Filter ImportedTimeEntries
-//        List<ImportedTimeEntry> filteredImportedTimeEntries = importedTimeEntries.stream()
-//                .filter(entry -> Objects.nonNull(entry.getClient()) &&
-//                        Objects.nonNull(entry.getProject()) &&
-//                        Objects.nonNull(entry.getEmail()) &&
-//                        Objects.nonNull(entry.getUser()) &&
-//                        !entry.getClient().isBlank() &&
-//                        !entry.getProject().isBlank() &&
-//                        !entry.getEmail().isBlank() &&
-//                        !entry.getUser().isBlank()
-//                ).collect(Collectors.toList());
-//
-//        //Adding project in projectList
-//        List<Project> projects = filteredImportedTimeEntries.stream().map(entry -> {
-//            Client client = new Client(entry.getClient(), "Imported from CSV file", defaultOrganization, Collections.emptyList());
-//            return new Project(
-//                    defaultOrganization,
-//                    client,
-//                    entry.getProject(),
-//                    true,
-//                    "Imported from CSV File",
-//                    true,
-//                    Collections.emptyList(),
-//                    1L);
-//        }).distinct().collect(Collectors.toList());
-//
-//        //Adding User in project
+        Organization defaultOrganization = new Organization();
+        List<Project> projects = Lists.newArrayList();
+
+        //Filter ImportedTimeEntries
+        List<ImportedTimeEntry> filteredImportedTimeEntries = importedTimeEntries.stream()
+                .filter(entry -> Objects.nonNull(entry.getClient()) &&
+                        Objects.nonNull(entry.getProject()) &&
+                        Objects.nonNull(entry.getEmail()) &&
+                        Objects.nonNull(entry.getUser()) &&
+                        !entry.getClient().isBlank() &&
+                        !entry.getProject().isBlank() &&
+                        !entry.getEmail().isBlank() &&
+                        !entry.getUser().isBlank()
+                ).collect(Collectors.toList());
+
+        //Adding project in projectList
+        return filteredImportedTimeEntries.stream()
+                .filter(entry -> isNotExistingProject(projects, entry.getProject(), entry.getClient()))
+                .map(entry -> {
+                    Client client = new Client(entry.getClient(), "Imported from CSV file", defaultOrganization, Lists.newArrayList());
+                    return new Project(
+                            defaultOrganization,
+                            client,
+                            entry.getProject(),
+                            true,
+                            "Imported from CSV File",
+                            true,
+                            Lists.newArrayList(),
+                            1L);
+        }).collect(Collectors.toList());
+
+        //Adding User in project
 //        filteredImportedTimeEntries.forEach(entry -> {
 //            String correctEmail = updateEmailToOrganization(entry.getEmail(), defaultOrganization);
 //            User user = User.createUserForImport(correctEmail, entry.getUser(), defaultOrganization);
@@ -116,12 +114,13 @@ public class CSVTimeEntriesParser {
 //                }
 //            });
 //        });
-//
-//        return projects;
-//    }
 
-    protected boolean isNotProjectInList(List<Project> projects, Project project){
-        return projects.stream().noneMatch(project1 -> project1.name.equals(project.name));
+//        return projects;
+    }
+
+    protected boolean isNotExistingProject(List<Project> projects, String projectName, String clientName){
+        return projects.stream()
+                .noneMatch(project1 -> project1.name.equals(projectName) && project1.client.name.equals(clientName));
     }
 
     protected boolean isNotAUserProject(Project project, User user){

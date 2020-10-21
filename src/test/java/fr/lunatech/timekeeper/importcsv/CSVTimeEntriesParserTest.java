@@ -16,18 +16,16 @@
 
 package fr.lunatech.timekeeper.importcsv;
 
-import fr.lunatech.timekeeper.models.Organization;
-import fr.lunatech.timekeeper.models.Project;
-import fr.lunatech.timekeeper.models.ProjectUser;
-import fr.lunatech.timekeeper.models.User;
+import fr.lunatech.timekeeper.models.*;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CSVTimeEntriesParserTest {
@@ -87,52 +85,67 @@ class CSVTimeEntriesParserTest {
     }
 
     @Test
-    void shouldReturnFalseForAnEmptyListOfProjects(){
+    void shouldReturnTrueForAnEmptyListOfProjects(){
         CSVTimeEntriesParser tested = new CSVTimeEntriesParser();
         List<Project> projects = Collections.emptyList();
-        Project project = new Project();
-        project.name = "Project";
-        assertTrue(tested.isNotProjectInList(projects, project));
+        assertTrue(tested.isNotExistingProject(projects, "Project", "Client"));
     }
 
     @Test
-    void shouldReturnTrueIfProjectIsInProjectList(){
+    void shouldReturnFalseIfProjectIsInProjectList(){
         CSVTimeEntriesParser tested = new CSVTimeEntriesParser();
         Project project = new Project();
         project.name = "Project";
+        project.client = new Client("Client","",new Organization(),Collections.emptyList());
         Project project2 = new Project();
         project2.name = "Project 2";
+        project2.client = new Client("Client","",new Organization(),Collections.emptyList());
         Project project3 = new Project();
         project3.name = "Project 3";
+        project3.client = new Client("Client","",new Organization(),Collections.emptyList());
         Project project4 = new Project();
         project4.name = "Project 4";
+        project4.client = new Client("Client","",new Organization(),Collections.emptyList());
 
         List<Project> projects = Arrays.asList(project,project2,project3, project3);
 
-        Project projectToCheck = new Project();
-        projectToCheck.name = "Project";
-
-        assertFalse(tested.isNotProjectInList(projects, projectToCheck));
+        assertFalse(tested.isNotExistingProject(projects, "Project", "Client"));
     }
 
     @Test
-    void shouldReturnFalseIfProjectIsNotInProjectList(){
+    void shouldReturnTrueIfProjectIsNotInProjectListSameNameDifferentClient(){
         CSVTimeEntriesParser tested = new CSVTimeEntriesParser();
         Project project = new Project();
-        project.name = "Project 1";
+        project.name = "Project";
+        project.client = new Client("Client","",new Organization(),Collections.emptyList());
         Project project2 = new Project();
         project2.name = "Project 2";
+        project2.client = new Client("Client","",new Organization(),Collections.emptyList());
         Project project3 = new Project();
         project3.name = "Project 3";
-        Project project4 = new Project();
-        project4.name = "Project 4";
+        project3.client = new Client("Client","",new Organization(),Collections.emptyList());
 
         List<Project> projects = Arrays.asList(project,project2,project3, project3);
 
-        Project projectToCheck = new Project();
-        projectToCheck.name = "Project";
+        assertTrue(tested.isNotExistingProject(projects, "Project", "Client 2"));
+    }
 
-        assertTrue(tested.isNotProjectInList(projects, projectToCheck));
+    @Test
+    void shouldReturnTrueIfProjectIsNotInProjectListSameClientDifferentName(){
+        CSVTimeEntriesParser tested = new CSVTimeEntriesParser();
+        Project project = new Project();
+        project.name = "Project";
+        project.client = new Client("Client","",new Organization(),Collections.emptyList());
+        Project project2 = new Project();
+        project2.name = "Project 2";
+        project2.client = new Client("Client","",new Organization(),Collections.emptyList());
+        Project project3 = new Project();
+        project3.name = "Project 3";
+        project3.client = new Client("Client","",new Organization(),Collections.emptyList());
+
+        List<Project> projects = Arrays.asList(project,project2,project3, project3);
+
+        assertTrue(tested.isNotExistingProject(projects, "Project 1", "Client"));
     }
 
     @Test
@@ -185,4 +198,60 @@ class CSVTimeEntriesParserTest {
         assertFalse(tested.isNotAUserProject(project, user));
     }
 
+    @Test
+    void shouldReturnAListOf1ProjectWith2Users(){
+        CSVTimeEntriesParser csvTimeEntriesParser = new CSVTimeEntriesParser();
+        ImportedTimeEntry importedTimeEntry = new ImportedTimeEntry();
+        importedTimeEntry.setUser("John Doe");
+        importedTimeEntry.setEmail("john.doe@lunatech.fr");
+        importedTimeEntry.setProject("Project 1");
+        importedTimeEntry.setClient("Client 1");
+
+        ImportedTimeEntry importedTimeEntry2 = new ImportedTimeEntry();
+        importedTimeEntry2.setUser("Jane Doe");
+        importedTimeEntry2.setEmail("jane.doe@lunatech.fr");
+        importedTimeEntry2.setProject("Project 1");
+        importedTimeEntry2.setClient("Client 1");
+
+//        Client client = new Client("Client 1", "Imported from CSV file", Organization.findById(1L), Collections.emptyList());
+        Client client = new Client("Client 1", "Imported from CSV file", new Organization(), Collections.emptyList());
+
+//        User john = User.createUserForImport("john.doe@lunatech.fr", "John Doe", Organization.findById(1L));
+//        User jane = User.createUserForImport("jane.doe@lunatech.fr", "Jane Doe", Organization.findById(1L));
+        User john = User.createUserForImport("john.doe@lunatech.fr", "John Doe", new Organization());
+        User jane = User.createUserForImport("jane.doe@lunatech.fr", "Jane Doe", new Organization());
+
+        Project project = new Project();
+        project.name = "Project 1";
+//        project.organization = Organization.findById(1L);
+        project.organization = new Organization();
+        project.client = client;
+        project.billable = true;
+        project.description = "Imported from CSV file";
+        project.version = 1L;
+
+        ProjectUser projectUser = new ProjectUser();
+        projectUser.user = john;
+        projectUser.project = project;
+        projectUser.manager = false;
+
+        ProjectUser projectUser2 = new ProjectUser();
+        projectUser2.user = jane;
+        projectUser2.project = project;
+        projectUser2.manager = false;
+
+        project.users = Collections.emptyList();
+//        project.users = Arrays.asList(projectUser, projectUser2);
+
+        Project[] expected = {
+                project,
+        };
+
+        var actual = csvTimeEntriesParser.computeProjects(List.of(importedTimeEntry, importedTimeEntry2), 1L);
+
+        assertThat(actual, Matchers.<Collection<Project>>allOf(
+                hasItems(expected),
+                hasSize(expected.length)
+        ));
+    }
 }
