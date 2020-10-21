@@ -18,6 +18,7 @@ package fr.lunatech.timekeeper.importcsv;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import fr.lunatech.timekeeper.services.imports.ImportService;
 import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.apache.camel.dataformat.bindy.csv.BindyCsvDataFormat;
 import org.apache.camel.spi.DataFormat;
@@ -37,7 +38,25 @@ public class CamelRoute extends EndpointRouteBuilder {
 
         from(file("/Users/gdavy/DEV/TIMEKEEPER/lunatech-timekeeper/src/main/resources/input/1?noop=true&idempotent=true"))
                 .unmarshal(bindy)
-                .bean(CSVTimeEntriesParser.class, "importEntries")
+                .bean(CSVTimeEntriesParser.class, "importClients")
+                .bean(ImportService.class, "createClients(*, 1)")
+                .to("log:done")
+        ;
+        from(file("/Users/gdavy/DEV/TIMEKEEPER/lunatech-timekeeper/src/main/resources/input/1?noop=true&idempotent=true"))
+                .unmarshal(bindy)
+                .bean(CSVTimeEntriesParser.class, "importClientAndProject")
+                .bean(ImportService.class, "updateOrCreateProjects(*, 1)")
+                .to("log:done")
+        ;
+        from(file("/Users/gdavy/DEV/TIMEKEEPER/lunatech-timekeeper/src/main/resources/input/1?noop=true&idempotent=true"))
+                .unmarshal(bindy)
+                .bean(CSVTimeEntriesParser.class, "importUserProjectClient")
+                .bean(ImportService.class, "checkUserMembership(*, 1)")
+                .to("log:done")
+        ;
+        from(file("/Users/gdavy/DEV/TIMEKEEPER/lunatech-timekeeper/src/main/resources/input/1?noop=true&idempotent=true"))
+                .unmarshal(bindy)
+                .bean(CSVTimeEntriesParser.class, "insertOrUpdateTimeEntries(*, 1)")
                 .to("log:done")
         ;
     }
