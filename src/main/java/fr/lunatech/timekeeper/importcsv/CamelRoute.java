@@ -25,11 +25,6 @@ import org.apache.camel.spi.DataFormat;
 
 @ApplicationScoped
 public class CamelRoute extends EndpointRouteBuilder {
-    /**
-     * An injected bean
-     */
-    @Inject
-    CSVTimeEntriesParser csvParser;
 
     @Override
     public void configure() throws Exception {
@@ -38,26 +33,27 @@ public class CamelRoute extends EndpointRouteBuilder {
 
         from(file("/Users/gdavy/DEV/TIMEKEEPER/lunatech-timekeeper/src/main/resources/input/1?noop=true&idempotent=true"))
                 .unmarshal(bindy)
+                .recipientList(constant("direct:processClients, direct:processProjects, direct:processMember, direct:processTimeEntries"))
+                .to("log:done")
+        ;
+        from("direct:processClients")
                 .bean(CSVTimeEntriesParser.class, "importClients")
                 .bean(ImportService.class, "createClients(*, 1)")
                 .to("log:done")
         ;
-//        from(file("/Users/gdavy/DEV/TIMEKEEPER/lunatech-timekeeper/src/main/resources/input/1?noop=true&idempotent=true"))
-//                .unmarshal(bindy)
-//                .bean(CSVTimeEntriesParser.class, "importClientAndProject")
-//                .bean(ImportService.class, "updateOrCreateProjects(*, 1)")
-//                .to("log:done")
-//        ;
-//        from(file("/Users/gdavy/DEV/TIMEKEEPER/lunatech-timekeeper/src/main/resources/input/1?noop=true&idempotent=true"))
-//                .unmarshal(bindy)
-//                .bean(CSVTimeEntriesParser.class, "importUserProjectClient")
-//                .bean(ImportService.class, "checkUserMembership(*, 1)")
-//                .to("log:done")
-//        ;
-//        from(file("/Users/gdavy/DEV/TIMEKEEPER/lunatech-timekeeper/src/main/resources/input/1?noop=true&idempotent=true"))
-//                .unmarshal(bindy)
-//                .bean(CSVTimeEntriesParser.class, "insertOrUpdateTimeEntries(*, 1)")
-//                .to("log:done")
-//        ;
+        from("direct:processProjects")
+                .bean(CSVTimeEntriesParser.class, "importClientAndProject")
+                .bean(ImportService.class, "updateOrCreateProjects(*, 1)")
+                .to("log:done")
+        ;
+        from("direct:processMember")
+                .bean(CSVTimeEntriesParser.class, "importUserProjectClient")
+                .bean(ImportService.class, "checkUserMembership(*, 1)")
+                .to("log:done")
+        ;
+        from("direct:processTimeEntries")
+            .bean(CSVTimeEntriesParser.class, "insertOrUpdateTimeEntries(*, 1)")
+                .to("log:done")
+        ;
     }
 }
