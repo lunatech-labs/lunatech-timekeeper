@@ -33,20 +33,39 @@ public class CSVTimeEntriesParser {
     private static Logger logger = LoggerFactory.getLogger(CSVTimeEntriesParser.class);
 
     public List<String> importClients(List<ImportedTimeEntry> importedTimeEntries){
-        return importedTimeEntries.stream().map(ImportedTimeEntry::getClient).distinct().collect(Collectors.toList());
+        logger.info("----------- Compute importedTimeEntries to Client Name -----------");
+        return importedTimeEntries.stream()
+                .filter(entry -> Objects.nonNull(entry.getClient()) && !entry.getClient().isBlank())
+                .map(ImportedTimeEntry::getClient)
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     public List<ImportedClientProject> importClientAndProject(List<ImportedTimeEntry> importedTimeEntries){
+        logger.info("----------- Compute importedTimeEntries to ImportedClientProjects -----------");
         return importedTimeEntries
                 .stream()
-                .map(entry -> ImportedClientProject.of(entry.getProject(), entry.getClient()))
+                .filter(entry -> Objects.nonNull(entry.getClient()) &&
+                        Objects.nonNull(entry.getProject()) &&
+                        !entry.getClient().isBlank() &&
+                        !entry.getProject().isBlank())
+                .map(entry -> ImportedClientProject.of(entry.getClient(), entry.getProject()))
                 .distinct()
                 .collect(Collectors.toList());
     }
 
     public List<ImportedUserProjectClient> importUserProjectClient(List<ImportedTimeEntry> importedTimeEntries){
+        logger.info("----------- Compute importedTimeEntries to ImportedUserProjectClient -----------");
         return importedTimeEntries
                 .stream()
+                .filter(entry -> Objects.nonNull(entry.getClient()) &&
+                        Objects.nonNull(entry.getProject()) &&
+                        Objects.nonNull(entry.getUser()) &&
+                        Objects.nonNull(entry.getEmail()) &&
+                        !entry.getClient().isBlank() &&
+                        !entry.getProject().isBlank() &&
+                        !entry.getUser().isBlank() &&
+                        !entry.getEmail().isBlank())
                 .map(entry -> ImportedUserProjectClient.of(entry.getEmail(), entry.getUser(), entry.getProject(), entry.getClient()))
                 .collect(Collectors.toList());
     }
