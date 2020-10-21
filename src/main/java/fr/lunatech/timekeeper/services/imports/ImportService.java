@@ -40,52 +40,71 @@ import java.util.Optional;
 public class ImportService {
 
     private static Logger logger = LoggerFactory.getLogger(ImportService.class);
+
     @Transactional
-    protected void updateOrCreateProjects(List<ImportedClientProject> clientsAndProjects) {
-        Organization defaultOrganization = Organization.findById(1L); // NOSONAR
+    protected void createClients(List<String> clients, Long organizationId) {
+        Organization defaultOrganization = Organization.findById(organizationId);//NOSONAR
 
-        clientsAndProjects.stream()
-                .filter(projectAndClient -> !projectAndClient.getClientName().isBlank() && !projectAndClient.getProjectName().isBlank())
-                .forEach(projectAndClient -> {
-
-            String projectName = clientsAndProjects.getProjectName();
-            String clientName = projectAndClient.getValue();
-
+        clients.forEach(clientName -> {
             Optional<Client> maybeClient = Client.find("name", clientName).firstResultOptional(); // NOSONAR
-
             if (maybeClient.isPresent()) {
-                Optional<Project> maybeProject = Project.find("name", projectName).firstResultOptional(); // NOSONAR
-                if (maybeProject.isPresent()) {
-                    logger.debug(String.format("Skip existing project [%s]", maybeProject.get().name));
-                } else {
-                    Project project = new Project();
-                    project.name = projectName;
-                    project.publicAccess = true;
-                    project.organization = defaultOrganization;
-                    project.billable = true;
-                    project.client = maybeClient.get();
-                    project.description = "Imported from CSV File";
-                    project.version = 1L;
-                    project.persistAndFlush();
-                }
+                logger.debug(String.format("Skip existing client [%s]", maybeClient.get().name));
             } else {
-                logger.warn(String.format("Client not found, cannot import project %s", projectName));
+                logger.debug(String.format("Create client [%s]", clientName));
+                Client c = new Client();
+                c.name = clientName;
+                c.description = "Imported from CSV file";
+                c.organization = defaultOrganization;
+                c.projects = Collections.emptyList();
+                c.persistAndFlush();
             }
         });
     }
 
     @Transactional
-    protected void checkUserMembership(List<ImportedUserProjectClient> userEmailAndProjectName) {
-        Organization defaultOrganization = Organization.findById(1L); // NOSONAR
+    protected void updateOrCreateProjects(List<ImportedClientProject> clientsAndProjects, Long organizationId) {
+        Organization defaultOrganization = Organization.findById(organizationId); // NOSONAR
+
+        clientsAndProjects.forEach(projectAndClient -> {
+
+                    String projectName = projectAndClient.getProjectName();
+                    String clientName = projectAndClient.getClientName();
+
+                    Optional<Client> maybeClient = Client.find("name", clientName).firstResultOptional(); // NOSONAR
+
+                    if (maybeClient.isPresent()) {
+                        Optional<Project> maybeProject = Project.find("name", projectName).firstResultOptional(); // NOSONAR
+                        if (maybeProject.isPresent()) {
+                            logger.debug(String.format("Skip existing project [%s]", maybeProject.get().name));
+                        } else {
+                            Project project = new Project();
+                            project.name = projectName;
+                            project.publicAccess = true;
+                            project.organization = defaultOrganization;
+                            project.billable = true;
+                            project.client = maybeClient.get();
+                            project.description = "Imported from CSV File";
+                            project.version = 1L;
+                            project.persistAndFlush();
+                        }
+                    } else {
+                        logger.warn(String.format("Client not found, cannot import project %s", projectName));
+                    }
+        });
+    }
+
+    @Transactional
+    protected void checkUserMembership(List<ImportedUserProjectClient> userEmailAndProjectName, Long organizationId) {
+        Organization defaultOrganization = Organization.findById(organizationId); // NOSONAR
 
         // TODO il faut que je fasse l'update lorsque la Timeentry existe déjà...
 
-        userEmailAndProjectName.stream().forEach(entry -> {
+        userEmailAndProjectName.forEach(entry -> {
 
-            String correctEmail = ImportUtils.updateEmailToOrganization(entry.getItem1(), defaultOrganization);
-            String userName = entry.getItem2();
-            String projectName = entry.getItem3();
-            String clientName = entry.getItem4();
+            String correctEmail = ImportUtils.updateEmailToOrganization(entry.getUserEmail(), defaultOrganization);
+            String userName = entry.getUserName();
+            String projectName = entry.getProjectName();
+            String clientName = entry.getClientName();
 
             Optional<User> maybeUser = User.find("email", correctEmail).firstResultOptional();
             if (maybeUser.isEmpty()) {
@@ -122,37 +141,14 @@ public class ImportService {
                     logger.warn("client [" + clientName + "] does not match the project's client [" + maybeProject.get().name + "] we found for this user");
                 }
             } else {
-                logger.warn("project " + entry.getItem2() + " not found");
-            }
-
-
-        });
-    }
-
-    @Transactional
-    protected void createClients(List<String> clients) {
-        Organization defaultOrganization = Organization.findById(1L);//NOSONAR
-
-        clients.stream().filter(clientName -> !clientName.isBlank()).forEach(clientName -> {
-            Optional<Client> maybeClient = Client.find("name", clientName).firstResultOptional(); // NOSONAR
-            if (maybeClient.isPresent()) {
-                logger.debug(String.format("Skip existing client [%s]", maybeClient.get().name));
-            } else {
-                logger.debug(String.format("Create client [%s]", clientName));
-                Client c = new Client();
-                c.name = clientName;
-                c.description = "Imported from CSV file";
-                c.organization = defaultOrganization;
-                c.projects = Collections.emptyList();
-                c.persistAndFlush();
+                logger.warn("project " + entry.getProjectName() + " not found");
             }
         });
-    }
     }
 
     @Transactional
     protected void insertOrUpdateTimeEntries(List<ImportedTimeEntry> timeEntries) {
-        timeEntries.stream().forEach(importedTimeEntry -> {
+        timeEntries.forEach(importedTimeEntry -> {
 
             String projectName = importedTimeEntry.getProject();
             String clientName = importedTimeEntry.getClient();
@@ -192,7 +188,6 @@ public class ImportService {
                                 return;
                             }
                         }
-
                         TimeEntry timeEntry = new TimeEntry();
                         timeEntry.timeSheet = maybeTimeSheet.get();
                         timeEntry.comment = importedTimeEntry.getDescription();
@@ -212,7 +207,6 @@ public class ImportService {
                             logger.error("TimeEntry=" + timeEntry);
                             logger.error(e.getMessage());
                         }
-
                     } else {
                         logger.warn("User " + userEmail + " not found");
                     }
