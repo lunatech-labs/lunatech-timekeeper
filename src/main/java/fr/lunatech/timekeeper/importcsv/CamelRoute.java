@@ -42,22 +42,22 @@ public class CamelRoute extends EndpointRouteBuilder {
                 .bean(ImportService.class, "createClients(*, 1)")
                 .to("log:done")
         ;
-        from(file("/Users/gdavy/DEV/TIMEKEEPER/lunatech-timekeeper/src/main/resources/input/1?noop=true&idempotent=true"))
-                .unmarshal(bindy)
-                .bean(CSVTimeEntriesParser.class, "importClientAndProject")
-                .bean(ImportService.class, "updateOrCreateProjects(*, 1)")
-                .to("log:done")
-        ;
-        from(file("/Users/gdavy/DEV/TIMEKEEPER/lunatech-timekeeper/src/main/resources/input/1?noop=true&idempotent=true"))
-                .unmarshal(bindy)
-                .bean(CSVTimeEntriesParser.class, "importUserProjectClient")
-                .bean(ImportService.class, "checkUserMembership(*, 1)")
-                .to("log:done")
-        ;
-        from(file("/Users/gdavy/DEV/TIMEKEEPER/lunatech-timekeeper/src/main/resources/input/1?noop=true&idempotent=true"))
-                .unmarshal(bindy)
-                .bean(CSVTimeEntriesParser.class, "insertOrUpdateTimeEntries(*, 1)")
-                .to("log:done")
-        ;
+//        from(file("/Users/gdavy/DEV/TIMEKEEPER/lunatech-timekeeper/src/main/resources/input/1?noop=true&idempotent=true"))
+//                .unmarshal(bindy)
+//                .bean(CSVTimeEntriesParser.class, "importClientAndProject")
+//                .bean(ImportService.class, "updateOrCreateProjects(*, 1)")
+//                .to("log:done")
+//        ;
+//        from(file("/Users/gdavy/DEV/TIMEKEEPER/lunatech-timekeeper/src/main/resources/input/1?noop=true&idempotent=true"))
+//                .unmarshal(bindy)
+//                .bean(CSVTimeEntriesParser.class, "importUserProjectClient")
+//                .bean(ImportService.class, "checkUserMembership(*, 1)")
+//                .to("log:done")
+//        ;
+//        from(file("/Users/gdavy/DEV/TIMEKEEPER/lunatech-timekeeper/src/main/resources/input/1?noop=true&idempotent=true"))
+//                .unmarshal(bindy)
+//                .bean(CSVTimeEntriesParser.class, "insertOrUpdateTimeEntries(*, 1)")
+//                .to("log:done")
+//        ;
     }
 }
