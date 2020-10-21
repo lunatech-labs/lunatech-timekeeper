@@ -80,13 +80,13 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
-            <version>1.14.3</version>
+            <version>1.15.0-rc2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.14.3</version>
+            <version>1.15.0-rc2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -98,7 +98,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>1.14.3</version>
+            <version>1.15.0-rc2</version>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -410,6 +410,8 @@
                             <skipTests>true</skipTests>
                             <systemProperties>
                                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                                <!-- Enable debug logging for all logging categories -->
+<!--                                <quarkus.log.level>DEBUG</quarkus.log.level>-->
                             </systemProperties>
                         </configuration>
                     </plugin>

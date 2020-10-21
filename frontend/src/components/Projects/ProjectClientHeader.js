@@ -47,7 +47,7 @@ ProjectClientHeader.propTypes = {
     name: PropTypes.string,
     client: PropTypes.object
   }),
-  makeItGrey: PropTypes.bool.isRequired
+  makeItGrey: PropTypes.bool
 };
 
 export default ProjectClientHeader;
