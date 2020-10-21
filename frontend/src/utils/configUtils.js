@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 Lunatech S.A.S
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 // If exists return the number of hours per day defined in .env files, or set default at 8hrs
 export const getMaximumHoursPerDay = () => {
   return process.env.REACT_APP_GLOBAL_VARIABLE_MAX_HOUR_PER_DAY ? process.env.REACT_APP_GLOBAL_VARIABLE_MAX_HOUR_PER_DAY : 8;
@@ -6,4 +22,9 @@ export const getMaximumHoursPerDay = () => {
 // If exists return the halfday duration defined in .env files, or set default at 4hrs
 export const getHalfDayDuration = () => {
   return process.env.REACT_APP_GLOBAL_VARIABLE_HALFDAY_DURATION ? process.env.REACT_APP_GLOBAL_VARIABLE_HALFDAY_DURATION : 4;
+};
+
+export const Durations = {
+  DAY: 8,
+  HALF_DAY: 4
 };

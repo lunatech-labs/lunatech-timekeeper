@@ -15,41 +15,21 @@
  */
 
 import React from 'react';
-import {DatePicker, Col, Form, Row, Select} from 'antd';
+import {Col, Row} from 'antd';
 import './EventDateAndHoursPicker.less';
 import '../../components/Button/BtnGeneral.less';
-import _ from 'lodash';
 import 'moment/locale/en-gb';
 import PropTypes from 'prop-types';
 
-const EventDateAndHoursPicker = ({dateLabel, dateName, hoursLabel, hoursName, onDateChange, onHoursChange, disabledDate, marginTop}) => {
-  const {Option} = Select;
+export const EventDateAndHoursPicker = ({datePicker, hoursPicker, cssClass, style}) => {
   return (
-    <div className="tk_DateAndHours" style={{marginTop: marginTop}}>
-      <Row>
+    <div className={cssClass} style={style}>
+      <Row gutter={16}>
         <Col span={12} order={1}>
-          <Form.Item
-            label={dateLabel}
-            name={dateName}
-            rules={[{required: true}]}
-          >
-            <DatePicker
-              disabledDate={disabledDate}
-              className="tk_DatePicker"
-              onChange={onDateChange}
-            />
-          </Form.Item>
+          {datePicker}
         </Col>
         <Col span={12} order={2}>
-          <Form.Item
-            label={hoursLabel}
-            name={hoursName}
-            rules={[{required: true}]}
-          >
-            <Select onChange={onHoursChange}>
-              {_.range(1, 9, 1).map(i => <Option key={`option-hour-${i}`} value={i} >{i}</Option>)};
-            </Select>
-          </Form.Item>
+          {hoursPicker}
         </Col>
       </Row>
     </div>
@@ -57,14 +37,10 @@ const EventDateAndHoursPicker = ({dateLabel, dateName, hoursLabel, hoursName, on
 };
 
 EventDateAndHoursPicker.propTypes = {
-  dateLabel: PropTypes.string,
-  dateName: PropTypes.string,
-  hoursLabel: PropTypes.string,
-  hoursName: PropTypes.string,
-  onDateChange: PropTypes.func,
-  onHoursChange: PropTypes.func,
-  disabledDate: PropTypes.func,
-  marginTop: PropTypes.number
+  datePicker: PropTypes.element.isRequired,
+  hoursPicker: PropTypes.element.isRequired,
+  cssClass: PropTypes.string,
+  style: PropTypes.object
 };
 
 export default EventDateAndHoursPicker;

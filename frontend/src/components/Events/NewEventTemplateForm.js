@@ -16,7 +16,7 @@
 
 import React, {useContext, useEffect, useState} from 'react';
 import {sortListByName, useTimeKeeperAPI, useTimeKeeperAPIPost} from '../../utils/services';
-import {Alert, Button, Col, DatePicker, Form, Input, message, Radio, Row, Select, Space, Spin} from 'antd';
+import {Alert, Button, Col, Form, Input, message, Radio, Row, Select, Space, Spin} from 'antd';
 import EventDateAndHoursPicker from './EventDateAndHoursPicker';
 import '../../components/Button/BtnGeneral.less';
 import {Link, Redirect} from 'react-router-dom';
@@ -30,9 +30,11 @@ import UserTreeData from './UserTreeData';
 import PropTypes from 'prop-types';
 import './NewEventTemplateForm.less';
 import EventDuration from './EventDuration';
+import EventDatePickerFormItem from './EventDatePickerFormItem';
+import EventHoursDropDownFormItem from './EventHoursDropDownFormItem';
+import EventHoursRadioGroupFormItem from './EventHoursRadioGroupFormItem';
 
 const {TextArea} = Input;
-const { RangePicker } = DatePicker;
 const {Option} = Select;
 
 const USER_EVENTS = ['Vacations', 'Sickness', 'Maternity/Paternity leave', 'Family event'];
@@ -49,26 +51,31 @@ const NewEventTemplateForm = ({eventType}) => {
   const [endDate, setEndDate] = useState(null);
   const [endDateHours, setEndDateHours] = useState(0);
 
-  const companyEventFormData = (formData) => {
-    const start = moment(formData.firstDay)
-      .startOf('day')
-      .add(17 - _.get(formData, 'firstDayDuration', 0), 'hours')
-      .utc(true);
-
-    const end = isMultiDay ? moment(formData.lastDay)
-      .startOf('day')
-      .add(9 + _.get(formData, 'lastDayDuration', 0), 'hours')
-      .utc(true)
-      : moment(formData.firstDay)
+  const formDataMapping = {
+    start: (formData) => {
+      return moment(formData.firstDay)
         .startOf('day')
-        .add(17, 'hours')
+        .add(17 - _.get(formData, 'firstDayDuration', 0), 'hours')
         .utc(true);
+    },
+    end: (formData, multiDay) => {
+      return multiDay ? moment(formData.lastDay)
+        .startOf('day')
+        .add(9 + _.get(formData, 'lastDayDuration', 0), 'hours')
+        .utc(true)
+        : moment(formData.firstDay)
+          .startOf('day')
+          .add(17, 'hours')
+          .utc(true);
+    }
+  };
 
+  const companyEventFormData = (formData) => {
     return {
       name: formData.name,
       description: formData.description,
-      startDateTime: start,
-      endDateTime: end,
+      startDateTime: formDataMapping.start(formData),
+      endDateTime: formDataMapping.end(formData, isMultiDay),
       attendees: usersSelected
     };
   };
@@ -77,13 +84,14 @@ const NewEventTemplateForm = ({eventType}) => {
     return {
       name: formData.name,
       description: formData.description,
-      startDateTime: formData.eventDateTime[0],
-      endDateTime: _.get(formData.eventDateTime, '[1]', formData.eventDateTime[0]),
+      startDateTime: formDataMapping.start(formData),
+      endDateTime: formDataMapping.end(formData, isMultiDay),
       userId: _.get(usersSelected[0], 'userId', currentUser.id),
       creatorId: currentUser.id,
       eventType: 'PERSONAL'
     };
   };
+
   const usersResponse = useTimeKeeperAPI('/api/users');
   const eventsResponse = useTimeKeeperAPI('/api/users');
   const apiCallCompanyEventPOST = useTimeKeeperAPIPost('/api/events-template', (form => form), setEventTemplateCreated, companyEventFormData);
@@ -116,101 +124,85 @@ const NewEventTemplateForm = ({eventType}) => {
     );
   }
 
-  const disabledDate = (current) => {
-    // Can not select days before today and today
-    return current && current < moment().subtract(1,'days').endOf('day');
-  };
+  const renderDatePickers = (onStartDateChange, onStartHoursChange, onEndDateChange, onEndHoursChange) => {
 
-  function disabledTime(time, type) {
-    if (type === 'start') {
-      return {
-        disabledHours() {
-          let morning =  _.range(0, 7);
-          let evening =  _.range(20, 24);
-          return _.concat(morning,evening);
-        },
-        disabledMinutes: function () {
-          return _.filter(_.range(0, 60), function (x) {
-            return x % 15 !== 0;
-          });
-        },
-        disabledSeconds() {
-          return _.range(0, 60);
-        },
-      };
-    }
-    return {
-      disabledHours() {
-        let morning =  _.range(0, 7);
-        let evening =  _.range(20, 24);
-        return _.concat(morning,evening);
-      },
-      disabledMinutes: function () {
-        return _.filter(_.range(0, 60), function (x) {
-          return x % 15 !== 0;
-        });
-      },
-      disabledSeconds() {
-        return _.range(0, 60);
-      },
+    const startDatePicker = () => {
+      return (
+        <EventDatePickerFormItem
+          label={isMultiDay ? 'First Day:' : 'Date:'}
+          name="firstDay"
+          onChange={onStartDateChange}
+          isRequired={true}
+          disabledDates={(current) => {
+            if(isMultiDay && !_.isNull(endDate)) {
+              return current && current > moment(endDate).subtract(1,'days').endOf('day');
+            }
+          }}
+        />
+      );
     };
-  }
+    const startHoursPicker = () => {
+      return (
+        <EventHoursDropDownFormItem label="Number of hours" name="firstDayDuration" isRequired={true} onChange={onStartHoursChange}/>
+      );
+    };
+    const endDatePicker = () => {
+      return (
+        <EventDatePickerFormItem
+          label="Last Day"
+          name="lastDay"
+          onChange={onEndDateChange}
+          isRequired={true}
+          disabledDates={(current) => current && current < moment(startDate).endOf('day')}
+        />
+      );
+    };
+    const endHoursPicker = () => {
+      return (
+        <EventHoursDropDownFormItem label="Number of hours" name="lastDayDuration" isRequired={true} onChange={onEndHoursChange}/>
+      );
+    };
 
-  const getDatePicker = (onStartDateChange, onStartHoursChange, onEndDateChange, onEndHoursChange) => {
     switch (currentEventType) {
       case 'PERSONAL':
-        return dateRangePicker();
-      case 'COMPANY':
         return (
-          <React.Fragment>
+          <div className="tk_DateAndHoursGen">
             <EventDateAndHoursPicker
-              dateLabel="First day"
-              dateName="firstDay"
-              hoursLabel="Number of hours"
-              hoursName="firstDayDuration"
-              onDateChange={onStartDateChange}
-              onHoursChange={onStartHoursChange}
-              disabledDate={(current) => {
-                if(isMultiDay && !_.isNull(endDate)) {
-                  return current && current > moment(endDate).subtract(1,'days').endOf('day');
-                }
-              }}
-            />
+              cssClass="tk_DateAndHours"
+              datePicker={startDatePicker()}
+              hoursPicker={
+                <EventHoursRadioGroupFormItem label="Duration:" name="firstDayDuration" isRequired={true} onChange={onStartRadioHoursChange}/>
+              }/>
             {
               isMultiDay ? <EventDateAndHoursPicker
-                dateLabel="Last day"
-                dateName="lastDay"
-                hoursLabel="Number of hours"
-                hoursName="lastDayDuration"
-                onDateChange={onEndDateChange}
-                onHoursChange={onEndHoursChange}
-                marginTop={15}
-                disabledDate={(current) => current && current < moment(startDate).endOf('day')}
-              /> : <></>
+                cssClass="tk_DateAndHours"
+                datePicker={endDatePicker()}
+                hoursPicker={
+                  <EventHoursRadioGroupFormItem label="Duration:" name="lastDayDuration" isRequired={true} onChange={onEndRadioHoursChange}/>
+                }
+              />
+                : <></>
             }
-          </React.Fragment>
+          </div>);
+      case 'COMPANY':
+        return (
+          <div className="tk_DateAndHoursGen">
+            <EventDateAndHoursPicker
+              cssClass="tk_DateAndHours"
+              datePicker={startDatePicker()}
+              hoursPicker={startHoursPicker()}/>
+            {
+              isMultiDay ? <EventDateAndHoursPicker
+                cssClass="tk_DateAndHours"
+                datePicker={endDatePicker()}
+                hoursPicker={endHoursPicker()}
+                // style={{marginTop: 24}}
+              />
+                : <></>
+            }
+          </div>
         );
     }
-  };
-
-  const dateRangePicker = () => {
-    return (
-      <Form.Item
-        label="Date and duration"
-        name="eventDateTime"
-        rules={[{required: true}]}
-      >
-        <RangePicker
-          disabledDate={disabledDate}
-          disabledTime={disabledTime}
-          showTime={{
-            hideDisabledOptions: true
-          }}
-          format="DD-MM-YYYY HH:mm"
-          className="tk_RangePicker"
-        />
-      </Form.Item>
-    );
   };
 
   const eventColumn = () => {
@@ -311,7 +303,7 @@ const NewEventTemplateForm = ({eventType}) => {
         <span className="tk_EventForm_Delimiter"/>
 
 
-        {getDatePicker(onStartDateChange, onStartHoursChange, onEndDateChange, onEndHoursChange)}
+        {renderDatePickers(onStartDateChange, onStartHoursChange, onEndDateChange, onEndHoursChange)}
 
         <span className="tk_EventForm_Delimiter"/>
 
@@ -361,6 +353,9 @@ const NewEventTemplateForm = ({eventType}) => {
       setIsMultiDay(value.target.value);
     }
   };
+
+  const onStartRadioHoursChange = (value) => setStartDateHours(value.target.value);
+  const onEndRadioHoursChange = (value) => setEndDateHours(value.target.value);
 
   const userColumn = () => {
     return (<Col className="gutter-row" span={12}>

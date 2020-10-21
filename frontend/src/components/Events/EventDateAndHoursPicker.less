@@ -16,33 +16,37 @@
 
 @import '../../main.less';
 
-.tk_DateAndHours {
-  .ant-form-item {
-    width: 100%;
-    margin-bottom: 0;
-    &:last-child {
-      align-self: center;
+.tk_DateAndHoursGen {
+  .tk_DateAndHours {
+    margin-top: 24px;
+    &:first-child {margin-top: 0px;}
+    .ant-form-item {
+      width: 100%;
+      margin-bottom: 0;
+      &:last-child {
+        align-self: center;
+      }
     }
-  }
-  .tk_DatePicker {
-    width: 98%;
-    height: 40px;
-    &:hover {
+    .tk_DatePicker {
+      width: 98%;
+      height: 40px;
+      &:hover {
+        .ant-picker-clear {
+          background-color: @tk_DarkGray;
+        }
+        border: 1px solid rgba(145, 145, 160, 0.8);
+      }
+      .ant-picker-input {
+        input {
+          border: none !important;
+        }
+      }
       .ant-picker-clear {
+        &:hover{
+          background-color: @tk_DarkGray;
+        }
         background-color: @tk_DarkGray;
       }
-      border: 1px solid rgba(145, 145, 160, 0.8);
-    }
-    .ant-picker-input {
-      input {
-        border: none !important;
-      }
-    }
-    .ant-picker-clear {
-      &:hover{
-        background-color: @tk_DarkGray;
-      }
-      background-color: @tk_DarkGray;
     }
   }
 }
