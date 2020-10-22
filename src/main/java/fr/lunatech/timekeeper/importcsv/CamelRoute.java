@@ -31,7 +31,7 @@ public class CamelRoute extends EndpointRouteBuilder {
 
         final DataFormat bindy = new BindyCsvDataFormat(ImportedTimeEntry.class);
 
-        from(file("/Users/gdavy/DEV/TIMEKEEPER/lunatech-timekeeper/src/main/resources/input/1?noop=true&idempotent=true"))
+        from(file("/Users/gdavy/DEV/TIMEKEEPER/lunatech-timekeeper/src/main/resources/input/1?noop=true&idempotent=true&initialDelay=8000"))
                 .unmarshal(bindy)
                 .recipientList(constant("direct:processClients, direct:processProjects, direct:processMember, direct:processTimeEntries"))
                 .to("log:done")
@@ -52,7 +52,7 @@ public class CamelRoute extends EndpointRouteBuilder {
                 .to("log:done")
         ;
         from("direct:processTimeEntries")
-            .bean(CSVTimeEntriesParser.class, "insertOrUpdateTimeEntries(*, 1)")
+            .bean(ImportService.class, "insertOrUpdateTimeEntries(*, 1)")
                 .to("log:done")
         ;
     }

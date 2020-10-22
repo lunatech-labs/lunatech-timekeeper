@@ -31,10 +31,7 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @ApplicationScoped
 public class ImportService {
@@ -44,6 +41,7 @@ public class ImportService {
     @Transactional
     protected void createClients(List<String> clients, Long organizationId) {
         Organization defaultOrganization = Organization.findById(organizationId);//NOSONAR
+        Objects.requireNonNull(defaultOrganization);
 
         clients.forEach(clientName -> {
             Optional<Client> maybeClient = Client.find("name", clientName).firstResultOptional(); // NOSONAR
@@ -64,6 +62,7 @@ public class ImportService {
     @Transactional
     protected void updateOrCreateProjects(List<ImportedClientProject> clientsAndProjects, Long organizationId) {
         Organization defaultOrganization = Organization.findById(organizationId); // NOSONAR
+        Objects.requireNonNull(defaultOrganization);
 
         clientsAndProjects.forEach(projectAndClient -> {
 
@@ -96,8 +95,7 @@ public class ImportService {
     @Transactional
     protected void checkUserMembership(List<ImportedUserProjectClient> userEmailAndProjectName, Long organizationId) {
         Organization defaultOrganization = Organization.findById(organizationId); // NOSONAR
-
-        // TODO il faut que je fasse l'update lorsque la Timeentry existe déjà...
+        Objects.requireNonNull(defaultOrganization);
 
         userEmailAndProjectName.forEach(entry -> {
 
@@ -148,7 +146,12 @@ public class ImportService {
 
     @Transactional
     protected void insertOrUpdateTimeEntries(List<ImportedTimeEntry> timeEntries) {
-        timeEntries.forEach(importedTimeEntry -> {
+        timeEntries.stream()
+                .filter(entry -> Objects.nonNull(entry.getProject()) &&
+                        Objects.nonNull(entry.getClient()) &&
+                        Objects.nonNull(entry.getEmail()) &&
+                        Objects.nonNull(entry.getDescription()))
+                .forEach(importedTimeEntry -> {
 
             String projectName = importedTimeEntry.getProject();
             String clientName = importedTimeEntry.getClient();
