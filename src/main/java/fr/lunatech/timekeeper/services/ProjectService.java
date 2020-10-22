@@ -23,6 +23,7 @@ import fr.lunatech.timekeeper.resources.exceptions.ConflictOnVersionException;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
+import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.security.ForbiddenException;
 import org.slf4j.Logger;
@@ -110,6 +111,38 @@ public class ProjectService {
         if (!project.version.equals(request.getVersion())) {
             throw new ConflictOnVersionException(String.format("Version of this project does not match the current project version (%d) ", project.version));
         }
+
+        final List<Long> userIds = request.getUsers().stream().map(i -> i.getId()).collect(Collectors.toList());
+
+        final List<Long> userIdToDelete = project.users.stream()
+                .map(i -> i.user.id)
+                .filter(i -> !userIds.contains(i))
+                .collect(Collectors.toList());
+
+        //find user's currently active timesheet that corresponds with project
+        final List<Optional<TimeSheetResponse>> timeSheetsToUpdate = userIdToDelete
+                .stream().map(userId -> timeSheetService.findFirstForProjectForUser(project.id, userId))
+                .collect(Collectors.toList());
+
+        //todo handle empty optionals
+
+
+
+
+
+//                .forEach(userId -> {
+//                    try {
+//                        timeSheetService.findFirstForProjectForUser(project.id, userId)
+//                                .orElseThrow(() -> new Exception(
+//                                        "Time sheet for user " + userId + " not found in project " + project.id
+//                                + ". "
+//                                )
+//                        );
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                });
+
 
         // It has to be done before the project is unbind
         deleteOldMembers(project, request::notContains, ctx);
