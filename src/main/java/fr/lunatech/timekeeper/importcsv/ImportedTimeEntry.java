@@ -18,7 +18,7 @@ package fr.lunatech.timekeeper.importcsv;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 
-@CsvRecord(separator = ",|;", skipFirstLine = true, quoting = true, quote = "\"")
+@CsvRecord(separator = ",", skipFirstLine = true)
 public class ImportedTimeEntry {
 
     @DataField(pos = 1)
