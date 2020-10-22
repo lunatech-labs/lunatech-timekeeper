@@ -24,6 +24,7 @@ import {isPublicHoliday, isWeekEnd, totalHoursPerDay} from '../../utils/momentUt
 import en_GB from 'antd/lib/locale-provider/en_GB';
 import 'moment/locale/en-gb';
 import _ from 'lodash';
+import {getMaximumHoursPerDay} from '../../utils/configUtils';
 
 const {Option} = Select;
 
@@ -135,14 +136,15 @@ const MonthCalendar = (props) => {
       'tk_CardMonthCalendar_Body_With_Warn' : '';
 
     if (isPublicHoliday(item, publicHolidays)) {
-          return <React.Fragment>
-                      <Tag className="tk_Tag_Public_Holiday"><InfoCircleOutlined/> Public holiday</Tag>
-                      <div className='tk_CardMonthCalendar_Body'/>
-                 </React.Fragment>
-      }
+      return <React.Fragment>
+        <Tag className="tk_Tag_Public_Holiday"><InfoCircleOutlined/> Public holiday</Tag>
+        <div className='tk_CardMonthCalendar_Body'/>
+      </React.Fragment>;
+    }
 
-    if(!isDisabled(item)){
-      if(associatedData && associatedData.date && totalHoursPerDay(userEvents, associatedData.date, associatedData.data) >= 8) {
+    if(!isDisabled(item)) {
+      const timeEntries = associatedData ? associatedData.data : [];
+      if(associatedData && associatedData.date && totalHoursPerDay(userEvents, associatedData.date, timeEntries) >= getMaximumHoursPerDay()) {
         return (
           <React.Fragment>
             <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>
