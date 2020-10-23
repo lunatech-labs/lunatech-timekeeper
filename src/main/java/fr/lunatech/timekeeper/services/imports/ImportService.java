@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -44,8 +45,6 @@ import static java.util.stream.Collectors.toSet;
 public class ImportService {
 
     private static Logger logger = LoggerFactory.getLogger(ImportService.class);
-
-    //TODO : mettre des var
 
     @Transactional
     protected void createClients(List<String> clientsName, Long organizationId) {
@@ -99,8 +98,8 @@ public class ImportService {
             String projectName = projectAndClient.getProjectName();
             String clientName = projectAndClient.getClientName();
 
-            if (existingProjectsByClient.containsKey(clientName.toLowerCase())) {
-                if (existingProjectsByClient.get(clientName.toLowerCase()).contains(projectName.toLowerCase())) {
+            if (existingClients.stream().anyMatch(client -> clientName.equalsIgnoreCase(client.name))) {
+                if (existingProjectsByClient.containsKey(clientName.toLowerCase()) && existingProjectsByClient.get(clientName.toLowerCase()).contains(projectName.toLowerCase())) {
                     logger.debug(String.format("Skip existing project [%s]", projectName));
                 } else {
                     Client client = existingClients.stream().filter(client1 -> client1.name.equalsIgnoreCase(clientName)).findAny().orElseThrow(() -> new IllegalStateException("Client " + clientName + " not in list"));
@@ -185,7 +184,7 @@ public class ImportService {
                     logger.warn("client [" + clientName + "] does not match the project's client [" + projectName + "] we found for this user");
                 }
             } else {
-                logger.warn("project " + entry.getProjectName() + " not found");
+                logger.warn("checkUserMembership -->  project " + entry.getProjectName() + " not found");
             }
         });
     }
@@ -194,6 +193,20 @@ public class ImportService {
     protected void insertOrUpdateTimeEntries(List<ImportedTimeEntry> timeEntries, Long organizationId) {
         Organization defaultOrganization = Organization.findById(organizationId); // NOSONAR
         Objects.requireNonNull(defaultOrganization);
+
+        Map<String, User> existingUsersEmail;
+        try (final Stream<User> userStream = User.streamAll()) {
+            existingUsersEmail = userStream
+                    .filter(user -> user.organization.id.equals(defaultOrganization.id))
+                    .collect(Collectors.toMap(user -> user.email, user -> user));
+        }
+
+        Map<String, Project> existingProjects;
+        try (final Stream<Project> projectsStream = Project.streamAll()) {
+            existingProjects = projectsStream
+                    .filter(project -> project.organization.id.equals(defaultOrganization.id))
+                    .collect(Collectors.toMap(project -> project.name.toLowerCase(), project -> project));
+        }
 
         timeEntries.stream()
                 .filter(entry -> Objects.nonNull(entry.getProject()) &&
@@ -214,51 +227,60 @@ public class ImportService {
 
                     logger.debug("--> project=" + projectName + " client=" + clientName + " user=" + userEmail);
 
-                    Optional<Project> maybeProject = Project.find("name", projectName).firstResultOptional();
+                    if (existingProjects.containsKey(projectName.toLowerCase())) {
+                        if (existingProjects.get(projectName.toLowerCase()).client.name.equalsIgnoreCase(clientName)) {
+                            if (existingUsersEmail.containsKey(userEmail)) {
+                                var user = existingUsersEmail.get(userEmail);
+                                var project = existingProjects.get(projectName.toLowerCase());
 
-                    if (maybeProject.isPresent()) {
-                        if (maybeProject.get().client.name.equalsIgnoreCase(clientName)) {
-                            Optional<User> maybeUser = User.find("email", userEmail).firstResultOptional();
-                            if (maybeUser.isPresent()) {
-
-                                Optional<TimeSheet> maybeTimeSheet = TimeSheet.find("user_id=?1 and project_id=?2", maybeUser.get().id, maybeProject.get().id).firstResultOptional();
+                                Optional<TimeSheet> maybeTimeSheet = TimeSheet.find("user_id=?1 and project_id=?2", user.id, project.id).firstResultOptional();
 
                                 if (maybeTimeSheet.isEmpty()) {
                                     logger.warn("Create a TimeSheet for user=" + userEmail + " and project=" + projectName);
-                                    TimeSheet ts = new TimeSheet();
-                                    ts.owner = maybeUser.get();
-                                    ts.entries = Lists.newArrayListWithExpectedSize(1);
-                                    ts.durationUnit = TimeUnit.HOURLY;
-                                    ts.startDate = LocalDate.of(2020, 1, 1);
-                                    ts.timeUnit = TimeUnit.HOURLY;
-                                    ts.defaultIsBillable = true;
-                                    ts.project = maybeProject.get();
-                                    ts.persistAndFlush();
-                                    maybeTimeSheet = TimeSheet.find("user_id=?1 and project_id=?2", maybeUser.get().id, maybeProject.get().id).firstResultOptional();
+                                    var timeSheet = new TimeSheet();
+                                    timeSheet.owner = user;
+                                    timeSheet.entries = Lists.newArrayListWithExpectedSize(1);
+                                    timeSheet.durationUnit = TimeUnit.HOURLY;
+                                    timeSheet.startDate = LocalDate.of(2020, 1, 1);
+                                    timeSheet.timeUnit = TimeUnit.HOURLY;
+                                    timeSheet.defaultIsBillable = true;
+                                    timeSheet.project = project;
+                                    timeSheet.persistAndFlush();
+                                    maybeTimeSheet = TimeSheet.find("user_id=?1 and project_id=?2", user.id, project.id).firstResultOptional();
                                     if (maybeTimeSheet.isEmpty()) {
                                         logger.error("FATAL : Could not create a TimeSheet for user=" + userEmail + " and project=" + projectName);
                                         return;
                                     }
                                 }
-                                //TODO vérifier l'existance d'une timeEntry, skip si existante
-                                TimeEntry timeEntry = new TimeEntry();
-                                timeEntry.timeSheet = maybeTimeSheet.get();
-                                timeEntry.comment = importedTimeEntry.getDescription();
-                                if(timeEntry.comment==null || timeEntry.comment.isBlank()){
-                                    timeEntry.comment = "Worked on project " + StringUtils.abbreviate(maybeProject.get().name,50);
+
+                                String comment;
+                                if(importedTimeEntry.getDescription()==null || importedTimeEntry.getDescription().isBlank()){
+                                    comment = "Worked on project " + StringUtils.abbreviate(project.name,50);
+                                } else {
+                                    comment = importedTimeEntry.getDescription();
                                 }
-                                timeEntry.startDateTime = ImportUtils.parseToLocalDateTime(importedTimeEntry.getStartDate(), importedTimeEntry.getStartTime());
-                                timeEntry.endDateTime = ImportUtils.parseToLocalDateTime(importedTimeEntry.getEndDate(), importedTimeEntry.getEndTime());
-                                if(timeEntry.getRoundedNumberOfHours()==0){
-                                    logger.warn("--- Fixed a timeEntry to 1h min");
-                                    timeEntry.endDateTime = timeEntry.startDateTime.plusHours(1);
-                                }
-                                try {
-                                    timeEntry.persistAndFlush();
-                                }catch (javax.persistence.PersistenceException e){
-                                    logger.error("Cannot persist a timeEntry");
-                                    logger.error("TimeEntry=" + timeEntry);
-                                    logger.error(e.getMessage());
+                                LocalDateTime startDateTime =  ImportUtils.parseToLocalDateTime(importedTimeEntry.getStartDate(), importedTimeEntry.getStartTime());
+                                LocalDateTime endDateTime = ImportUtils.parseToLocalDateTime(importedTimeEntry.getEndDate(), importedTimeEntry.getEndTime());
+                                Optional<TimeEntry> maybeTimeEntry = TimeEntry.find("comment=?1 and timesheet_id=?2 and startdatetime=?3 and enddatetime=?4", comment, maybeTimeSheet.get().id, startDateTime, endDateTime).firstResultOptional();
+                                if(maybeTimeEntry.isEmpty()){
+                                    var timeEntry = new TimeEntry();
+                                    timeEntry.timeSheet = maybeTimeSheet.get();
+                                    timeEntry.comment = comment;
+                                    timeEntry.startDateTime = startDateTime;
+                                    timeEntry.endDateTime = endDateTime;
+                                    if(timeEntry.getRoundedNumberOfHours()==0){
+                                        logger.warn("--- Fixed a timeEntry to 1h min");
+                                        timeEntry.endDateTime = timeEntry.startDateTime.plusHours(1);
+                                    }
+                                    try {
+                                        timeEntry.persistAndFlush();
+                                    }catch (javax.persistence.PersistenceException e){
+                                        logger.error("Cannot persist a timeEntry");
+                                        logger.error("TimeEntry=" + timeEntry);
+                                        logger.error(e.getMessage());
+                                    }
+                                } else {
+                                    logger.warn("TimeEntry " + comment + " from " + startDateTime + " to " + endDateTime + " already exists");
                                 }
                             } else {
                                 logger.warn("User " + userEmail + " not found");
@@ -267,7 +289,7 @@ public class ImportService {
                             logger.warn("Client not found name=[" + clientName + "]");
                         }
                     } else {
-                        logger.warn("Project not found name=[" + projectName + "]");
+                        logger.warn("insertOrUpdateTimeEntries ----> Project not found name=[" + projectName + "]");
                     }
         });
     }
