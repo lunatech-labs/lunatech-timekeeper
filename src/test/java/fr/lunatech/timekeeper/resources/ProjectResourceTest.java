@@ -555,8 +555,9 @@ class ProjectResourceTest {
                 .body(is(timeKeeperTestUtils.toJson(expectedProject)))
                 .statusCode(is(OK.getStatusCode()));
         // THEN
-        final var expectedTimeSheetSam = new TimeSheetResponse(1L, expectedProject, sam.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null, START_DATE);
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, expectedProject, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null, START_DATE);
+        final LocalDate now = LocalDate.now();
+        final var expectedTimeSheetSam = new TimeSheetResponse(1L, expectedProject, sam.getId(), TimeUnit.HOURLY, true, now, null, TimeUnit.DAY.toString(), Collections.emptyList(),null, START_DATE);
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, expectedProject, jimmy.getId(), TimeUnit.HOURLY, true, now, null, TimeUnit.DAY.toString(), Collections.emptyList(),null, START_DATE);
 
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), sam.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam))).statusCode(is(OK.getStatusCode()));
