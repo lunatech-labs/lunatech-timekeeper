@@ -16,41 +16,63 @@
 
 @import '../../main.less';
 
+
+
+
+.tk_EventForm_Delimiter {
+  border-top: 1px solid rgba(145, 145, 160, 0.4);
+  margin: 32px 0 24px 0;
+  display: block;
+}
+
+.tk_EventType_RadioGroup {
+  width: 100%;
+  > div {
+    > div {
+      &:first-child {
+        .tk_EventType_RadioButton {margin-right: 8px;}
+      }
+      &:last-child {
+        .tk_EventType_RadioButton {margin-left: 8px;}
+      }
+      .tk_EventType_RadioButton {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        height: 100px;
+      }
+      .tk_EventType_RadioButton.ant-radio-button-wrapper-checked {
+        border-color: @tk_Red!important;
+        &:hover {color: @tk_Red;}
+      }
+    }
+  }
+}
 .tk_RangePicker {
   width: 100%;
   &:hover {
-    .ant-picker-clear {
-      background-color: @tk_DarkGray;
-    }
+    .ant-picker-clear {background-color: @tk_DarkGray;}
     border: 1px solid rgba(145, 145, 160, 0.8)!important;
   }
   .ant-picker-input {
-    input {
-      border: none !important;
-    }
+    input {border: none !important;}
   }
   .ant-picker-clear {
-    &:hover{
-      background-color: @tk_DarkGray;
-    }
+    &:hover{background-color: @tk_DarkGray;}
     background-color: @tk_DarkGray;
   }
 }
-
 .ant-picker-time-panel-column {
   > li.ant-picker-time-panel-cell-selected {
-    .ant-picker-time-panel-cell-inner {
-      background: @tk_DarkGray !important;
-    }
+    .ant-picker-time-panel-cell-inner {background: @tk_DarkGray !important;}
   }
   > li.ant-picker-time-panel-cell {
-    .ant-picker-time-panel-cell-inner:hover {
-      background: @tk_DarkGray !important;
-    }
+    .ant-picker-time-panel-cell-inner:hover {background: @tk_DarkGray !important;}
   }
 }
 .tk_UserEvent_Radio_Button {
-  label:first-child {
-    padding-right: 40px;
-  }
+  label:first-child {padding-right: 40px;}
 }
+#firstDayDuration {margin-top: 5px;}
+#lastDayDuration {margin-top: 5px;}
