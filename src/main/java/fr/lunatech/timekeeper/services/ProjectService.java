@@ -22,6 +22,7 @@ import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.resources.exceptions.ConflictOnVersionException;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
+import fr.lunatech.timekeeper.services.requests.TimeSheetRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -33,6 +34,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -84,6 +86,26 @@ public class ProjectService {
     private void deleteOldMembers(Project project, Predicate<ProjectUser> deleteUserPredicate, AuthenticationContext userContext) {
         project.users.stream()
                 .filter(deleteUserPredicate)
+                .peek(user -> {
+                    final Optional<TimeSheetResponse> ts = timeSheetService.findFirstForProjectForUser(project.id, user.user.id);
+                    if(ts.isPresent()) {
+                        final TimeSheetResponse tsResp = ts.get();
+                        final TimeSheetRequest tsReq = new TimeSheetRequest(tsResp.timeUnit,
+                                tsResp.defaultIsBillable,
+                                LocalDate.now(),
+                                tsResp.maxDuration,
+                                tsResp.timeUnit,
+                                tsResp.startDate);
+                        if(timeSheetService.update(tsResp.id, tsReq, userContext).isEmpty()) {
+                            if(logger.isWarnEnabled())
+                                logger.warn("Something went wrong. User " + user.user.id + " unchanged in project " + project.id);
+                        }
+                    } else {
+                        if(logger.isWarnEnabled())
+                            logger.warn("Unable to find timesheet for user " + user.user.id + " in project " + project.id);
+                    }
+//                    return user;
+                })
                 .forEach(PanacheEntityBase::delete);
     }
 
@@ -111,38 +133,6 @@ public class ProjectService {
         if (!project.version.equals(request.getVersion())) {
             throw new ConflictOnVersionException(String.format("Version of this project does not match the current project version (%d) ", project.version));
         }
-
-        final List<Long> userIds = request.getUsers().stream().map(i -> i.getId()).collect(Collectors.toList());
-
-        final List<Long> userIdToDelete = project.users.stream()
-                .map(i -> i.user.id)
-                .filter(i -> !userIds.contains(i))
-                .collect(Collectors.toList());
-
-        //find user's currently active timesheet that corresponds with project
-        final List<Optional<TimeSheetResponse>> timeSheetsToUpdate = userIdToDelete
-                .stream().map(userId -> timeSheetService.findFirstForProjectForUser(project.id, userId))
-                .collect(Collectors.toList());
-
-        //todo handle empty optionals
-
-
-
-
-
-//                .forEach(userId -> {
-//                    try {
-//                        timeSheetService.findFirstForProjectForUser(project.id, userId)
-//                                .orElseThrow(() -> new Exception(
-//                                        "Time sheet for user " + userId + " not found in project " + project.id
-//                                + ". "
-//                                )
-//                        );
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                });
-
 
         // It has to be done before the project is unbind
         deleteOldMembers(project, request::notContains, ctx);
