@@ -36,7 +36,7 @@
     "react-https-redirect": "^1.1.0",
     "react-moment-proptypes": "^1.7.0",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.4.3",
+    "react-scripts": "3.4.4",
     "umi": "^3.1.1",
     "umi-request": "^1.2.19"
   },
