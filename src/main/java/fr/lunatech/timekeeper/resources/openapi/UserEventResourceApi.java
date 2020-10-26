@@ -79,5 +79,29 @@ public interface UserEventResourceApi {
     })
     List<UserEventResponse> getPersonalEvents(@QueryParam("userId") Long id);
 
+    @GET
+    @Path("/organization/{organizationId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Retrieve user events by organization id",
+            description = "Retrieve the list of existing userEvents by organization id.")
+    @Tag(ref = "UserEventsByOrganizationId")
+    @APIResponses(value = {
+            @APIResponse(
+                    responseCode = "200",
+                    description = "List of user events"
+            ),
+            @APIResponse(
+                    responseCode = "400",
+                    description = "Invalid organizationId value"),
+            @APIResponse(
+                    responseCode = "403",
+                    description = "Invalid JWT token"),
+            @APIResponse(
+                    responseCode = "404",
+                    description = "user events not found"
+            )
+    })
+    List<UserEventResponse> getEventsByOrganizationId(@PathParam("organizationId") Long organizationId);
+
 
 }

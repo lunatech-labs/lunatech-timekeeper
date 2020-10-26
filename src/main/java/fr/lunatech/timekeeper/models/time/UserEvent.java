@@ -70,6 +70,7 @@ public class UserEvent extends PanacheEntityBase {
     @NotNull
     public User creator;
 
+    // NOTE: Here it is creators organisation (plz clarify with PO whose organisaton to be stored creators or owners ??? )
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "organization_id")
     public Organization organization;
