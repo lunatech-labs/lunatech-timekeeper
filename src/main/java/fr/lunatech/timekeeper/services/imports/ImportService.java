@@ -116,13 +116,14 @@ public class ImportService {
 
         userEmailAndProjectName.forEach(entry -> {
 
+            String email = entry.getUserEmail();
             String correctEmail = ImportUtils.updateEmailToOrganization(entry.getUserEmail(), defaultOrganization.tokenName);
             String userName = entry.getUserName();
             String projectName = entry.getProjectName();
             String clientName = entry.getClientName();
 
             if (!existingUsersEmail.containsKey(correctEmail)) {
-                ImportUtils.createUserAndPersist(correctEmail, userName, defaultOrganization);
+                ImportUtils.createUserAndPersist(correctEmail, userName, defaultOrganization, email);
                 //Needed to get the user Id that is created when persisted
                 // get the user just created and add it to the list of existing users
                 User user = User.find("email", correctEmail).firstResult();

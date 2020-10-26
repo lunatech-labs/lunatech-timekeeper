@@ -18,6 +18,7 @@ package fr.lunatech.timekeeper.services.imports;
 
 import com.google.common.collect.Lists;
 import fr.lunatech.timekeeper.models.*;
+import fr.lunatech.timekeeper.models.imports.UserImportExtension;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
@@ -221,7 +222,7 @@ public class ImportUtils {
      * @param defaultOrganization as an Organization
      * @return the id of the user persisted as a Long
      */
-    protected static Long createUserAndPersist(String correctEmail, String userName, Organization defaultOrganization) {
+    protected static Long createUserAndPersist(String correctEmail, String userName, Organization defaultOrganization, String email) {
         var newUser = new User();
         newUser.email = correctEmail;
         if (userName.contains(" ")) {
@@ -234,6 +235,13 @@ public class ImportUtils {
         newUser.profiles = new ArrayList<>(1);
         newUser.profiles.add(Profile.USER);
         newUser.persistAndFlush();
+
+        //Create the extension table that contains the email from the import file
+        var userImportExtension = new UserImportExtension();
+        userImportExtension.user = newUser;
+        userImportExtension.userEmailFromImport = email;
+        userImportExtension.persistAndFlush();
+
         return newUser.id;
     }
 

@@ -15,45 +15,44 @@
  */
 
 package fr.lunatech.timekeeper.importcsv;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 import fr.lunatech.timekeeper.services.imports.ImportService;
 import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.apache.camel.dataformat.bindy.csv.BindyCsvDataFormat;
 import org.apache.camel.spi.DataFormat;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
+import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class CamelRoute extends EndpointRouteBuilder {
+
+    @ConfigProperty(name = "timekeeper.import.folder")
+    String path;
 
     @Override
     public void configure() throws Exception {
 
         final DataFormat bindy = new BindyCsvDataFormat(ImportedTimeEntry.class);
 
-        from(file("/Users/gdavy/DEV/TIMEKEEPER/lunatech-timekeeper/src/main/resources/input/1?noop=true&idempotent=true&initialDelay=8000"))
+        from(file(path + "?move=.archive&initialDelay=8000"))
                 .unmarshal(bindy)
                 .recipientList(constant("direct:processClients, direct:processProjects, direct:processMember, direct:processTimeEntries"))
-                .to("log:done")
         ;
         from("direct:processClients")
                 .bean(CSVTimeEntriesParser.class, "importClients")
                 .bean(ImportService.class, "createClients(*, 1)")
-                .to("log:done")
         ;
         from("direct:processProjects")
                 .bean(CSVTimeEntriesParser.class, "importClientAndProject")
-                .bean(ImportService.class, "updateOrCreateProjects(*, 1)")
-                .to("log:done")
+                .bean(ImportService.class, "createProjects(*, 1)")
         ;
         from("direct:processMember")
                 .bean(CSVTimeEntriesParser.class, "importUserProjectClient")
-                .bean(ImportService.class, "checkUserMembership(*, 1)")
-                .to("log:done")
+                .bean(ImportService.class, "createUserAndAddInProject(*, 1)")
         ;
         from("direct:processTimeEntries")
-            .bean(ImportService.class, "insertOrUpdateTimeEntries(*, 1)")
-                .to("log:done")
+                .bean(ImportService.class, "createTimeEntries(*, 1)")
         ;
     }
 }
