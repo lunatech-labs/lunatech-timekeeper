@@ -16,82 +16,63 @@
 
 package fr.lunatech.timekeeper.services.imports;
 
-import com.google.common.collect.Lists;
 import fr.lunatech.timekeeper.importcsv.ImportedTimeEntry;
-import fr.lunatech.timekeeper.models.*;
+import fr.lunatech.timekeeper.models.Client;
+import fr.lunatech.timekeeper.models.Organization;
+import fr.lunatech.timekeeper.models.Project;
+import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
-import fr.lunatech.timekeeper.models.time.TimeSheet;
 import fr.lunatech.timekeeper.services.imports.businessClass.ImportedClientProject;
 import fr.lunatech.timekeeper.services.imports.businessClass.ImportedUserProjectClient;
-import fr.lunatech.timekeeper.timeutils.TimeUnit;
-import org.apache.commons.lang3.StringUtils;
-import org.jose4j.jwk.Use;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.mapping;
-import static java.util.stream.Collectors.toSet;
 
 @ApplicationScoped
 public class ImportService {
 
     private static Logger logger = LoggerFactory.getLogger(ImportService.class);
 
+    /**
+     * Create clients from clients name and persists it in DB
+     *
+     * @param clientsName    as a List of String
+     * @param organizationId as a Long
+     */
     @Transactional
     protected void createClients(List<String> clientsName, Long organizationId) {
         Organization defaultOrganization = Organization.findById(organizationId);//NOSONAR
         Objects.requireNonNull(defaultOrganization);
 
-        Set<String> existingClientsNames;
-        try (final Stream<Client> clientsStream = Client.streamAll()) {
-             existingClientsNames = clientsStream
-                     .filter(client -> client.organization.id.equals(defaultOrganization.id))
-                     .map(client -> client.name.toLowerCase())
-                     .collect(toSet());
-        }
+        Set<String> existingClientsNames = ImportUtils.getExistingClientsNames(defaultOrganization.id);
 
         clientsName.forEach(clientName -> {
             if (existingClientsNames.contains(clientName.toLowerCase())) {
                 logger.debug(String.format("Skip existing client [%s]", clientName));
             } else {
                 logger.debug(String.format("Create client [%s]", clientName));
-                Client c = new Client();
-                c.name = clientName;
-                c.description = "Imported from CSV file";
-                c.organization = defaultOrganization;
-                c.projects = Collections.emptyList();
-                c.persistAndFlush();
+                ImportUtils.createClientAndPersist(clientName, defaultOrganization);
             }
         });
     }
 
+    /**
+     * Create project from an importedClientProject and persists it in DB.
+     *
+     * @param clientsAndProjects as a ImportedClientProject
+     * @param organizationId     as a Long
+     */
     @Transactional
-    protected void updateOrCreateProjects(List<ImportedClientProject> clientsAndProjects, Long organizationId) {
+    protected void createProjects(List<ImportedClientProject> clientsAndProjects, Long organizationId) {
         Organization defaultOrganization = Organization.findById(organizationId); // NOSONAR
         Objects.requireNonNull(defaultOrganization);
 
-        List<Client> existingClients;
-        try (final Stream<Client> clientsStream = Client.streamAll()) {
-            existingClients = clientsStream
-                    .filter(client -> client.organization.id.equals(defaultOrganization.id))
-                    .collect(Collectors.toList());
-        }
-
-        Map<String, Set<String>> existingProjectsByClient;
-        try (final Stream<Project> projectsStream = Project.streamAll()) {
-            existingProjectsByClient = projectsStream
-                    .filter(project -> project.organization.id.equals(defaultOrganization.id))
-                    .collect(Collectors.groupingBy(p -> p.client.name.toLowerCase(), mapping(p2 -> p2.name.toLowerCase(), toSet())));
-        }
+        List<Client> existingClients = ImportUtils.getExistingClients(defaultOrganization.id);
+        Map<String, Set<String>> existingProjectsByClient = ImportUtils.getExistingProjectsByClient(defaultOrganization.id);
 
         clientsAndProjects.forEach(projectAndClient -> {
 
@@ -103,15 +84,7 @@ public class ImportService {
                     logger.debug(String.format("Skip existing project [%s]", projectName));
                 } else {
                     Client client = existingClients.stream().filter(client1 -> client1.name.equalsIgnoreCase(clientName)).findAny().orElseThrow(() -> new IllegalStateException("Client " + clientName + " not in list"));
-                    Project project = new Project();
-                    project.name = projectName;
-                    project.publicAccess = true;
-                    project.organization = defaultOrganization;
-                    project.billable = true;
-                    project.client = client;
-                    project.description = "Imported from CSV File";
-                    project.version = 1L;
-                    project.persistAndFlush();
+                    ImportUtils.createProjectAndPersist(projectName, defaultOrganization, client);
                 }
             } else {
                 logger.warn(String.format("Client not found, cannot import project %s", projectName));
@@ -119,94 +92,51 @@ public class ImportService {
         });
     }
 
+    /**
+     * Create a user and persists it and add the user in project and update it in DB.
+     *
+     * @param userEmailAndProjectName as ImportedUserProjectClient
+     * @param organizationId          as a Long
+     */
     @Transactional
-    protected void checkUserMembership(List<ImportedUserProjectClient> userEmailAndProjectName, Long organizationId) {
+    protected void createUserAndAddInProject(List<ImportedUserProjectClient> userEmailAndProjectName, Long organizationId) {
         Organization defaultOrganization = Organization.findById(organizationId); // NOSONAR
         Objects.requireNonNull(defaultOrganization);
 
-        Map<String, User> existingUsersEmail;
-        try (final Stream<User> userStream = User.streamAll()) {
-            existingUsersEmail = userStream
-                    .filter(user -> user.organization.id.equals(defaultOrganization.id))
-                    .collect(Collectors.toMap(user -> user.email, user -> user));
-        }
-
-        Map<String, Project> existingProjects;
-        try (final Stream<Project> projectsStream = Project.streamAll()) {
-            existingProjects = projectsStream
-                    .filter(project -> project.organization.id.equals(defaultOrganization.id))
-                    .collect(Collectors.toMap(project -> project.name.toLowerCase(), project -> project));
-        }
+        Map<String, User> existingUsersEmail = ImportUtils.getExistingEmailAndUser(defaultOrganization.id);
 
         userEmailAndProjectName.forEach(entry -> {
 
-            String correctEmail = ImportUtils.updateEmailToOrganization(entry.getUserEmail(), defaultOrganization);
+            String correctEmail = ImportUtils.updateEmailToOrganization(entry.getUserEmail(), defaultOrganization.tokenName);
             String userName = entry.getUserName();
             String projectName = entry.getProjectName();
             String clientName = entry.getClientName();
 
             if (!existingUsersEmail.containsKey(correctEmail)) {
-                var newUser = new User();
-                newUser.email = correctEmail;
-                if (userName.contains(" ")) {
-                    newUser.firstName = userName.substring(0, userName.indexOf(" "));
-                    newUser.lastName = userName.substring(userName.indexOf(" ") + 1);
-                } else {
-                    newUser.lastName = userName;
-                }
-                newUser.organization = defaultOrganization;
-                newUser.profiles = new ArrayList<>(1);
-                newUser.profiles.add(Profile.USER);
-                newUser.persistAndFlush();
+                ImportUtils.createUserAndPersist(correctEmail, userName, defaultOrganization);
+                //Needed to get the user Id that is created when persisted
+                // get the user just created and add it to the list of existing users
                 User user = User.find("email", correctEmail).firstResult();
                 Objects.requireNonNull(user);
                 existingUsersEmail.put(user.email, user);
             }
-            if (existingProjects.containsKey(projectName.toLowerCase())) {
-                if (existingProjects.get(projectName.toLowerCase()).client.name.equalsIgnoreCase(clientName)) {
-                    var project = existingProjects.get(projectName.toLowerCase());
-                    Objects.requireNonNull(project);
-                    if (project.users.stream().anyMatch(u -> u.user.email.equals(correctEmail))) {
-                        logger.debug("User already belongs to project " + project.name);
-                    } else {
-                        logger.info("Add user [" + correctEmail + " as member of project [" + projectName + "]");
-                        var user = existingUsersEmail.get(correctEmail);
-                        Objects.requireNonNull(user);
-
-                        var projectUser = new ProjectUser();
-                        projectUser.user =  user;
-                        projectUser.manager = false;
-                        projectUser.project = project;
-                        project.users.add(projectUser);
-                        project.persistAndFlush();
-                    }
-                } else {
-                    logger.warn("client [" + clientName + "] does not match the project's client [" + projectName + "] we found for this user");
-                }
-            } else {
-                logger.warn("checkUserMembership -->  project " + entry.getProjectName() + " not found");
-            }
+            ImportUtils.addUserInProjectAndUpdate(projectName.toLowerCase(), clientName, correctEmail, existingUsersEmail, defaultOrganization.id);
         });
     }
 
+    /**
+     * Create a timeentry and persists it
+     *
+     * @param timeEntries    as a List<ImportedTimeEntry>
+     * @param organizationId as a Long
+     */
     @Transactional
-    protected void insertOrUpdateTimeEntries(List<ImportedTimeEntry> timeEntries, Long organizationId) {
+    protected void createTimeEntries(List<ImportedTimeEntry> timeEntries, Long organizationId) {
         Organization defaultOrganization = Organization.findById(organizationId); // NOSONAR
         Objects.requireNonNull(defaultOrganization);
 
-        Map<String, User> existingUsersEmail;
-        try (final Stream<User> userStream = User.streamAll()) {
-            existingUsersEmail = userStream
-                    .filter(user -> user.organization.id.equals(defaultOrganization.id))
-                    .collect(Collectors.toMap(user -> user.email, user -> user));
-        }
-
-        Map<String, Project> existingProjects;
-        try (final Stream<Project> projectsStream = Project.streamAll()) {
-            existingProjects = projectsStream
-                    .filter(project -> project.organization.id.equals(defaultOrganization.id))
-                    .collect(Collectors.toMap(project -> project.name.toLowerCase(), project -> project));
-        }
+        Map<String, User> existingUsersEmail = ImportUtils.getExistingEmailAndUser(defaultOrganization.id);
+        Map<String, Project> existingProjects = ImportUtils.getExistingProject(defaultOrganization.id);
 
         timeEntries.stream()
                 .filter(entry -> Objects.nonNull(entry.getProject()) &&
@@ -215,70 +145,32 @@ public class ImportService {
                         Objects.nonNull(entry.getDescription()))
                 .forEach(importedTimeEntry -> {
 
-                    String projectName = importedTimeEntry.getProject();
+                    String projectNameLower = importedTimeEntry.getProject().toLowerCase();
                     String clientName = importedTimeEntry.getClient();
-                    String userEmail = ImportUtils.updateEmailToOrganization(importedTimeEntry.getEmail(), defaultOrganization);
+                    String userEmail = ImportUtils.updateEmailToOrganization(importedTimeEntry.getEmail(), defaultOrganization.tokenName);
 
-                    if (projectName.isBlank()) {
+                    if (projectNameLower.isBlank()) {
                         logger.error("Cannot create a TimeEntry cause project is empty");
                         logger.error("importedTimeEntry =>" + importedTimeEntry);
                         return;
                     }
 
-                    logger.debug("--> project=" + projectName + " client=" + clientName + " user=" + userEmail);
+                    logger.debug("--> project=" + projectNameLower + " client=" + clientName + " user=" + userEmail);
 
-                    if (existingProjects.containsKey(projectName.toLowerCase())) {
-                        if (existingProjects.get(projectName.toLowerCase()).client.name.equalsIgnoreCase(clientName)) {
+                    if (existingProjects.containsKey(projectNameLower)) {
+                        if (existingProjects.get(projectNameLower).client.name.equalsIgnoreCase(clientName)) {
                             if (existingUsersEmail.containsKey(userEmail)) {
                                 var user = existingUsersEmail.get(userEmail);
-                                var project = existingProjects.get(projectName.toLowerCase());
+                                var project = existingProjects.get(projectNameLower);
+                                var timeSheet = ImportUtils.getTimeSheet(user, project);
 
-                                Optional<TimeSheet> maybeTimeSheet = TimeSheet.find("user_id=?1 and project_id=?2", user.id, project.id).firstResultOptional();
-
-                                if (maybeTimeSheet.isEmpty()) {
-                                    logger.warn("Create a TimeSheet for user=" + userEmail + " and project=" + projectName);
-                                    var timeSheet = new TimeSheet();
-                                    timeSheet.owner = user;
-                                    timeSheet.entries = Lists.newArrayListWithExpectedSize(1);
-                                    timeSheet.durationUnit = TimeUnit.HOURLY;
-                                    timeSheet.startDate = LocalDate.of(2020, 1, 1);
-                                    timeSheet.timeUnit = TimeUnit.HOURLY;
-                                    timeSheet.defaultIsBillable = true;
-                                    timeSheet.project = project;
-                                    timeSheet.persistAndFlush();
-                                    maybeTimeSheet = TimeSheet.find("user_id=?1 and project_id=?2", user.id, project.id).firstResultOptional();
-                                    if (maybeTimeSheet.isEmpty()) {
-                                        logger.error("FATAL : Could not create a TimeSheet for user=" + userEmail + " and project=" + projectName);
-                                        return;
-                                    }
-                                }
-
-                                String comment;
-                                if(importedTimeEntry.getDescription()==null || importedTimeEntry.getDescription().isBlank()){
-                                    comment = "Worked on project " + StringUtils.abbreviate(project.name,50);
-                                } else {
-                                    comment = importedTimeEntry.getDescription();
-                                }
-                                LocalDateTime startDateTime =  ImportUtils.parseToLocalDateTime(importedTimeEntry.getStartDate(), importedTimeEntry.getStartTime());
+                                String comment = ImportUtils.computeComment(importedTimeEntry.getDescription(), project.name);
+                                LocalDateTime startDateTime = ImportUtils.parseToLocalDateTime(importedTimeEntry.getStartDate(), importedTimeEntry.getStartTime());
                                 LocalDateTime endDateTime = ImportUtils.parseToLocalDateTime(importedTimeEntry.getEndDate(), importedTimeEntry.getEndTime());
-                                Optional<TimeEntry> maybeTimeEntry = TimeEntry.find("comment=?1 and timesheet_id=?2 and startdatetime=?3 and enddatetime=?4", comment, maybeTimeSheet.get().id, startDateTime, endDateTime).firstResultOptional();
-                                if(maybeTimeEntry.isEmpty()){
-                                    var timeEntry = new TimeEntry();
-                                    timeEntry.timeSheet = maybeTimeSheet.get();
-                                    timeEntry.comment = comment;
-                                    timeEntry.startDateTime = startDateTime;
-                                    timeEntry.endDateTime = endDateTime;
-                                    if(timeEntry.getRoundedNumberOfHours()==0){
-                                        logger.warn("--- Fixed a timeEntry to 1h min");
-                                        timeEntry.endDateTime = timeEntry.startDateTime.plusHours(1);
-                                    }
-                                    try {
-                                        timeEntry.persistAndFlush();
-                                    }catch (javax.persistence.PersistenceException e){
-                                        logger.error("Cannot persist a timeEntry");
-                                        logger.error("TimeEntry=" + timeEntry);
-                                        logger.error(e.getMessage());
-                                    }
+                                Optional<TimeEntry> maybeTimeEntry = TimeEntry.find("comment=?1 and timesheet_id=?2 and startdatetime=?3 and enddatetime=?4", comment, timeSheet.id, startDateTime, endDateTime).firstResultOptional();
+
+                                if (maybeTimeEntry.isEmpty()) {
+                                    ImportUtils.createTimeEntryAndPersist(comment, startDateTime, endDateTime, timeSheet);
                                 } else {
                                     logger.warn("TimeEntry " + comment + " from " + startDateTime + " to " + endDateTime + " already exists");
                                 }
@@ -289,8 +181,8 @@ public class ImportService {
                             logger.warn("Client not found name=[" + clientName + "]");
                         }
                     } else {
-                        logger.warn("insertOrUpdateTimeEntries ----> Project not found name=[" + projectName + "]");
+                        logger.warn("insertOrUpdateTimeEntries ----> Project not found name=[" + projectNameLower + "]");
                     }
-        });
+                });
     }
 }
