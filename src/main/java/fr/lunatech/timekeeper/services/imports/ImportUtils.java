@@ -61,8 +61,7 @@ public class ImportUtils {
 
         LocalTime timeUpdated = LocalTime.parse(time);
 
-        LocalDateTime localDateTime = LocalDateTime.of(dateUpdated, timeUpdated);
-        return localDateTime;
+        return LocalDateTime.of(dateUpdated, timeUpdated);
     }
 
     /**
@@ -94,9 +93,8 @@ public class ImportUtils {
     protected static String computeComment(String importedTimeEntryDescription, String projectName) {
         if (importedTimeEntryDescription == null || importedTimeEntryDescription.isBlank()) {
             return "Worked on project " + StringUtils.abbreviate(projectName, 50);
-        } else {
-            return importedTimeEntryDescription;
         }
+        return importedTimeEntryDescription;
     }
 
     /**
@@ -111,8 +109,8 @@ public class ImportUtils {
 
         if (maybeTimeSheet.isEmpty()) {
             logger.warn("Create a TimeSheet for user=" + user.email + " and project=" + project.name);
-            createTimesheetAndPersist(user, project);
-            TimeSheet timeSheet = TimeSheet.find("user_id=?1 and project_id=?2", user.id, project.id).firstResult();
+            Long timeSheetId = createTimesheetAndPersist(user, project);
+            TimeSheet timeSheet = TimeSheet.findById(timeSheetId);
             Objects.requireNonNull(timeSheet);
             return timeSheet;
         }
@@ -128,8 +126,9 @@ public class ImportUtils {
      * @param correctEmail       as a String
      * @param existingUsersEmail as a Map<String, User>
      * @param organizationId     as a Long
+     * @return the id of the project updated
      */
-    protected static void addUserInProjectAndUpdate(String projectName, String clientName, String correctEmail, Map<String, User> existingUsersEmail, Long organizationId) {
+    protected static Long addUserInProjectAndUpdate(String projectName, String clientName, String correctEmail, Map<String, User> existingUsersEmail, Long organizationId) {
         Map<String, Project> existingProjects = getExistingProject(organizationId);
 
         if (existingProjects.containsKey(projectName)) {
@@ -142,7 +141,7 @@ public class ImportUtils {
                     logger.info("Add user [" + correctEmail + " as member of project [" + projectName + "]");
                     var user = existingUsersEmail.get(correctEmail);
                     Objects.requireNonNull(user);
-                    createUserProjectAddInProjectAndPersist(user, project);
+                    return createUserProjectAddInProjectAndPersist(user, project);
                 }
             } else {
                 logger.warn("client [" + clientName + "] does not match the project's client [" + projectName + "] we found for this user");
@@ -150,6 +149,7 @@ public class ImportUtils {
         } else {
             logger.warn("checkUserMembership -->  project " + projectName + " not found");
         }
+        return null;
     }
 
     /**
@@ -159,8 +159,9 @@ public class ImportUtils {
      * @param startDateTime as a LocalDateTime
      * @param endDateTime   as a LocalDateTime
      * @param timeSheet     as a Timesheet
+     * @return the id of the TimeEntry persisted as a Long
      */
-    protected static void createTimeEntryAndPersist(String comment, LocalDateTime startDateTime, LocalDateTime endDateTime, TimeSheet timeSheet) {
+    protected static Long createTimeEntryAndPersist(String comment, LocalDateTime startDateTime, LocalDateTime endDateTime, TimeSheet timeSheet) {
         var timeEntry = new TimeEntry();
         timeEntry.timeSheet = timeSheet;
         timeEntry.comment = comment;
@@ -170,13 +171,8 @@ public class ImportUtils {
             logger.warn("--- Fixed a timeEntry to 1h min");
             timeEntry.endDateTime = timeEntry.startDateTime.plusHours(1);
         }
-        try {
-            timeEntry.persistAndFlush();
-        } catch (javax.persistence.PersistenceException e) {
-            logger.error("Cannot persist a timeEntry");
-            logger.error("TimeEntry=" + timeEntry);
-            logger.error(e.getMessage());
-        }
+        timeEntry.persistAndFlush();
+        return timeEntry.id;
     }
 
     /**
@@ -184,14 +180,16 @@ public class ImportUtils {
      *
      * @param clientName          as a String
      * @param defaultOrganization as an Organization
+     * @return the id of the client persisted as a Long
      */
-    protected static void createClientAndPersist(String clientName, Organization defaultOrganization) {
-        Client c = new Client();
-        c.name = clientName;
-        c.description = "Imported from CSV file";
-        c.organization = defaultOrganization;
-        c.projects = Collections.emptyList();
-        c.persistAndFlush();
+    protected static Long createClientAndPersist(String clientName, Organization defaultOrganization) {
+        Client client = new Client();
+        client.name = clientName;
+        client.description = "Imported from CSV file";
+        client.organization = defaultOrganization;
+        client.projects = Collections.emptyList();
+        client.persistAndFlush();
+        return client.id;
     }
 
     /**
@@ -200,8 +198,9 @@ public class ImportUtils {
      * @param projectName         as a String
      * @param defaultOrganization as an Organization
      * @param client              as a Client
+     * @return the id of the project persisted as a Long
      */
-    protected static void createProjectAndPersist(String projectName, Organization defaultOrganization, Client client) {
+    protected static Long createProjectAndPersist(String projectName, Organization defaultOrganization, Client client) {
         Project project = new Project();
         project.name = projectName;
         project.publicAccess = true;
@@ -211,6 +210,7 @@ public class ImportUtils {
         project.description = "Imported from CSV File";
         project.version = 1L;
         project.persistAndFlush();
+        return project.id;
     }
 
     /**
@@ -219,8 +219,9 @@ public class ImportUtils {
      * @param correctEmail        as a String
      * @param userName            as a String
      * @param defaultOrganization as an Organization
+     * @return the id of the user persisted as a Long
      */
-    protected static void createUserAndPersist(String correctEmail, String userName, Organization defaultOrganization) {
+    protected static Long createUserAndPersist(String correctEmail, String userName, Organization defaultOrganization) {
         var newUser = new User();
         newUser.email = correctEmail;
         if (userName.contains(" ")) {
@@ -233,6 +234,7 @@ public class ImportUtils {
         newUser.profiles = new ArrayList<>(1);
         newUser.profiles.add(Profile.USER);
         newUser.persistAndFlush();
+        return newUser.id;
     }
 
     /**
@@ -240,14 +242,16 @@ public class ImportUtils {
      *
      * @param user    as a User
      * @param project as a Project
+     * @return the id of the project persisted as a Long
      */
-    protected static void createUserProjectAddInProjectAndPersist(User user, Project project) {
+    protected static Long createUserProjectAddInProjectAndPersist(User user, Project project) {
         var projectUser = new ProjectUser();
         projectUser.user = user;
         projectUser.manager = false;
         projectUser.project = project;
         project.users.add(projectUser);
         project.persistAndFlush();
+        return project.id;
     }
 
     /**
@@ -255,8 +259,9 @@ public class ImportUtils {
      *
      * @param user    as a User
      * @param project as a Project
+     * @return the id of the timesheet persisted as a Long
      */
-    protected static void createTimesheetAndPersist(User user, Project project) {
+    protected static Long createTimesheetAndPersist(User user, Project project) {
         var timeSheet = new TimeSheet();
         timeSheet.owner = user;
         timeSheet.entries = Lists.newArrayListWithExpectedSize(1);
@@ -266,6 +271,7 @@ public class ImportUtils {
         timeSheet.defaultIsBillable = true;
         timeSheet.project = project;
         timeSheet.persistAndFlush();
+        return timeSheet.id;
     }
 
 
@@ -339,5 +345,4 @@ public class ImportUtils {
                     .collect(Collectors.groupingBy(p -> p.client.name.toLowerCase(), mapping(p2 -> p2.name.toLowerCase(), toSet())));
         }
     }
-
 }

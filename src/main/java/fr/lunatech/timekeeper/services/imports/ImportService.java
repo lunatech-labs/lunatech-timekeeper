@@ -42,9 +42,11 @@ public class ImportService {
      *
      * @param clientsName    as a List of String
      * @param organizationId as a Long
+     * @return the list of id of the clients persisted
      */
     @Transactional
-    protected void createClients(List<String> clientsName, Long organizationId) {
+    protected List<Long> createClients(List<String> clientsName, Long organizationId) {
+        List<Long> clientsIds = new ArrayList<>();
         Organization defaultOrganization = Organization.findById(organizationId);//NOSONAR
         Objects.requireNonNull(defaultOrganization);
 
@@ -55,9 +57,10 @@ public class ImportService {
                 logger.debug(String.format("Skip existing client [%s]", clientName));
             } else {
                 logger.debug(String.format("Create client [%s]", clientName));
-                ImportUtils.createClientAndPersist(clientName, defaultOrganization);
+                clientsIds.add(ImportUtils.createClientAndPersist(clientName, defaultOrganization));
             }
         });
+        return clientsIds;
     }
 
     /**
@@ -65,9 +68,11 @@ public class ImportService {
      *
      * @param clientsAndProjects as a ImportedClientProject
      * @param organizationId     as a Long
+     * @return the list of id of the projects persisted
      */
     @Transactional
-    protected void createProjects(List<ImportedClientProject> clientsAndProjects, Long organizationId) {
+    protected List<Long> createProjects(List<ImportedClientProject> clientsAndProjects, Long organizationId) {
+        List<Long> projectsIds = new ArrayList<>();
         Organization defaultOrganization = Organization.findById(organizationId); // NOSONAR
         Objects.requireNonNull(defaultOrganization);
 
@@ -80,16 +85,18 @@ public class ImportService {
             String clientName = projectAndClient.getClientName();
 
             if (existingClients.stream().anyMatch(client -> clientName.equalsIgnoreCase(client.name))) {
-                if (existingProjectsByClient.containsKey(clientName.toLowerCase()) && existingProjectsByClient.get(clientName.toLowerCase()).contains(projectName.toLowerCase())) {
+                if (existingProjectsByClient.containsKey(clientName.toLowerCase())
+                        && existingProjectsByClient.get(clientName.toLowerCase()).contains(projectName.toLowerCase())) {
                     logger.debug(String.format("Skip existing project [%s]", projectName));
                 } else {
                     Client client = existingClients.stream().filter(client1 -> client1.name.equalsIgnoreCase(clientName)).findAny().orElseThrow(() -> new IllegalStateException("Client " + clientName + " not in list"));
-                    ImportUtils.createProjectAndPersist(projectName, defaultOrganization, client);
+                    projectsIds.add(ImportUtils.createProjectAndPersist(projectName, defaultOrganization, client));
                 }
             } else {
                 logger.warn(String.format("Client not found, cannot import project %s", projectName));
             }
         });
+        return projectsIds;
     }
 
     /**
@@ -97,9 +104,11 @@ public class ImportService {
      *
      * @param userEmailAndProjectName as ImportedUserProjectClient
      * @param organizationId          as a Long
+     * @return the list of id of the projects updated
      */
     @Transactional
-    protected void createUserAndAddInProject(List<ImportedUserProjectClient> userEmailAndProjectName, Long organizationId) {
+    protected List<Long> createUserAndAddInProject(List<ImportedUserProjectClient> userEmailAndProjectName, Long organizationId) {
+        List<Long> projectsIds = new ArrayList<>();
         Organization defaultOrganization = Organization.findById(organizationId); // NOSONAR
         Objects.requireNonNull(defaultOrganization);
 
@@ -120,8 +129,9 @@ public class ImportService {
                 Objects.requireNonNull(user);
                 existingUsersEmail.put(user.email, user);
             }
-            ImportUtils.addUserInProjectAndUpdate(projectName.toLowerCase(), clientName, correctEmail, existingUsersEmail, defaultOrganization.id);
+            projectsIds.add(ImportUtils.addUserInProjectAndUpdate(projectName.toLowerCase(), clientName, correctEmail, existingUsersEmail, defaultOrganization.id));
         });
+        return projectsIds;
     }
 
     /**
@@ -129,9 +139,11 @@ public class ImportService {
      *
      * @param timeEntries    as a List<ImportedTimeEntry>
      * @param organizationId as a Long
+     * @return the list of id of the timeEntries persisted
      */
     @Transactional
-    protected void createTimeEntries(List<ImportedTimeEntry> timeEntries, Long organizationId) {
+    protected List<Long> createTimeEntries(List<ImportedTimeEntry> timeEntries, Long organizationId) {
+        List<Long> timeEntriesIds = new ArrayList<>();
         Organization defaultOrganization = Organization.findById(organizationId); // NOSONAR
         Objects.requireNonNull(defaultOrganization);
 
@@ -170,7 +182,7 @@ public class ImportService {
                                 Optional<TimeEntry> maybeTimeEntry = TimeEntry.find("comment=?1 and timesheet_id=?2 and startdatetime=?3 and enddatetime=?4", comment, timeSheet.id, startDateTime, endDateTime).firstResultOptional();
 
                                 if (maybeTimeEntry.isEmpty()) {
-                                    ImportUtils.createTimeEntryAndPersist(comment, startDateTime, endDateTime, timeSheet);
+                                    timeEntriesIds.add(ImportUtils.createTimeEntryAndPersist(comment, startDateTime, endDateTime, timeSheet));
                                 } else {
                                     logger.warn("TimeEntry " + comment + " from " + startDateTime + " to " + endDateTime + " already exists");
                                 }
@@ -184,5 +196,6 @@ public class ImportService {
                         logger.warn("insertOrUpdateTimeEntries ----> Project not found name=[" + projectNameLower + "]");
                     }
                 });
+        return timeEntriesIds;
     }
 }
