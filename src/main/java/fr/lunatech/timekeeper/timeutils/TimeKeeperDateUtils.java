@@ -141,6 +141,26 @@ public class TimeKeeperDateUtils {
     }
 
     /**
+     * Format and return the time as a String
+     *
+     * @param time is a valid time
+     * @return a String ISO LOCAL TIME
+     */
+    public static String formatToString(final LocalTime time) {
+        return DateTimeFormatter.ISO_LOCAL_TIME.format(time);
+    }
+
+    /**
+     * Returns a LocalTime from ISO LOCAL TIME String
+     *
+     * @param timeString
+     * @return a LocalTime
+     */
+    public static LocalTime formatToLocalTime(final String timeString) {
+        return LocalTime.parse(timeString, DateTimeFormatter.ISO_LOCAL_TIME);
+    }
+
+    /**
      * Returns a formatted DateTime as ISO LOCAL DATE_TIME
      *
      * @param dateTime

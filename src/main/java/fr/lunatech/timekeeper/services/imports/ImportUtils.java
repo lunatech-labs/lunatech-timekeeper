@@ -21,6 +21,7 @@ import fr.lunatech.timekeeper.models.*;
 import fr.lunatech.timekeeper.models.imports.UserImportExtension;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
+import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 import fr.lunatech.timekeeper.timeutils.TimeUnit;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -29,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -58,9 +58,9 @@ public class ImportUtils {
         if (time == null || time.isBlank()) {
             throw new IllegalArgumentException("Cannot parse a null time");
         }
-        LocalDate dateUpdated = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
+        LocalDate dateUpdated = TimeKeeperDateUtils.formatToLocalDate(date);
 
-        LocalTime timeUpdated = LocalTime.parse(time);
+        LocalTime timeUpdated = TimeKeeperDateUtils.formatToLocalTime(time);
 
         return LocalDateTime.of(dateUpdated, timeUpdated);
     }

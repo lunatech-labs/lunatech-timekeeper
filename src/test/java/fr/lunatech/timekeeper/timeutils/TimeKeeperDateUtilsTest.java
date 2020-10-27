@@ -25,6 +25,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
 import static fr.lunatech.timekeeper.resources.utils.DateUtilsTestResourceProvider.*;
@@ -402,6 +403,20 @@ class TimeKeeperDateUtilsTest {
         assertEquals(
                 THE_11_TH_JUNE_2020,
                 TimeKeeperDateUtils.formatToLocalDate(date));
+    }
+
+    @Test
+    void shouldReturnAStringFromLocalTime() {
+        var time = LocalTime.of(9, 0);
+        assertEquals("09:00:00", TimeKeeperDateUtils.formatToString(time));
+
+    }
+
+    @Test
+    void shouldReturnALocalTimeFromString() {
+        var timeString = "09:00:00";
+        var expected = LocalTime.of(9, 0);
+        assertEquals(expected, TimeKeeperDateUtils.formatToLocalTime(timeString));
     }
 
     @Test
