@@ -16,10 +16,7 @@
 
 create table users_import_extension
 (
-    id int8 not null
-        constraint users_import_extension_pkey
-            primary key,
-
+    id serial primary key,
     user_id int8 not null
         constraint fk_users_user_id
             references users

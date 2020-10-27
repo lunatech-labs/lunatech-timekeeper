@@ -42,9 +42,33 @@ public class UserImportExtension extends PanacheEntityBase {
     public UserImportExtension() {
     }
 
-    public UserImportExtension(Long id, @NotNull User user, @NotBlank String userEmailFromImport) {
+    public UserImportExtension(Long id, User user, String userEmailFromImport) {
         this.id = id;
         this.user = user;
+        this.userEmailFromImport = userEmailFromImport;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getUserEmailFromImport() {
+        return userEmailFromImport;
+    }
+
+    public void setUserEmailFromImport(String userEmailFromImport) {
         this.userEmailFromImport = userEmailFromImport;
     }
 }
