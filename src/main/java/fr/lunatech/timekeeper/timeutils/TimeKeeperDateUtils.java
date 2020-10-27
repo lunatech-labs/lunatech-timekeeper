@@ -16,10 +16,7 @@
 
 package fr.lunatech.timekeeper.timeutils;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.*;
 import java.util.List;
@@ -210,6 +207,21 @@ public class TimeKeeperDateUtils {
             throw new IllegalArgumentException("EndDateTime must be after startDateTime");
         }
         return from.until(to, unit);
+    }
+
+    /**
+     * Returns the time between two date in hours, minutes and seconds
+     *
+     * @param from
+     * @param to
+     * @return a String that represent the time between two date
+     */
+    public static String getDurationIntoHoursMinutesAndSecondAsString(LocalDateTime from, LocalDateTime to){
+        if (from.isAfter(to)) {
+            throw new IllegalArgumentException("EndDateTime must be after startDateTime");
+        }
+        Duration duration = Duration.between(from, to);
+        return String.format("%02d:%02d:%02d", duration.toHours(), duration.toMinutesPart(), duration.toSecondsPart());
     }
 
     /**

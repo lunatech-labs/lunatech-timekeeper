@@ -357,6 +357,18 @@ class TimeKeeperDateUtilsTest {
         assertEquals(expected, TimeKeeperDateUtils.getDuration(start, end, unit));
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "9, 30, 17, 0, 07:30:00",
+            "9, 30, 10, 0, 00:30:00",
+            "9, 30, 17, 15, 07:45:00",
+    })
+    void shouldComputeDurationInHoursMinutesAndSeconds(int to, int toMinutes, int from, int fromMinutes,String expected){
+        LocalDateTime start = LocalDateTime.of(2020, 10, 6, to, toMinutes);
+        LocalDateTime end = LocalDateTime.of(2020, 10, 6, from, fromMinutes);
+        assertEquals(expected, TimeKeeperDateUtils.getDurationIntoHoursMinutesAndSecondAsString(start, end));
+    }
+
     @Test
     void shouldThrowAnErrorIfStartIsAfterEnd() {
         Assertions.assertThrows(IllegalArgumentException.class, () ->
