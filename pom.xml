@@ -199,6 +199,11 @@
             <artifactId>camel-quarkus-direct</artifactId>
             <version>1.3.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel.quarkus</groupId>
+            <artifactId>camel-quarkus-rest</artifactId>
+            <version>1.3.0</version>
+        </dependency>
 
 
     </dependencies>

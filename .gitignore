@@ -66,3 +66,5 @@ frontend/.clever.json
 /lsp
 
 input/Toggl_time_entries_2020-09-01_to_2020-09-30.csv
+
+input/1/.archive/Toggl_time_entries_2020-09-01_to_2020-09-30.csv

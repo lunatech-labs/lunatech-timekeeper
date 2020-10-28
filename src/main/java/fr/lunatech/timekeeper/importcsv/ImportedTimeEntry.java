@@ -15,45 +15,67 @@
  */
 
 package fr.lunatech.timekeeper.importcsv;
+import com.google.common.base.Objects;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 
 @CsvRecord(separator = ",", skipFirstLine = true)
 public class ImportedTimeEntry {
 
-    @DataField(pos = 1)
+    @DataField(name="User", pos = 1)
     private String user;
-    @DataField(pos = 2)
+    @DataField(name="Email", pos = 2)
     private String email;
-    @DataField(pos = 3)
+    @DataField(name="Client", pos = 3)
     private String client;
-    @DataField(pos = 4)
+    @DataField(name="Project", pos = 4)
     private String project;
-    @DataField(pos = 5)
+    @DataField(name="Task", pos = 5)
     private String task;
-    @DataField(pos = 6)
+    @DataField(name="Description", pos = 6)
     private String description;
-    @DataField(pos = 7)
+    @DataField(name="Billable", pos = 7)
     private String billable;
-    @DataField(pos = 8)
+    @DataField(name="Start date", pos = 8)
     private String startDate;
-    @DataField(pos = 9)
+    @DataField(name="Start time", pos = 9)
     private String startTime;
-    @DataField(pos = 10)
+    @DataField(name="End date", pos = 10)
     private String endDate;
-    @DataField(pos = 11)
+    @DataField(name="End time", pos = 11)
     private String endTime;
-    @DataField(pos = 12)
+    @DataField(name="Duration", pos = 12)
     private String duration;
-    @DataField(pos = 13)
+    @DataField(name="Tags", pos = 13)
     private String tags;
-    @DataField(pos = 14)
+    @DataField(name="Amount (EUR)", pos = 14)
     private String amount;
 
     //User,Email,Client,Project,Task,Description,Billable,Start date,Start time,End date,End time,Duration,Tags,Amount (EUR)
 
 //    @DataField(pos = 9, pattern = "dd-MM-yyyy")
 //    private Date orderDate;
+
+
+    public ImportedTimeEntry() {
+    }
+
+    public ImportedTimeEntry(String user, String email, String client, String project, String task, String description, String billable, String startDate, String startTime, String endDate, String endTime, String duration, String tags, String amount) {
+        this.user = user;
+        this.email = email;
+        this.client = client;
+        this.project = project;
+        this.task = task;
+        this.description = description;
+        this.billable = billable;
+        this.startDate = startDate;
+        this.startTime = startTime;
+        this.endDate = endDate;
+        this.endTime = endTime;
+        this.duration = duration;
+        this.tags = tags;
+        this.amount = amount;
+    }
 
     public String getUser() {
         return user;
@@ -165,5 +187,51 @@ public class ImportedTimeEntry {
 
     public void setAmount(String amount) {
         this.amount = amount;
+    }
+
+    @Override
+    public String toString() {
+        return "ImportedTimeEntry{" +
+                "user='" + user + '\'' +
+                ", email='" + email + '\'' +
+                ", client='" + client + '\'' +
+                ", project='" + project + '\'' +
+                ", task='" + task + '\'' +
+                ", description='" + description + '\'' +
+                ", billable='" + billable + '\'' +
+                ", startDate='" + startDate + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", endDate='" + endDate + '\'' +
+                ", endTime='" + endTime + '\'' +
+                ", duration='" + duration + '\'' +
+                ", tags='" + tags + '\'' +
+                ", amount='" + amount + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ImportedTimeEntry)) return false;
+        ImportedTimeEntry that = (ImportedTimeEntry) o;
+        return Objects.equal(getUser(), that.getUser()) &&
+                Objects.equal(getEmail(), that.getEmail()) &&
+                Objects.equal(getClient(), that.getClient()) &&
+                Objects.equal(getProject(), that.getProject()) &&
+                Objects.equal(getTask(), that.getTask()) &&
+                Objects.equal(getDescription(), that.getDescription()) &&
+                Objects.equal(getBillable(), that.getBillable()) &&
+                Objects.equal(getStartDate(), that.getStartDate()) &&
+                Objects.equal(getStartTime(), that.getStartTime()) &&
+                Objects.equal(getEndDate(), that.getEndDate()) &&
+                Objects.equal(getEndTime(), that.getEndTime()) &&
+                Objects.equal(getDuration(), that.getDuration()) &&
+                Objects.equal(getTags(), that.getTags()) &&
+                Objects.equal(getAmount(), that.getAmount());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getUser(), getEmail(), getClient(), getProject(), getTask(), getDescription(), getBillable(), getStartDate(), getStartTime(), getEndDate(), getEndTime(), getDuration(), getTags(), getAmount());
     }
 }

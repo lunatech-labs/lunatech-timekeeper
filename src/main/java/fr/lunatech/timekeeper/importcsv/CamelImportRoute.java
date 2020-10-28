@@ -25,7 +25,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class CamelRoute extends EndpointRouteBuilder {
+public class CamelImportRoute extends EndpointRouteBuilder {
 
     @ConfigProperty(name = "timekeeper.import.folder")
     String path;
@@ -54,5 +54,8 @@ public class CamelRoute extends EndpointRouteBuilder {
         from("direct:processTimeEntries")
                 .bean(ImportService.class, "createTimeEntries(*, 1)")
         ;
+
+//        from("rest:get:hi")
+//                .transform().constant("Bye World");
     }
 }
