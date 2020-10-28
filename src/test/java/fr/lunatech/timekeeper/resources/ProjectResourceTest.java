@@ -20,6 +20,7 @@ import fr.lunatech.timekeeper.resources.utils.HttpTestRuntimeException;
 import fr.lunatech.timekeeper.resources.utils.TimeKeeperTestUtils;
 import fr.lunatech.timekeeper.services.requests.ClientRequest;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
+import fr.lunatech.timekeeper.services.requests.TimeSheetRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import fr.lunatech.timekeeper.services.responses.TimeSheetResponse;
 import fr.lunatech.timekeeper.testcontainers.KeycloakTestResource;
@@ -38,8 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.ProjectDef;
-import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TimeSheetPerProjectPerUserDef;
+import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
@@ -521,46 +521,165 @@ class ProjectResourceTest {
         final String adminToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
 
+        //create users Sam (manager) and Jimmy
         var sam = create(adminToken);
         var jimmy = create(jimmyToken);
+        //create a client
         final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
-
+        //create project user requests to add to a project
         ProjectRequest.ProjectUserRequest samProjectRequest = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
         ProjectRequest.ProjectUserRequest jimmyProjectRequest = new ProjectRequest.ProjectUserRequest(jimmy.getId(), false);
 
+        //Put Sam and Jimmy in a list of user to give to the project creation
         List<ProjectRequest.ProjectUserRequest> newUsers = List.of(samProjectRequest, jimmyProjectRequest);
 
+        //create the project
         final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers, 1L), adminToken);
 
-        final var updatedProjectWithTwoUsers = new ProjectRequest("Some Project"
+        //Update Sam and Jimmy's timesheets to have a start date in the past.
+        //We need to do this because at the moment you can't add an expiry date
+        //on the same day as start date, or indeed before the start date
+        TimeSheetRequest updatedTimeSheet = new TimeSheetRequest(
+                TimeUnit.DAY,
+                true,
+                null,
+                null,
+                TimeUnit.DAY,
+                START_DATE.minusDays(1)
+        );
+        putValidation(TimeSheetDef.uriPlusId(jimmy.getId()), adminToken, updatedTimeSheet)
+                .statusCode(NO_CONTENT.getStatusCode())
+        ;
+        putValidation(TimeSheetDef.uriPlusId(sam.getId()), adminToken, updatedTimeSheet)
+                .statusCode(NO_CONTENT.getStatusCode())
+        ;
+
+        //update the project removing non admin
+        final var updatedProjectWithNoUsers = new ProjectRequest("Some Project"
+                , true
+                , "some description"
+                , client.getId()
+                , true
+                , List.of(samProjectRequest)
+                , 1L);
+        update(updatedProjectWithNoUsers, ProjectDef.uriPlusId(project.getId()), adminToken);
+        //update project removing admin
+        update(new ProjectRequest("Some Project"
                 , true
                 , "some description"
                 , client.getId()
                 , true
                 , Collections.emptyList()
-                , 1L);
+                , 2L), ProjectDef.uriPlusId(project.getId()), adminToken);
 
+        //create expected project response, i.e. no users
         final var expectedProject = new ProjectResponse(project.getId()
-                , updatedProjectWithTwoUsers.getName()
-                , updatedProjectWithTwoUsers.isBillable()
-                , updatedProjectWithTwoUsers.getDescription()
+                , updatedProjectWithNoUsers.getName()
+                , updatedProjectWithNoUsers.isBillable()
+                , updatedProjectWithNoUsers.getDescription()
                 , new ProjectResponse.ProjectClientResponse(client.getId(), client.getName())
                 , Collections.emptyList()
-                , updatedProjectWithTwoUsers.isPublicAccess()
-                , 2L
+                , updatedProjectWithNoUsers.isPublicAccess()
+                , 3L
         );
 
-        update(updatedProjectWithTwoUsers, ProjectDef.uriPlusId(project.getId()), adminToken);
+        //check the update project against expected results
         getValidation(ProjectDef.uriPlusId(project.getId()), adminToken)
                 .body(is(timeKeeperTestUtils.toJson(expectedProject)))
                 .statusCode(is(OK.getStatusCode()));
-        // THEN
-        final LocalDate now = LocalDate.now();
-        final var expectedTimeSheetSam = new TimeSheetResponse(1L, expectedProject, sam.getId(), TimeUnit.HOURLY, true, now, null, TimeUnit.DAY.toString(), Collections.emptyList(),null, START_DATE);
-        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, expectedProject, jimmy.getId(), TimeUnit.HOURLY, true, now, null, TimeUnit.DAY.toString(), Collections.emptyList(),null, START_DATE);
 
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
-        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), sam.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam))).statusCode(is(OK.getStatusCode()));
+        // Create time sheet responses with the expected values for Sam and Jimmy
+        final var expectedTimeSheetSam = new TimeSheetResponse(sam.getId(), expectedProject, sam.getId(), TimeUnit.DAY, true, LocalDate.now(), null, TimeUnit.DAY.toString(), Collections.emptyList(),null, START_DATE.minusDays(1));
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(jimmy.getId(), expectedProject, jimmy.getId(), TimeUnit.DAY, true, LocalDate.now(), null, TimeUnit.DAY.toString(), Collections.emptyList(),null, START_DATE.minusDays(1));
+
+        // Validate the expected values
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), sam.getId()), adminToken)
+                .body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)))
+                .statusCode(is(OK.getStatusCode()));
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), jimmyToken)
+                .body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)))
+                .statusCode(is(OK.getStatusCode()));
+    }
+
+    @Test
+    void shouldUpdateTimeSheetExpirationWhenMembersAreRemoved() {
+        // GIVEN
+        final String adminToken = getAdminAccessToken();
+        final String jimmyToken = getUserAccessToken();
+
+        //create users Sam (manager) and Jimmy
+        var sam = create(adminToken);
+        var jimmy = create(jimmyToken);
+        //create a client
+        final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
+        //create project user requests to add to a project
+        ProjectRequest.ProjectUserRequest samProjectRequest = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
+        ProjectRequest.ProjectUserRequest jimmyProjectRequest = new ProjectRequest.ProjectUserRequest(jimmy.getId(), false);
+
+        //Put Sam and Jimmy in a list of user to give to the project creation
+        List<ProjectRequest.ProjectUserRequest> newUsers = List.of(samProjectRequest, jimmyProjectRequest);
+        //make a list of remaining users expected after removing a user
+        List<ProjectResponse.ProjectUserResponse> remainingUsers = List.of(
+                new ProjectResponse.ProjectUserResponse(
+                        sam.getId(), true, sam.getName(), sam.getPicture()
+                )
+        );
+        //create the project
+        final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers, 1L), adminToken);
+
+        //Update Sam and Jimmy's timesheets to have a start date in the past.
+        //We need to do this because at the moment you can't add an expiry date
+        //on the same day as start date, or indeed before the start date
+        TimeSheetRequest updatedTimeSheet = new TimeSheetRequest(
+                TimeUnit.DAY,
+                true,
+                null,
+                null,
+                TimeUnit.DAY,
+                START_DATE.minusDays(1)
+        );
+        putValidation(TimeSheetDef.uriPlusId(jimmy.getId()), adminToken, updatedTimeSheet)
+                .statusCode(NO_CONTENT.getStatusCode())
+        ;
+        putValidation(TimeSheetDef.uriPlusId(sam.getId()), adminToken, updatedTimeSheet)
+                .statusCode(NO_CONTENT.getStatusCode())
+        ;
+
+        //update the project such that it removes 'Jimmy'
+        final var updatedProjectWithOneUserRemaining = new ProjectRequest("Some Project"
+                , true
+                , "some description"
+                , client.getId()
+                , true
+                , List.of(samProjectRequest)
+                , 1L);
+        update(updatedProjectWithOneUserRemaining, ProjectDef.uriPlusId(project.getId()), adminToken);
+
+
+        //Create a project response with the expected values
+        final var expectedProject = new ProjectResponse(project.getId()
+                , updatedProjectWithOneUserRemaining.getName()
+                , updatedProjectWithOneUserRemaining.isBillable()
+                , updatedProjectWithOneUserRemaining.getDescription()
+                , new ProjectResponse.ProjectClientResponse(client.getId(), client.getName())
+                , remainingUsers
+                , updatedProjectWithOneUserRemaining.isPublicAccess()
+                , 2L
+        );
+
+        // Create time sheet responses with the expected values for Sam and Jimmy
+        // Sam should have no expiry date, Jimmy should have an expiry date for today
+        final var expectedTimeSheetSam = new TimeSheetResponse(sam.getId(), expectedProject, sam.getId(), TimeUnit.DAY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(),null, START_DATE.minusDays(1));
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(jimmy.getId(), expectedProject, jimmy.getId(), TimeUnit.DAY, true, LocalDate.now(), null, TimeUnit.DAY.toString(), Collections.emptyList(),null, START_DATE.minusDays(1));
+
+        // Validate the expected values
+        getValidation(TimeSheetDef.uriPlusId(sam.getId()), adminToken)
+                .body(is(timeKeeperTestUtils.toJson(expectedTimeSheetSam)))
+                .statusCode(is(OK.getStatusCode()));
+
+        getValidation(TimeSheetDef.uriPlusId(jimmy.getId()), adminToken)
+                .body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy)))
+                .statusCode(is(OK.getStatusCode()));
     }
 
     @Test
