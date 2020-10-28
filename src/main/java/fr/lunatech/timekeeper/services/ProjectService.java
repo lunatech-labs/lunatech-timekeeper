@@ -86,7 +86,7 @@ public class ProjectService {
     private void deleteOldMembers(Project project, Predicate<ProjectUser> deleteUserPredicate, AuthenticationContext userContext) {
         project.users.stream()
                 .filter(deleteUserPredicate)
-                .peek(user -> {
+                .map(user -> {
                     final Optional<TimeSheetResponse> ts = timeSheetService.findFirstForProjectForUser(project.id, user.user.id);
                     if(ts.isPresent()) {
                         final TimeSheetResponse tsResp = ts.get();
@@ -104,6 +104,7 @@ public class ProjectService {
                         if(logger.isWarnEnabled())
                             logger.warn("Unable to find timesheet for user " + user.user.id + " in project " + project.id);
                     }
+                    return user;
                 })
                 .forEach(PanacheEntityBase::delete);
     }
