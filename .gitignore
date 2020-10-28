@@ -64,3 +64,5 @@ frontend/package-lock.json
 frontend/.clever.json
 # Frontend -- END
 /lsp
+
+input/Toggl_time_entries_2020-09-01_to_2020-09-30.csv
