@@ -27,7 +27,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Singleton
-@Named("CSVTimeEntriesParserBean")
 public class CSVTimeEntriesParser {
 
     private static Logger logger = LoggerFactory.getLogger(CSVTimeEntriesParser.class);

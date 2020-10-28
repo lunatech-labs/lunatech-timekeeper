@@ -16,6 +16,7 @@
 
 package fr.lunatech.timekeeper.importcsv;
 
+import fr.lunatech.timekeeper.exportcsv.TimeEntryCSVParser;
 import fr.lunatech.timekeeper.services.imports.ImportService;
 import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.apache.camel.dataformat.bindy.csv.BindyCsvDataFormat;
@@ -55,7 +56,10 @@ public class CamelImportRoute extends EndpointRouteBuilder {
                 .bean(ImportService.class, "createTimeEntries(*, 1)")
         ;
 
-//        from("rest:get:hi")
-//                .transform().constant("Bye World");
+        from("rest:get:export/startDate={dateStart}&endDate={dateEnd}")
+                .bean(TimeEntryCSVParser.class, "checkStringParametersAndParseThemIntoLocalDate(${header.dateStart}, ${header.dateEnd})")
+                .bean(TimeEntryCSVParser.class, "getTimeEntriesFromDates(*)")
+                .transform().simple("from ${header.dateStart} to ${header.dateEnd}");
+
     }
 }

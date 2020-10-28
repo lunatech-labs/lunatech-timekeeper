@@ -35,6 +35,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -116,7 +117,7 @@ class ExportServiceIntegrationTest {
         timeEntry3.timeSheet = timeSheet;
         timeEntry3.persistAndFlush();
 
-        var actual = exportService.getTimeEntriesBetweenTwoDate(start, end);
+        var actual = exportService.getTimeEntriesBetweenTwoDate(Arrays.asList(start,end));
         TimeEntry[] expected = {timeEntry1, timeEntry2, timeEntry3};
 
         assertThat(actual, Matchers.<Collection<TimeEntry>>allOf(
@@ -181,7 +182,7 @@ class ExportServiceIntegrationTest {
         timeEntry3.timeSheet = timeSheet;
         timeEntry3.persistAndFlush();
 
-        var actual = exportService.getTimeEntriesBetweenTwoDate(start, end);
+        var actual = exportService.getTimeEntriesBetweenTwoDate(Arrays.asList(start,end));
         TimeEntry[] expected = {timeEntry2};
 
         assertThat(actual, Matchers.<Collection<TimeEntry>>allOf(
@@ -246,7 +247,7 @@ class ExportServiceIntegrationTest {
         timeEntry3.timeSheet = timeSheet;
         timeEntry3.persistAndFlush();
 
-        var actual = exportService.getTimeEntriesBetweenTwoDate(start, end);
+        var actual = exportService.getTimeEntriesBetweenTwoDate(Arrays.asList(start,end));
         TimeEntry[] expected = {};
 
         assertThat(actual, Matchers.<Collection<TimeEntry>>allOf(
@@ -261,7 +262,7 @@ class ExportServiceIntegrationTest {
         var start = LocalDate.of(2020, 10, 28);
         var end = LocalDate.of(2020, 10, 26);
 
-        assertThrows(IllegalArgumentException.class, () -> exportService.getTimeEntriesBetweenTwoDate(start, end));
+        assertThrows(IllegalArgumentException.class, () -> exportService.getTimeEntriesBetweenTwoDate(Arrays.asList(start,end)));
     }
 
     @Test

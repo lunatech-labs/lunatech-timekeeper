@@ -28,6 +28,7 @@ import javax.enterprise.context.ApplicationScoped;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,11 +41,14 @@ public class ExportService {
     /**
      * get timeentries between two date from database
      *
-     * @param start as a LocalDate
-     * @param end   as a LocalDate
+     * @param dates as a List of LocalDate
      * @return a List of TimeEntry
      */
-    protected List<TimeEntry> getTimeEntriesBetweenTwoDate(final LocalDate start, final LocalDate end) {
+    public List<TimeEntry> getTimeEntriesBetweenTwoDate(List<LocalDate> dates) {
+        var start = dates.get(0);
+        Objects.requireNonNull(start);
+        var end = dates.get(1);
+        Objects.requireNonNull(end);
         if (start.isAfter(end)) {
             throw new IllegalArgumentException("Start should be before end");
         }
@@ -67,7 +71,7 @@ public class ExportService {
      * @param timeEntries as a List of TimeEntry
      * @return a List of ExportedTimeEntry
      */
-    protected List<ImportedTimeEntry> getExportedTimeEntry(List<TimeEntry> timeEntries) {
+    public List<ImportedTimeEntry> getExportedTimeEntry(List<TimeEntry> timeEntries) {
         return timeEntries.stream().map(timeEntry -> {
             // Compute userName with firstName and lastName
             String user = timeEntry.timeSheet.owner.firstName + " " + timeEntry.timeSheet.owner.lastName;
