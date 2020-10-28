@@ -104,7 +104,6 @@ public class ProjectService {
                         if(logger.isWarnEnabled())
                             logger.warn("Unable to find timesheet for user " + user.user.id + " in project " + project.id);
                     }
-//                    return user;
                 })
                 .forEach(PanacheEntityBase::delete);
     }
@@ -134,7 +133,7 @@ public class ProjectService {
             throw new ConflictOnVersionException(String.format("Version of this project does not match the current project version (%d) ", project.version));
         }
 
-        final List<Long> userIds = request.getUsers().stream().map(i -> i.getId()).collect(Collectors.toList());
+        final List<Long> userIds = request.getUsers().stream().map(ProjectRequest.ProjectUserRequest::getId).collect(Collectors.toList());
 
         final List<Long> userIdToDelete = project.users.stream()
                 .map(i -> i.user.id)
@@ -145,26 +144,6 @@ public class ProjectService {
         final List<Optional<TimeSheetResponse>> timeSheetsToUpdate = userIdToDelete
                 .stream().map(userId -> timeSheetService.findFirstForProjectForUser(project.id, userId))
                 .collect(Collectors.toList());
-
-        //todo handle empty optionals
-
-
-
-
-
-//                .forEach(userId -> {
-//                    try {
-//                        timeSheetService.findFirstForProjectForUser(project.id, userId)
-//                                .orElseThrow(() -> new Exception(
-//                                        "Time sheet for user " + userId + " not found in project " + project.id
-//                                + ". "
-//                                )
-//                        );
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                });
-
 
         // It has to be done before the project is unbind
         deleteOldMembers(project, request::notContains, ctx);
