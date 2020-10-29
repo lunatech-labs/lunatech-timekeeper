@@ -83,28 +83,25 @@ public class ProjectService {
 
     // docs : https://quarkus.io/guides/transaction
     @Transactional(MANDATORY)
-    private void deleteOldMembers(Project project, Predicate<ProjectUser> deleteUserPredicate, AuthenticationContext userContext) {
+    private void deleteOldMembers(Project project, Predicate<ProjectUser> deleteUserPredicate, List<Long> userTimeSheetsToUpdate, AuthenticationContext userContext) {
         project.users.stream()
-                .filter(deleteUserPredicate)
-                .map(user -> {
-                    final Optional<TimeSheetResponse> ts = timeSheetService.findFirstForProjectForUser(project.id, user.user.id);
-                    if(ts.isPresent()) {
-                        final TimeSheetResponse tsResp = ts.get();
-                        final TimeSheetRequest tsReq = new TimeSheetRequest(tsResp.timeUnit,
+            .filter(deleteUserPredicate)
+            .map(user -> {
+                timeSheetService.findFirstForProjectForUser(project.id, user.user.id)
+                    .ifPresent(tsResp -> {
+                        if(userTimeSheetsToUpdate.contains(user.user.id)) {
+                            final TimeSheetRequest tsReq = new TimeSheetRequest(tsResp.timeUnit,
                                 tsResp.defaultIsBillable,
                                 LocalDate.now(),
                                 tsResp.maxDuration,
                                 tsResp.timeUnit,
                                 tsResp.startDate);
-                        if(timeSheetService.update(tsResp.id, tsReq, userContext).isEmpty() && logger.isWarnEnabled()) {
-                            logger.warn(String.format("Something went wrong. User %d unchanged in project %d", user.user.id, project.id));
+                            timeSheetService.update(tsResp.id, tsReq, userContext);
                         }
-                    } else if (logger.isWarnEnabled()){
-                        logger.warn("Unable to find timesheet for user %d in project %d", user.user.id, project.id);
-                    }
-                    return user;
-                })
-                .forEach(PanacheEntityBase::delete);
+                    });
+                return user;
+            })
+            .forEach(PanacheEntityBase::delete);
     }
 
     @Transactional(MANDATORY)
@@ -140,7 +137,7 @@ public class ProjectService {
                 .collect(Collectors.toList());
 
         // It has to be done before the project is unbind
-        deleteOldMembers(project, request::notContains, ctx);
+        deleteOldMembers(project, request::notContains, userIdToDelete, ctx);
 
         final Project updatedProject = request.unbind(maybeProject.get(), clientService::findById, userService::findById, ctx);
 
@@ -150,6 +147,8 @@ public class ProjectService {
         createTimeSheetsForNewUsers(updatedProject, ctx);
         return Optional.of(project.id);
     }
+
+
 
     @Transactional
     public Optional<Long> joinProject(Long id, AuthenticationContext userContext) {
