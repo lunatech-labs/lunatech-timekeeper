@@ -139,11 +139,6 @@ public class ProjectService {
                 .filter(i -> !userIds.contains(i))
                 .collect(Collectors.toList());
 
-        //find user's currently active timesheet that corresponds with project
-        final List<Optional<TimeSheetResponse>> timeSheetsToUpdate = userIdToDelete
-                .stream().map(userId -> timeSheetService.findFirstForProjectForUser(project.id, userId))
-                .collect(Collectors.toList());
-
         // It has to be done before the project is unbind
         deleteOldMembers(project, request::notContains, ctx);
 
