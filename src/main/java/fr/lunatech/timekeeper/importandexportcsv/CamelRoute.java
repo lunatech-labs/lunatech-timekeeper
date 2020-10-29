@@ -14,30 +14,33 @@
  * limitations under the License.
  */
 
-package fr.lunatech.timekeeper.importcsv;
+package fr.lunatech.timekeeper.importandexportcsv;
 
-import fr.lunatech.timekeeper.exportcsv.TimeEntryCSVParser;
 import fr.lunatech.timekeeper.services.exports.ExportService;
 import fr.lunatech.timekeeper.services.imports.ImportService;
 import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.apache.camel.dataformat.bindy.csv.BindyCsvDataFormat;
+import org.apache.camel.dataformat.csv.CsvDataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class CamelImportRoute extends EndpointRouteBuilder {
+public class CamelRoute extends EndpointRouteBuilder {
 
     @ConfigProperty(name = "timekeeper.import.folder")
-    String path;
+    String importPath;
+
+    @ConfigProperty(name = "timekeeper.export.folder")
+    String exportPath;
 
     @Override
     public void configure() throws Exception {
 
         final DataFormat bindy = new BindyCsvDataFormat(ImportedTimeEntry.class);
 
-        from(file(path + "?move=.archive&initialDelay=8000"))
+        from(file(importPath + "?move=.archive&initialDelay=8000"))
                 .unmarshal(bindy)
                 .recipientList(constant("direct:processClients, direct:processProjects, direct:processMember, direct:processTimeEntries"))
         ;
@@ -57,13 +60,13 @@ public class CamelImportRoute extends EndpointRouteBuilder {
                 .bean(ImportService.class, "createTimeEntries(*, 1)")
         ;
 
-        from("rest:get:export/startDate={dateStart}&endDate={dateEnd}")
-                .bean(TimeEntryCSVParser.class, "checkStringParametersAndParseThemIntoLocalDate(${header.dateStart}, ${header.dateEnd})")
+        // Export to CSV using platform http that create and endpoint
+        from("direct:export")
                 .bean(ExportService.class, "getTimeEntriesBetweenTwoDate")
-                .bean(ExportService.class, "getExportedTimeEntry")
-                .marshal().csv()
-                .to(file("/Users/gdavy/DEV/TIMEKEEPER/lunatech-timekeeper/output?fileName=report_${header.dateStart}_${header.dateEnd}.csv"))
-                .transform().simple("TimeEntries from ${header.dateStart} to ${header.dateEnd} exported");
+                .marshal(bindy)
+                .to(file(exportPath + "?fileName=report_${header.startDate}_${header.endDate}.csv"))
+                .setBody(simple("TimeEntries from ${header.startDate} to end ${header.endDate}"))
+        ;
 
     }
 }
