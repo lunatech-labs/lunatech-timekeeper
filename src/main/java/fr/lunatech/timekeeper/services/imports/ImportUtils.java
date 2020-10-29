@@ -58,9 +58,9 @@ public class ImportUtils {
         if (time == null || time.isBlank()) {
             throw new IllegalArgumentException("Cannot parse a null time");
         }
-        LocalDate dateUpdated = TimeKeeperDateUtils.formatToLocalDate(date);
+        LocalDate dateUpdated = TimeKeeperDateUtils.parseToLocalDate(date);
 
-        LocalTime timeUpdated = TimeKeeperDateUtils.formatToLocalTime(time);
+        LocalTime timeUpdated = TimeKeeperDateUtils.parseToLocalTime(time);
 
         return LocalDateTime.of(dateUpdated, timeUpdated);
     }

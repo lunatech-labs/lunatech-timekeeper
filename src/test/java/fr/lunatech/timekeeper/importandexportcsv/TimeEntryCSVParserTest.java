@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package fr.lunatech.timekeeper.exportcsv;
+package fr.lunatech.timekeeper.importandexportcsv;
 
+import fr.lunatech.timekeeper.importandexportcsv.TimeEntryCSVParser;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 

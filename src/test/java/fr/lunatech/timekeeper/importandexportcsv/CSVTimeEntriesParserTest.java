@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package fr.lunatech.timekeeper.importcsv;
+package fr.lunatech.timekeeper.importandexportcsv;
 
 import fr.lunatech.timekeeper.resources.utils.NullableConverter;
 import fr.lunatech.timekeeper.services.imports.businessClass.ImportedClientProject;

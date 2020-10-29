@@ -16,7 +16,7 @@
 
 package fr.lunatech.timekeeper.services.imports;
 
-import fr.lunatech.timekeeper.importcsv.ImportedTimeEntry;
+import fr.lunatech.timekeeper.importandexportcsv.ImportedTimeEntry;
 import fr.lunatech.timekeeper.models.Client;
 import fr.lunatech.timekeeper.models.Organization;
 import fr.lunatech.timekeeper.models.Project;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package fr.lunatech.timekeeper.exportcsv;
+package fr.lunatech.timekeeper.importandexportcsv;
 
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 import org.slf4j.Logger;
@@ -42,8 +42,8 @@ public class TimeEntryCSVParser {
         LocalDate startDate;
         LocalDate endDate;
         try {
-            startDate = TimeKeeperDateUtils.formatToLocalDate(start);
-            endDate = TimeKeeperDateUtils.formatToLocalDate(end);
+            startDate = TimeKeeperDateUtils.parseToLocalDate(start);
+            endDate = TimeKeeperDateUtils.parseToLocalDate(end);
             return Arrays.asList(startDate, endDate);
         } catch (DateTimeParseException e) {
             logger.warn("StartDate or EndDate is not valid to be parse into a LocalDate");

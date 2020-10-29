@@ -16,7 +16,7 @@
 
 package fr.lunatech.timekeeper.services.imports;
 
-import fr.lunatech.timekeeper.importcsv.ImportedTimeEntry;
+import fr.lunatech.timekeeper.importandexportcsv.ImportedTimeEntry;
 import fr.lunatech.timekeeper.services.imports.businessClass.ImportedClientProject;
 import fr.lunatech.timekeeper.services.imports.businessClass.ImportedUserProjectClient;
 import fr.lunatech.timekeeper.testcontainers.KeycloakTestResource;

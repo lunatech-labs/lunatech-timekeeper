@@ -16,7 +16,8 @@
 
 package fr.lunatech.timekeeper.services.exports;
 
-import fr.lunatech.timekeeper.importcsv.ImportedTimeEntry;
+import com.ibm.icu.impl.Pair;
+import fr.lunatech.timekeeper.importandexportcsv.ImportedTimeEntry;
 import fr.lunatech.timekeeper.models.imports.UserImportExtension;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.services.imports.ImportService;
@@ -25,8 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -44,73 +47,71 @@ public class ExportService {
      * @param dates as a List of LocalDate
      * @return a List of TimeEntry
      */
-    public List<TimeEntry> getTimeEntriesBetweenTwoDate(List<LocalDate> dates) {
-        var start = dates.get(0);
+    @Transactional
+    public List<ImportedTimeEntry> getTimeEntriesBetweenTwoDate(Pair<LocalDate, LocalDate> dates) {
+        var start = dates.first;
         Objects.requireNonNull(start);
-        var end = dates.get(1);
+        var end = dates.second;
         Objects.requireNonNull(end);
+
         if (start.isAfter(end)) {
             throw new IllegalArgumentException("Start should be before end");
         }
-
         final LocalDateTime startDateTime = start.atTime(0, 1);
         final LocalDateTime endDateTime = end.atTime(23, 59);
 
         try (final Stream<TimeEntry> timeEntryStream = TimeEntry.streamAll()) {
+            logger.debug("StreamAll timeentries succeded, now filtering");
             return timeEntryStream
                     .filter(timeEntry -> (timeEntry.startDateTime.isAfter(startDateTime) || timeEntry.startDateTime.isEqual(startDateTime))
                             && (timeEntry.endDateTime.isBefore(endDateTime) || timeEntry.endDateTime.isEqual(endDateTime))
                     )
-                    .collect(Collectors.toList());
+                    .map(timeEntry -> {
+                        // Compute userName with firstName and lastName
+                        String user = timeEntry.timeSheet.owner.firstName + " " + timeEntry.timeSheet.owner.lastName;
+                        // User Email
+                        String email = getEmail(timeEntry);
+                        // Client Name
+                        String clientName = timeEntry.timeSheet.project.client.name;
+                        // Project Name
+                        String projectName = timeEntry.timeSheet.project.name;
+                        //Description
+                        String description = timeEntry.comment;
+                        //Compute billable
+                        String billable = (timeEntry.timeSheet.defaultIsBillable ? "Yes" : "No");
+                        //StartDate & Time
+                        String startDate = TimeKeeperDateUtils.formatToString(timeEntry.startDateTime.toLocalDate());
+                        String startTime = TimeKeeperDateUtils.formatToString(timeEntry.startDateTime.toLocalTime());
+                        //EndDate & Time
+                        String endDate = TimeKeeperDateUtils.formatToString(timeEntry.endDateTime.toLocalDate());
+                        String endTime = TimeKeeperDateUtils.formatToString(timeEntry.endDateTime.toLocalTime());
+                        // Duration
+                        String duration = TimeKeeperDateUtils.getDurationIntoHoursMinutesAndSecondAsString(timeEntry.startDateTime, timeEntry.endDateTime);
+
+                        logger.debug("Every information are retrieved, now creating an ImportedTimeEntry");
+
+                        return new ImportedTimeEntry(
+                                user,
+                                email,
+                                clientName,
+                                projectName,
+                                "",
+                                description,
+                                billable,
+                                startDate,
+                                startTime,
+                                endDate,
+                                endTime,
+                                duration,
+                                "",
+                                "");
+
+                    }).collect(Collectors.toList());
         }
-    }
-
-    /**
-     * Compute a List of TimeEntry into a List of ExportedTimeEntry
-     *
-     * @param timeEntries as a List of TimeEntry
-     * @return a List of ExportedTimeEntry
-     */
-    public List<ImportedTimeEntry> getExportedTimeEntry(List<TimeEntry> timeEntries) {
-        return timeEntries.stream().map(timeEntry -> {
-            // Compute userName with firstName and lastName
-            String user = timeEntry.timeSheet.owner.firstName + " " + timeEntry.timeSheet.owner.lastName;
-            // User Email
-            String email = getEmail(timeEntry);
-            // Client Name
-            String clientName = timeEntry.timeSheet.project.client.name;
-            // Project Name
-            String projectName = timeEntry.timeSheet.project.name;
-            //Description
-            String description = timeEntry.comment;
-            //Compute billable
-            String billable = (timeEntry.timeSheet.defaultIsBillable ? "Yes" : "No");
-            //StartDate & Time
-            String startDate = TimeKeeperDateUtils.formatToString(timeEntry.startDateTime.toLocalDate());
-            String startTime = TimeKeeperDateUtils.formatToString(timeEntry.startDateTime.toLocalTime());
-            //EndDate & Time
-            String endDate = TimeKeeperDateUtils.formatToString(timeEntry.endDateTime.toLocalDate());
-            String endTime = TimeKeeperDateUtils.formatToString(timeEntry.endDateTime.toLocalTime());
-            // Duration
-            String duration = TimeKeeperDateUtils.getDurationIntoHoursMinutesAndSecondAsString(timeEntry.startDateTime, timeEntry.endDateTime);
-
-            return new ImportedTimeEntry(
-                    user,
-                    email,
-                    clientName,
-                    projectName,
-                    "",
-                    description,
-                    billable,
-                    startDate,
-                    startTime,
-                    endDate,
-                    endTime,
-                    duration,
-                    "",
-                    "");
-
-        }).collect(Collectors.toList());
+        catch (Exception e){
+            logger.warn("Exception -> " + e);
+            throw e;
+        }
     }
 
     /**

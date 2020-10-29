@@ -133,7 +133,7 @@ public class TimeKeeperDateUtils {
      * @param dateString
      * @return a localDate
      */
-    public static LocalDate formatToLocalDate(final String dateString) {
+    public static LocalDate parseToLocalDate(final String dateString) {
         return LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE);
     }
 
@@ -153,7 +153,7 @@ public class TimeKeeperDateUtils {
      * @param timeString
      * @return a LocalTime
      */
-    public static LocalTime formatToLocalTime(final String timeString) {
+    public static LocalTime parseToLocalTime(final String timeString) {
         return LocalTime.parse(timeString, DateTimeFormatter.ISO_LOCAL_TIME);
     }
 
@@ -173,7 +173,7 @@ public class TimeKeeperDateUtils {
      * @param dateString
      * @return a localDateTime
      */
-    public static LocalDateTime formatToLocalDateTime(final String dateString) {
+    public static LocalDateTime parseToLocalDateTime(final String dateString) {
         return LocalDateTime.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 

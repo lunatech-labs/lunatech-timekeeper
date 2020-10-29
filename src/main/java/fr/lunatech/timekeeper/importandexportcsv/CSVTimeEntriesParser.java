@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package fr.lunatech.timekeeper.importcsv;
+package fr.lunatech.timekeeper.importandexportcsv;
 
 import fr.lunatech.timekeeper.services.imports.businessClass.ImportedClientProject;
 import fr.lunatech.timekeeper.services.imports.businessClass.ImportedUserProjectClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.*;
 import java.util.stream.Collectors;

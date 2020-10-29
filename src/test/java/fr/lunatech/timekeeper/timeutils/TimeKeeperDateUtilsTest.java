@@ -406,7 +406,7 @@ class TimeKeeperDateUtilsTest {
         String date = "2020-10-06T09:00:00";
         assertEquals(
                 LocalDateTime.of(2020, 10, 6, 9, 0, 0),
-                TimeKeeperDateUtils.formatToLocalDateTime(date));
+                TimeKeeperDateUtils.parseToLocalDateTime(date));
     }
 
     @Test
@@ -414,7 +414,7 @@ class TimeKeeperDateUtilsTest {
         String date = "2020-06-11";
         assertEquals(
                 THE_11_TH_JUNE_2020,
-                TimeKeeperDateUtils.formatToLocalDate(date));
+                TimeKeeperDateUtils.parseToLocalDate(date));
     }
 
     @Test
@@ -428,7 +428,7 @@ class TimeKeeperDateUtilsTest {
     void shouldReturnALocalTimeFromString() {
         var timeString = "09:00:00";
         var expected = LocalTime.of(9, 0);
-        assertEquals(expected, TimeKeeperDateUtils.formatToLocalTime(timeString));
+        assertEquals(expected, TimeKeeperDateUtils.parseToLocalTime(timeString));
     }
 
     @Test

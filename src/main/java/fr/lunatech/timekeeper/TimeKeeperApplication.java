@@ -17,6 +17,8 @@
 package fr.lunatech.timekeeper;
 
 
+import io.quarkus.runtime.Quarkus;
+import org.apache.camel.quarkus.main.CamelMainApplication;
 import org.eclipse.microprofile.openapi.annotations.ExternalDocumentation;
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType;
@@ -78,5 +80,8 @@ import javax.ws.rs.core.Application;
 )
 
 public class TimeKeeperApplication extends Application {
-
+        // For apache camel properties
+        public static void main(String... args) {
+                Quarkus.run(CamelMainApplication.class, args);
+        }
 }
