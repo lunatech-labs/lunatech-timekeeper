@@ -683,6 +683,33 @@ class ProjectResourceTest {
     }
 
     @Test
+    void shouldNotReturnProject() {
+        //GIVEN
+        final String adminToken = getAdminAccessToken();
+        var sam = create(adminToken);
+        //create a client
+        final var client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
+        //create the project
+        final var project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true
+                , Collections.emptyList(), 1L), adminToken);
+        //create project user requests to add to a project
+        ProjectRequest.ProjectUserRequest samProjectRequest = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
+
+        //update the project such that it removes 'Jimmy'
+        final var updatedProjectWithAdmin= new ProjectRequest("Some Project"
+                , true
+                , "some description"
+                , client.getId()
+                , true
+                , List.of(samProjectRequest)
+                , 1L);
+
+        putValidation(ProjectDef.uriPlusId(project.getId() + 10), adminToken, updatedProjectWithAdmin)
+                .statusCode(NOT_FOUND.getStatusCode())
+        ;
+    }
+
+    @Test
     void shouldNotChangeListOfTimeSheetsForExistingMembersWhenANewMemberIsAdded() {
         // GIVEN
         final String adminToken = getAdminAccessToken();
