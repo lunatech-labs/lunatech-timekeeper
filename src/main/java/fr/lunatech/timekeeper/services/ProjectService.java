@@ -96,13 +96,11 @@ public class ProjectService {
                                 tsResp.maxDuration,
                                 tsResp.timeUnit,
                                 tsResp.startDate);
-                        if(timeSheetService.update(tsResp.id, tsReq, userContext).isEmpty()) {
-                            if(logger.isWarnEnabled())
-                                logger.warn("Something went wrong. User " + user.user.id + " unchanged in project " + project.id);
+                        if(timeSheetService.update(tsResp.id, tsReq, userContext).isEmpty() && logger.isWarnEnabled()) {
+                            logger.warn(String.format("Something went wrong. User %d unchanged in project %d", user.user.id, project.id));
                         }
-                    } else {
-                        if(logger.isWarnEnabled())
-                            logger.warn("Unable to find timesheet for user " + user.user.id + " in project " + project.id);
+                    } else if (logger.isWarnEnabled()){
+                        logger.warn("Unable to find timesheet for user %d in project %d", user.user.id, project.id);
                     }
                     return user;
                 })
