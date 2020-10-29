@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package fr.lunatech.timekeeper.importandexportcsv;
+package fr.lunatech.timekeeper.csv;
 import com.google.common.base.Objects;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;

@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package fr.lunatech.timekeeper.importandexportcsv;
+package fr.lunatech.timekeeper.csv;
 
 import fr.lunatech.timekeeper.services.exports.ExportService;
 import fr.lunatech.timekeeper.services.imports.ImportService;
 import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.apache.camel.dataformat.bindy.csv.BindyCsvDataFormat;
-import org.apache.camel.dataformat.csv.CsvDataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 

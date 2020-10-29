@@ -16,12 +16,9 @@
 
 package fr.lunatech.timekeeper.resources;
 
-import com.ibm.icu.impl.Pair;
 import fr.lunatech.timekeeper.resources.openapi.ExportResourceApi;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 import org.apache.camel.ProducerTemplate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -34,8 +31,6 @@ public class ExportResource implements ExportResourceApi {
     @Inject
     ProducerTemplate producerTemplate;
 
-    private static Logger logger = LoggerFactory.getLogger(ExportResource.class);
-
     @RolesAllowed({"admin"})
     @Override
     public String exportCSV(String startString, String endString) {
@@ -45,14 +40,12 @@ public class ExportResource implements ExportResourceApi {
             startDate = TimeKeeperDateUtils.parseToLocalDate(startString);
             endDate = TimeKeeperDateUtils.parseToLocalDate(endString);
         } catch (DateTimeParseException e) {
-            logger.warn("StartDate or EndDate is not valid to be parse into a LocalDate");
             throw new IllegalArgumentException("Start or end date format error");
         }
 
         if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("StartDate should be before endDate");
         }
-        logger.debug("Start : " + startDate + " end : " + endDate);
-        return producerTemplate.requestBodyAndHeaders("direct:export", Pair.of(startDate, endDate), Map.of("startDate", startDate, "endDate", endDate), String.class);
+        return producerTemplate.requestBodyAndHeaders("direct:export", null, Map.of("startDate", startDate, "endDate", endDate), String.class);
     }
 }
