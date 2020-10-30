@@ -17,7 +17,7 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory} from 'react-router-dom';
 import {Button, Select, Tag} from 'antd';
-import CardWeekCalendar from '../../Card/CardWeekCalendar';
+import CardWeekCalendar from '../Card/CardWeekCalendar';
 import {
   LeftOutlined,
   PlusOutlined,
@@ -34,11 +34,11 @@ import {
   weekRangeOfDate,
   totalHoursPerDay,
   isPublicHoliday, isNotWeekEnd, isNotPublicHoliday,
-} from '../../../utils/momentUtils';
+} from '../../utils/momentUtils';
 import moment from 'moment';
 import _ from 'lodash';
-import UserEvent from '../../UserEvent/UserEvent';
-import {getMaximumHoursPerDay} from '../../../utils/configUtils';
+import UserEvent from '../UserEvent/UserEvent';
+import {getMaximumHoursPerDay} from '../../utils/configUtils';
 
 const numberOfWeek = 15; // It's the number of weeks where we can navigate
 
@@ -119,7 +119,7 @@ const WeekCalendar = (props) => {
       dropdownRender={menu => (
         <div>
           <div className={'tk_Select_CurrentWeek'} onClick={() => setWeekSelected(weekRanges.weekNumberCurrent)}>Current
-            Week
+                        Week
           </div>
           {menu}
         </div>)}>
@@ -283,4 +283,4 @@ WeekCalendar.propTypes = {
   )
 };
 
-export default WeekCalendar;
+// export default WeekCalendar;

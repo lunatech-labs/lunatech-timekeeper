@@ -20,7 +20,7 @@ import {useLocation} from 'react-router';
 import queryString from 'query-string';
 import moment from 'moment';
 import MainPage from '../MainPage/MainPage';
-import WeekCalendar from '../../components/TimeSheet/WeekCalendar';
+import WeekCalendar from '../../components/TimeSheet/WeekCalendar/WeekCalendar';
 import TimeEntry from '../../components/TimeEntry/TimeEntry';
 import {useTimeKeeperAPI} from '../../utils/services';
 import {Alert, Form, Modal} from 'antd';
