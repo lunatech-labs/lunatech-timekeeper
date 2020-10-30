@@ -82,9 +82,10 @@ public class TimeSheetService {
     }
 
     public Optional<TimeSheetResponse> findFirstForProjectForUser(long idProject, long idUser) {
-        final Stream<TimeSheet> timeSheetStream = TimeSheet.stream("project_id= ?1 AND user_id= ?2", idProject, idUser);
-        return timeSheetStream.map(TimeSheetResponse::bind)
-                .findFirst();
+        try(final Stream<TimeSheet> timeSheetStream = TimeSheet.stream("project_id= ?1 AND user_id= ?2", idProject, idUser)) {
+            return timeSheetStream.map(TimeSheetResponse::bind)
+                    .findFirst();
+        }
     }
 
     // for the MVP we don't filter, some kind of "active" flag will be added once business rules are defined (see TK-389)
