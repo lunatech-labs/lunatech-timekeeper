@@ -73,19 +73,18 @@ const WeekCalendar = (props) => {
     }
   }, [weekSelected, onPanelChange, weekRanges, history]);
 
-  const daysToData = () => {
+  const weekCalendarDataByDays = () => {
     const daysOfWeek = [...Array(7).keys()].map(i => props.firstDay.clone().add(i, 'day'));
     return daysOfWeek.map(dayOfWeek => {
-      const day = props.days.find(d => d.date.isSame(moment(dayOfWeek).utc(), 'day'));
+      const timeEntry = props.days.find(d => d.date.isSame(moment(dayOfWeek).utc(), 'day'));
       return {
         date: dayOfWeek,
-        day: day,
+        day: timeEntry,
       };
     });
   };
-  const dateFormat = props.dateFormat || 'Do';
-  const headerDateFormat = props.headerDateFormat || 'ddd';
-  const dataByDays = daysToData();
+
+  const dataByDays = weekCalendarDataByDays();
 
   const isDisabled = (item) => {
     if(item.day) {
@@ -213,10 +212,10 @@ const WeekCalendar = (props) => {
           };
           return (
             <div className="tk_WeekCalendar_Day" key={`day-card-${index}`}>
-              <p>{item.date.format(headerDateFormat)}</p>
+              <p>{item.date.format('ddd')}</p>
               <CardWeekCalendar onClick={(e) => props.onClickCard && props.onClickCard(e, item.date)}>
                 <div className="tk_CardWeekCalendar_Head">
-                  <p className={isToday(moment(item.date)) ? 'tk_CurrentDay' : ''}>{item.date.format(dateFormat)}</p>
+                  <p className={isToday(moment(item.date)) ? 'tk_CurrentDay' : ''}>{item.date.format('Do')}</p>
                   <TopCardComponent item={item} userEvents={userEvents} />
                 </div>
                 <div className={props.warningCardPredicate && props.warningCardPredicate(item.date, item.day) ?
