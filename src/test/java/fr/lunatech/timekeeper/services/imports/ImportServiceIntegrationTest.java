@@ -17,8 +17,8 @@
 package fr.lunatech.timekeeper.services.imports;
 
 import fr.lunatech.timekeeper.csv.ImportedTimeEntry;
-import fr.lunatech.timekeeper.services.imports.businessClass.ImportedClientProject;
-import fr.lunatech.timekeeper.services.imports.businessClass.ImportedUserProjectClient;
+import fr.lunatech.timekeeper.services.imports.dtos.ImportedClientProject;
+import fr.lunatech.timekeeper.services.imports.dtos.ImportedUserProjectClient;
 import fr.lunatech.timekeeper.testcontainers.KeycloakTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;

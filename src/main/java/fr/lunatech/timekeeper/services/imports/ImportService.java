@@ -22,8 +22,8 @@ import fr.lunatech.timekeeper.models.Organization;
 import fr.lunatech.timekeeper.models.Project;
 import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
-import fr.lunatech.timekeeper.services.imports.businessClass.ImportedClientProject;
-import fr.lunatech.timekeeper.services.imports.businessClass.ImportedUserProjectClient;
+import fr.lunatech.timekeeper.services.imports.dtos.ImportedClientProject;
+import fr.lunatech.timekeeper.services.imports.dtos.ImportedUserProjectClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

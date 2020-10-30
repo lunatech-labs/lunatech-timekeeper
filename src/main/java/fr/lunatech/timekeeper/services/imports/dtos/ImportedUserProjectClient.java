@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package fr.lunatech.timekeeper.services.imports.businessClass;
+package fr.lunatech.timekeeper.services.imports.dtos;
 
 import com.google.common.base.Objects;
 
