@@ -39,6 +39,7 @@ public class CamelRoute extends EndpointRouteBuilder {
 
         final DataFormat bindy = new BindyCsvDataFormat(ImportedTimeEntry.class);
 
+        //Import
         from(file(importPath + "?move=.archive&initialDelay=8000"))
                 .unmarshal(bindy)
                 .recipientList(constant("direct:processClients, direct:processProjects, direct:processMember, direct:processTimeEntries"))
@@ -59,7 +60,7 @@ public class CamelRoute extends EndpointRouteBuilder {
                 .bean(ImportService.class, "createTimeEntries(*, 1)")
         ;
 
-        // Export to CSV using platform http that create and endpoint
+        // Export
         from("direct:export")
                 .bean(ExportService.class, "getImportedTimeEntriesBetweenTwoDate")
                 .marshal(bindy)

@@ -19,7 +19,7 @@ import com.google.common.base.Objects;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 
-@CsvRecord(separator = ",", skipFirstLine = true)
+@CsvRecord(separator = ",", skipFirstLine = true, quoting = true,generateHeaderColumns=true)
 public class ImportedTimeEntry {
 
     @DataField(name="User", pos = 1)
