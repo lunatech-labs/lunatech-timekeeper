@@ -43,7 +43,6 @@ const TimeEntriesPage = () => {
   const [calendarMode, setCalendarMode] = useState('week');
   const firstDayOfCurrentWeek = moment().utc().startOf('week');
   const [contextDate, setContextDate] = useState(firstDayOfCurrentWeek);
-  // const today = () => firstDayOfCurrentWeek.clone();
   const [prefixWeekUrl, setPrefixWeekUrl] = useState(() => {
     if (location.search) {
       let searchParams = queryString.parse(location.search);

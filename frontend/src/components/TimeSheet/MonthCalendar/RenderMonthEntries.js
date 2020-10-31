@@ -16,20 +16,20 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import UserTimeEntries from './UserTimeEntries';
+import TimeEntriesForMonthCalendar from './TimeEntriesForMonthCalendar';
 import UserEventTag from './UserEventTag';
 
-const RenderEntries = (props) => {
+const RenderMonthEntries = (props) => {
   const {userTimeEntry, userEventEntry} = props;
   return (
     <div>
-      <UserTimeEntries userTimeEntry={userTimeEntry}/>
+      <TimeEntriesForMonthCalendar userTimeEntry={userTimeEntry}/>
       <UserEventTag userEvent={userEventEntry}/>
     </div>
   );
 };
 
-RenderEntries.propTypes = {
+RenderMonthEntries.propTypes = {
   userEventEntry: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.string,
@@ -46,4 +46,4 @@ RenderEntries.propTypes = {
   }).isRequired
 };
 
-export default RenderEntries;
+export default RenderMonthEntries;

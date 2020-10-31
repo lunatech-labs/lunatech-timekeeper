@@ -18,12 +18,12 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import React from 'react';
 import DisplayTopRightCorner from './DisplayTopRightCorner';
-import RenderEntries from './RenderEntries';
+import RenderMonthEntries from './RenderMonthEntries';
 
 const MonthDayCard = (props) => {
-  const {dateAsMoment, userEventEntry, userTimeEntry, onClickPlusButton, applyWarningClass, isPublicHoliday, isDisabled, hoursCompleted} = props;
+  const {dateAsMoment, userEventEntry, userTimeEntry, onClickPlusButton, isDayWithoutAnyEntries, isPublicHoliday, isDisabled, hoursCompleted} = props;
 
-  const applyClass = (applyWarningClass && !isDisabled) ? 'tk_CardMonthCalendar_Body_With_Warn' : isDisabled ? 'tk_CardMonthCalendar_Body' : '';
+  const applyClass = (isDayWithoutAnyEntries && !isDisabled) ? 'tk_CardMonthCalendar_Body_With_Warn' : isDisabled ? 'tk_CardMonthCalendar_Body' : '';
 
   return (
     <div className={applyClass}>
@@ -34,7 +34,7 @@ const MonthDayCard = (props) => {
         onClickPlusButton={onClickPlusButton}
         isDisabled={isDisabled}
       />
-      <RenderEntries
+      <RenderMonthEntries
         userTimeEntry={userTimeEntry}
         userEventEntry={userEventEntry}
       />
@@ -59,7 +59,7 @@ MonthDayCard.propTypes = {
     disabled: PropTypes.bool,
     data: PropTypes.any
   }).isRequired,
-  applyWarningClass: PropTypes.bool,
+  isDayWithoutAnyEntries: PropTypes.bool,
   isPublicHoliday: PropTypes.bool,
   isDisabled: PropTypes.bool,
   hoursCompleted: PropTypes.bool
