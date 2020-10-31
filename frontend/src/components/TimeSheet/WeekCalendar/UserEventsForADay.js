@@ -14,23 +14,15 @@
  * limitations under the License.
  */
 
-import {Badge} from 'antd';
 import React from 'react';
 import PropTypes from 'prop-types';
+import './WeekCalendar.less';
+import UserEvent from '../../UserEvent/UserEvent';
 
-const TimeEntryForADayForMonthCalendar = ({timeEntry}) => {
-  return timeEntry ?
-    <div key={`badge-${timeEntry.id}`}>
-      <Badge status='success' text={timeEntry.comment}/>
-    </div> : <></>;
+const UserEventsForADay = ({eventEntries}) => {
+
+  return eventEntries.map(userEventDay => {
+    return <UserEvent userEvent={userEventDay}/>;
+  });
 };
-
-TimeEntryForADayForMonthCalendar.propTypes = {
-  timeEntry: PropTypes.shape({
-    id: PropTypes.number,
-    comment: PropTypes.string,
-    project: PropTypes.any
-  })
-};
-
-export default TimeEntryForADayForMonthCalendar;
+export default UserEventsForADay;

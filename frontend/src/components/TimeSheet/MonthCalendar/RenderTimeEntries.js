@@ -16,16 +16,16 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import TimeEntryForADayForMonthCalendar from './TimeEntryForADayForMonthCalendar';
+import TimeEntryForADay from './TimeEntryForADay';
 
-const TimeEntriesForMonthCalendar = ({userTimeEntry}) => {
+const RenderTimeEntries = ({userTimeEntry}) => {
   return userTimeEntry.data ?
     userTimeEntry.data.map(entry =>
-      <TimeEntryForADayForMonthCalendar timeEntry={entry} key={`user-time-entry-${entry.id}`}/>
+      <TimeEntryForADay timeEntry={entry} key={`user-time-entry-${entry.id}`}/>
     ) : <></>;
 };
 
-TimeEntriesForMonthCalendar.propTypes = {
+RenderTimeEntries.propTypes = {
   userTimeEntry: PropTypes.shape({
     date: PropTypes.object,
     disabled: PropTypes.bool,
@@ -39,4 +39,4 @@ TimeEntriesForMonthCalendar.propTypes = {
   })
 };
 
-export default TimeEntriesForMonthCalendar;
+export default RenderTimeEntries;

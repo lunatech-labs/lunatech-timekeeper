@@ -18,7 +18,7 @@ import React from 'react';
 import TimeEntry from '../../TimeEntry/TimeEntry';
 import moment from 'moment';
 
-const TimeEntriesForADayForAWeekCalendar = (props) => {
+const TimeEntriesForADay = (props) => {
   const {timeEntries, onClickEntryCard} = props;
   console.log('timeEntries: ' + timeEntries.date);
   return (timeEntries && timeEntries.timeEntriesForADay && timeEntries.timeEntriesForADay.data) ?
@@ -30,4 +30,4 @@ const TimeEntriesForADayForAWeekCalendar = (props) => {
       );
     }) : <></>;
 };
-export default TimeEntriesForADayForAWeekCalendar;
+export default TimeEntriesForADay;

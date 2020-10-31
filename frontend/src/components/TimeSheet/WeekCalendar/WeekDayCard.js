@@ -19,8 +19,8 @@ import PropTypes from 'prop-types';
 import './WeekCalendar.less';
 import moment from 'moment';
 import DisplayTopRightCorner from '../MonthCalendar/DisplayTopRightCorner';
-import TimeEntriesForADayForAWeekCalendar from './TimeEntriesForADayForAWeekCalendar';
-import UserEventsForADayForWeekCalendar from './UserEventsForADayForWeekCalendar';
+import TimeEntriesForADay from './TimeEntriesForADay';
+import UserEventsForADay from './UserEventsForADay';
 
 const WeekDayCard = (props) => {
   const { onClickCard, onClickButton, onClickEntryCard, dateAsMoment, timeEntries, eventEntries, isItPublicHoliday, hoursCompleted, isDayDisabled, isDayWithoutAnyEntries} = props;
@@ -46,8 +46,8 @@ const WeekDayCard = (props) => {
           />
         </div>
         <div onClick={(e) => onClickCard && onClickCard(e, dateAsMoment)} className={applyClass}>
-          <UserEventsForADayForWeekCalendar eventEntries={eventEntries}/>
-          <TimeEntriesForADayForAWeekCalendar
+          <UserEventsForADay eventEntries={eventEntries}/>
+          <TimeEntriesForADay
             timeEntries={timeEntries}
             onClickEntryCard={onClickEntryCard}
           />

@@ -16,14 +16,14 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import TimeEntriesForMonthCalendar from './TimeEntriesForMonthCalendar';
+import RenderTimeEntries from './RenderTimeEntries';
 import UserEventTag from './UserEventTag';
 
 const RenderMonthEntries = (props) => {
   const {userTimeEntry, userEventEntry} = props;
   return (
     <div>
-      <TimeEntriesForMonthCalendar userTimeEntry={userTimeEntry}/>
+      <RenderTimeEntries userTimeEntry={userTimeEntry}/>
       <UserEventTag userEvent={userEventEntry}/>
     </div>
   );
