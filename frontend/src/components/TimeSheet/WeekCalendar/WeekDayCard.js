@@ -23,37 +23,37 @@ import TimeEntriesForADayForAWeekCalendar from './TimeEntriesForADayForAWeekCale
 import UserEventsForADayForWeekCalendar from './UserEventsForADayForWeekCalendar';
 
 const WeekDayCard = (props) => {
-    const { onClickCard, onClickButton, onClickEntryCard, dateAsMoment, timeEntries, eventEntries, isItPublicHoliday, hoursCompleted, isDayDisabled, isDayWithoutAnyEntries} = props;
+  const { onClickCard, onClickButton, onClickEntryCard, dateAsMoment, timeEntries, eventEntries, isItPublicHoliday, hoursCompleted, isDayDisabled, isDayWithoutAnyEntries} = props;
 
-    const applyClass2 = (isDayWithoutAnyEntries && !isDayDisabled) ? 'tk_CardWeekCalendar_Body_With_Warn' : isDayDisabled ? 'tk_CardWeekCalendar_Body' : '';
-    const applyClass = 'tk_CardWeekCalendar_Body';
-    const isToday = (day) => {
-        return moment().isSame(day, 'day');
-    };
+  const applyClass2 = (isDayWithoutAnyEntries && !isDayDisabled) ? 'tk_CardWeekCalendar_Body_With_Warn' : isDayDisabled ? 'tk_CardWeekCalendar_Body' : '';
+  const applyClass = 'tk_CardWeekCalendar_Body';
+  const isToday = (day) => {
+    return moment().isSame(day, 'day');
+  };
 
-    return (
-        <div className="tk_WeekCalendar_Day" key={`WeekCalendarDay-${timeEntries.date.toString()}`}>
-            <p>{timeEntries.date.format('ddd')}</p>
-            <div className="tk_CardWeekCalendar">
-                <div className="tk_CardWeekCalendar_Head">
-                    <p className={isToday(moment(timeEntries.date)) ? 'tk_CurrentDay' : ''}>{timeEntries.date.format('Do')}</p>
-                    <DisplayTopRightCorner
-                        isPublicHoliday={isItPublicHoliday}
-                        hoursCompleted={hoursCompleted}
-                        dateAsMoment={timeEntries.date}
-                        onClickPlusButton={onClickButton}
-                        isDisabled={isDayDisabled}
-                    />
-                </div>
-                <div onClick={(e) => onClickCard && onClickCard(e, dateAsMoment)} className={applyClass}>
-                    <UserEventsForADayForWeekCalendar eventEntries={eventEntries}/>
-                    <TimeEntriesForADayForAWeekCalendar
-                        timeEntries={timeEntries}
-                        onClickEntryCard={onClickEntryCard}
-                    />
-                </div>
-            </div>
+  return (
+    <div className="tk_WeekCalendar_Day" key={`WeekCalendarDay-${timeEntries.date.toString()}`}>
+      <p>{timeEntries.date.format('ddd')}</p>
+      <div className="tk_CardWeekCalendar">
+        <div className="tk_CardWeekCalendar_Head">
+          <p className={isToday(moment(timeEntries.date)) ? 'tk_CurrentDay' : ''}>{timeEntries.date.format('Do')}</p>
+          <DisplayTopRightCorner
+            isPublicHoliday={isItPublicHoliday}
+            hoursCompleted={hoursCompleted}
+            dateAsMoment={timeEntries.date}
+            onClickPlusButton={onClickButton}
+            isDisabled={isDayDisabled}
+          />
         </div>
-    );
+        <div onClick={(e) => onClickCard && onClickCard(e, dateAsMoment)} className={applyClass}>
+          <UserEventsForADayForWeekCalendar eventEntries={eventEntries}/>
+          <TimeEntriesForADayForAWeekCalendar
+            timeEntries={timeEntries}
+            onClickEntryCard={onClickEntryCard}
+          />
+        </div>
+      </div>
+    </div>
+  );
 };
 export default WeekDayCard;

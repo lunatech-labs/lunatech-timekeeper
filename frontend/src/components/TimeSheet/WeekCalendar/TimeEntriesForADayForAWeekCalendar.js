@@ -19,15 +19,15 @@ import TimeEntry from '../../TimeEntry/TimeEntry';
 import moment from 'moment';
 
 const TimeEntriesForADayForAWeekCalendar = (props) => {
-    const {timeEntries, onClickEntryCard} = props;
-    console.log("timeEntries: " + timeEntries.date);
-    return (timeEntries && timeEntries.timeEntriesForADay && timeEntries.timeEntriesForADay.data) ?
-        timeEntries.timeEntriesForADay.data.map(entry => {
-            return (
-                <TimeEntry key={entry.id} entry={entry}
-                           onClick={mouseEvent => onClickEntryCard(mouseEvent, moment().utc(), entry.id)}
-                />
-            );
-        }) : <></>;
+  const {timeEntries, onClickEntryCard} = props;
+  console.log('timeEntries: ' + timeEntries.date);
+  return (timeEntries && timeEntries.timeEntriesForADay && timeEntries.timeEntriesForADay.data) ?
+    timeEntries.timeEntriesForADay.data.map(entry => {
+      return (
+        <TimeEntry key={entry.id} entry={entry}
+          onClick={mouseEvent => onClickEntryCard(mouseEvent, moment().utc(), entry.id)}
+        />
+      );
+    }) : <></>;
 };
 export default TimeEntriesForADayForAWeekCalendar;

@@ -21,8 +21,8 @@ import UserEvent from '../../UserEvent/UserEvent';
 
 const UserEventsForADayForWeekCalendar = ({eventEntries}) => {
 
-    return eventEntries.map(userEventDay => {
-        return <UserEvent userEvent={userEventDay}/>;
-    });
+  return eventEntries.map(userEventDay => {
+    return <UserEvent userEvent={userEventDay}/>;
+  });
 };
 export default UserEventsForADayForWeekCalendar;

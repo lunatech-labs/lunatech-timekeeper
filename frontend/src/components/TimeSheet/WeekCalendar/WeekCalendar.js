@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-import React, {useEffect, useState} from 'react';
-import {useHistory} from 'react-router-dom';
-import {Button, Select, Tag} from 'antd';
-import CardWeekCalendar from '../../Card/CardWeekCalendar';
+import React from 'react';
 import {
-  LeftOutlined,
   PlusOutlined,
-  RightOutlined,
   CheckOutlined,
   InfoCircleOutlined,
 } from '@ant-design/icons';
@@ -29,49 +24,18 @@ import PropTypes from 'prop-types';
 import './WeekCalendar.less';
 import {
   isWeekEnd,
-  renderRange,
-  renderRangeWithYear,
-  weekRangeOfDate,
   totalHoursPerDay,
   isPublicHoliday, isNotWeekEnd, isNotPublicHoliday,
 } from '../../../utils/momentUtils';
 import moment from 'moment';
-import _ from 'lodash';
 import UserEvent from '../../UserEvent/UserEvent';
 import {getMaximumHoursPerDay} from '../../../utils/configUtils';
-
-const numberOfWeek = 15; // It's the number of weeks where we can navigate
-
-const computeWeekRanges = (selectedDay) => {
-  const weekRanges = weekRangeOfDate(selectedDay, numberOfWeek);
-  return {
-    weekNumber: selectedDay.isoWeek(),
-    weekRange: weekRanges,
-    weekRangeMap: _.keyBy(weekRangeOfDate(moment().utc().startOf('week'), 1).concat(weekRanges), 'id'),
-    weekNumberCurrent: moment().utc().startOf('week').week()
-  };
-};
+import {Button, Tag} from 'antd';
+import CardWeekCalendar from '../../Card/CardWeekCalendar';
+import WeekNavigationPanel from './WeekNavigationPanel';
 
 const WeekCalendar = (props) => {
-  const publicHolidays = props.publicHolidays;
-  const userEvents = props.userEvents;
-  const weekSelected = props.firstDay.isoWeek();
-  const setWeekSelected = (weekNumber) => props.onDateChange(moment().isoWeek(weekNumber).startOf('week'));
-  const [weekRanges, setWeekRanges] = useState(computeWeekRanges(props.firstDay));
-  const {onPanelChange} = props;
-  const history = useHistory();
-
-  useEffect(() => {
-    const weekRange = _.get(weekRanges.weekRangeMap, weekSelected);
-    if (weekRange && onPanelChange) {
-      const {id, start, end} = weekRange;
-      onPanelChange(id, start, end);
-      if (weekRanges.weekNumber !== id) {
-        setWeekRanges(computeWeekRanges(start));
-        history.push('?year=2020&weekNumber=' + id);
-      }
-    }
-  }, [weekSelected, onPanelChange, weekRanges, history]);
+  const {publicHolidays, userEvents, firstDay, onDateChange, onPanelChange, timeEntriesData, onClickEntryCard, disabledWeekEnd, onClickButton, onClickCard} = props;
 
   const weekCalendarDataByDays = () => {
     const daysOfWeek = [...Array(7).keys()].map(i => props.firstDay.clone().add(i, 'day'));
@@ -93,44 +57,6 @@ const WeekCalendar = (props) => {
       return props.disabledWeekEnd && ( isWeekEnd(item.date) || isPublicHoliday(item.date, publicHolidays));
     }
   };
-
-  const WeekNavigator = () => {
-    const weekRangeIds = weekRanges.weekRange.map(weekRange => weekRange.id);
-    const weekRange = _.get(weekRanges.weekRangeMap, weekSelected);
-    const {start, end} = weekRange;
-    const disableLeft = !weekRangeIds.includes(weekSelected - 1);
-    const disableRight = !weekRangeIds.includes(weekSelected + 1);
-    return (
-      <div data-cy='weekNavigator'>
-        <Button data-cy='btnWeekPrevious' data-cy-week={weekSelected - 1} icon={<LeftOutlined/>} disabled={disableLeft} onClick={() => setWeekSelected(weekSelected - 1)}/>
-        <Button data-cy='btnWeekNext' data-cy-week={weekSelected + 1} icon={<RightOutlined/>} disabled={disableRight} onClick={() => setWeekSelected(weekSelected + 1)}/>
-        <p>{renderRangeWithYear(start, end)}</p>
-      </div>
-    );
-  };
-
-  const WeekNavigatorSelect = () =>
-    <Select
-      data-cy='selectWeekNavigator'
-      onChange={id => setWeekSelected(id)}
-      defaultValue={0}
-      value={weekSelected}
-      dropdownRender={menu => (
-        <div>
-          <div className={'tk_Select_CurrentWeek'} onClick={() => setWeekSelected(weekRanges.weekNumberCurrent)}>Current
-            Week
-          </div>
-          {menu}
-        </div>)}>
-      {weekRanges.weekRange.map(({id, start, end}) => {
-        return (
-          <Select.Option className={`${start.isSame(moment(), 'week') ? 'tk_CurrentWeekSelect' : ''}`}
-            key={`date-range-${id}`} value={id} disabled={id === weekSelected}>
-            {renderRange(start, end)}
-          </Select.Option>
-        );
-      })}
-    </Select>;
 
   const TopCardComponent = ({item, userEvents}) => {
     if(!isDisabled(item)){
@@ -182,12 +108,11 @@ const WeekCalendar = (props) => {
   };
   return (
     <div id="tk_WeekCalendar">
-      <div id="tk_WeekCalendar_Head">
-        <WeekNavigator/>
-        <div>
-          <WeekNavigatorSelect/>
-        </div>
-      </div>
+      <WeekNavigationPanel
+        firstDay={firstDay}
+        onDateChange={onDateChange}
+        onPanelChange={onPanelChange}
+      />
       <div id="tk_WeekCalendar_Body">
         {dataByDays.map((item, index) => {
           const renderDay = () => {
