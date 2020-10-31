@@ -22,6 +22,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
+/*
+* This representational component displays - Either:
+* 1. Plus Button to add task when hours are not completed
+* 2. PublicHoliday Text Tag
+* 3. Completed tag when hours are completed
+* At the top right corner in header of the Single date entry card
+* */
+
 const DisplayTopRightCorner = (props) => {
   const {isPublicHoliday, hoursCompleted, isDisabled, dateAsMoment, onClickPlusButton} = props;
 

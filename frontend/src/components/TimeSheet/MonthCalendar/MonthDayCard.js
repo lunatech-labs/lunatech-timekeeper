@@ -20,6 +20,17 @@ import React from 'react';
 import DisplayTopRightCorner from './DisplayTopRightCorner';
 import RenderMonthEntries from './RenderMonthEntries';
 
+/*
+* This is the single Day Card entry for a month calendar cells.
+*
+*  It has Top Right corner section where you can use Plus button to add task
+*   or displays completed tag when hours are completed
+*   or displays public tag when date of the single month card is public holiday
+*   or disable the button when it is weekend
+*
+*   Render Time & Event Entries component
+* */
+
 const MonthDayCard = (props) => {
   const {dateAsMoment, userEventEntry, userTimeEntry, onClickPlusButton, isDayWithoutAnyEntries, isPublicHoliday, isDisabled, hoursCompleted} = props;
 

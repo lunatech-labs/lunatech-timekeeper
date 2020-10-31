@@ -33,6 +33,11 @@ import {
   //DayCellConsoleLogger // Used only for debugging purpose
 } from '../CalendarUtils';
 
+/*
+* This is representational component used to displays time and event entries
+*
+* */
+
 const MonthCalendar = (props) => {
   const {contextDate, onDateChange, onClickPlusButton, timeEntriesData, disabledWeekEnd, onPanelChange, publicHolidays, userEvents } = props;
 

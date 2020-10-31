@@ -18,6 +18,11 @@ import {Tag} from 'antd';
 import React from 'react';
 import {CheckOutlined} from '@ant-design/icons';
 
+/*
+* This representational component is used to show "Completed" text.
+* It is currently in top right corner in a Cell.
+* */
+
 const CompletedTag = () => {
   return <Tag className="tk_Tag_Completed"><CheckOutlined/>Completed</Tag>;
 };
