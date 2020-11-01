@@ -91,15 +91,3 @@ IsDayWithoutAnyEntries.PropTypes = {
     data: PropTypes.any
   }).isRequired
 };
-
-
-export const DayCellConsoleLogger = (dateAsMoment, hoursCompleted, isItPublicHoliday, dayWithoutEntries, isDayDisabled, userTimeEntry, userEventEntry) => {
-  console.debug('MonthDayCellRender: [' + '\n'+
-        ' Date: '+ dateAsMoment.format('DD-MM-YYYY') + '\n' +
-        ' Hours completed on this day: ' + hoursCompleted + '\n' +
-        ' Is It PublicHoliday: ' + isItPublicHoliday + '\n' +
-        ' Day without any entries (mark red or warning class): ' + dayWithoutEntries + '\n' +
-        ' Is this day disabled (on Weekend or Public holiday): ' + isDayDisabled + '\n' +
-        ' TimeEntry for this day: ' + JSON.stringify(userTimeEntry) + '\n' +
-        ' EventEntry for this day: ' + JSON.stringify(userEventEntry) + '\n' + ' ]');
-};

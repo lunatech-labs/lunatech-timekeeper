@@ -29,8 +29,7 @@ import {
   UserTimeEntryData,
   IsDisabled,
   UserEventEntryData,
-  IsDayWithoutAnyEntries,
-  //DayCellConsoleLogger // Used only for debugging purpose
+  IsDayWithoutAnyEntries
 } from '../CalendarUtils';
 
 /*
@@ -48,8 +47,6 @@ const MonthCalendar = (props) => {
     const isItPublicHoliday = isPublicHoliday(dateAsMoment, publicHolidays);
     const isDayWithoutAnyEntries = IsDayWithoutAnyEntries(dateAsMoment, userTimeEntry, userEventEntry);
     const isDayDisabled = IsDisabled(dateAsMoment, timeEntriesData, disabledWeekEnd, publicHolidays);
-    // console.log('MonthDayCellRender.userTimeEntry: ', JSON.stringify(userTimeEntry));
-    //DayCellConsoleLogger(dateAsMoment, hoursCompleted, isItPublicHoliday, applyWarningClass, isDayDisabled, userTimeEntry, userEventEntry);
 
     return (
       <MonthDayCard
