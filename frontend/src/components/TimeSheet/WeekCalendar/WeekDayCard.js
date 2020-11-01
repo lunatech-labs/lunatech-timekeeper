@@ -24,7 +24,18 @@ import TimeEntriesForADay from './TimeEntriesForADay';
 import UserEventsForADay from './UserEventsForADay';
 
 const WeekDayCard = (props) => {
-  const { onClickCard, onClickButton, onClickEntryCard, dateAsMoment, timeEntries, eventEntries, isItPublicHoliday, hoursCompleted, isDayDisabled, isDayWithoutAnyEntries} = props;
+  const {
+    onClickCard,
+    onClickButton,
+    onClickEntryCard,
+    dateAsMoment,
+    timeEntries,
+    eventEntries,
+    isItPublicHoliday,
+    hoursCompleted,
+    isDayDisabled,
+    isDayWithoutAnyEntries
+  } = props;
 
   const applyClassForTodayDate = moment().isSame(timeEntries.date, 'day') ? 'tk_CurrentDay' : '';
 
