@@ -23,9 +23,20 @@ import CardWeekCalendar from '../../Card/CardWeekCalendar';
 import WeekNavigationPanel from './WeekNavigationPanel';
 
 const WeekCalendar = (props) => {
-  const {publicHolidays, userEvents, firstDay, onDateChange, onPanelChange, timeEntriesData, onClickEntryCard, disabledWeekEnd, onClickButton, onClickCard} = props;
+  const {
+    onClickButton,
+    onClickCard,
+    onClickEntryCard,
+    publicHolidays,
+    onPanelChange,
+    onDateChange,
+    firstDay,
+    userEvents,
+    timeEntriesData,
+    disabledWeekEnd
+  } = props;
 
-  const weekCalendarDataByDays = () => {
+  const computeWeeklyTimeEntriesByDays = () => {
     const daysOfWeek = [...Array(7).keys()].map(i => firstDay.clone().add(i, 'day'));
     return daysOfWeek.map(dayOfWeek => {
       const timeEntry = timeEntriesData.find(d => d.date.isSame(moment(dayOfWeek).utc(), 'day'));
@@ -36,7 +47,7 @@ const WeekCalendar = (props) => {
     });
   };
 
-  const dataByDays = weekCalendarDataByDays();
+  const weeklyTimeEntriesByDays = computeWeeklyTimeEntriesByDays();
 
   return (
     <div id="tk_WeekCalendar">
@@ -46,7 +57,7 @@ const WeekCalendar = (props) => {
         onPanelChange={onPanelChange}
       />
       <div id="tk_WeekCalendar_Body">
-        {dataByDays.map((item, index) => {
+        {weeklyTimeEntriesByDays.map((item, index) => {
           const renderDay = () => {
             if (item && item.day) {
               const {data, date, disabled} = item.day;

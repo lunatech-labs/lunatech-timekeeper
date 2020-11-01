@@ -220,7 +220,7 @@ const TimeEntriesPage = () => {
               return (
                 <div>
                   {data.map(entry => {
-                    console.log("Entry: " + JSON.stringify(entry));
+                    console.log('Entry: ' + JSON.stringify(entry));
                     return (
                       <TimeEntry key={entry.id} entry={entry}
                         onClick={e => onClickEntryCard(e, date, entry.id)}/>
