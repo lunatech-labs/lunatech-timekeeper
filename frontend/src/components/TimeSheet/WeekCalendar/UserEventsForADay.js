@@ -20,9 +20,35 @@ import './WeekCalendar.less';
 import UserEvent from '../../UserEvent/UserEvent';
 
 const UserEventsForADay = ({eventEntries}) => {
-
   return eventEntries.map(userEventDay => {
-    return <UserEvent userEvent={userEventDay}/>;
+    return <React.Fragment key={''}>
+      <UserEvent userEvent={userEventDay}/>
+    </React.Fragment>;
   });
 };
+
+UserEventsForADay.propTypes = {
+  eventEntries:  PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      date: PropTypes.string,
+      name: PropTypes.string,
+      description: PropTypes.string,
+      eventUserDaysResponse: PropTypes.arrayOf(
+        PropTypes.shape({
+          name: PropTypes.string,
+          description: PropTypes.string,
+          startDateTime: PropTypes.string,
+          endDateTime: PropTypes.string,
+          date: PropTypes.string
+        })
+      ),
+      eventType: PropTypes.string,
+      startDateTime: PropTypes.string,
+      endDateTime: PropTypes.string,
+      duration: PropTypes.string
+    })
+  )
+};
+
 export default UserEventsForADay;

@@ -21,7 +21,6 @@ import {totalHoursPerDay, isPublicHoliday} from '../../../utils/momentUtils';
 import WeekNavigationPanel from './WeekNavigationPanel';
 import {getMaximumHoursPerDay} from '../../../utils/configUtils';
 import {
-  DayCellConsoleLogger,
   IsDayWithoutAnyEntries,
   IsDisabled,
   UserEventEntryData,
@@ -74,21 +73,21 @@ const WeekCalendar = (props) => {
           const isDayWithoutAnyEntries = IsDayWithoutAnyEntries(dateAsMoment, timeEntriesForADay, eventEntries);
           const isDayDisabled = IsDisabled(dateAsMoment, timeEntriesData, disabledWeekEnd, publicHolidays);
 
-          // DayCellConsoleLogger(dateAsMoment, hoursCompleted, isItPublicHoliday, isDayWithoutAnyEntries, isDayDisabled, timeEntriesForADay, eventEntries);
-
           return (
-            <WeekDayCard
-              onClickCard={onClickCard}
-              onClickButton={onClickButton}
-              onClickEntryCard={onClickEntryCard}
-              dateAsMoment={timeEntries.date}
-              timeEntries={timeEntries}
-              eventEntries={eventEntries}
-              isItPublicHoliday={isItPublicHoliday}
-              hoursCompleted={hoursCompleted}
-              isDayDisabled={isDayDisabled}
-              isDayWithoutAnyEntries={isDayWithoutAnyEntries}
-            />
+            <React.Fragment key={`WeekDayCard-${timeEntries.date}`}>
+              <WeekDayCard
+                onClickCard={onClickCard}
+                onClickButton={onClickButton}
+                onClickEntryCard={onClickEntryCard}
+                dateAsMoment={timeEntries.date}
+                timeEntries={timeEntries}
+                eventEntries={eventEntries}
+                isItPublicHoliday={isItPublicHoliday}
+                hoursCompleted={hoursCompleted}
+                isDayDisabled={isDayDisabled}
+                isDayWithoutAnyEntries={isDayWithoutAnyEntries}
+              />
+            </React.Fragment>
           );
         }
         )
@@ -99,21 +98,11 @@ const WeekCalendar = (props) => {
 };
 
 WeekCalendar.propTypes = {
-  dateFormat: PropTypes.string,
-  headerDateFormat: PropTypes.string,
-  disabledWeekEnd: PropTypes.bool,
+  onClickButton: PropTypes.func,
+  onClickCard: PropTypes.func,
+  onClickEntryCard: PropTypes.func,
+  onPanelChange: PropTypes.func,
   onDateChange: PropTypes.func.isRequired,
-  firstDay: PropTypes.object.isRequired,
-  timeEntriesData: PropTypes.arrayOf(
-    PropTypes.shape({
-      date: PropTypes.object,
-      disabled: PropTypes.bool,
-      data: PropTypes.any
-    })
-  ).isRequired,
-  onClickButton: PropTypes.func, // (event, moment) => void
-  onPanelChange: PropTypes.func, // (id, start, end) => void
-  onClickCard: PropTypes.func, // (event, moment) => void
   publicHolidays:  PropTypes.arrayOf(
     PropTypes.shape({
       date: PropTypes.string,
@@ -122,6 +111,7 @@ WeekCalendar.propTypes = {
       countryCode: PropTypes.string
     })
   ),
+  firstDay: PropTypes.object.isRequired,
   userEvents: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number,
@@ -142,7 +132,15 @@ WeekCalendar.propTypes = {
       endDateTime: PropTypes.string,
       duration: PropTypes.string
     })
-  )
+  ),
+  timeEntriesData: PropTypes.arrayOf(
+    PropTypes.shape({
+      date: PropTypes.object,
+      disabled: PropTypes.bool,
+      data: PropTypes.any
+    })
+  ).isRequired,
+  disabledWeekEnd: PropTypes.bool,
 };
 
 export default WeekCalendar;

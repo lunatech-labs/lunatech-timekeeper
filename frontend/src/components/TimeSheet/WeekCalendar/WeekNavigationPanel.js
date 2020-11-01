@@ -15,6 +15,7 @@
  */
 
 import {Button, Select} from 'antd';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 import {renderRange, renderRangeWithYear, weekRangeOfDate} from '../../../utils/momentUtils';
 import React, {useEffect, useState} from 'react';
@@ -102,6 +103,12 @@ const WeekNavigationPanel = (props) => {
       </div>
     </div>
   );
+};
+
+WeekNavigationPanel.propTypes = {
+  firstDay: PropTypes.instanceOf(moment).isRequired,
+  onDateChange: PropTypes.func,
+  onPanelChange: PropTypes.func
 };
 
 export default WeekNavigationPanel;

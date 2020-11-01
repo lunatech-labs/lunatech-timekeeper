@@ -29,6 +29,8 @@ const WeekDayCard = (props) => {
   const applyClassForTodayDate = moment().isSame(timeEntries.date, 'day') ? 'tk_CurrentDay' : '';
 
   const applyClass2 = (isDayWithoutAnyEntries && !isDayDisabled) ? 'tk_CardWeekCalendar_Body_With_Warn' : isDayDisabled ? 'tk_CardWeekCalendar_Body' : '';
+  console.log('applyClass2: ' + applyClass2);
+
   const applyClass = 'tk_CardWeekCalendar_Body';
 
   return (
@@ -56,4 +58,19 @@ const WeekDayCard = (props) => {
     </div>
   );
 };
+
+WeekDayCard.propTypes = {
+  onClickCard: PropTypes.func.isRequired,
+  onClickButton: PropTypes.func.isRequired,
+  onClickEntryCard: PropTypes.func.isRequired,
+  dateAsMoment: PropTypes.instanceOf(moment).isRequired,
+  timeEntries: PropTypes.object.isRequired,
+  eventEntries:PropTypes.arrayOf(PropTypes.object),
+  isItPublicHoliday:PropTypes.bool,
+  hoursCompleted: PropTypes.bool,
+  isDayDisabled:PropTypes.bool,
+  isDayWithoutAnyEntries:PropTypes.bool,
+};
+
+
 export default WeekDayCard;

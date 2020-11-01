@@ -15,11 +15,14 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import TimeEntry from '../../TimeEntry/TimeEntry';
 
 const TimeEntriesForADay = (props) => {
   const {timeEntries, onClickEntryCard} = props;
+
   const checkIfDataExists = timeEntries && timeEntries.timeEntriesForADay && timeEntries.timeEntriesForADay.data;
+
   return (checkIfDataExists) ?
     timeEntries.timeEntriesForADay.data.map(entry => {
       return (
@@ -30,5 +33,10 @@ const TimeEntriesForADay = (props) => {
         />
       );
     }) : <></>;
+};
+
+TimeEntriesForADay.propTypes = {
+  timeEntries: PropTypes.object,
+  onClickEntryCard: PropTypes.func
 };
 export default TimeEntriesForADay;
