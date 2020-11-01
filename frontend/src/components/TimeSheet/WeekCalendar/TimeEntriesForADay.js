@@ -16,16 +16,17 @@
 
 import React from 'react';
 import TimeEntry from '../../TimeEntry/TimeEntry';
-import moment from 'moment';
 
 const TimeEntriesForADay = (props) => {
   const {timeEntries, onClickEntryCard} = props;
-  console.log('timeEntries: ' + timeEntries.date);
-  return (timeEntries && timeEntries.timeEntriesForADay && timeEntries.timeEntriesForADay.data) ?
+  const checkIfDataExists = timeEntries && timeEntries.timeEntriesForADay && timeEntries.timeEntriesForADay.data;
+  return (checkIfDataExists) ?
     timeEntries.timeEntriesForADay.data.map(entry => {
       return (
         <TimeEntry key={entry.id} entry={entry}
-          onClick={mouseEvent => onClickEntryCard(mouseEvent, moment().utc(), entry.id)}
+          onClick={ mouseEvent =>
+            onClickEntryCard(mouseEvent, timeEntries.date, entry.id)
+          }
         />
       );
     }) : <></>;

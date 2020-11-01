@@ -17,6 +17,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import './WeekCalendar.less';
+import './CardWeekCalendar.less';
 import moment from 'moment';
 import DisplayTopRightCorner from '../MonthCalendar/DisplayTopRightCorner';
 import TimeEntriesForADay from './TimeEntriesForADay';
@@ -25,18 +26,17 @@ import UserEventsForADay from './UserEventsForADay';
 const WeekDayCard = (props) => {
   const { onClickCard, onClickButton, onClickEntryCard, dateAsMoment, timeEntries, eventEntries, isItPublicHoliday, hoursCompleted, isDayDisabled, isDayWithoutAnyEntries} = props;
 
+  const applyClassForTodayDate = moment().isSame(timeEntries.date, 'day') ? 'tk_CurrentDay' : '';
+
   const applyClass2 = (isDayWithoutAnyEntries && !isDayDisabled) ? 'tk_CardWeekCalendar_Body_With_Warn' : isDayDisabled ? 'tk_CardWeekCalendar_Body' : '';
   const applyClass = 'tk_CardWeekCalendar_Body';
-  const isToday = (day) => {
-    return moment().isSame(day, 'day');
-  };
 
   return (
     <div className="tk_WeekCalendar_Day" key={`WeekCalendarDay-${timeEntries.date.toString()}`}>
       <p>{timeEntries.date.format('ddd')}</p>
       <div className="tk_CardWeekCalendar">
         <div className="tk_CardWeekCalendar_Head">
-          <p className={isToday(moment(timeEntries.date)) ? 'tk_CurrentDay' : ''}>{timeEntries.date.format('Do')}</p>
+          <p className={applyClassForTodayDate}>{timeEntries.date.format('Do')}</p>
           <DisplayTopRightCorner
             isPublicHoliday={isItPublicHoliday}
             hoursCompleted={hoursCompleted}

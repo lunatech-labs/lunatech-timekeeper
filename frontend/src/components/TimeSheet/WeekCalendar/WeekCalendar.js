@@ -17,19 +17,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import './WeekCalendar.less';
-import {isPublicHoliday, isWeekEnd,} from '../../../utils/momentUtils';
-import moment from 'moment';
-import CardWeekCalendar from '../../Card/CardWeekCalendar';
+import {totalHoursPerDay, isPublicHoliday} from '../../../utils/momentUtils';
 import WeekNavigationPanel from './WeekNavigationPanel';
+import {getMaximumHoursPerDay} from '../../../utils/configUtils';
+import {
+  DayCellConsoleLogger,
+  IsDayWithoutAnyEntries,
+  IsDisabled,
+  UserEventEntryData,
+  UserTimeEntryData
+} from '../CalendarUtils';
+import WeekDayCard from './WeekDayCard';
 
 const WeekCalendar = (props) => {
   const {
     onClickButton,
     onClickCard,
     onClickEntryCard,
-    publicHolidays,
     onPanelChange,
     onDateChange,
+    publicHolidays,
     firstDay,
     userEvents,
     timeEntriesData,
@@ -38,11 +45,10 @@ const WeekCalendar = (props) => {
 
   const computeWeeklyTimeEntriesByDays = () => {
     const daysOfWeek = [...Array(7).keys()].map(i => firstDay.clone().add(i, 'day'));
-    return daysOfWeek.map(dayOfWeek => {
-      const timeEntry = timeEntriesData.find(d => d.date.isSame(moment(dayOfWeek).utc(), 'day'));
+    return daysOfWeek.map(dateAsMoment => {
       return {
-        date: dayOfWeek,
-        day: timeEntry,
+        date: dateAsMoment,
+        timeEntriesForADay: UserTimeEntryData(dateAsMoment, timeEntriesData)
       };
     });
   };
@@ -57,56 +63,57 @@ const WeekCalendar = (props) => {
         onPanelChange={onPanelChange}
       />
       <div id="tk_WeekCalendar_Body">
-        {weeklyTimeEntriesByDays.map((item, index) => {
-          const renderDay = () => {
-            if (item && item.day) {
-              const {data, date, disabled} = item.day;
-              return item && item.day && props.dateCellRender(data, date, disabled);
-            }
-          };
+        { weeklyTimeEntriesByDays.map(timeEntries => {
 
-          const isToday = (day) => {
-            return moment().isSame(day, 'day');
-          };
+          const dateAsMoment = timeEntries.date;
+          const timeEntriesForADay = timeEntries.timeEntriesForADay.data;
+          const eventEntries = UserEventEntryData(userEvents, dateAsMoment);
+
+          const hoursCompleted = totalHoursPerDay(userEvents, dateAsMoment, timeEntriesForADay) >= getMaximumHoursPerDay();
+          const isItPublicHoliday = isPublicHoliday(dateAsMoment, publicHolidays);
+          const isDayWithoutAnyEntries = IsDayWithoutAnyEntries(dateAsMoment, timeEntriesForADay, eventEntries);
+          const isDayDisabled = IsDisabled(dateAsMoment, timeEntriesData, disabledWeekEnd, publicHolidays);
+
+          // DayCellConsoleLogger(dateAsMoment, hoursCompleted, isItPublicHoliday, isDayWithoutAnyEntries, isDayDisabled, timeEntriesForADay, eventEntries);
+
           return (
-            <div className="tk_WeekCalendar_Day" key={`day-card-${index}`}>
-              <p>{item.date.format('ddd')}</p>
-              <CardWeekCalendar onClick={(e) => props.onClickCard && props.onClickCard(e, item.date)}>
-                <div className="tk_CardWeekCalendar_Head">
-                  <p className={isToday(moment(item.date)) ? 'tk_CurrentDay' : ''}>{item.date.format('Do')}</p>
-                </div>
-                <div className={props.warningCardPredicate && props.warningCardPredicate(item.date, item.day) ?
-                  'tk_CardWeekCalendar_Body tk_CardWeekCalendar_Body_With_Warn' : 'tk_CardWeekCalendar_Body'} disabled={false}>
-                  {renderDay()}
-                </div>
-              </CardWeekCalendar>
-            </div>
+            <WeekDayCard
+              onClickCard={onClickCard}
+              onClickButton={onClickButton}
+              onClickEntryCard={onClickEntryCard}
+              dateAsMoment={timeEntries.date}
+              timeEntries={timeEntries}
+              eventEntries={eventEntries}
+              isItPublicHoliday={isItPublicHoliday}
+              hoursCompleted={hoursCompleted}
+              isDayDisabled={isDayDisabled}
+              isDayWithoutAnyEntries={isDayWithoutAnyEntries}
+            />
           );
-        })}
+        }
+        )
+        }
       </div>
     </div>
   );
 };
 
 WeekCalendar.propTypes = {
-  dateCellRender: PropTypes.func.isRequired, //(data, date, disabled) => node
   dateFormat: PropTypes.string,
   headerDateFormat: PropTypes.string,
   disabledWeekEnd: PropTypes.bool,
   onDateChange: PropTypes.func.isRequired,
   firstDay: PropTypes.object.isRequired,
-  days: PropTypes.arrayOf(
+  timeEntriesData: PropTypes.arrayOf(
     PropTypes.shape({
       date: PropTypes.object,
       disabled: PropTypes.bool,
       data: PropTypes.any
     })
   ).isRequired,
-  hiddenButtons: PropTypes.bool,
   onClickButton: PropTypes.func, // (event, moment) => void
   onPanelChange: PropTypes.func, // (id, start, end) => void
   onClickCard: PropTypes.func, // (event, moment) => void
-  warningCardPredicate : PropTypes.func, // (date, day) => bool
   publicHolidays:  PropTypes.arrayOf(
     PropTypes.shape({
       date: PropTypes.string,

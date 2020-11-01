@@ -21,7 +21,6 @@ import queryString from 'query-string';
 import moment from 'moment';
 import MainPage from '../MainPage/MainPage';
 import WeekCalendar from '../../components/TimeSheet/WeekCalendar/WeekCalendar';
-import TimeEntry from '../../components/TimeEntry/TimeEntry';
 import {useTimeKeeperAPI} from '../../utils/services';
 import {Alert, Form, Modal} from 'antd';
 import TimeEntryForm from '../../components/TimeEntry/TimeEntryForm';
@@ -121,21 +120,6 @@ const TimeEntriesPage = () => {
   const openModal = () => setVisibleEntryModal(true);
   const closeModal = () => setVisibleEntryModal(false);
 
-  const convertDateTimeToDate = (dateTime) => moment(moment(dateTime).format('YYYY-MM-DD'), 'YYYY-MM-DD');
-
-  const getEventsOnDate = (date) => userEvents.filter(userEvent =>
-    date.isBetween(
-      convertDateTimeToDate(userEvent.startDateTime).subtract(1, 'second'),
-      convertDateTimeToDate(userEvent.endDateTime).add(1, 'day')
-    )
-  );
-
-  // A day without entries in the past should be displayed with "warn" design
-  const hasWarnNoEntryInPastDay = (date, day) => {
-    const hasEventOnThisDate = getEventsOnDate(date).length > 0;
-    return moment().subtract('1', 'days').isAfter(date) && !day && !hasEventOnThisDate;
-  };
-
   const onClickAddTask = (e, m) => {
     setTaskMoment(m);
     setAddMode();
@@ -150,29 +134,28 @@ const TimeEntriesPage = () => {
     }
   };
 
-  const onClickEntryCard = (e, m, selectedEntryId) => {
+  const onClickEntryCard = (mouseEvent, dateAsMoment, selectedEntryId) => {
     setSelectedEntryId(selectedEntryId);
-    setTaskMoment(m);
+    setTaskMoment(dateAsMoment);
     setEditMode();
     openModal();
-    e.stopPropagation();
+    mouseEvent.stopPropagation();
   };
 
-  /* const removeDuplicatesElementAndSort = (array) => {
-    const set = new Set(array);
-    const arraySorted = [...set].sort((a, b) => a.localeCompare(b));
-    return arraySorted;
-  };
-*/
   const setViewMode = () => setMode('view');
   const setAddMode = () => setMode('add');
   const setEditMode = () => setMode('edit');
 
   const timeEntryForm = () => {
     if (selectedEntryId && mode === 'edit') {
-      return <TimeEntryForm selectedEntryId={selectedEntryId} setMode={setMode}
-        entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment}
-        userEvents={userEvents} form={form} mode={mode}
+      return <TimeEntryForm
+        mode={mode}
+        setMode={setMode}
+        selectedEntryId={selectedEntryId}
+        entries={entriesOfSelectedDay.map(entries => entries.data)}
+        currentDay={taskMoment}
+        userEvents={userEvents}
+        form={form}
         onSuccess={() => {
           closeModal();
           weekData.run();
@@ -181,8 +164,13 @@ const TimeEntriesPage = () => {
         }} onCancel={() => setViewMode()}
       />;
     }
-    return <TimeEntryForm setMode={setMode} entries={entriesOfSelectedDay.map(entries => entries.data)}
-      userEvents={userEvents} currentDay={taskMoment} form={form} mode={mode}
+    return <TimeEntryForm
+      mode={mode}
+      setMode={setMode}
+      entries={entriesOfSelectedDay.map(entries => entries.data)}
+      userEvents={userEvents}
+      currentDay={taskMoment}
+      form={form}
       onSuccess={() => {
         closeModal();
         weekData.run();
@@ -209,30 +197,16 @@ const TimeEntriesPage = () => {
       {
         calendarMode === 'week' ?
           <WeekCalendar
-            onDateChange={setContextDate}
-            firstDay={contextDate}
-            disabledWeekEnd={true}
-            hiddenButtons={false}
-            onPanelChange={(id, start) => setPrefixWeekUrl(start.year() + '?weekNumber=' + start.isoWeek())}
             onClickButton={onClickAddTask}
             onClickCard={onClickCard}
-            dateCellRender={(data, date) => {
-              return (
-                <div>
-                  {data.map(entry => {
-                    console.log('Entry: ' + JSON.stringify(entry));
-                    return (
-                      <TimeEntry key={entry.id} entry={entry}
-                        onClick={e => onClickEntryCard(e, date, entry.id)}/>
-                    );
-                  })}
-                </div>
-              );
-            }}
-            timeEntriesData={timeEntriesData}
+            onClickEntryCard={onClickEntryCard}
+            onPanelChange={(id, start) => setPrefixWeekUrl(start.year() + '?weekNumber=' + start.isoWeek())}
+            onDateChange={setContextDate}
             publicHolidays={publicHolidays}
+            firstDay={contextDate}
+            timeEntriesData={timeEntriesData}
+            disabledWeekEnd={true}
             userEvents={userEvents}
-            warningCardPredicate={hasWarnNoEntryInPastDay}
           /> :
           <MonthCalendar
             contextDate={contextDate}
