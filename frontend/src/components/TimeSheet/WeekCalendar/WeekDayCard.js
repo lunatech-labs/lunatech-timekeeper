@@ -76,10 +76,10 @@ WeekDayCard.propTypes = {
   dateAsMoment: PropTypes.instanceOf(moment).isRequired,
   timeEntries: PropTypes.object.isRequired,
   eventEntries:PropTypes.arrayOf(PropTypes.object),
-  isItPublicHoliday:PropTypes.bool,
-  hoursCompleted: PropTypes.bool,
-  isDayDisabled:PropTypes.bool,
-  isDayWithoutAnyEntries:PropTypes.bool,
+  isItPublicHoliday:PropTypes.bool.isRequired,
+  hoursCompleted: PropTypes.bool.isRequired,
+  isDayDisabled:PropTypes.bool.isRequired,
+  isDayWithoutAnyEntries:PropTypes.bool.isRequired,
 };
 
 
