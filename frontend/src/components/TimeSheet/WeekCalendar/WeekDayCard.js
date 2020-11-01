@@ -39,7 +39,7 @@ const WeekDayCard = (props) => {
   } = props;
 
   const applyClassForTodayDate = moment().isSame(timeEntries.date, 'day') ? 'tk_CurrentDay' : '';
-  const applyClass = (isDayWithoutAnyEntries && !isDayDisabled) ? 'tk_CardWeekCalendar_Body tk_CardWeekCalendar_Body_With_Warn' : 'tk_CardWeekCalendar_Body';
+  const applyClassForEntries = (isDayWithoutAnyEntries && !isDayDisabled) ? 'tk_CardWeekCalendar_Body tk_CardWeekCalendar_Body_With_Warn' : 'tk_CardWeekCalendar_Body';
 
   return (
     <div className="tk_WeekCalendar_Day" key={`WeekCalendarDay-${timeEntries.date.toString()}`}>
@@ -55,7 +55,7 @@ const WeekDayCard = (props) => {
             isDisabled={isDayDisabled}
           />
         </div>
-        <div className={applyClass}
+        <div className={applyClassForEntries}
           disabled={isDayDisabled}
           onClick={(e) => onClickCard && onClickCard(e, dateAsMoment)}
         >
