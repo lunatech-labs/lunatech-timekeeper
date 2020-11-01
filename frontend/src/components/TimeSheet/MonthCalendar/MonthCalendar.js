@@ -33,8 +33,7 @@ import {
 } from '../CalendarUtils';
 
 /*
-* This is representational component used to displays time and event entries
-*
+* This component is used to display time and event entries for a month
 * */
 
 const MonthCalendar = (props) => {

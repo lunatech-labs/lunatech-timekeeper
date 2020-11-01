@@ -16,6 +16,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import './WeekCalendar.less';
 import {totalHoursPerDay, isPublicHoliday} from '../../../utils/momentUtils';
 import WeekNavigationPanel from './WeekNavigationPanel';

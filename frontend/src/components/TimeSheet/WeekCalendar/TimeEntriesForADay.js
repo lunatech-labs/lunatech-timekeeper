@@ -16,6 +16,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import TimeEntry from '../../TimeEntry/TimeEntry';
 
 const TimeEntriesForADay = (props) => {

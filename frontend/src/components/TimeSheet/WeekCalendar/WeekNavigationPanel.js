@@ -17,11 +17,12 @@
 import {Button, Select} from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import {renderRange, renderRangeWithYear, weekRangeOfDate} from '../../../utils/momentUtils';
 import React, {useEffect, useState} from 'react';
 import _ from 'lodash';
 import {LeftOutlined, RightOutlined} from '@ant-design/icons';
 import {useHistory} from 'react-router-dom';
+
+import {renderRange, renderRangeWithYear, weekRangeOfDate} from '../../../utils/momentUtils';
 
 const numberOfWeek = 15; // It's the number of weeks where we can navigate
 
