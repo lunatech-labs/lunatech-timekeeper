@@ -15,22 +15,10 @@
  */
 
 import React from 'react';
-import {
-  PlusOutlined,
-  CheckOutlined,
-  InfoCircleOutlined,
-} from '@ant-design/icons';
 import PropTypes from 'prop-types';
 import './WeekCalendar.less';
-import {
-  isWeekEnd,
-  totalHoursPerDay,
-  isPublicHoliday, isNotWeekEnd, isNotPublicHoliday,
-} from '../../../utils/momentUtils';
+import {isPublicHoliday, isWeekEnd,} from '../../../utils/momentUtils';
 import moment from 'moment';
-import UserEvent from '../../UserEvent/UserEvent';
-import {getMaximumHoursPerDay} from '../../../utils/configUtils';
-import {Button, Tag} from 'antd';
 import CardWeekCalendar from '../../Card/CardWeekCalendar';
 import WeekNavigationPanel from './WeekNavigationPanel';
 
@@ -38,9 +26,9 @@ const WeekCalendar = (props) => {
   const {publicHolidays, userEvents, firstDay, onDateChange, onPanelChange, timeEntriesData, onClickEntryCard, disabledWeekEnd, onClickButton, onClickCard} = props;
 
   const weekCalendarDataByDays = () => {
-    const daysOfWeek = [...Array(7).keys()].map(i => props.firstDay.clone().add(i, 'day'));
+    const daysOfWeek = [...Array(7).keys()].map(i => firstDay.clone().add(i, 'day'));
     return daysOfWeek.map(dayOfWeek => {
-      const timeEntry = props.days.find(d => d.date.isSame(moment(dayOfWeek).utc(), 'day'));
+      const timeEntry = timeEntriesData.find(d => d.date.isSame(moment(dayOfWeek).utc(), 'day'));
       return {
         date: dayOfWeek,
         day: timeEntry,
@@ -50,62 +38,6 @@ const WeekCalendar = (props) => {
 
   const dataByDays = weekCalendarDataByDays();
 
-  const isDisabled = (item) => {
-    if(item.day) {
-      return (item.day.disabled || isPublicHoliday(item.day.date, publicHolidays));
-    }else{
-      return props.disabledWeekEnd && ( isWeekEnd(item.date) || isPublicHoliday(item.date, publicHolidays));
-    }
-  };
-
-  const TopCardComponent = ({item, userEvents}) => {
-    if(!isDisabled(item)){
-      const timeEntries = item.day ? item.day.data : [];
-      if(totalHoursPerDay(userEvents, item.date, timeEntries) >= getMaximumHoursPerDay()) {
-        return <Tag className="tk_Tag_Completed"><CheckOutlined /> Completed</Tag>;
-      }
-      return <Button
-        shape="circle"
-        icon={<PlusOutlined/>}
-        onClick={(e) => {
-          props.onClickButton && props.onClickButton(e, item.date);
-          e.stopPropagation();
-        }}/>;
-    }
-    if(isPublicHoliday(item.date,publicHolidays)){
-      return <Tag className="tk_Tag_Public_Holiday"><InfoCircleOutlined /> Public holiday</Tag>;
-    }
-    return '';
-  };
-  TopCardComponent.propTypes = {
-    item: PropTypes.shape({
-      date: PropTypes.object,
-      day: PropTypes.shape({
-        data: PropTypes.arrayOf(PropTypes.object)
-      })
-    }),
-    userEvents: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number,
-        date: PropTypes.string,
-        name: PropTypes.string,
-        description: PropTypes.string,
-        eventUserDaysResponse: PropTypes.arrayOf(
-          PropTypes.shape({
-            name: PropTypes.string,
-            description: PropTypes.string,
-            startDateTime: PropTypes.string,
-            endDateTime: PropTypes.string,
-            date: PropTypes.string
-          })
-        ),
-        eventType: PropTypes.string,
-        startDateTime: PropTypes.string,
-        endDateTime: PropTypes.string,
-        duration: PropTypes.string
-      })
-    )
-  };
   return (
     <div id="tk_WeekCalendar">
       <WeekNavigationPanel
@@ -121,17 +53,7 @@ const WeekCalendar = (props) => {
               return item && item.day && props.dateCellRender(data, date, disabled);
             }
           };
-          const renderUserEvents = (userEvents) => {
-            if(userEvents && item && isNotWeekEnd(item.date) && isNotPublicHoliday(item.date,publicHolidays)){
-              return userEvents.map(userEvent => {
-                return userEvent.eventUserDaysResponse.map(userEventDay => {
-                  if(userEventDay.date === item.date.format('YYYY-MM-DD')){
-                    return userEventDay && <UserEvent userEvent={userEventDay}/>;
-                  }
-                });
-              });
-            }
-          };
+
           const isToday = (day) => {
             return moment().isSame(day, 'day');
           };
@@ -141,11 +63,9 @@ const WeekCalendar = (props) => {
               <CardWeekCalendar onClick={(e) => props.onClickCard && props.onClickCard(e, item.date)}>
                 <div className="tk_CardWeekCalendar_Head">
                   <p className={isToday(moment(item.date)) ? 'tk_CurrentDay' : ''}>{item.date.format('Do')}</p>
-                  <TopCardComponent item={item} userEvents={userEvents} />
                 </div>
                 <div className={props.warningCardPredicate && props.warningCardPredicate(item.date, item.day) ?
-                  'tk_CardWeekCalendar_Body tk_CardWeekCalendar_Body_With_Warn' : 'tk_CardWeekCalendar_Body'} disabled={isDisabled(item)}>
-                  {renderUserEvents(userEvents)}
+                  'tk_CardWeekCalendar_Body tk_CardWeekCalendar_Body_With_Warn' : 'tk_CardWeekCalendar_Body'} disabled={false}>
                   {renderDay()}
                 </div>
               </CardWeekCalendar>

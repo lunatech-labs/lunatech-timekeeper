@@ -115,11 +115,6 @@ const TimeEntriesPage = () => {
   const userEvents = calendarMode === 'week' ?
     (weekData.data && !weekData.loading ? weekData.data.userEvents : []) : (monthData.data && !monthData.loading ? monthData.data.userEvents : []);
 
-  const datas = {
-    //firstDayOfWeek: weekData.data ? moment.utc(weekData.data.firstDayOfWeek) : today(),
-    days: timeEntriesData
-  };
-
   const entriesOfSelectedDay = timeEntriesData.filter(day => day.date.format('YYYY-MM-DD') === taskMoment.format('YYYY-MM-DD'));
 
   const resetForm = () => form.resetFields();
@@ -224,7 +219,8 @@ const TimeEntriesPage = () => {
             dateCellRender={(data, date) => {
               return (
                 <div>
-                  {data.filter(data => !!data).map(entry => {
+                  {data.map(entry => {
+                    console.log("Entry: " + JSON.stringify(entry));
                     return (
                       <TimeEntry key={entry.id} entry={entry}
                         onClick={e => onClickEntryCard(e, date, entry.id)}/>
@@ -233,7 +229,7 @@ const TimeEntriesPage = () => {
                 </div>
               );
             }}
-            days={datas.days}
+            timeEntriesData={timeEntriesData}
             publicHolidays={publicHolidays}
             userEvents={userEvents}
             warningCardPredicate={hasWarnNoEntryInPastDay}
