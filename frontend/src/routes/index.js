@@ -31,7 +31,7 @@ import ProjectsPage from '../pages/Project/allProjects';
 import NewProjectPage from '../pages/Project/newProject';
 import DetailProjectPage from '../pages/Project/detailProject';
 import EditProjectsPage from '../pages/Project/editProject';
-import TimeEntriesPage from '../pages/TimeSheet/timeEntriesPage';
+import TimeEntriesPage from '../pages/TimeSheet/TimeEntriesPage';
 import EventsPage from '../pages/Event/eventsPage';
 import NewEventTemplatePage from '../pages/Event/NewEventTemplatePage';
 import EditEventTemplatePage from '../pages/Event/EditEventTemplatePage';

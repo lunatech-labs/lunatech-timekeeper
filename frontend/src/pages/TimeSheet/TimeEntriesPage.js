@@ -20,8 +20,7 @@ import {useLocation} from 'react-router';
 import queryString from 'query-string';
 import moment from 'moment';
 import MainPage from '../MainPage/MainPage';
-import WeekCalendar from '../../components/TimeSheet/WeekCalendar';
-import TimeEntry from '../../components/TimeEntry/TimeEntry';
+import WeekCalendar from '../../components/TimeSheet/WeekCalendar/WeekCalendar';
 import {useTimeKeeperAPI} from '../../utils/services';
 import {Alert, Form, Modal} from 'antd';
 import TimeEntryForm from '../../components/TimeEntry/TimeEntryForm';
@@ -31,19 +30,12 @@ import CalendarSelectionMode from '../../components/TimeSheet/CalendarSelectionM
 import {getIsoMonth, isNotPublicHoliday, isNotWeekEnd} from '../../utils/momentUtils';
 import {groupBy} from '../../utils/jsFunctionUtils';
 
-const computeData = (timeSheets) => Object.entries(
-  groupBy(timeSheets.flatMap(({entries, project}) => entries.map(x => ({...x, project}))), entry => entry.startDateTime))
-  .map(([date, timeEntry]) => {
-    return ({ data: timeEntry, date: moment(date), disabled: false});
-  });
-
 const TimeEntriesPage = () => {
   const history = useHistory();
   const location = useLocation();
   const [calendarMode, setCalendarMode] = useState('week');
   const firstDayOfCurrentWeek = moment().utc().startOf('week');
   const [contextDate, setContextDate] = useState(firstDayOfCurrentWeek);
-  // const today = () => firstDayOfCurrentWeek.clone();
   const [prefixWeekUrl, setPrefixWeekUrl] = useState(() => {
     if (location.search) {
       let searchParams = queryString.parse(location.search);
@@ -108,7 +100,12 @@ const TimeEntriesPage = () => {
 
   const timeSheets = calendarMode === 'week' ?
     (weekData.data && !weekData.loading ? weekData.data.sheets : []) : (monthData.data && !monthData.loading ? monthData.data.sheets : []);
-  const timeEntriesData = computeData(timeSheets);
+
+  const timeEntriesData = (timeSheets) => Object.entries(
+    groupBy(timeSheets.flatMap(({entries, project}) => entries.map(x => ({...x, project}))), entry => entry.startDateTime))
+    .map(([date, timeEntry]) => {
+      return ({ data: timeEntry, date: moment(date), disabled: false});
+    });
 
   const publicHolidays = calendarMode === 'week' ?
     (weekData.data && !weekData.loading ? weekData.data.publicHolidays : []) : (monthData.data && !monthData.loading ? monthData.data.publicHolidays : []);
@@ -116,31 +113,11 @@ const TimeEntriesPage = () => {
   const userEvents = calendarMode === 'week' ?
     (weekData.data && !weekData.loading ? weekData.data.userEvents : []) : (monthData.data && !monthData.loading ? monthData.data.userEvents : []);
 
-  const datas = {
-    //firstDayOfWeek: weekData.data ? moment.utc(weekData.data.firstDayOfWeek) : today(),
-    days: timeEntriesData
-  };
-
-  const entriesOfSelectedDay = timeEntriesData.filter(day => day.date.format('YYYY-MM-DD') === taskMoment.format('YYYY-MM-DD'));
+  const entriesOfSelectedDay = timeEntriesData(timeSheets).filter(day => day.date.format('YYYY-MM-DD') === taskMoment.format('YYYY-MM-DD'));
 
   const resetForm = () => form.resetFields();
   const openModal = () => setVisibleEntryModal(true);
   const closeModal = () => setVisibleEntryModal(false);
-
-  const convertDateTimeToDate = (dateTime) => moment(moment(dateTime).format('YYYY-MM-DD'), 'YYYY-MM-DD');
-
-  const getEventsOnDate = (date) => userEvents.filter(userEvent =>
-    date.isBetween(
-      convertDateTimeToDate(userEvent.startDateTime).subtract(1, 'second'),
-      convertDateTimeToDate(userEvent.endDateTime).add(1, 'day')
-    )
-  );
-
-  // A day without entries in the past should be displayed with "warn" design
-  const hasWarnNoEntryInPastDay = (date, day) => {
-    const hasEventOnThisDate = getEventsOnDate(date).length > 0;
-    return moment().subtract('1', 'days').isAfter(date) && !day && !hasEventOnThisDate;
-  };
 
   const onClickAddTask = (e, m) => {
     setTaskMoment(m);
@@ -156,45 +133,48 @@ const TimeEntriesPage = () => {
     }
   };
 
-  const onClickEntryCard = (e, m, selectedEntryId) => {
+  const onClickEntryCard = (mouseEvent, dateAsMoment, selectedEntryId) => {
     setSelectedEntryId(selectedEntryId);
-    setTaskMoment(m);
+    setTaskMoment(dateAsMoment);
     setEditMode();
     openModal();
-    e.stopPropagation();
+    mouseEvent.stopPropagation();
   };
 
-  /* const removeDuplicatesElementAndSort = (array) => {
-    const set = new Set(array);
-    const arraySorted = [...set].sort((a, b) => a.localeCompare(b));
-    return arraySorted;
+  const onSuccessTimeEntries = () => {
+    closeModal();
+    weekData.run();
+    monthData.run();
+    setViewMode();
   };
-*/
+
   const setViewMode = () => setMode('view');
   const setAddMode = () => setMode('add');
   const setEditMode = () => setMode('edit');
 
   const timeEntryForm = () => {
     if (selectedEntryId && mode === 'edit') {
-      return <TimeEntryForm selectedEntryId={selectedEntryId} setMode={setMode}
-        entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment}
-        userEvents={userEvents} form={form} mode={mode}
-        onSuccess={() => {
-          closeModal();
-          weekData.run();
-          monthData.run();
-          setViewMode();
-        }} onCancel={() => setViewMode()}
+      return <TimeEntryForm
+        mode={mode}
+        setMode={setMode}
+        selectedEntryId={selectedEntryId}
+        entries={entriesOfSelectedDay.map(entries => entries.data)}
+        currentDay={taskMoment}
+        userEvents={userEvents}
+        form={form}
+        onSuccess={onSuccessTimeEntries}
+        onCancel={() => setViewMode()}
       />;
     }
-    return <TimeEntryForm setMode={setMode} entries={entriesOfSelectedDay.map(entries => entries.data)}
-      userEvents={userEvents} currentDay={taskMoment} form={form} mode={mode}
-      onSuccess={() => {
-        closeModal();
-        weekData.run();
-        monthData.run();
-        setViewMode();
-      }} onCancel={() => setViewMode()}
+    return <TimeEntryForm
+      mode={mode}
+      setMode={setMode}
+      entries={entriesOfSelectedDay.map(entries => entries.data)}
+      userEvents={userEvents}
+      currentDay={taskMoment}
+      form={form}
+      onSuccess={onSuccessTimeEntries}
+      onCancel={() => setViewMode()}
     />;
   };
 
@@ -215,35 +195,22 @@ const TimeEntriesPage = () => {
       {
         calendarMode === 'week' ?
           <WeekCalendar
-            onDateChange={setContextDate}
-            firstDay={contextDate}
-            disabledWeekEnd={true}
-            hiddenButtons={false}
-            onPanelChange={(id, start) => setPrefixWeekUrl(start.year() + '?weekNumber=' + start.isoWeek())}
             onClickButton={onClickAddTask}
             onClickCard={onClickCard}
-            dateCellRender={(data, date) => {
-              return (
-                <div>
-                  {data.filter(data => !!data).map(entry => {
-                    return (
-                      <TimeEntry key={entry.id} entry={entry}
-                        onClick={e => onClickEntryCard(e, date, entry.id)}/>
-                    );
-                  })}
-                </div>
-              );
-            }}
-            days={datas.days}
+            onClickEntryCard={onClickEntryCard}
+            onPanelChange={(id, start) => setPrefixWeekUrl(start.year() + '?weekNumber=' + start.isoWeek())}
+            onDateChange={setContextDate}
             publicHolidays={publicHolidays}
+            firstDay={contextDate}
+            timeEntriesData={timeEntriesData(timeSheets)}
+            disabledWeekEnd={true}
             userEvents={userEvents}
-            warningCardPredicate={hasWarnNoEntryInPastDay}
           /> :
           <MonthCalendar
             contextDate={contextDate}
             onDateChange={(date) => setContextDate(date.utc().startOf('week'))}
             onClickPlusButton={onClickAddTask}
-            timeEntriesData={timeEntriesData}
+            timeEntriesData={timeEntriesData(timeSheets)}
             disabledWeekEnd={true}
             onPanelChange={(date) => {
               setPrefixMonthUrl(`${date.year()}/month?monthNumber=${getIsoMonth(date)}`);
