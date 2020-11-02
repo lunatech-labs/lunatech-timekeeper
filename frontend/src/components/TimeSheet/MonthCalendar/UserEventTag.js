@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
+import {Tag} from 'antd';
 import React from 'react';
 import PropTypes from 'prop-types';
-import './CardWeekCalendar.less';
-const CardWeekCalendar = ( {children, onClick, onMouseOver, onMouseLeave} ) => {
-  return (
-    <div className="tk_CardWeekCalendar" onClick={onClick} onMouseOver={onMouseOver} onMouseLeave={onMouseLeave}>
-      {children}
-    </div>
-  );
+
+const UserEventTag = ({userEvent}) => {
+  return userEvent ?
+    userEvent.map( event => <Tag className="tk_Tag_UserEvent" key={`event-tag-${event.name}`}>{event.name}</Tag>)
+    : <></>;
 };
 
-CardWeekCalendar.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node
-  ]).isRequired,
-  disabled: PropTypes.bool,
-  onMouseOver: PropTypes.func,
-  onMouseLeave: PropTypes.func,
-  onClick: PropTypes.func
+UserEventTag.propTypes =  {
+  userEvent: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string,
+      description: PropTypes.string,
+      startDateTime: PropTypes.string,
+      endDateTime: PropTypes.string,
+      date: PropTypes.string
+    })
+  ).isRequired
 };
 
-export default CardWeekCalendar;
+export default UserEventTag;

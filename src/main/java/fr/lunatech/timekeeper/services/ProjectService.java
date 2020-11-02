@@ -22,6 +22,7 @@ import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.resources.exceptions.ConflictOnVersionException;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
 import fr.lunatech.timekeeper.services.requests.ProjectRequest;
+import fr.lunatech.timekeeper.services.requests.TimeSheetRequest;
 import fr.lunatech.timekeeper.services.responses.ProjectResponse;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.security.ForbiddenException;
@@ -32,6 +33,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -80,10 +82,25 @@ public class ProjectService {
 
     // docs : https://quarkus.io/guides/transaction
     @Transactional(MANDATORY)
-    private void deleteOldMembers(Project project, Predicate<ProjectUser> deleteUserPredicate, AuthenticationContext userContext) {
+    private void deleteOldMembers(Project project, Predicate<ProjectUser> deleteUserPredicate, List<Long> userTimeSheetsToUpdate, AuthenticationContext userContext) {
         project.users.stream()
-                .filter(deleteUserPredicate)
-                .forEach(PanacheEntityBase::delete);
+            .filter(deleteUserPredicate)
+            .map(user -> {
+                timeSheetService.findFirstForProjectForUser(project.id, user.user.id)
+                    .ifPresent(tsResp -> {
+                        if(userTimeSheetsToUpdate.contains(user.user.id)) {
+                            final TimeSheetRequest tsReq = new TimeSheetRequest(tsResp.timeUnit,
+                                tsResp.defaultIsBillable,
+                                LocalDate.now(),
+                                tsResp.maxDuration,
+                                tsResp.timeUnit,
+                                tsResp.startDate);
+                            timeSheetService.update(tsResp.id, tsReq, userContext);
+                        }
+                    });
+                return user;
+            })
+            .forEach(PanacheEntityBase::delete);
     }
 
     @Transactional(MANDATORY)
@@ -111,8 +128,15 @@ public class ProjectService {
             throw new ConflictOnVersionException(String.format("Version of this project does not match the current project version (%d) ", project.version));
         }
 
+        final List<Long> userIds = request.getUsers().stream().map(ProjectRequest.ProjectUserRequest::getId).collect(Collectors.toList());
+
+        final List<Long> userIdToDelete = project.users.stream()
+                .map(i -> i.user.id)
+                .filter(i -> !userIds.contains(i))
+                .collect(Collectors.toList());
+
         // It has to be done before the project is unbind
-        deleteOldMembers(project, request::notContains, ctx);
+        deleteOldMembers(project, request::notContains, userIdToDelete, ctx);
 
         final Project updatedProject = request.unbind(maybeProject.get(), clientService::findById, userService::findById, ctx);
 
@@ -122,6 +146,8 @@ public class ProjectService {
         createTimeSheetsForNewUsers(updatedProject, ctx);
         return Optional.of(project.id);
     }
+
+
 
     @Transactional
     public Optional<Long> joinProject(Long id, AuthenticationContext userContext) {
