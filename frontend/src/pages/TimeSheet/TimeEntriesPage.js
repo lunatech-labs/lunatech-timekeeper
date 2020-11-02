@@ -142,6 +142,13 @@ const TimeEntriesPage = () => {
     mouseEvent.stopPropagation();
   };
 
+  const onSuccessTimeEntries = () => {
+    closeModal();
+    weekData.run();
+    monthData.run();
+    setViewMode();
+  };
+
   const setViewMode = () => setMode('view');
   const setAddMode = () => setMode('add');
   const setEditMode = () => setMode('edit');
@@ -156,12 +163,8 @@ const TimeEntriesPage = () => {
         currentDay={taskMoment}
         userEvents={userEvents}
         form={form}
-        onSuccess={() => {
-          closeModal();
-          weekData.run();
-          monthData.run();
-          setViewMode();
-        }} onCancel={() => setViewMode()}
+        onSuccess={onSuccessTimeEntries}
+        onCancel={() => setViewMode()}
       />;
     }
     return <TimeEntryForm
@@ -171,12 +174,8 @@ const TimeEntriesPage = () => {
       userEvents={userEvents}
       currentDay={taskMoment}
       form={form}
-      onSuccess={() => {
-        closeModal();
-        weekData.run();
-        monthData.run();
-        setViewMode();
-      }} onCancel={() => setViewMode()}
+      onSuccess={onSuccessTimeEntries}
+      onCancel={() => setViewMode()}
     />;
   };
 
