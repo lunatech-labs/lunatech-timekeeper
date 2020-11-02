@@ -55,7 +55,9 @@ TimeEntriesForADay.propTypes = {
                 project: PropTypes.object
               }
             )
-          )
+          ),
+          date: PropTypes.instanceOf(moment),
+          disabled: PropTypes.bool
         }
       )
     }
