@@ -16,6 +16,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 
 import TimeEntry from '../../TimeEntry/TimeEntry';
 import {nonEmpty} from '../../../utils/jsFunctionUtils';
@@ -23,11 +24,10 @@ import {nonEmpty} from '../../../utils/jsFunctionUtils';
 const TimeEntriesForADay = (props) => {
   const {timeEntries, onClickEntryCard} = props;
 
-  const checkIfDataExists = nonEmpty(timeEntries)
+  return nonEmpty(timeEntries)
       && nonEmpty(timeEntries.timeEntriesForADay)
-      && nonEmpty(timeEntries.timeEntriesForADay.data);
-
-  return (checkIfDataExists) ?
+      && nonEmpty(timeEntries.timeEntriesForADay.data)
+      && onClickEntryCard ?
     timeEntries.timeEntriesForADay.data.map(entry => {
       return (
         <TimeEntry key={entry.id} entry={entry}
@@ -40,7 +40,26 @@ const TimeEntriesForADay = (props) => {
 };
 
 TimeEntriesForADay.propTypes = {
-  timeEntries: PropTypes.object,
-  onClickEntryCard: PropTypes.func
+  timeEntries: PropTypes.shape(
+    {
+      date: PropTypes.instanceOf(moment),
+      timeEntriesForADay: PropTypes.shape(
+        {
+          data: PropTypes.arrayOf(
+            PropTypes.shape(
+              {
+                id: PropTypes.number,
+                comment: PropTypes.string,
+                startDateTime: PropTypes.string,
+                numberOfHours: PropTypes.number,
+                project: PropTypes.object
+              }
+            )
+          )
+        }
+      )
+    }
+  ).isRequired,
+  onClickEntryCard: PropTypes.func.isRequired
 };
 export default TimeEntriesForADay;

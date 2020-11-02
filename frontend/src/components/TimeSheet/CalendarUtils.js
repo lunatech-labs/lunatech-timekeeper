@@ -68,11 +68,9 @@ UserEventEntryData.PropTypes = {
 };
 
 export const IsDayWithoutAnyEntries = (currentDate, userTimeEntry, userEventEntry) => {
-  const today = moment();
+  const today = moment().utc();
   const isCurrentDateBeforeToday = currentDate.isBefore(today , 'day');
-  const isUserTimeEntryEmpty = _.isEmpty(userTimeEntry);
-  const isUserEventEntryEmpty = _.isEmpty(userEventEntry);
-  return(isCurrentDateBeforeToday && isUserTimeEntryEmpty && isUserEventEntryEmpty);
+  return(isCurrentDateBeforeToday && _.isEmpty(userTimeEntry) && _.isEmpty(userEventEntry));
 };
 IsDayWithoutAnyEntries.PropTypes = {
   currentDate: PropTypes.instanceOf(moment),
