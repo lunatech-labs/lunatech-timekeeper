@@ -30,12 +30,6 @@ import CalendarSelectionMode from '../../components/TimeSheet/CalendarSelectionM
 import {getIsoMonth, isNotPublicHoliday, isNotWeekEnd} from '../../utils/momentUtils';
 import {groupBy} from '../../utils/jsFunctionUtils';
 
-const computeData = (timeSheets) => Object.entries(
-  groupBy(timeSheets.flatMap(({entries, project}) => entries.map(x => ({...x, project}))), entry => entry.startDateTime))
-  .map(([date, timeEntry]) => {
-    return ({ data: timeEntry, date: moment(date), disabled: false});
-  });
-
 const TimeEntriesPage = () => {
   const history = useHistory();
   const location = useLocation();
@@ -106,7 +100,12 @@ const TimeEntriesPage = () => {
 
   const timeSheets = calendarMode === 'week' ?
     (weekData.data && !weekData.loading ? weekData.data.sheets : []) : (monthData.data && !monthData.loading ? monthData.data.sheets : []);
-  const timeEntriesData = computeData(timeSheets);
+
+  const timeEntriesData = (timeSheets) => Object.entries(
+    groupBy(timeSheets.flatMap(({entries, project}) => entries.map(x => ({...x, project}))), entry => entry.startDateTime))
+    .map(([date, timeEntry]) => {
+      return ({ data: timeEntry, date: moment(date), disabled: false});
+    });
 
   const publicHolidays = calendarMode === 'week' ?
     (weekData.data && !weekData.loading ? weekData.data.publicHolidays : []) : (monthData.data && !monthData.loading ? monthData.data.publicHolidays : []);
@@ -114,7 +113,7 @@ const TimeEntriesPage = () => {
   const userEvents = calendarMode === 'week' ?
     (weekData.data && !weekData.loading ? weekData.data.userEvents : []) : (monthData.data && !monthData.loading ? monthData.data.userEvents : []);
 
-  const entriesOfSelectedDay = timeEntriesData.filter(day => day.date.format('YYYY-MM-DD') === taskMoment.format('YYYY-MM-DD'));
+  const entriesOfSelectedDay = timeEntriesData(timeSheets).filter(day => day.date.format('YYYY-MM-DD') === taskMoment.format('YYYY-MM-DD'));
 
   const resetForm = () => form.resetFields();
   const openModal = () => setVisibleEntryModal(true);
@@ -203,7 +202,7 @@ const TimeEntriesPage = () => {
             onDateChange={setContextDate}
             publicHolidays={publicHolidays}
             firstDay={contextDate}
-            timeEntriesData={timeEntriesData}
+            timeEntriesData={timeEntriesData(timeSheets)}
             disabledWeekEnd={true}
             userEvents={userEvents}
           /> :
@@ -211,7 +210,7 @@ const TimeEntriesPage = () => {
             contextDate={contextDate}
             onDateChange={(date) => setContextDate(date.utc().startOf('week'))}
             onClickPlusButton={onClickAddTask}
-            timeEntriesData={timeEntriesData}
+            timeEntriesData={timeEntriesData(timeSheets)}
             disabledWeekEnd={true}
             onPanelChange={(date) => {
               setPrefixMonthUrl(`${date.year()}/month?monthNumber=${getIsoMonth(date)}`);
