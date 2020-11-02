@@ -18,11 +18,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import TimeEntry from '../../TimeEntry/TimeEntry';
+import {nonEmpty} from '../../../utils/jsFunctionUtils';
 
 const TimeEntriesForADay = (props) => {
   const {timeEntries, onClickEntryCard} = props;
 
-  const checkIfDataExists = timeEntries && timeEntries.timeEntriesForADay && timeEntries.timeEntriesForADay.data;
+  const checkIfDataExists = nonEmpty(timeEntries)
+      && nonEmpty(timeEntries.timeEntriesForADay)
+      && nonEmpty(timeEntries.timeEntriesForADay.data);
 
   return (checkIfDataExists) ?
     timeEntries.timeEntriesForADay.data.map(entry => {
