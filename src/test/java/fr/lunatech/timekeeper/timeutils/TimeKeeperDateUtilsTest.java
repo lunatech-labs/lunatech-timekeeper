@@ -405,12 +405,64 @@ class TimeKeeperDateUtilsTest {
     }
 
     @Test
+    void shouldReturn8Hours() {
+        assertEquals(8, TimeKeeperDateUtils.getMaxHoursInDay());
+    }
+
+    @Test
     void shouldCompute0Hours() {
         assertEquals(0L,
                 TimeKeeperDateUtils.computeTotalNumberOfHours(THE_17_TH_JUNE_2020_AT_9_AM,
                         THE_17_TH_JUNE_2020_AT_9_AM
                 )
         );
+    }
+
+    @Test
+    void shouldCompute1HourToEndOfDay() {
+        assertEquals(1L, TimeKeeperDateUtils.computeTotalNumberOfHoursToEndOfDay(THE_17_TH_JULY_2020_AT_16_PM));
+    }
+
+    @Test
+    void shouldCompute5HoursToEndOfDay() {
+        assertEquals(5L, TimeKeeperDateUtils.computeTotalNumberOfHoursToEndOfDay(THE_17_TH_JUNE_2020_AT_NOON));
+    }
+
+    @Test
+    void shouldCompute1HourFromStartOfDay() {
+        assertEquals(1L, TimeKeeperDateUtils.computeTotalNumberOfHoursFromStartOfDay(THE_20_TH_JULY_2020_AT_10_AM));
+    }
+
+    @Test
+    void shouldCompute4HoursFromStartOfDay() {
+        assertEquals(4L, TimeKeeperDateUtils.computeTotalNumberOfHoursFromStartOfDay(THE_18_TH_JUNE_2020_AT_13_PM));
+    }
+
+    @Test
+    void shouldCompute2HoursOnStartDay() {
+        assertEquals(2L, TimeKeeperDateUtils.computeHoursOnDay(
+                THE_15_TH_JUNE_2020_AT_9_AM.toLocalDate(),
+                THE_15_TH_JUNE_2020_AT_15_PM,
+                THE_17_TH_JUNE_2020_AT_NOON
+                ));
+    }
+
+    @Test
+    void shouldCompute8HoursOnInBetweenDay() {
+        assertEquals(8L, TimeKeeperDateUtils.computeHoursOnDay(
+                THE_16_TH_JUNE_2020_AT_9_AM.toLocalDate(),
+                THE_15_TH_JUNE_2020_AT_15_PM,
+                THE_17_TH_JUNE_2020_AT_NOON
+        ));
+    }
+
+    @Test
+    void shouldCompute3HoursOnEndDay() {
+        assertEquals(3L, TimeKeeperDateUtils.computeHoursOnDay(
+                THE_17_TH_JUNE_2020_AT_9_AM.toLocalDate(),
+                THE_15_TH_JUNE_2020_AT_15_PM,
+                THE_17_TH_JUNE_2020_AT_NOON
+        ));
     }
 
     @Test

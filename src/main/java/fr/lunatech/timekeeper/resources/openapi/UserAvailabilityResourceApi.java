@@ -16,6 +16,7 @@
 
 package fr.lunatech.timekeeper.resources.openapi;
 
+import fr.lunatech.timekeeper.services.responses.AvailabilityResponse;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
@@ -26,9 +27,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
 
 @Path("/available")
 public interface UserAvailabilityResourceApi {
@@ -48,7 +46,5 @@ public interface UserAvailabilityResourceApi {
                     description = "No users found"
             )
     })
-//    List<Map<String, List<Object>>> getAvailabilities(@PathParam("start") LocalDate start, @PathParam("end") LocalDate end);
-    List<Map<String, List<Object>>> getAvailabilities(@PathParam("start") LocalDate start, @PathParam("end") LocalDate end);
-    //TODO: To Map or to AvailabilityResponse
+    AvailabilityResponse getAvailabilities(@PathParam("start") String startDateTime, @PathParam("end") String endDateTime);
 }

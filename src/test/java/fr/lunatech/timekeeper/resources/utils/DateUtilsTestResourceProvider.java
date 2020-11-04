@@ -16,6 +16,8 @@ public class DateUtilsTestResourceProvider {
     public static final LocalDateTime THE_3_RD_JANUARY_2020_AT_10_AM = LocalDate.of(2020, 1, 3).atTime(10, 0).truncatedTo(ChronoUnit.HOURS);
 
     public static final LocalDateTime THE_15_TH_JUNE_2020_AT_9_AM = LocalDate.of(2020, 6, 15).atTime(9, 0).truncatedTo(ChronoUnit.HOURS);
+    public static final LocalDateTime THE_15_TH_JUNE_2020_AT_15_PM = LocalDate.of(2020, 6, 15).atTime(15, 0).truncatedTo(ChronoUnit.HOURS);
+    public static final LocalDateTime THE_16_TH_JUNE_2020_AT_9_AM = LocalDate.of(2020, 6, 16).atTime(9, 0).truncatedTo(ChronoUnit.HOURS);
     public static final LocalDateTime THE_17_TH_JUNE_2020_AT_9_AM = LocalDate.of(2020, 6, 17).atTime(9, 0).truncatedTo(ChronoUnit.HOURS);
     public static final LocalDateTime THE_17_TH_JUNE_2020_AT_8_AM = LocalDate.of(2020, 6, 17).atTime(8, 0).truncatedTo(ChronoUnit.HOURS);
     public static final LocalDateTime THE_17_TH_JUNE_2020_AT_NOON = LocalDate.of(2020, 6, 17).atTime(12, 0).truncatedTo(ChronoUnit.HOURS);
@@ -43,6 +45,7 @@ public class DateUtilsTestResourceProvider {
 
     public static final LocalDateTime THE_6_TH_OCTOBER_2020_AT_9_AM = LocalDateTime.of(2020, 10, 6, 9, 0);
     public static final LocalDateTime THE_6_TH_OCTOBER_2020_AT_10_AM = LocalDateTime.of(2020, 10, 6, 10, 0);
+    public static final LocalDateTime THE_6_TH_OCTOBER_2020_AT_17_PM = LocalDateTime.of(2020, 10, 6, 17, 0);
 
     public static final LocalDateTime NEW_YEARS_EVE_2020_AT_16_PM = LocalDate.of(2020, 12, 31).atTime(16, 0).truncatedTo(ChronoUnit.HOURS);
     public static final LocalDateTime THE_4_TH_JANUARY_2021_AT_10_AM = LocalDate.of(2021, 1, 4).atTime(10, 0).truncatedTo(ChronoUnit.HOURS);
