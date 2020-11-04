@@ -31,10 +31,10 @@ import java.util.stream.IntStream;
 public class TimeKeeperDateUtils {
 
     //TODO - get from config
-    private static final LocalTime START_OF_DAY = LocalTime.parse("09:00:00",
+    public static final LocalTime START_OF_DAY = LocalTime.parse("09:00:00",
             DateTimeFormatter.ISO_TIME);
     //TODO - get from config
-    private static final LocalTime END_OF_DAY = LocalTime.parse("17:00:00",
+    public static final LocalTime END_OF_DAY = LocalTime.parse("17:00:00",
             DateTimeFormatter.ISO_TIME);
 
     private TimeKeeperDateUtils() {

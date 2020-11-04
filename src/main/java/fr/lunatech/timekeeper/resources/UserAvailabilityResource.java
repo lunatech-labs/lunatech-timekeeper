@@ -58,56 +58,48 @@ public class UserAvailabilityResource implements UserAvailabilityResourceApi {
         try {
             final LocalDateTime startLocalDateTime = LocalDateTime.parse(startDateTime);
             final LocalDateTime endLocalDateTime = LocalDateTime.parse(endDateTime);
-            final LocalDate startParam = startLocalDateTime.toLocalDate();
-            final LocalDate endParam = endLocalDateTime.toLocalDate();
+            final LocalDate startDate = startLocalDateTime.toLocalDate();
+            final LocalDate endDate = endLocalDateTime.toLocalDate();
 
             //Let's get all the users
-            List<UserResponse> listAllResponses = userService.listAllResponses(authentication.context());
+            List<UserResponse> availableUserResponses = userService.listAllResponses(authentication.context());
+            List<UserResponse> unavailableUserResponses = List.copyOf(availableUserResponses);
 
             //Let's get all the user events in the system
             List<UserEventResponse> listAllUserEvents = userEventService.listAllEventUser(authentication.context());
 
-            if (startParam.isEqual(endParam)) {
-                //Single day logic
-                final var hours = TimeKeeperDateUtils.computeTotalNumberOfHours(startLocalDateTime, endLocalDateTime);
-                final var eventsOnDay = listAllUserEvents
-                        .stream()
-                        .filter(event ->
-                                LocalDateTime.parse(event.getStartDateTime()).toLocalDate().isEqual(startParam)
-                                        || LocalDateTime.parse(event.getEndDateTime()).toLocalDate().isEqual(startParam)
-                        )
-                        .collect(Collectors.groupingBy(e ->
-                                        e.getAttendees().get(0).getUserId(), Collectors.summingInt(e ->
-                                        TimeKeeperDateUtils.computeHoursOnDay(startParam
-                                                , LocalDateTime.parse(e.getStartDateTime())
-                                                , LocalDateTime.parse(e.getEndDateTime())
-                                        ).intValue()
-                                )
-                        ));
-
-
-                final var maxHoursInDay = TimeKeeperDateUtils.getMaxHoursInDay();
-                final var unavailable = listAllResponses
-                        .stream()
-                        .filter(user -> {
-                            if (eventsOnDay.containsKey(user.getId()))
-                                return hours + eventsOnDay.getOrDefault(user.getId(), maxHoursInDay) > maxHoursInDay;
-                            else
-                                return false;
-                        })
-                        .collect(Collectors.toList());
-
-                listAllResponses.removeAll(unavailable);
-
-                return new AvailabilityResponse(
-                        startLocalDateTime
+            if (startDate.isEqual(endDate)) {
+                //When start and end are the same day
+                filterAvailabilityForDay(startDate, startLocalDateTime, endLocalDateTime, availableUserResponses, listAllUserEvents);
+            } else if(startDate.plusDays(1).isEqual(endDate)) {
+                //When end is the day after start
+                //remove any unavailable at the start
+                filterAvailabilityForDay(startDate
+                        , startLocalDateTime
+                        , LocalDateTime.of(startDate, TimeKeeperDateUtils.END_OF_DAY)
+                        , availableUserResponses
+                        , listAllUserEvents
+                );
+                //remove any unavailable at the end
+                filterAvailabilityForDay(endDate
+                        , LocalDateTime.of(endDate, TimeKeeperDateUtils.START_OF_DAY)
                         , endLocalDateTime
-                        , listAllResponses
-                        , unavailable
+                        , availableUserResponses
+                        , listAllUserEvents
                 );
             } else {
-                //Multiday logic
-                final Interval queryInterval = new Interval(DateTime.parse(startDateTime), DateTime.parse(endDateTime));
+                //When start and end has days in between
+                //Remove from 'available' if a user already has an event between the start and end dates
+                final Interval queryInterval = new Interval(
+                        DateTime.parse(startDateTime).plusDays(1) //Don't include the start date - we handle that later
+                                .withHourOfDay(TimeKeeperDateUtils.START_OF_DAY.getHour())
+                                .withMinuteOfHour(TimeKeeperDateUtils.START_OF_DAY.getMinute())
+                                .withSecondOfMinute(TimeKeeperDateUtils.START_OF_DAY.getSecond())
+                        , DateTime.parse(endDateTime).minusDays(1) //Don't include the end date - we handle that later
+                                .withHourOfDay(TimeKeeperDateUtils.END_OF_DAY.getHour())
+                                .withMinuteOfHour(TimeKeeperDateUtils.END_OF_DAY.getMinute())
+                                .withSecondOfMinute(TimeKeeperDateUtils.END_OF_DAY.getSecond())
+                );
                 final var unavailableUserIds = listAllUserEvents
                         .stream()
                         .filter(event -> {
@@ -124,22 +116,81 @@ public class UserAvailabilityResource implements UserAvailabilityResourceApi {
                         .distinct()
                         .collect(Collectors.toList());
 
-                final var unavailable = listAllResponses
+                final var unavailable = availableUserResponses
                         .stream()
                         .filter(user -> unavailableUserIds.contains(user.getId()))
                         .collect(Collectors.toList());
+                availableUserResponses.removeAll(unavailable);
 
-                listAllResponses.removeAll(unavailable);
-
-                return new AvailabilityResponse(
-                        startLocalDateTime
-                        , endLocalDateTime
-                        , listAllResponses
-                        , unavailable
+                //remove any unavailable at the start
+                filterAvailabilityForDay(startDate
+                        , startLocalDateTime
+                        , LocalDateTime.of(startDate, TimeKeeperDateUtils.END_OF_DAY)
+                        , availableUserResponses
+                        , listAllUserEvents
                 );
+                //remove any unavailable at the end
+                filterAvailabilityForDay(endDate
+                        , LocalDateTime.of(endDate, TimeKeeperDateUtils.START_OF_DAY)
+                        , endLocalDateTime
+                        , availableUserResponses
+                        , listAllUserEvents
+                );
+
             }
+
+            return new AvailabilityResponse(
+                    startLocalDateTime
+                    , endLocalDateTime
+                    , availableUserResponses
+                    , unavailableUserResponses
+                        .stream()
+                        .filter(user -> availableUserResponses.contains(user) == false)
+                        .collect(Collectors.toList())
+            );
         } catch (Exception e) {
             throw new NotFoundException();
         }
+    }
+
+    private void filterAvailabilityForDay(LocalDate referenceDate, LocalDateTime startLocalDateTime, LocalDateTime endLocalDateTime, List<UserResponse> listAllResponses, List<UserEventResponse> listAllUserEvents) {
+        final var hours = TimeKeeperDateUtils.computeTotalNumberOfHours(startLocalDateTime, endLocalDateTime);
+        final Interval queryInterval = new Interval(
+                DateTime.parse(referenceDate.toString())
+                        .withHourOfDay(TimeKeeperDateUtils.START_OF_DAY.getHour())
+                        .withMinuteOfHour(TimeKeeperDateUtils.START_OF_DAY.getMinute())
+                        .withSecondOfMinute(TimeKeeperDateUtils.START_OF_DAY.getSecond()),
+                DateTime.parse(referenceDate.toString())
+                        .withHourOfDay(TimeKeeperDateUtils.END_OF_DAY.getHour())
+                        .withMinuteOfHour(TimeKeeperDateUtils.END_OF_DAY.getMinute())
+                        .withSecondOfMinute(TimeKeeperDateUtils.END_OF_DAY.getSecond())
+        );
+        final var eventsOnDay = listAllUserEvents
+                .stream()
+                .filter(event -> {
+                    final Interval eventInterval = new Interval(DateTime.parse(event.getStartDateTime()), DateTime.parse(event.getEndDateTime()));
+                    return queryInterval.overlaps(eventInterval);
+                })
+                .collect(Collectors.groupingBy(e ->
+                                e.getAttendees().get(0).getUserId(), Collectors.summingInt(e ->
+                                TimeKeeperDateUtils.computeHoursOnDay(referenceDate
+                                        , LocalDateTime.parse(e.getStartDateTime())
+                                        , LocalDateTime.parse(e.getEndDateTime())
+                                ).intValue()
+                        )
+                ));
+
+        final var maxHoursInDay = TimeKeeperDateUtils.getMaxHoursInDay();
+        final var unavailable = listAllResponses
+                .stream()
+                .filter(user -> {
+                    if (eventsOnDay.containsKey(user.getId()))
+                        return hours + eventsOnDay.getOrDefault(user.getId(), maxHoursInDay) > maxHoursInDay;
+                    else
+                        return false;
+                })
+                .collect(Collectors.toList());
+
+        listAllResponses.removeAll(unavailable);
     }
 }
