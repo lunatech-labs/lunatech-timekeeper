@@ -18,6 +18,7 @@ import React from 'react';
 import Keycloak from 'keycloak-js';
 import { KeycloakProvider } from '@react-keycloak/web';
 import { AppRouter } from './routes';
+
 import './App.less';
 
 const keycloak = new Keycloak({
@@ -39,7 +40,9 @@ class App extends React.PureComponent {
         onEvent={this.onKeycloakEvent}
         onTokens={this.onKeycloakTokens}
       >
-        <AppRouter />
+        <div id='app' className="dark-theme">
+          <AppRouter />
+        </div>
       </KeycloakProvider>
     );
   }
