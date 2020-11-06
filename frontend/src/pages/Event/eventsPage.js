@@ -26,10 +26,7 @@ const EventsPage = () => {
   const isAdmin = keycloak.hasRealmRole('admin');
   const actions = isAdmin && <Link id="btnAddEvent" className="tk_Btn tk_BtnPrimary" key='addLink' to={'/events/new'}>Add event</Link>;
   return (
-    <MainPage
-      title="List of events"
-      actions={actions}
-    >
+    <MainPage actions={actions}>
       <EventsNavBar/>
     </MainPage>
   );
