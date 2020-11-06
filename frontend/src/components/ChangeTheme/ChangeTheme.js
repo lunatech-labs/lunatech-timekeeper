@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-const ChangeTheme = (newThemeName) => {
-    document.getElementById('app').className = newThemeName;
-}
-  
-export default ChangeTheme;
+import React  from 'react';
+
+export const ChangeTheme = React.createContext({
+    theme: 'dark',
+    toggleTheme: () => {},
+});

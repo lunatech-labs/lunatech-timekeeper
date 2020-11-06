@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import Keycloak from 'keycloak-js';
 import { KeycloakProvider } from '@react-keycloak/web';
 import { AppRouter } from './routes';
 
 import './App.less';
+import { ChangeTheme } from './components/ChangeTheme/ChangeTheme';
 
 const keycloak = new Keycloak({
   realm: process.env.REACT_APP_KEYCLOAK_REALM,
@@ -31,6 +32,28 @@ const keycloakProviderInitConfig = {
   onLoad: 'check-sso',
 };
 
+function TestPago ({children}) {
+  const [theme, setTheme] = useState('dark-theme');
+
+  const changeTheme = {
+    theme, toggleTheme: () => {
+      if (theme === 'light-theme') {
+        setTheme('dark-theme');
+      } else {
+        setTheme('light-theme');
+      }
+    },
+  }
+
+  return (
+    <ChangeTheme.Provider value={changeTheme}>
+      <div className={theme}>
+        {children}
+      </div>
+    </ChangeTheme.Provider>
+  )
+}
+
 class App extends React.PureComponent {
   render() {
     return (
@@ -40,9 +63,9 @@ class App extends React.PureComponent {
         onEvent={this.onKeycloakEvent}
         onTokens={this.onKeycloakTokens}
       >
-        <div id='app' className="dark-theme">
+       <TestPago>
           <AppRouter />
-        </div>
+        </TestPago> 
       </KeycloakProvider>
     );
   }

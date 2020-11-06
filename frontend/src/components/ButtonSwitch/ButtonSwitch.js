@@ -1,17 +1,18 @@
-import React, { ButtonHTMLAttributes } from "react";
-import './ButtonSwitch.less';
+import React  from 'react';
+import {ChangeTheme} from '../ChangeTheme/ChangeTheme';
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  onClickMethod : (args: any) => void;
-}
-
-
-const ButtonSwitch: React.FC<ButtonProps> = ({ disabled = false, children, onClickMethod, ...rest }) => {
+function ButtonSwitch() {
+  // The Theme Toggler Button receives not only the theme
+  // but also a toggleTheme function from the context
   return (
-    <button disabled={disabled} className='primary-btn' {...rest} onClick={onClickMethod}>
-      {children}
-    </button>
+    <ChangeTheme.Consumer>
+      {({theme, toggleTheme}) => (
+        <button onClick={toggleTheme}>
+          Toggle Theme
+        </button>
+      )}
+    </ChangeTheme.Consumer>
   );
-};
+}
 
 export default ButtonSwitch;

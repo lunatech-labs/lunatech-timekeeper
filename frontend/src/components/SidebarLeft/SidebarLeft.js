@@ -21,22 +21,9 @@ import Logo from '../Logo/Logo';
 import MenuSidebar from '../MenuSidebar/MenuSidebar';
 import ThemeSwitcher from '../ThemeSwitcher/ThemeSwitcher';
 import ButtonSwitch from '../ButtonSwitch/ButtonSwitch';
-import ChangeTheme from '../ChangeTheme/ChangeTheme';
 import PropTypes from 'prop-types';
 
 const { Sider } = Layout;
-
-let theme = 'light-theme';
-
-const toggleThemes = () => {
-  if (theme === 'light-theme') {
-    ChangeTheme('dark-theme');
-    theme = 'dark-theme';
-  } else {
-    ChangeTheme('light-theme');
-    theme = 'light-theme'
-  }
-}
 
 const SidebarLeft = ({ collapsed }) => {
   return (
@@ -44,7 +31,7 @@ const SidebarLeft = ({ collapsed }) => {
       <Logo />
       <MenuSidebar/>
       <ThemeSwitcher/>
-      <ButtonSwitch onClickMethod = {toggleThemes}>Test</ButtonSwitch>
+      <ButtonSwitch>Test</ButtonSwitch>
     </Sider>
   );
 };
