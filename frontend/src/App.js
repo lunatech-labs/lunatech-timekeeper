@@ -18,9 +18,8 @@ import React, {useState} from 'react';
 import Keycloak from 'keycloak-js';
 import { KeycloakProvider } from '@react-keycloak/web';
 import { AppRouter } from './routes';
-
+import { ContextTheme} from './components/Theme/ContextTheme';
 import './App.less';
-import { ChangeTheme } from './components/ChangeTheme/ChangeTheme';
 
 const keycloak = new Keycloak({
   realm: process.env.REACT_APP_KEYCLOAK_REALM,
@@ -46,11 +45,11 @@ function TestPago ({children}) {
   }
 
   return (
-    <ChangeTheme.Provider value={changeTheme}>
+    <ContextTheme.Provider value={changeTheme}>
       <div className={theme}>
         {children}
       </div>
-    </ChangeTheme.Provider>
+    </ContextTheme.Provider>
   )
 }
 

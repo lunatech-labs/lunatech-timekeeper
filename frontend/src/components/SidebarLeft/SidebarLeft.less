@@ -23,4 +23,19 @@
   left: 0;
   position: sticky;
   background: var(--primary-color);
+  > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+}
+
+#tk_LeftSidebar.ant-layout-sider-collapsed {
+  .tk_ThemeSwitcher {
+    display: flex;
+    justify-content: center;
+    p {
+      display: none;
+    }
+  }
 }

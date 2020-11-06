@@ -16,7 +16,7 @@
 
 import React  from 'react';
 
-export const ChangeTheme = React.createContext({
-    theme: 'dark',
+export const ContextTheme = React.createContext({
+    theme: 'dark-theme',
     toggleTheme: () => {},
 });

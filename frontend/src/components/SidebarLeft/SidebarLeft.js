@@ -19,19 +19,19 @@ import {Layout} from 'antd';
 import './SidebarLeft.less';
 import Logo from '../Logo/Logo';
 import MenuSidebar from '../MenuSidebar/MenuSidebar';
-import ThemeSwitcher from '../ThemeSwitcher/ThemeSwitcher';
-import ButtonSwitch from '../ButtonSwitch/ButtonSwitch';
+import ThemeSwitcher from '../Theme/ThemeSwitcher';
 import PropTypes from 'prop-types';
 
 const { Sider } = Layout;
 
 const SidebarLeft = ({ collapsed }) => {
   return (
-    <Sider width={208} id="tk_LeftSidebar" className="site-layout-background" trigger={null} collapsible collapsed={collapsed}>
-      <Logo />
-      <MenuSidebar/>
-      <ThemeSwitcher/>
-      <ButtonSwitch>Test</ButtonSwitch>
+    <Sider width={240} id="tk_LeftSidebar" className="site-layout-background" trigger={null} collapsible collapsed={collapsed}>
+      <div>
+        <Logo />
+        <MenuSidebar/>
+      </div>
+      <ThemeSwitcher>Test</ThemeSwitcher>
     </Sider>
   );
 };
