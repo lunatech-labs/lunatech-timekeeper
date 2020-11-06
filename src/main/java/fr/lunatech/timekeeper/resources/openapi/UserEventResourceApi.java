@@ -80,7 +80,7 @@ public interface UserEventResourceApi {
     List<UserEventResponse> getPersonalEvents(@QueryParam("userId") Long id);
 
     @GET
-    @Path("/organization/{organizationId}")
+    @Path("organization/{organizationId}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Retrieve user events by organization id",
             description = "Retrieve the list of existing userEvents by organization id.")

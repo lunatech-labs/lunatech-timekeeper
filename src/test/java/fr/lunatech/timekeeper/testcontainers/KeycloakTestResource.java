@@ -70,7 +70,7 @@ public class KeycloakTestResource implements QuarkusTestResourceLifecycleManager
         realm.getUsers().add(createUser("merry", "Merry", "Jones", "lunatech.fr", "user"));
         realm.getUsers().add(createUser("sam", "Sam", "Uell", "lunatech.fr", "admin"));
         realm.getUsers().add(createUser("clark", "Clark", "Kent", "lunatech.fr", "super_admin"));
-
+        realm.getUsers().add(createUser("dutch", "Dutch First Name", "Dutch Last Name", "lunatech.nl", "admin"));
 
         // Create config in keycloak
         try {
@@ -103,6 +103,10 @@ public class KeycloakTestResource implements QuarkusTestResourceLifecycleManager
 
     public static String getSuperAdminAccessToken() {
         return getAccessToken("clark");
+    }
+
+    public static String getAdminAccessTokenForDutch() {
+        return getAccessToken("dutch");
     }
 
     public static String getAccessToken(String userName) {

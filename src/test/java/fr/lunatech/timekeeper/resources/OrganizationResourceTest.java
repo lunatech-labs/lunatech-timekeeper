@@ -103,7 +103,17 @@ class OrganizationResourceTest {
                 )
         );
 
-        getValidation(OrganizationDef.uri, clarkToken).body(is(timeKeeperTestUtils.listOfTasJson(lunatechOrganization, organization, organization2))).statusCode(is(OK.getStatusCode()));
+        final OrganizationResponse dutchOrganization = new OrganizationResponse(
+                2L,
+                "Lunatech NL",
+                "lunatech.nl",
+                emptyList(),
+                emptyList()
+        );
+
+        getValidation(OrganizationDef.uri, clarkToken).body(
+                is(timeKeeperTestUtils.listOfTasJson(lunatechOrganization, dutchOrganization, organization, organization2))
+        ).statusCode(is(OK.getStatusCode()));
     }
 
     @Test
