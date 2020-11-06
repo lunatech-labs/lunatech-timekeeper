@@ -13,7 +13,7 @@ function ThemeSwitcher() {
       {({theme, toggleTheme}) => (
         <div className="tk_ThemeSwitcher">
           <p>Light</p>
-          <Switch defaultChecked onClick={toggleTheme} onChange={onChange} />
+          <Switch checked={theme === 'dark-theme'} onClick={toggleTheme} onChange={onChange} />
           <p>Dark</p>
         </div>
       )}

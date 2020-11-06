@@ -18,7 +18,7 @@
 
 #tk_Header {
   z-index: 5;
-  background: @tk_Black;
+  background: var(--tk_Black);
   border-bottom: @tk_Border_Base;
   justify-content: space-between;
   padding: 0;
@@ -28,7 +28,7 @@
   transition: all 0.2s;
   .mixin_Flexbox_Basis();
   .anticon[tabindex] {
-    color: @tk_LightGray;
+    color: var(--tk_LightGray);
     font-size: 18px;
     line-height: 64px;
     padding: 0 16px;

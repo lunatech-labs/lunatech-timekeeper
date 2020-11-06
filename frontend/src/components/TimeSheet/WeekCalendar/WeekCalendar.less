@@ -35,8 +35,8 @@
     button {
       background: none;
       border-radius: 0;
-      border: 1px solid @tk_MediumGray;
-      color: @tk_LightGray;
+      border: 1px solid var(--tk_MediumGray);
+      color: var(--tk_LightGray);
       .mixin_Flexbox_Basis();
       justify-content: center;
       &:first-child {
@@ -51,8 +51,8 @@
       }
       span {font-size: 12px;}
       &:hover {
-        border-color: @tk_Red;
-        color: @tk_Red;
+        border-color: var(--tk_Red);
+        color: var(--tk_Red);
       }
     }
   }
@@ -61,19 +61,19 @@
     position: relative;
     .ant-select {
       width: 140px;
-      color: @tk_LightGray;
+      color: var(--tk_LightGray);
       .ant-select-selector {
         background: none;
-        &:hover {border: 1px solid @tk_Red;}
+        &:hover {border: 1px solid var(--tk_Red);}
       }
-      .ant-select-arrow {color: @tk_LightGray;}
+      .ant-select-arrow {color: var(--tk_LightGray);}
     }
     .ant-radio-group {
-      .ant-radio-button-wrapper {border: 1px solid @tk_LightGray;}
+      .ant-radio-button-wrapper {border: 1px solid var(--tk_LightGray);}
       .ant-radio-button-wrapper:not(:first-child)::before {background-color: purple;}
       .ant-radio-button-wrapper-checked {
-        border: 1px solid @tk_Red;
-        color: @tk_Red;
+        border: 1px solid var(--tk_Red);
+        color: var(--tk_Red);
       }
     }
   }
@@ -124,12 +124,20 @@
     border: 0;
   }
 }
+.tk_WeekCalendar_Day {
+  > p {
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--tk_LightGray);
+    margin-bottom: 16px;
+  }
+}
 .ant-select-item-option-disabled {
-  color: @tk_LightGray;
+  color: var(--tk_LightGray);
 }
 .tk_CurrentWeekSelect:before {
   content: "•";
-  color: @tk_Red;
+  color: var(--tk_Red);
   font-size: 24px;
   height: 6px;
   .mixin_Flexbox_Basis();
@@ -144,8 +152,8 @@
   padding: 5px 12px;
 
   &:hover {
-    background-color: @tk_Red;
+    background-color: var(--tk_Red);
   }
   cursor: pointer;
-  border-bottom: @tk_White 1px solid;
+  border-bottom: var(--tk_White) 1px solid;
 }

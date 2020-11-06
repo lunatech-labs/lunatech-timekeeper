@@ -19,7 +19,7 @@
 .tk_Information {
   margin-bottom: 0;
   padding: 14px 0px;
-  color: @tk_White;
+  color: var(--tk_White);
   border-top: @tk_Border_Base;
   border-bottom: @tk_Border_Base;
   &:last-child {border-top: none;}
@@ -31,13 +31,13 @@
       .ant-picker-date-panel {
         .ant-picker-header {
           button {
-            color: @tk_LightGray;
-            &:hover {color: @tk_White;}
+            color: var(--tk_LightGray);
+            &:hover {color: var(--tk_White);}
           }
           .ant-picker-header-view {
             button {
-              color: @tk_White;
-              &:hover {color: @tk_Red;}
+              color: var(--tk_White);
+              &:hover {color: var(--tk_Red);}
             }
 
           }
@@ -46,11 +46,11 @@
           tbody {
             tr {
               td {
-                color: @tk_LightGray;
+                color: var(--tk_LightGray);
                 div {
                   &:hover {
-                    background: @tk_Red;
-                    color: @tk_White;
+                    background: var(--tk_Red);
+                    color: var(--tk_White);
                   }
                 }
               }
@@ -60,8 +60,8 @@
       }
       .ant-picker-footer {
         a {
-          color: @tk_White;
-          &:hover {color: @tk_Red;}
+          color: var(--tk_White);
+          &:hover {color: var(--tk_Red);}
         }
       }
     }

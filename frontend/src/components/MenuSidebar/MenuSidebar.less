@@ -17,6 +17,7 @@
 @import '../../main.less';
 
 #tk_Menu {
+  background: var(--tk_DarkGray);
   margin-top: 32px;
   .tk_MenuItem {
     margin: 0;
@@ -30,10 +31,10 @@
     }
   }
   .ant-menu-item-selected {
-    background: @tk_Black;
-    border-left: 3px solid @tk_Red;
+    background: var(--tk_Black);
+    border-left: 3px solid var(--tk_Red);
     a {
-      span:first-child {color: @tk_Red;}
+      span:first-child {color: var(--tk_Red);}
     }
   }
 }

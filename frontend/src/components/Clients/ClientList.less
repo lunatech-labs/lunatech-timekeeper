@@ -19,7 +19,7 @@
 #tk_List {
 }
 .tk_CardClientTitle {
-  color: @tk_White;
+  color: var(--tk_White);
   font-size: 18px;
 }
 .tk_Search_Input {
@@ -30,21 +30,21 @@
     svg {
       margin-right: 8px;
       font-size: 14px;
-      color: @tk_LightGray;
+      color: var(--tk_LightGray);
     }
     input {
       background: none;
       font-size: 14px;
-      color: @tk_LightGray;
+      color: var(--tk_LightGray);
     }
   }
 }
 #tk_UsersTag {
   margin-right: 0;
   border-radius: 5rem;
-  background: @tk_Red;
+  background: var(--tk_Red);
   border: none;
-  color: @tk_White;
+  color: var(--tk_White);
   span:last-child {
     margin-left: 4px;
   }
@@ -66,8 +66,8 @@
     .ant-card-head-wrapper {
       align-items: flex-start;
       a {
-        color: @tk_LightGray;
-        &:hover {color: @tk_White;}
+        color: var(--tk_LightGray);
+        &:hover {color: var(--tk_White);}
       }
       .ant-card-head-title {padding: 0;}
       .ant-card-extra {padding: 0;}
@@ -77,7 +77,7 @@
         justify-content: space-between;
         height: 40px;
         .tk_Card_ClientTitle {
-          color: @tk_White;
+          color: var(--tk_White);
           font-size: 16px;
           font-weight: 500;
           line-height: 1;
@@ -86,7 +86,7 @@
         .tk_Card_ClientNbProject {
           font-size: 14px;
           font-weight: 400;
-          color: @tk_LightGray;
+          color: var(--tk_LightGray);
           margin-bottom: 0;
         }
       }
@@ -132,7 +132,7 @@
       border-bottom: none;
       &:last-child {margin-bottom: 0;}
       .tk_Client_ProjectList {
-        background: @tk_Black;
+        background: var(--tk_Black);
         padding: 0 8px;
         height: 40px;
         border-radius: 4px;

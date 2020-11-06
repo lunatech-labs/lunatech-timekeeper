@@ -17,6 +17,37 @@
 // ------------------- VARIABLES SOURCE -------------------
 //---------------------------------------------------------
 // Colors
+.light-theme {
+    --primary-color: green;
+    --disabled-color: green;
+
+    --tk_White: green;
+    --tk_LightGray: green;
+    --tk_MediumGray: green;
+    --tk_DarkGray: yellow;
+    --tk_Black: blue;
+    --tk_Red: green;
+    --tk_Gold: green;
+}
+
+.dark-theme {
+    --primary-color: #9191A0;
+    --disabled-color: #6c757d;
+
+    --tk_White: #ffffff;
+    --tk_LightGray: #9191A0;
+    --tk_MediumGray: #49495A;
+    --tk_DarkGray: #323342;
+    --tk_Black: #272836;
+    --tk_Red: #F3252C;
+    --tk_Gold: #FAAD14;
+}
+
+
+
+
+
+  
 @tk_White: #ffffff;
 @tk_LightGray: #9191A0;
 @tk_MediumGray: #49495A;
@@ -73,11 +104,11 @@
 // ------------------- TYPOGRAPHY -------------------
 //---------------------------------------------------
 // Title
-@heading-color: @tk_White;
+@heading-color: var(--tk_White);
 
 // General Text
 @text-color-secondary: @tk_LightGray;
-@text-color: @tk_White;
+@text-color: var(--tk_White);
 
 // ------------------- BREADCRUMB -------------------
 //---------------------------------------------------
@@ -86,12 +117,12 @@
 
 // ------------------- TABLE -------------------
 //----------------------------------------------
-@table-bg: @tk_Black;
+@table-bg: var(--tk_Black);
 @table-header-bg: @tk_Black;
 @table-header-color: @tk_LightGray;
 @table-row-hover-bg: @tk_MediumGray;
 @table-body-sort-bg: #fafafa;
-@table-row-hover-bg: @tk_Black;
+@table-row-hover-bg: var(--tk_Black);
 @table-selected-row-color: inherit;
 @table-selected-row-bg: @tk_Black;
 @table-body-selected-sort-bg: @table-selected-row-bg;
@@ -106,58 +137,58 @@
 
 // ------------------- CARD -------------------
 //---------------------------------------------
-@card-background: @tk_DarkGray;
-@card-actions-background: @tk_DarkGray;
+@card-background: var(--tk_DarkGray);
+@card-actions-background: var(--tk_DarkGray);
 
 // ------------------- COLLAPSE -------------------
 //-------------------------------------------------
-@collapse-header-bg: @tk_DarkGray;
+@collapse-header-bg: var(--tk_DarkGray);
 
 // ------------------- FORM -------------------
 //---------------------------------------------
 // ----- General -----
-@label-required-color: @tk_Red;
-@label-color: @tk_LightGray;
+@label-required-color: var(--tk_Red);
+@label-color: var(--tk_LightGray);
 
 // ----- Select -----
-@select-dropdown-bg: @tk_MediumGray;
+@select-dropdown-bg: var(--tk_MediumGray);
 
 // ------------------- TAG -------------------
 //--------------------------------------------
-@tag-default-color: @tk_LightGray;
+@tag-default-color: var(--tk_LightGray);
 
 // ------------------- DROPDOWN -------------------
 //-------------------------------------------------
-@dropdown-menu-bg: @tk_MediumGray;
+@dropdown-menu-bg: var(--tk_MediumGray);
 
 // ------------------- MODAL -------------------
 //----------------------------------------------
-@modal-content-bg: @tk_DarkGray;
-@modal-content-bg: @tk_DarkGray;
+@modal-content-bg: var(--tk_DarkGray);
+@modal-content-bg: var(--tk_DarkGray);
 
 // ------------------- RADIO -------------------
 //----------------------------------------------
-@radio-button-color: @tk_LightGray;
-@radio-button-hover-color: @tk_White;
-@radio-button-active-color: @tk_White;
+@radio-button-color: var(--tk_LightGray);
+@radio-button-hover-color: var(--tk_White);
+@radio-button-active-color: var(--tk_White);
 
 // ------------------- CALENDAR -------------------
 //-------------------------------------------------
-@calendar-bg: @tk_MediumGray;
-@picker-basic-cell-hover-color: @tk_Red;
+@calendar-bg: var(--tk_MediumGray);
+@picker-basic-cell-hover-color: var(--tk_Red);
 
 // ------------------- BUTTONS -------------------
 //------------------------------------------------
 @btn-font-weight: 400;
-@btn-primary-color: @tk_White;
-@btn-primary-bg: @tk_Red;
-@btn-default-color: @tk_White;
-@btn-default-bg: @tk_Red;
-@btn-default-border: @tk_Red;
+@btn-primary-color: var(--tk_White);
+@btn-primary-bg: var(--tk_Red);
+@btn-default-color: var(--tk_White);
+@btn-default-bg: var(--tk_Red);
+@btn-default-border: var(--tk_Red);
 
 // ------------------- TIMEPICKER-----------------
 //------------------------------------------------
-@picker-bg: @tk_DarkGray;
+@picker-bg: var(--tk_DarkGray);
 @picker-basic-cell-active-with-range-color: rgba(39, 40, 54, 0.8);
 @picker-basic-cell-disabled-bg: rgba(39, 40, 54, 0.3);
 @picker-border-color: rgba(216, 216, 216, 0.1);
@@ -168,16 +199,3 @@
 @picker-panel-cell-width: 36px;
 @picker-text-height: 40px;
 @picker-panel-without-time-cell-height: 66px;
-
-
-
-
-.dark-theme {
-    @tk_White: #ffffff;
-    @tk_LightGray: #9191A0;
-    @tk_MediumGray: #49495A;
-    @tk_DarkGray: #323342;
-    @tk_Black: #272836;
-    @tk_Red: #F3252C;
-    @tk_Gold: #FAAD14;
-}

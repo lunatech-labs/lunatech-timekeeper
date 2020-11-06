@@ -19,6 +19,9 @@
 .tk_CardWeekCalendar {
   border: 1px solid rgba(216, 216, 216, 0.1);
   border-right: none;
+  background: var(--tk_DarkGray);
+  border-radius: 4px;
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2);
   position: relative;
   cursor: pointer;
   &[disabled] {
@@ -30,7 +33,7 @@
     .mixin_Flexbox_Basis();
     justify-content: space-between;
     padding: 16px 8px 16px 16px;
-    color: @tk_LightGray;
+    color: var(--tk_LightGray);
     font-size: 20px;
     height: 64px;
     border-bottom: 1px solid rgba(216, 216, 216, 0.1);
@@ -41,13 +44,13 @@
       font-weight: 300;
     }
     button {
-      background-color: @tk_DarkGray;
-      color: @tk_LightGray;
+      background-color: var(--tk_Black);
+      color: var(--tk_LightGray);
       border: none;
       .mixin_Flexbox_Basis();
       justify-content: center;
       &:hover {
-        background: @tk_Red;
+        background: var(--tk_Red);
         color: white;
       }
       &[disabled] {
@@ -56,7 +59,10 @@
       }
       span {font-size: 12px;}
     }
-    .tk_CurrentDay {color: @tk_White;}
+    .tk_CurrentDay {
+      color: var(--tk_White);
+      font-weight: 500;
+    }
   }
   .tk_CardWeekCalendar_Body {
     padding: 16px 8px 16px 8px;

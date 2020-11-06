@@ -17,7 +17,7 @@
 @import '../../main.less';
 
 .tk_CardMember {
-  background: @tk_Black;
+  background: var(--tk_Black);
   .mixin_Flexbox_Basis();
   justify-content: space-between;
   height: 50px;
@@ -33,8 +33,8 @@
     .mixin_Flexbox_Basis();
     p {margin: 0 0 0 12px;}
     svg {
-      color: @tk_LightGray;
-      &:hover {color: @tk_White;}
+      color: var(--tk_LightGray);
+      &:hover {color: var(--tk_White);}
     }
   }
 }

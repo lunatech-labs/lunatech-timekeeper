@@ -43,8 +43,8 @@
         height: 100px;
       }
       .tk_EventType_RadioButton.ant-radio-button-wrapper-checked {
-        border-color: @tk_Red!important;
-        &:hover {color: @tk_Red;}
+        border-color: var(--tk_Red)!important;
+        &:hover {color: var(--tk_Red);}
       }
     }
   }
@@ -52,23 +52,23 @@
 .tk_RangePicker {
   width: 100%;
   &:hover {
-    .ant-picker-clear {background-color: @tk_DarkGray;}
+    .ant-picker-clear {background-color: var(--tk_DarkGray);}
     border: 1px solid rgba(145, 145, 160, 0.8)!important;
   }
   .ant-picker-input {
     input {border: none !important;}
   }
   .ant-picker-clear {
-    &:hover{background-color: @tk_DarkGray;}
-    background-color: @tk_DarkGray;
+    &:hover{background-color: var(--tk_DarkGray);}
+    background-color: var(--tk_DarkGray);
   }
 }
 .ant-picker-time-panel-column {
   > li.ant-picker-time-panel-cell-selected {
-    .ant-picker-time-panel-cell-inner {background: @tk_DarkGray !important;}
+    .ant-picker-time-panel-cell-inner {background: var(--tk_DarkGray)!important;}
   }
   > li.ant-picker-time-panel-cell {
-    .ant-picker-time-panel-cell-inner:hover {background: @tk_DarkGray !important;}
+    .ant-picker-time-panel-cell-inner:hover {background: var(--tk_DarkGray)!important;}
   }
 }
 .tk_UserEvent_Radio_Button {

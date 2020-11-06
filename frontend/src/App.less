@@ -46,16 +46,23 @@ div.userProfile p {
   background-color: white;
   padding: 10px
 }
+.tk_Footer {
+  text-align: center;
+}
+.ant-layout-footer{
+  color: var(--tk_MediumGray)!important;
+  font-size: 8px !important;
+}
 .shadow {
   box-shadow: 3px 4px 3px 3px rgba(25, 26, 41, 0.25);
 }
 .ant-input {
-  background-color: @tk_MediumGray;
-  border: 2px solid @tk_DarkGray;
-  color: @tk_White;
+  background-color: var(--tk_MediumGray);
+  border: 2px solid var(--tk_DarkGray);
+  color: var(--tk_White);
 }
 .ant-message, .ant-alert-message, .ant-alert-description {
-  color: @tk_MediumGray !important;
+  color: var(--tk_MediumGray)!important;
 }
 .ant-divider {
   background: rgba(216, 216, 216, .1) !important;
@@ -80,27 +87,13 @@ div.userProfile p {
   padding: 4px 15px;
   font-size: 14px;
   border-radius: 4px;
-  color: @tk_White;
-  background: @tk_Red;
-  border-color: @tk_Red;
+  color: var(--tk_White);
+  background: var(--tk_Red);
+  border-color: var(--tk_Red);
 }
 .ant-btn-link {
-  color: @tk_Red;
+  color: var(--tk_Red);
   background: transparent;
   border-color: transparent;
   box-shadow: none;
-}
-
-
-
-.light-theme {
-  /* Set the 'light' theme */
-  --primary-color: #9191A0;
-  --disabled-color: #6c757d;
-}
-
-.dark-theme {
-/* Set the 'dark' theme */
---primary-color: #323342;
---disabled-color: #4a4a4b;
 }

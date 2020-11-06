@@ -26,7 +26,7 @@
   span {font-weight: 500;}
   a {
     font-weight: 400;
-    &:hover {color: @tk_Red;}
+    &:hover {color: var(--tk_Red);}
   }
 }
 #tk_h1 {
@@ -48,7 +48,7 @@
     }
     tbody {
       tr {
-        background: @tk_DarkGray;
+        background: var(--tk_DarkGray);
         td {
           border-bottom: none;
           &:first-child, &:nth-child(5) div {
@@ -64,7 +64,7 @@
           &:last-child {
             padding: 0;
             div {
-              background: @tk_Black;
+              background: var(--tk_Black);
               padding: 4px 16px;
               margin-bottom: 8px;
               &:first-child {margin-top: 16px;}
@@ -79,20 +79,20 @@
   }
 }
 .ant-pagination-prev button, .ant-pagination-next button {
-  background-color: @tk_MediumGray !important;
-  color: @tk_LightGray!important;
+  background-color: var(--tk_MediumGray)!important;
+  color: var(--tk_LightGray)!important;
   border: none !important;
 }
 .ant-pagination-item {
   background-color: transparent !important;
-  color: @tk_LightGray !important;
+  color: var(--tk_LightGray)!important;
   border: none !important;
 }
 .ant-pagination-item:not(.ant-pagination-item-active) button {
   background-color: transparent !important;
-  color: @tk_LightGray !important;
+  color: var(--tk_LightGray)!important;
   border: none !important;
 }
 .ant-pagination-disabled button {
-  color: @tk_DarkGray !important;
+  color: var(--tk_DarkGray)!important;
 }
