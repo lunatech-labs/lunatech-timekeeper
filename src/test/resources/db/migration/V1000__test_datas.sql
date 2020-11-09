@@ -15,3 +15,4 @@
  */
 
 insert into organizations (name, tokenname) values ('Lunatech FR', 'lunatech.fr');
+insert into organizations (name, tokenname) values ('Lunatech NL', 'lunatech.nl');
