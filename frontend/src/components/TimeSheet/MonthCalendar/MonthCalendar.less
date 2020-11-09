@@ -110,30 +110,60 @@
       background: none;
       .ant-picker-date-panel {
         .ant-picker-body {
-          margin: 0 -8px;
           padding: 0;
           table {
-            thead {
-              tr {
-                th {
-                  text-transform: uppercase;
-                  text-align: center;
-                  color: #9191A0;
-                  padding-top: 2px;
-                  padding-bottom: 18px;
-                }
-              }
+            thead tr th {
+              text-transform: uppercase;
+              text-align: center;
+              color: #9191A0;
+              padding-top: 2px;
+              padding-bottom: 18px;
             }
             tbody {
               tr {
                 td {
+                  &:last-child {
+                    .ant-picker-cell-inner {
+                      border-right: 1px solid rgba(216, 216, 216, 0.1);
+                    }
+                  }
+                }
+              &:first-child {
+                td {
+                  &:first-child {
+                    .ant-picker-cell-inner {border-top-left-radius: 4px;}
+                  }
+                  &:last-child  {
+                    .ant-picker-cell-inner {
+                      border-top-right-radius: 4px;
+                      
+                    }
+                  }
+                }
+              }
+              &:last-child {
+                td {
+                  &:first-child {
+                    .ant-picker-cell-inner {border-bottom-left-radius: 4px;}
+                  }
+                  &:last-child {
+                    .ant-picker-cell-inner {border-bottom-right-radius: 4px;}
+                  }
+                  .ant-picker-cell-inner {
+                    border-bottom: 1px solid rgba(216, 216, 216, 0.1);
+                  }
+                }
+              }
+                td {
                   .ant-picker-cell-inner {
                     border-top: none;
-                    background: @tk_DarkGray;
-                    border-radius: 4px;
-                    margin: 0 8px 16px 8px;
+                    background: @tk_Black;
+                    margin: 0;
                     position: relative;
                     padding: 0;
+                    border: 1px solid rgba(216, 216, 216, 0.1);
+                    border-bottom: 0;
+                    border-right: 0;
                     .ant-picker-calendar-date-value {
                       display: flex;
                       font-size: 20px;
@@ -150,7 +180,7 @@
                           position: absolute;
                           right: 16px;
                           top: 12px;
-                          background-color: @tk_Black;
+                          background-color: @tk_DarkGray;
                           color: @tk_LightGray;
                           border: none;
                           .mixin_Flexbox_Basis();
@@ -205,6 +235,5 @@
     position: absolute;
     left: 0;
     top: 0;
-    border-radius: 4px;
   }
 }

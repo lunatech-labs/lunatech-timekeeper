@@ -179,7 +179,7 @@ const TimeEntriesPage = () => {
   };
 
   return (
-    <MainPage title="Time entries">
+    <MainPage>
       <Modal
         visible={visibleEntryModal}
         onCancel={closeModal}
