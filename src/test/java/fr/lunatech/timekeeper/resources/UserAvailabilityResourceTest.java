@@ -37,6 +37,7 @@ import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
+import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getAccessToken;
 import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getAdminAccessToken;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.hamcrest.CoreMatchers.is;
@@ -69,16 +70,16 @@ class UserAvailabilityResourceTest {
         final String adminToken = getAdminAccessToken();
         final var sam = create(adminToken);
         //Create Jimmy, a user
-        final String userToken = getAdminAccessToken();
+        final String userToken = getAccessToken("jimmy");
         final var jimmy = create(userToken);
         //Create another user Geoff
-        final String geoffToken = getAdminAccessToken();
-        final var geoff = create(geoffToken);
+//        final String geoffToken = getAccessToken("geoff");
+//        final var geoff = create(geoffToken);
 
         final var expectedResponse = new AvailabilityResponse(
                 DateUtilsTestResourceProvider.THE_6_TH_OCTOBER_2020_AT_9_AM
                 , DateUtilsTestResourceProvider.THE_6_TH_OCTOBER_2020_AT_17_PM
-                , List.of(sam, jimmy, geoff)
+                , List.of(sam, jimmy)
                 , Collections.emptyList()
         );
 
