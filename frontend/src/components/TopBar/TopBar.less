@@ -19,7 +19,7 @@
 #tk_Header {
   z-index: 5;
   background: var(--tk_Black);
-  border-bottom: @tk_Border_Base;
+  border-bottom: 1px solid var(--tk_Border);
   justify-content: space-between;
   padding: 0;
   position: fixed;
@@ -44,12 +44,12 @@
   justify-content: center;
   .mixin_Flexbox_Basis();
   text-align: center;
-  border-left: @tk_Border_Base;
+  border-left: 1px solid var(--tk_Border);
   span {
     sup {box-shadow: none;}
   }
 }
 .tk_Header_Organization {
-  border-left: @tk_Border_Base;
+  border-left: 1px solid var(--tk_Border);
   padding: 0 20px;
 }
