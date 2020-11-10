@@ -16,10 +16,7 @@
 
 package fr.lunatech.timekeeper.timeutils;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.*;
 import java.util.List;
@@ -33,10 +30,11 @@ import java.util.stream.IntStream;
  */
 public class TimeKeeperDateUtils {
 
-    private static final LocalTime START_OF_DAY = LocalTime.parse("09:00:00",
+    //TODO - get from config
+    public static final LocalTime START_OF_DAY = LocalTime.parse("09:00:00",
             DateTimeFormatter.ISO_TIME);
-
-    private static final LocalTime END_OF_DAY = LocalTime.parse("17:00:00",
+    //TODO - get from config
+    public static final LocalTime END_OF_DAY = LocalTime.parse("17:00:00",
             DateTimeFormatter.ISO_TIME);
 
     private TimeKeeperDateUtils() {
@@ -55,6 +53,10 @@ public class TimeKeeperDateUtils {
         Integer lastWeekNumber = getWeekNumberFromDate(LocalDate.of(year, 12, 28));
         if (weekNumber < 1 || weekNumber > lastWeekNumber)
             throw new IllegalStateException("weeknumber must be an Int value in range 1 to " + lastWeekNumber);
+    }
+
+    public static final int getMaxHoursInDay() {
+        return END_OF_DAY.minus(START_OF_DAY.getHour(), ChronoUnit.HOURS).getHour();
     }
 
     /**
@@ -206,6 +208,27 @@ public class TimeKeeperDateUtils {
                 .flatMap(calendar -> calendar.getBusinessDays().stream())
                 .filter(date -> date.isAfter(from) && date.isBefore(to) || date.equals(from) || date.equals(to))
                 .collect(Collectors.toList());
+    }
+
+
+    public static Long computeTotalNumberOfHoursToEndOfDay(LocalDateTime fromDateTime) {
+        LocalDateTime toDateTime = LocalDateTime.of(fromDateTime.toLocalDate(), END_OF_DAY);
+        return Duration.between(fromDateTime, toDateTime).toHours();
+    }
+
+    public static Long computeTotalNumberOfHoursFromStartOfDay(LocalDateTime toDateTime) {
+        LocalDateTime fromDateTime = LocalDateTime.of(toDateTime.toLocalDate(), START_OF_DAY);
+        return Duration.between(fromDateTime, toDateTime).toHours();
+    }
+
+    public static Long computeHoursOnDay(LocalDate refDate, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        if(refDate.isEqual(startDateTime.toLocalDate())) {
+            return computeTotalNumberOfHoursToEndOfDay(startDateTime);
+        } else if(refDate.isEqual(endDateTime.toLocalDate())) {
+            return computeTotalNumberOfHoursFromStartOfDay(endDateTime);
+        } else {
+            return Duration.between(START_OF_DAY, END_OF_DAY).toHours();
+        }
     }
 
     /**

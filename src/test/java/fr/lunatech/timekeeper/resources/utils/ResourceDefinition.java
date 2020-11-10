@@ -19,6 +19,7 @@ package fr.lunatech.timekeeper.resources.utils;
 import fr.lunatech.timekeeper.services.requests.*;
 import fr.lunatech.timekeeper.services.responses.*;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
 
@@ -40,7 +41,8 @@ public enum ResourceDefinition {
     PersonnalUserEventsByOrganizationIdDef("/api/user-events/organization/%d", apply(Void.class, UserEventResponse.class)),
     UserEventsDef("/api/user-events", apply(UserEventRequest.class, UserEventResponse.class)),
     TemplateEventDef("/api/events-template", apply(EventTemplateRequest.class, EventTemplateResponse.class)),
-    EventUsersDef("/api/events-template/%d/users", apply(Void.class, UserResponse.class));
+    EventUsersDef("/api/events-template/%d/users", apply(Void.class, UserResponse.class)),
+    UserAvailabilityDef("/api/available", apply(Void.class, AvailabilityResponse.class));
 
     final public String uri;
     final public TypeDefinition typeDef;
@@ -60,6 +62,10 @@ public enum ResourceDefinition {
 
     public String uriWithArgs(Object... args) {
         return String.format(this.uri, args);
+    }
+
+    public String uriWithLocalDateTimes(LocalDateTime start, LocalDateTime end) {
+        return String.format("%s/%s/%s", this.uri, start.toString(), end.toString());
     }
 
     public String uriWithMultiId(Long... ids) {
