@@ -43,12 +43,16 @@
           border-bottom: 0;
           font-weight: 400;
           border-radius: 0;
+          background: initial!important;
         }
       }
     }
     tbody {
       tr {
         background: var(--tk_DarkGray);
+        &:hover {
+          background: initial;
+        }
         td {
           border-bottom: none;
           &:first-child, &:nth-child(5) div {

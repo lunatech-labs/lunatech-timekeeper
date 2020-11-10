@@ -18,14 +18,14 @@
 
 #tk_Header {
   z-index: 5;
-  background: var(--tk_Black);
-  border-bottom: 1px solid var(--tk_Border);
+  background: var(--tk_DarkGray);
   justify-content: space-between;
   padding: 0;
   position: fixed;
   width: calc(100% - 208px);
   right: 0;
   transition: all 0.2s;
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
   .mixin_Flexbox_Basis();
   .anticon[tabindex] {
     color: var(--tk_LightGray);
@@ -44,12 +44,12 @@
   justify-content: center;
   .mixin_Flexbox_Basis();
   text-align: center;
-  border-left: 1px solid var(--tk_Border);
+  border-left: 1px solid var(--tk_BorderHeader);
   span {
     sup {box-shadow: none;}
   }
 }
 .tk_Header_Organization {
-  border-left: 1px solid var(--tk_Border);
+  border-left: 1px solid var(--tk_BorderHeader);
   padding: 0 20px;
 }

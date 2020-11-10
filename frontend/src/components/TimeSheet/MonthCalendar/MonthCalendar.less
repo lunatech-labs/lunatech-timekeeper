@@ -62,7 +62,7 @@
         button {
           background: none;
           border-radius: 0;
-          border: 1px solid var(--tk_MediumGray);
+          border: 1px solid var(--tk_Border);
           color: var(--tk_LightGray);
           .mixin_Flexbox_Basis();
           justify-content: center;
@@ -97,7 +97,7 @@
           .ant-select-arrow {color: var(--tk_LightGray);}
         }
         .ant-radio-group {
-          .ant-radio-button-wrapper {border: 1px solid var(--tk_LightGray);}
+          .ant-radio-button-wrapper {border: 1px solid var(--tk_Border);}
           .ant-radio-button-wrapper:not(:first-child)::before {background-color: purple;}
           .ant-radio-button-wrapper-checked {
             border: 1px solid var(--tk_Red);
@@ -124,7 +124,7 @@
                 td {
                   &:last-child {
                     .ant-picker-cell-inner {
-                      border-right: 1px solid rgba(216, 216, 216, 0.1);
+                      border-right: 1px solid var(--tk_Border);
                     }
                   }
                 }
@@ -150,19 +150,18 @@
                     .ant-picker-cell-inner {border-bottom-right-radius: 4px;}
                   }
                   .ant-picker-cell-inner {
-                    border-bottom: 1px solid rgba(216, 216, 216, 0.1);
+                    border-bottom: 1px solid var(--tk_Border);
                   }
                 }
               }
                 td {
                   .ant-picker-cell-inner {
                     border-top: none;
-                    background: var(--tk_DarkGray);
-                    border-radius: 4px;
-                    margin: 0 8px 16px 8px;
+                    background: var(--tk_Black);
+                    margin: 0;
                     position: relative;
                     padding: 0;
-                    border: 1px solid rgba(216, 216, 216, 0.1);
+                    border: 1px solid var(--tk_Border);
                     border-bottom: 0;
                     border-right: 0;
                     .ant-picker-calendar-date-value {
@@ -181,7 +180,7 @@
                           position: absolute;
                           right: 16px;
                           top: 12px;
-                          background-color: var(--tk_Black);
+                          background-color: var(--tk_DarkGray);
                           color: var(--tk_LightGray);
                           border: none;
                           .mixin_Flexbox_Basis();

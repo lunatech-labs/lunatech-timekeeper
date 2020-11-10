@@ -15,7 +15,7 @@
  */
 
 import React, {useState} from 'react';
-import {Alert, Layout, Typography} from 'antd';
+import {Alert, Layout} from 'antd';
 import './MainPage.less';
 import Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs';
 import SidebarLeft from '../../components/SidebarLeft/SidebarLeft';
@@ -65,7 +65,9 @@ const MainPage = ({children, actions, entityName, ...rest}) => {
               {children}
             </div>
           </Content>
-          <Footer id="tk_Footer">TimeKeeper ©2020 Lunatech</Footer>
+          <Footer id="tk_Footer">
+            <p>TimeKeeper ©2020 Lunatech</p>
+          </Footer>
         </Layout>
       </UserProvider>
     </Layout>

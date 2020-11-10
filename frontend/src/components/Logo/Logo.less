@@ -19,16 +19,15 @@
 .sider-logo {
     width: 100%;
     height: 64px;
-    border-bottom: 1px solid var(--tk_Border);
-    .mixin_Flexbox_Basis();
-    justify-content: center;
+    display: flex;
+    padding-left: 32px;
     a {
         .mixin_Flexbox_Basis();
         img {width: 30px;}
         h1 {
             font-weight: 700;
             font-size: 16px;
-            color: var(--tk_White);
+            color: #FFFFFF;
             margin: 0;
             margin-top: 4px;
             margin-left: 10px;
@@ -37,6 +36,8 @@
 }
 .ant-layout-sider-collapsed {
     .sider-logo {
+        padding: 0;
+        justify-content: center;
         h1 {
             display: none;
             transition: font-size 0.15s cubic-bezier(0.215, 0.61, 0.355, 1), margin 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);

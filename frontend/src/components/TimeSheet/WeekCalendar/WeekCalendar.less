@@ -35,7 +35,7 @@
     button {
       background: none;
       border-radius: 0;
-      border: 1px solid var(--tk_MediumGray);
+      border: 1px solid var(--tk_Border);
       color: var(--tk_LightGray);
       .mixin_Flexbox_Basis();
       justify-content: center;
@@ -69,13 +69,16 @@
       .ant-select-arrow {color: var(--tk_LightGray);}
     }
     .ant-radio-group {
-      .ant-radio-button-wrapper {border: 1px solid var(--tk_LightGray);}
+      .ant-radio-button-wrapper {border: 1px solid var(--tk_Border);}
       .ant-radio-button-wrapper:not(:first-child)::before {background-color: purple;}
       .ant-radio-button-wrapper-checked {
         border: 1px solid var(--tk_Red);
         color: var(--tk_Red);
       }
     }
+  }
+  .ant-select-selector {
+    border: 1px solid var(--tk_Border);
   }
 }
 #tk_WeekCalendar_Body {
@@ -93,7 +96,7 @@
     &:last-child {
       margin-right: 0;
       .tk_CardWeekCalendar {
-        border-right: 1px solid rgba(216, 216, 216, 0.1);
+        border-right: 1px solid var(--tk_Border);
         border-top-right-radius: 4px;
         border-bottom-right-radius: 4px;
         .tk_CardWeekCalendar_Head {border-top-right-radius: 4px;}

@@ -24,13 +24,14 @@
     --tk_White: #282D30;
     --tk_LightGray: #74798C;
     --tk_MediumGray: green;
-    --tk_DarkGray: white;
+    --tk_DarkGray: #FFFFFF;
     --tk_Black: #F5F6FA;
     --tk_Red: #F3252C;
     --tk_Gold: #FAAD14;
-    --tk_Border: #e6e6e6;
+    --tk_BorderHeader: #EEEFF4;
+    --tk_Border: #E4E4E4;
+    --tk_HoverMenu: #26266908;
 }
-
 .dark-theme {
     --primary-color: #9191A0;
     --disabled-color: #6c757d;
@@ -42,7 +43,9 @@
     --tk_Black: #272836;
     --tk_Red: #F3252C;
     --tk_Gold: #FAAD14;
+    --tk_BorderHeader: #2D2E3E;
     --tk_Border: #D8D8D81A;
+    --tk_HoverMenu: #27283680;
 }
 
 
@@ -80,9 +83,6 @@
 // ----- Form -----
 @tag-default-bg: transparent;
 
-// ----- Modal -----
-@modal-mask-bg: rgba(0, 0, 0, .5);
-
 // ----- Radio -----
 @radio-button-bg: none;
 @radio-button-checked-bg: none;
@@ -92,10 +92,7 @@
 
 // ------------------- LAYOUT BACKGROUND ------------------
 //---------------------------------------------------------
-@popover-background: @tk_DarkGray;
-@body-background: @tk_Black;
-@layout-body-background: @body-background;
-@layout-header-background: @popover-background;
+@popover-background: var(--tk_DarkGray);
 
 // ------------------- GENERAL -------------------
 //------------------------------------------------
@@ -119,10 +116,8 @@
 // ------------------- TABLE -------------------
 //----------------------------------------------
 @table-bg: var(--tk_Black);
-@table-header-bg: @tk_Black;
 @table-header-color: @tk_LightGray;
 @table-row-hover-bg: @tk_MediumGray;
-@table-body-sort-bg: #fafafa;
 @table-row-hover-bg: var(--tk_Black);
 @table-selected-row-color: inherit;
 @table-selected-row-bg: @tk_Black;
@@ -160,12 +155,7 @@
 
 // ------------------- DROPDOWN -------------------
 //-------------------------------------------------
-@dropdown-menu-bg: var(--tk_White);
-
-// ------------------- MODAL -------------------
-//----------------------------------------------
-@modal-content-bg: var(--tk_DarkGray);
-@modal-content-bg: var(--tk_DarkGray);
+@dropdown-menu-bg: var(--tk_Red);
 
 // ------------------- RADIO -------------------
 //----------------------------------------------

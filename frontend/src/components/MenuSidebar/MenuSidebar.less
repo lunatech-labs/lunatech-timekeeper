@@ -17,30 +17,33 @@
 @import '../../main.less';
 
 #tk_Menu {
-  background: var(--tk_DarkGray);
+  background: @tk_DarkGray;
   margin-top: 32px;
   .tk_MenuItem {
     margin: 0;
     height: 60px;
+    padding-left: 32px!important;
     .mixin_Flexbox_Basis();
-    &:hover {background: rgba(39, 40, 54, .5);}
+    &:hover {
+      background: rgba(39, 40, 54, .5);
+    }
     a {
-      color: var(--tk_LightGray);
+      color: @tk_LightGray;
       &:hover {
-        color: var(--tk_White);
+        color: @tk_White;
       }
       span:first-child {margin-right: 16px;}
     }
   }
   .ant-menu-item-selected {
-    background: var(--tk_Black);
-    border-left: 3px solid var(--tk_Red);
-    color: var(--tk_Black);
+    background: @tk_Black;
+    border-left: 3px solid @tk_Red;
+    color: @tk_Black;
     a {
-      span:first-child {color: var(--tk_Red);}
+      span:first-child {color: @tk_Red;}
     }
   }
   .ant-menu-item-selected .anticon + span {
-    color: var(--tk_White);
+    color: @tk_White;
   }
 }

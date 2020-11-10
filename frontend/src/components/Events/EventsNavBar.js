@@ -17,6 +17,7 @@
 import React, {useContext} from 'react';
 import {Tabs} from 'antd';
 import './EventsList.less';
+import './EventsNavBar.less';
 import EventsList from './EventsList';
 import {UserContext} from '../../context/UserContext';
 import {useKeycloak} from '@react-keycloak/web';
@@ -33,13 +34,15 @@ const EventsNavBar = () => {
 
   return (
     <div>
-      {(isAdmin || isUser) && <Tabs defaultActiveKey="tk_personnalEvent">
-        <TabPane tab="Personal Events" key="tk_personnalEvent"><EventsList
-          endPoint={'/api/user-events?userId=' + currentUser.id}/></TabPane>
+      {(isAdmin || isUser) &&
+      <Tabs className="tk_EventNavTab" defaultActiveKey="tk_personnalEvent">
+        <TabPane tab="Personal Events" key="tk_personnalEvent">
+          <EventsList endPoint={'/api/user-events?userId=' + currentUser.id}/>
+        </TabPane>
         {isAdmin &&
-        <TabPane tab="Company Events" key="tk_companyEvent"><EventsList endPoint={'/api/events-template'}/></TabPane>}
+          <TabPane tab="Company Events" key="tk_companyEvent"><EventsList endPoint={'/api/events-template'}/></TabPane>}
         {isAdmin &&
-        <TabPane tab="Users Events" key="tk_userEvents"><EventsList endPoint={'/api/user-events'}/></TabPane>}
+          <TabPane tab="Users Events" key="tk_userEvents"><EventsList endPoint={'/api/user-events'}/></TabPane>}
       </Tabs>}
     </div>
   );

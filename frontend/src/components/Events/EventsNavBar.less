@@ -14,25 +14,12 @@
  * limitations under the License.
  */
 
-@import '../../main.less';
+ @import '../../main.less';
 
-.tk_Card {
-  div:last-child {
-    background: var(--tk_DarkGray);
-    border: none;
-    padding: 16px;
-    table {
-      tbody {
-        tr {
-          border-bottom: 1px solid var(--tk_Border);
-          th {
-            background: var(--tk_Black);
-            border-right: 1px solid var(--tk_Border);
-          }
-          &:first-child th {border-top-left-radius: 4px;}
-          &:last-child th {border-bottom-left-radius: 4px;}
+.tk_EventNavTab {
+    .ant-tabs-nav {
+        &:before {
+            border-bottom: 1px solid var(--tk_Border)!important;
         }
-      }
     }
-  }
 }
