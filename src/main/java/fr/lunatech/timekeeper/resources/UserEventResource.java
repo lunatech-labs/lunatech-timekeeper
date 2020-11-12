@@ -48,7 +48,6 @@ public class UserEventResource implements UserEventResourceApi {
                 .orElseThrow(NotFoundException::new);
     }
 
-
     @RolesAllowed({"user", "admin"})
     @Override
     @Counted(name = "countgetPersonalEvents", description = "Counts how many times the user load the event list on method 'getPersonalEvents'")

@@ -25,6 +25,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
 import static fr.lunatech.timekeeper.resources.utils.DateUtilsTestResourceProvider.*;
@@ -356,6 +357,18 @@ class TimeKeeperDateUtilsTest {
         assertEquals(expected, TimeKeeperDateUtils.getDuration(start, end, unit));
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "9, 30, 17, 0, 07:30:00",
+            "9, 30, 10, 0, 00:30:00",
+            "9, 30, 17, 15, 07:45:00",
+    })
+    void shouldComputeDurationInHoursMinutesAndSeconds(int to, int toMinutes, int from, int fromMinutes,String expected){
+        LocalDateTime start = LocalDateTime.of(2020, 10, 6, to, toMinutes);
+        LocalDateTime end = LocalDateTime.of(2020, 10, 6, from, fromMinutes);
+        assertEquals(expected, TimeKeeperDateUtils.getDurationIntoHoursMinutesAndSecondAsString(start, end));
+    }
+
     @Test
     void shouldThrowAnErrorIfStartIsAfterEnd() {
         Assertions.assertThrows(IllegalArgumentException.class, () ->
@@ -393,7 +406,7 @@ class TimeKeeperDateUtilsTest {
         String date = "2020-10-06T09:00:00";
         assertEquals(
                 LocalDateTime.of(2020, 10, 6, 9, 0, 0),
-                TimeKeeperDateUtils.formatToLocalDateTime(date));
+                TimeKeeperDateUtils.parseToLocalDateTime(date));
     }
 
     @Test
@@ -401,7 +414,21 @@ class TimeKeeperDateUtilsTest {
         String date = "2020-06-11";
         assertEquals(
                 THE_11_TH_JUNE_2020,
-                TimeKeeperDateUtils.formatToLocalDate(date));
+                TimeKeeperDateUtils.parseToLocalDate(date));
+    }
+
+    @Test
+    void shouldReturnAStringFromLocalTime() {
+        var time = LocalTime.of(9, 0);
+        assertEquals("09:00:00", TimeKeeperDateUtils.formatToString(time));
+
+    }
+
+    @Test
+    void shouldReturnALocalTimeFromString() {
+        var timeString = "09:00:00";
+        var expected = LocalTime.of(9, 0);
+        assertEquals(expected, TimeKeeperDateUtils.parseToLocalTime(timeString));
     }
 
     @Test

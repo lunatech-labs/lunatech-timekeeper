@@ -101,7 +101,6 @@ public class TimeSheet extends PanacheEntityBase {
                 ", expirationDate=" + expirationDate +
                 ", maxDuration=" + maxDuration +
                 ", durationUnit=" + durationUnit +
-                ", entries=" + entries +
                 ", startDate=" + startDate +
                 '}';
     }
