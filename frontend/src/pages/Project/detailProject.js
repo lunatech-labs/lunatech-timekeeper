@@ -66,10 +66,7 @@ const DetailProjectPage = () => {
   const actions = canEditProject(useTimeKeeperAPIProject.data, useTimeKeeperAPICurrentUser.data, keycloak)
     && <Link id="btnEditProject" className="tk_Btn tk_BtnPrimary" to={`/projects/${useTimeKeeperAPIProject.data.id}/edit`}>Edit project</Link>;
   return (
-    <MainPage title="Project details" entityName={useTimeKeeperAPIProject.data.name}
-      actions={
-        actions
-      }>
+    <MainPage entityName={useTimeKeeperAPIProject.data.name} actions={actions}>
       <ShowProject project={useTimeKeeperAPIProject.data} onSuccessJoinProject={onSuccessCallback} />
     </MainPage>
   );

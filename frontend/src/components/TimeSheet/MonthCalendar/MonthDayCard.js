@@ -18,12 +18,23 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import React from 'react';
 import DisplayTopRightCorner from './DisplayTopRightCorner';
-import RenderEntries from './RenderEntries';
+import RenderMonthEntries from './RenderMonthEntries';
+
+/*
+* This is the single Day Card entry for a month calendar cells.
+*
+*  It has Top Right corner section where you can use Plus button to add task
+*   or displays completed tag when hours are completed
+*   or displays public tag when date of the single month card is public holiday
+*   or disable the button when it is weekend
+*
+*   Render Time & Event Entries component
+* */
 
 const MonthDayCard = (props) => {
-  const {dateAsMoment, userEventEntry, userTimeEntry, onClickPlusButton, applyWarningClass, isPublicHoliday, isDisabled, hoursCompleted} = props;
+  const {dateAsMoment, userEventEntry, userTimeEntry, onClickPlusButton, isDayWithoutAnyEntries, isPublicHoliday, isDisabled, hoursCompleted} = props;
 
-  const applyClass = (applyWarningClass && !isDisabled) ? 'tk_CardMonthCalendar_Body_With_Warn' : isDisabled ? 'tk_CardMonthCalendar_Body' : '';
+  const applyClass = (isDayWithoutAnyEntries && !isDisabled) ? 'tk_CardMonthCalendar_Body_With_Warn' : isDisabled ? 'tk_CardMonthCalendar_Body' : '';
 
   return (
     <div className={applyClass}>
@@ -34,7 +45,7 @@ const MonthDayCard = (props) => {
         onClickPlusButton={onClickPlusButton}
         isDisabled={isDisabled}
       />
-      <RenderEntries
+      <RenderMonthEntries
         userTimeEntry={userTimeEntry}
         userEventEntry={userEventEntry}
       />
@@ -59,7 +70,7 @@ MonthDayCard.propTypes = {
     disabled: PropTypes.bool,
     data: PropTypes.any
   }).isRequired,
-  applyWarningClass: PropTypes.bool,
+  isDayWithoutAnyEntries: PropTypes.bool,
   isPublicHoliday: PropTypes.bool,
   isDisabled: PropTypes.bool,
   hoursCompleted: PropTypes.bool

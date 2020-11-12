@@ -19,7 +19,7 @@
 #tk_RightContent {
 }
 #tk_MainContent {
-  margin: 128px 64px 64px 64px;
+  margin: 96px 32px 32px 32px;
   padding: 0;
   background: none;
   position: relative;
@@ -30,6 +30,19 @@
   justify-content: space-between;
   margin-bottom: 32px;
   .tk_MainContent_HeaderLeft {
-    h1 {margin-bottom: 0;}
+    .ant-breadcrumb {
+      font-size: 12px;
+      font-weight: 300;
+    }
+    h1 {
+      font-size: 26px;
+      margin-bottom: 0;
+      margin-top: 5px;
+    }
   }
+}
+#tk_Footer {
+  text-align: center;
+  font-size: 14px;
+  color: @tk_MediumGray;
 }
