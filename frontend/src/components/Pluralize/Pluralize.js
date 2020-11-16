@@ -16,7 +16,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import './Pluralize.less';
 
 const Pluralize = ({label,size}) => {
   if(size === null || size === 0){

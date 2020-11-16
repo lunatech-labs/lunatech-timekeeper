@@ -130,7 +130,7 @@ const TimeEntryForm = ({entries, userEvents, currentDay, form, onSuccess, onCanc
     return totalHoursPerDay(userEvents, date, entriesArray[0]);
   };
   return (
-    <div className="tk_ModalGen">
+    <div id="tk_ModalGen">
       <div className="tk_ModalTop">
         <div className="tk_ModalTopHead">
           <div>

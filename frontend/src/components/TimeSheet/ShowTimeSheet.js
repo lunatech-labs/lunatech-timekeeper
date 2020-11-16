@@ -37,7 +37,7 @@ const ShowTimeSheet = ({project, member}) => {
 
   const TimeSheet = ({timeSheet}) => {
     return (
-      <div className="tk_ModalGen">
+      <div id="tk_ModalGen">
         <div className="tk_ModalTop">
           <div className="tk_ModalTopHead">
             <h1>Individual timesheet</h1>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@import '../../main.less';
+@import '../../styles/main.less';
 
 .ant-modal-root {
   .ant-modal-wrap {
@@ -48,65 +48,65 @@
     }
   }
 }
-.tk_ModalGen {
-}
-.tk_ModalTop {
-  padding: 96px 64px 64px 64px;
-  .tk_ModalTopHead {
-    .mixin_Flexbox_Basis();
-    justify-content: space-between;
-    margin-bottom: 32px;
-    > div {
-      .mixin_Flexbox_Basis();
-      p {
-        text-align: center;
-        text-transform: uppercase;
-        border-right: 1px solid var(--tk_Border);
-        margin-right: 10px;
-        margin-bottom: 0;
-        padding-right: 10px;
-        color: var(--tk_LightGray);
-        line-height: 1;
-        span {
-          color: white;
-          font-size: 32px;
-        }
-      }
-    }
-    h1 {
-      margin: 0;
-      font-size: 32px;
-      font-weight: 400;
-    }
-  }
-  .tk_ModalTopBody {
-    .tk_ModalTopProject {
+#tk_ModalGen {
+  .tk_ModalTop {
+    padding: 96px 64px 64px 64px;
+    .tk_ModalTopHead {
       .mixin_Flexbox_Basis();
       justify-content: space-between;
-      padding-bottom: 16px;
-      margin-bottom: 16px;
-      border-bottom: 1px solid var(--tk_Border);
-      div {
+      margin-bottom: 32px;
+      > div {
         .mixin_Flexbox_Basis();
-        h2 {
-          font-size: 18px;
-          font-weight: 500;
+        p {
+          text-align: center;
+          text-transform: uppercase;
+          border-right: 1px solid var(--tk_Border);
+          margin-right: 10px;
           margin-bottom: 0;
+          padding-right: 10px;
+          color: var(--tk_LightGray);
+          line-height: 1;
+          span {
+            color: white;
+            font-size: 32px;
+          }
         }
       }
-      p {
-        margin-bottom: 0;
-        span {margin-right: 6px;}
+      h1 {
+        margin: 0;
+        font-size: 32px;
+        font-weight: 400;
       }
     }
-    .tk_CardMember {margin-bottom: 16px;}
-    .tk_Information {
-      &:first-child {border-top: none;}
-      &:last-child {border-bottom: none;}
+    .tk_ModalTopBody {
+      .tk_ModalTopProject {
+        .mixin_Flexbox_Basis();
+        justify-content: space-between;
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+        border-bottom: 1px solid var(--tk_Border);
+        div {
+          .mixin_Flexbox_Basis();
+          h2 {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 0;
+          }
+        }
+        p {
+          margin-bottom: 0;
+          span {margin-right: 6px;}
+        }
+      }
+      .tk_CardMember {margin-bottom: 16px;}
+      .tk_Information {
+        &:first-child {border-top: none;}
+        &:last-child {border-bottom: none;}
+      }
     }
   }
-}
-.tk_ModalBottom {
-  padding: 64px;
-  border-top: 1px solid var(--tk_Border);
+  .tk_ModalBottom {
+    padding: 64px;
+    border-top: 1px solid var(--tk_Border);
+  }
 }
