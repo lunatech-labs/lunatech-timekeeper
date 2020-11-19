@@ -17,19 +17,26 @@
 package fr.lunatech.timekeeper.resources;
 
 import fr.lunatech.timekeeper.resources.openapi.ExportResourceApi;
+import fr.lunatech.timekeeper.services.exports.ExportService;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
-import org.apache.camel.ProducerTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.Map;
 
 public class ExportResource implements ExportResourceApi {
 
+    private static Logger logger = LoggerFactory.getLogger(ExportResource.class);
+
     @Inject
-    ProducerTemplate producerTemplate;
+    ExportService exportService;
 
     @RolesAllowed({"admin"})
     @Override
@@ -46,6 +53,20 @@ public class ExportResource implements ExportResourceApi {
         if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("StartDate should be before endDate");
         }
-        return producerTemplate.requestBodyAndHeaders("direct:export", null, Map.of("startDate", startDate, "endDate", endDate), String.class);
+
+        try (FileReader fr = new FileReader(exportService.getImportedTimeEntriesBetweenTwoDate(startDate, endDate))) {
+            var br = new BufferedReader(fr);
+            var sb = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+                sb.append("\n");
+            }
+            //todo chunked response can be better
+            return sb.toString();
+        } catch (IOException ioException) {
+            logger.error(ioException.getMessage());
+            return Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase();
+        }
     }
 }

@@ -19,18 +19,22 @@ package fr.lunatech.timekeeper.services.exports;
 import fr.lunatech.timekeeper.csv.ImportedTimeEntry;
 import fr.lunatech.timekeeper.models.imports.UserImportExtension;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
-import fr.lunatech.timekeeper.services.imports.ImportService;
 import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
-import org.apache.camel.Exchange;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.quarkus.panache.common.Page;
+import io.quarkus.panache.common.Parameters;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -38,53 +42,75 @@ import java.util.stream.Stream;
 @ApplicationScoped
 public class ExportService {
 
-    private static Logger logger = LoggerFactory.getLogger(ImportService.class);
+    private static Logger logger = LoggerFactory.getLogger(ExportService.class);
+
+    private static final int EXPORT_PAGE_SIZE = 50;
+
+    @ConfigProperty(name = "timekeeper.export.folder")
+    String rootFile;
 
     /**
      * get importedTimeEntries between two date from database
-     * @param exchange that contains an header with the dates
-     * @return a List of TimeEntry
+     *
+     * @param startDate and endDate
+     * @return a File filled with the importedTimeEntries
      */
     @Transactional
-    public List<ImportedTimeEntry> getImportedTimeEntriesBetweenTwoDate(Exchange exchange) {
-        var start = (LocalDate) (exchange.getIn().getHeader("startDate"));
-        var end = (LocalDate) (exchange.getIn().getHeader("endDate"));
+    public File getImportedTimeEntriesBetweenTwoDate(LocalDate start, LocalDate end) throws IOException {
 
-        final LocalDateTime startDateTime = start.atTime(0, 1);
-        final LocalDateTime endDateTime = end.atTime(23, 59);
 
-        try (final Stream<TimeEntry> timeEntryStream = TimeEntry.streamAll()) {
-            logger.debug("StreamAll timeentries succeded, now filtering");
-            return timeEntryStream
-                    .filter(timeEntry -> (timeEntry.startDateTime.isAfter(startDateTime) || timeEntry.startDateTime.isEqual(startDateTime))
-                            && (timeEntry.endDateTime.isBefore(endDateTime) || timeEntry.endDateTime.isEqual(endDateTime))
-                    )
-                    .map(this::computeImportedTimeEntry)
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            logger.warn("Exception -> " + e);
-            throw e;
+        final LocalDateTime paramStartDateTime = start.atTime(0, 1);
+        final LocalDateTime paramEndDateTime = end.atTime(23, 59);
+
+        PanacheQuery<TimeEntry> query = TimeEntry
+                .find("startDateTime >= :paramStartDateTime AND endDateTime <= :paramEndDateTime",
+                        Parameters
+                                .with("paramStartDateTime", paramStartDateTime)
+                                .and("paramEndDateTime", paramEndDateTime)
+                ).page(Page.ofSize(EXPORT_PAGE_SIZE));
+        var toExport = query.stream().map(this::computeImportedTimeEntry).collect(Collectors.toList());
+
+        var filename = rootFile + "/export_at_" + LocalDate.now() + "_from_" + start + "_to_" + end + ".csv";
+        File file = new File(filename);
+        try (FileWriter writer = new FileWriter(file)) {
+            if (!file.exists() && !file.createNewFile()) {
+                throw new IOException("File can't be create");
+            }
+            while (!toExport.isEmpty()) {
+                String csvLines = toExport.stream().map(importedTimeEntry -> {
+                    //todo transform to csv format here
+                    var csvLine = importedTimeEntry.toString();
+                    return csvLine;
+                }).collect(Collectors.joining("\n"));
+                writer.append(csvLines);
+                writer.append("\n");
+                toExport = query.nextPage().stream().map(this::computeImportedTimeEntry).collect(Collectors.toList());
+            }
         }
+        return file;
     }
 
     /**
      * Compute an importedTimeEntry from a timeEntry
+     *
      * @param timeEntry
      * @return an ImportedTimeEntry
      */
-    protected ImportedTimeEntry computeImportedTimeEntry(TimeEntry timeEntry){
+    protected ImportedTimeEntry computeImportedTimeEntry(TimeEntry timeEntry) {
         // Compute userName with firstName and lastName
         String user = timeEntry.timeSheet.owner.firstName + " " + timeEntry.timeSheet.owner.lastName;
         // User Email
         String email = getEmail(timeEntry);
         // Client Name
-        String clientName = timeEntry.timeSheet.project.client.name;
+        String clientName = null != timeEntry.timeSheet.project.client
+                ? timeEntry.timeSheet.project.client.name
+                : "No client";
         // Project Name
         String projectName = timeEntry.timeSheet.project.name;
         //Description
         String description = timeEntry.comment;
         //Compute billable
-        String billable = (timeEntry.timeSheet.defaultIsBillable ? "Yes" : "No");
+        String billable = timeEntry.timeSheet.defaultIsBillable ? "Yes" : "No";
         //StartDate & Time
         String startDate = TimeKeeperDateUtils.formatToString(timeEntry.startDateTime.toLocalDate());
         String startTime = TimeKeeperDateUtils.formatToString(timeEntry.startDateTime.toLocalTime());

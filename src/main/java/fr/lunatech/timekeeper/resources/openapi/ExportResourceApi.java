@@ -16,6 +16,8 @@
 
 package fr.lunatech.timekeeper.resources.openapi;
 
+import fr.lunatech.timekeeper.csv.ImportedTimeEntry;
+import fr.lunatech.timekeeper.models.time.TimeEntry;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
@@ -26,12 +28,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.util.List;
 
 @Path("/export")
 public interface ExportResourceApi {
 
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces("text/csv")
     @Operation(summary = "Export timeentries to csv",
             description = "Export timeentries to csv between two dates")
     @Tag(ref = "export")
@@ -41,6 +45,5 @@ public interface ExportResourceApi {
                     description = "Export done"
             )
     })
-    String exportCSV(@QueryParam("startDate") String startString, @QueryParam("endDate") String endString);
-    //TODO put format of queryParam (DD-MM-YYYY) if possible + order query params start before end
+    String exportCSV(@QueryParam("startDate") String startString, @QueryParam("endDate") String endString) throws IOException;
 }
