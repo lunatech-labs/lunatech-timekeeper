@@ -16,8 +16,6 @@
 
 package fr.lunatech.timekeeper.resources.openapi;
 
-import fr.lunatech.timekeeper.csv.ImportedTimeEntry;
-import fr.lunatech.timekeeper.models.time.TimeEntry;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
@@ -27,9 +25,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 import java.io.IOException;
-import java.util.List;
 
 @Path("/export")
 public interface ExportResourceApi {
