@@ -74,4 +74,13 @@ public class UserEventResource implements UserEventResourceApi {
                                 " end day date=" + request.getEndDateTime().toLocalDate())
                 );
     }
+
+    @RolesAllowed({"user", "admin"})
+    @Override
+    @Counted(name = "countGetUserEvents", description = "Counts how many times the user load the event list on method 'getUserEventsByOrganizationId'")
+    @Timed(name = "timeGetUserEvents", description = "Times how long it takes the user load the event list on method 'getUserEventsByOrganizationId'", unit = MetricUnits.MILLISECONDS)
+    public List<UserEventResponse> getEventsByOrganizationId(Long organizationId) {
+        return userEventService.getEventsByOrganizationId(organizationId, authentication.context());
+    }
+
 }

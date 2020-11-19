@@ -20,7 +20,7 @@ import EditEventTemplateForm from '../../components/Events/EditEventTemplateForm
 
 const EditEventTemplatePage = () => {
   return (
-    <MainPage title="Edit an event">
+    <MainPage>
       <EditEventTemplateForm />
     </MainPage>
   );
