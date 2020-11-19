@@ -23,14 +23,14 @@ import fr.lunatech.timekeeper.timeutils.TimeKeeperDateUtils;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Parameters;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.QuoteMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -42,23 +42,18 @@ import java.util.stream.Stream;
 @ApplicationScoped
 public class ExportService {
 
-    private static Logger logger = LoggerFactory.getLogger(ExportService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExportService.class);
 
     private static final int EXPORT_PAGE_SIZE = 50;
 
-    @ConfigProperty(name = "timekeeper.export.folder")
-    String rootFile;
-
     /**
-     * get importedTimeEntries between two date from database
+     * get TimeEntries in Toggl import Csv line format between two date from database
      *
      * @param startDate and endDate
-     * @return a File filled with the importedTimeEntries
+     * @return a StringBuilder filled with the timeEntries
      */
     @Transactional
-    public File getImportedTimeEntriesBetweenTwoDate(LocalDate start, LocalDate end) throws IOException {
-
-
+    public StringBuilder getTimeEntriesBetweenTwoDateForExportToTogglCsv(LocalDate start, LocalDate end) throws IOException {
         final LocalDateTime paramStartDateTime = start.atTime(0, 1);
         final LocalDateTime paramEndDateTime = end.atTime(23, 59);
 
@@ -70,29 +65,29 @@ public class ExportService {
                 ).page(Page.ofSize(EXPORT_PAGE_SIZE));
         var toExport = query.stream().map(this::computeImportedTimeEntry).collect(Collectors.toList());
 
-        var filename = rootFile + "/export_at_" + LocalDate.now() + "_from_" + start + "_to_" + end + ".csv";
-        File file = new File(filename);
-        try (FileWriter writer = new FileWriter(file)) {
-            if (!file.exists() && !file.createNewFile()) {
-                throw new IOException("File can't be create");
-            }
-            writer.append(importedTimeEntryToTogglHeaderCsvLine()).append("\n");
+        StringBuilder sb = new StringBuilder();
+        try (CSVPrinter csvPrinter = new CSVPrinter(sb, CSVFormat.DEFAULT
+                .withHeader(importedTimeEntryToTogglHeaderCsvLine().toArray(new String[0]))
+                .withQuoteMode(QuoteMode.MINIMAL)
+                .withDelimiter(';'))) {
             while (!toExport.isEmpty()) {
-                String csvLines = toExport
-                        .stream()
-                        .map(this::importedTimeEntryToTogglCsvLine)
-                        .collect(Collectors.joining("\n"));
-                writer.append(csvLines).append("\n");
+                toExport.forEach(timeEntry -> {
+                    try {
+                        csvPrinter.printRecord(importedTimeEntryToTogglCsvLine(timeEntry).toArray());
+                    } catch (IOException ioException) {
+                        logger.error(ioException.getMessage());
+                    }
+                });
                 toExport = query.nextPage().stream().map(this::computeImportedTimeEntry).collect(Collectors.toList());
             }
+            csvPrinter.flush();
         }
-        return file;
+        return sb;
     }
 
-    protected String importedTimeEntryToTogglHeaderCsvLine(){
+    protected List<String> importedTimeEntryToTogglHeaderCsvLine() {
         //https://support.toggl.com/en/articles/3928821-toggl-csv-import-guide#importing-time-entries
-        return String.join(
-                ";",
+        return List.of(
                 "Email",
                 "Duration",
                 "Start Time",
@@ -106,10 +101,9 @@ public class ExportService {
         );
     }
 
-    protected String importedTimeEntryToTogglCsvLine(ImportedTimeEntry importedTimeEntry) {
+    protected List<String> importedTimeEntryToTogglCsvLine(ImportedTimeEntry importedTimeEntry) {
         //https://support.toggl.com/en/articles/3928821-toggl-csv-import-guide#importing-time-entries
-        return String.join(
-                ";",
+        return List.of(
                 importedTimeEntry.getEmail(),
                 importedTimeEntry.getDuration(),
                 importedTimeEntry.getStartTime(),

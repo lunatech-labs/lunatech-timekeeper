@@ -59,14 +59,5 @@ public class CamelRoute extends EndpointRouteBuilder {
         from("direct:processTimeEntries")
                 .bean(ImportService.class, "createTimeEntries(*, 1)")
         ;
-
-        // Export
-        from("direct:export")
-                .bean(ExportService.class, "getImportedTimeEntriesBetweenTwoDate")
-                .marshal(bindy)
-                .to(file(exportPath + "?fileName=report_${header.startDate}_${header.endDate}.csv"))
-                .setBody(simple("TimeEntries from ${header.startDate} to end ${header.endDate}"))
-        ;
-
     }
 }

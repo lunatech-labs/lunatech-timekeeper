@@ -25,8 +25,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -40,7 +38,7 @@ public class ExportResource implements ExportResourceApi {
 
     @RolesAllowed({"admin"})
     @Override
-    public String exportCSV(String startString, String endString) {
+    public Response exportCSV(String startString, String endString) {
         LocalDate startDate;
         LocalDate endDate;
         try {
@@ -54,19 +52,13 @@ public class ExportResource implements ExportResourceApi {
             throw new IllegalArgumentException("StartDate should be before endDate");
         }
 
-        try (FileReader fr = new FileReader(exportService.getImportedTimeEntriesBetweenTwoDate(startDate, endDate))) {
-            var br = new BufferedReader(fr);
-            var sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-                sb.append("\n");
-            }
-            //todo chunked response can be better
-            return sb.toString();
+        //todo chunked response can be better?
+        try {
+            StringBuilder sb = exportService.getTimeEntriesBetweenTwoDateForExportToTogglCsv(startDate, endDate);
+            return Response.ok(sb.toString()).build();
         } catch (IOException ioException) {
             logger.error(ioException.getMessage());
-            return Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase();
+            return Response.serverError().build();
         }
     }
 }
