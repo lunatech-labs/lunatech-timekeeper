@@ -76,18 +76,51 @@ public class ExportService {
             if (!file.exists() && !file.createNewFile()) {
                 throw new IOException("File can't be create");
             }
+            writer.append(importedTimeEntryToTogglHeaderCsvLine()).append("\n");
             while (!toExport.isEmpty()) {
-                String csvLines = toExport.stream().map(importedTimeEntry -> {
-                    //todo transform to csv format here
-                    var csvLine = importedTimeEntry.toString();
-                    return csvLine;
-                }).collect(Collectors.joining("\n"));
-                writer.append(csvLines);
-                writer.append("\n");
+                String csvLines = toExport
+                        .stream()
+                        .map(this::importedTimeEntryToTogglCsvLine)
+                        .collect(Collectors.joining("\n"));
+                writer.append(csvLines).append("\n");
                 toExport = query.nextPage().stream().map(this::computeImportedTimeEntry).collect(Collectors.toList());
             }
         }
         return file;
+    }
+
+    protected String importedTimeEntryToTogglHeaderCsvLine(){
+        //https://support.toggl.com/en/articles/3928821-toggl-csv-import-guide#importing-time-entries
+        return String.join(
+                ";",
+                "Email",
+                "Duration",
+                "Start Time",
+                "Start Date",
+                "Description",
+                "Project",
+                "Task",
+                "Client",
+                "Tags",
+                "Billable"
+        );
+    }
+
+    protected String importedTimeEntryToTogglCsvLine(ImportedTimeEntry importedTimeEntry) {
+        //https://support.toggl.com/en/articles/3928821-toggl-csv-import-guide#importing-time-entries
+        return String.join(
+                ";",
+                importedTimeEntry.getEmail(),
+                importedTimeEntry.getDuration(),
+                importedTimeEntry.getStartTime(),
+                importedTimeEntry.getStartDate(),
+                importedTimeEntry.getDescription(),
+                importedTimeEntry.getProject(),
+                importedTimeEntry.getTask(),
+                importedTimeEntry.getClient(),
+                importedTimeEntry.getTags(),
+                importedTimeEntry.getBillable()
+        );
     }
 
     /**
@@ -138,6 +171,7 @@ public class ExportService {
                 "",
                 "");
     }
+
 
     /**
      * returns the userImportExtension from DB to get the email of each user
