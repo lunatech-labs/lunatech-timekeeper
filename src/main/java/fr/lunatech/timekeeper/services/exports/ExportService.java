@@ -67,7 +67,7 @@ public class ExportService {
 
         StringBuilder sb = new StringBuilder();
         try (CSVPrinter csvPrinter = new CSVPrinter(sb, CSVFormat.DEFAULT
-                .withHeader(importedTimeEntryToTogglHeaderCsvLine().toArray(new String[0]))
+                .withHeader(togglHeaderCsvLine().toArray(new String[0]))
                 .withQuoteMode(QuoteMode.MINIMAL)
                 .withDelimiter(','))) {
             while (!toExport.isEmpty()) {
@@ -85,7 +85,7 @@ public class ExportService {
         return sb;
     }
 
-    protected List<String> importedTimeEntryToTogglHeaderCsvLine() {
+    protected List<String> togglHeaderCsvLine() {
         //https://support.toggl.com/en/articles/3928821-toggl-csv-import-guide#importing-time-entries
         return List.of(
                 "Email",
