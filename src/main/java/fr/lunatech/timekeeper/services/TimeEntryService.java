@@ -19,6 +19,7 @@ package fr.lunatech.timekeeper.services;
 import fr.lunatech.timekeeper.gauges.TimeEntriesNumberPerHoursGauge;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
+import fr.lunatech.timekeeper.resources.exceptions.DeleteResourceException;
 import fr.lunatech.timekeeper.services.requests.TimeEntryRequest;
 import io.quarkus.security.ForbiddenException;
 import org.slf4j.Logger;
@@ -87,8 +88,8 @@ public class TimeEntryService {
                 throw new ForbiddenException("The time entry can not be deleted because of authentication failed or access denied");
             }
             timeEntry.delete();
-        } catch (RuntimeException e) {
-            throw new RuntimeException("The user can't delete time entry with Id [ " + timeEntryId + " ], from the time sheet with Id [ " + timeSheetId + " ]" + " : " + e.getMessage());
+        } catch (PersistenceException e) {
+            throw new DeleteResourceException("The user can't delete time entry with Id [ " + timeEntryId + " ], from the time sheet with Id [ " + timeSheetId + " ]", e);
         }
 
         return Optional.of(timeEntryId);
