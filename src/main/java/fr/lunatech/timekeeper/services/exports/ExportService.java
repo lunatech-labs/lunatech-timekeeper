@@ -69,7 +69,7 @@ public class ExportService {
         try (CSVPrinter csvPrinter = new CSVPrinter(sb, CSVFormat.DEFAULT
                 .withHeader(importedTimeEntryToTogglHeaderCsvLine().toArray(new String[0]))
                 .withQuoteMode(QuoteMode.MINIMAL)
-                .withDelimiter(';'))) {
+                .withDelimiter(','))) {
             while (!toExport.isEmpty()) {
                 toExport.forEach(timeEntry -> {
                     try {
