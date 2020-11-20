@@ -38,13 +38,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
-import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TimeEntryDef;
-import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.TimeSheetPerProjectPerUserDef;
+import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.postValidation;
+import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.deleteValidation;
 import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getAdminAccessToken;
 import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getUserAccessToken;
 import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getUser2AccessToken;
@@ -359,5 +360,57 @@ class TimeEntryResourceTest {
         var expected = timeKeeperTestUtils.toJson(expectedTimeSheetJimmy2);
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken).body(is(expected)).statusCode(is(OK.getStatusCode()));
         getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken).statusCode(is(OK.getStatusCode()));
+    }
+
+    @Test
+    void shouldDeleteTimeEntry() {
+        final String adminToken = getAdminAccessToken();
+        final String jimmyToken = getUserAccessToken();
+        var sam = create(adminToken);
+        var jimmy = create(jimmyToken);
+        final ClientResponse client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
+        ProjectRequest.ProjectUserRequest samProjectRequest = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
+        ProjectRequest.ProjectUserRequest jimmyProjectRequest = new ProjectRequest.ProjectUserRequest(jimmy.getId(), false);
+        List<ProjectRequest.ProjectUserRequest> newUsers = List.of(samProjectRequest, jimmyProjectRequest);
+
+        final ProjectResponse project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers, 1L), adminToken);
+
+        // ID is 2 since Jimmy timesheet is created after Sam's one - Sam is added before Jimmy to the Project
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null, START_DATE);
+
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
+
+        final Long timeSheetId = 2L;
+        final Long timeEntryId1 = 1L;
+        final Long timeEntryId2 = 2L;
+
+        // Create two time entries 1 in morning and 1 in afternoon
+        LocalDateTime morningStartDateTime = LocalDateTime.of(2020, 1, 1, 9, 0);
+        LocalDateTime afternoonStartDateTime = LocalDateTime.of(2020, 1, 1, 13, 0);
+        TimeEntryRequest morning = new TimeEntryRequest("This morning, I did this test", morningStartDateTime, 4);
+        TimeEntryRequest afternoon = new TimeEntryRequest("This afternoon, I did this test", afternoonStartDateTime, 4);
+        create(timeSheetId, morning, jimmyToken);
+        create(timeSheetId, afternoon, jimmyToken);
+
+        // THEN check if time entries has been successfully created
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry1 = new TimeSheetResponse.TimeEntryResponse(timeEntryId1, "This morning, I did this test", morningStartDateTime, 4L);
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry2 = new TimeSheetResponse.TimeEntryResponse(timeEntryId2, "This afternoon, I did this test", afternoonStartDateTime, 4L);
+
+        var expectedTimeSheetJimmy_AfterAddingTimeEntries = timeKeeperTestUtils.toJson(
+                new TimeSheetResponse(timeSheetId, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(),
+                List.of(expectedTimeEntry1, expectedTimeEntry2), null, START_DATE));
+
+        // Initially two time entries added before deletion so check if they are present.
+        getValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken).body(is(expectedTimeSheetJimmy_AfterAddingTimeEntries)).statusCode(is(OK.getStatusCode()));
+
+        // Now delete afternoon time entry and check only one time entry is present.
+        var expectedTimeSheetJimmy_AfterDeletingAfternoonEntry = timeKeeperTestUtils.toJson(
+                new TimeSheetResponse(timeSheetId, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(),
+                        List.of(expectedTimeEntry1), null, START_DATE));
+        deleteValidation(TimeEntryDeleteDef.uriWithMultiId(timeSheetId, timeEntryId2), jimmyToken, Optional.empty()).statusCode(is(OK.getStatusCode()));
+
+        // after successful deletion: TimeSheet should have one time entry
+        getValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken).body(is(expectedTimeSheetJimmy_AfterDeletingAfternoonEntry)).statusCode(is(OK.getStatusCode()));
+
     }
 }

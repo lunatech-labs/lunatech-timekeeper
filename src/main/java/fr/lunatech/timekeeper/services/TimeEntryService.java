@@ -27,7 +27,9 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
+import javax.security.auth.DestroyFailedException;
 import javax.transaction.Transactional;
+import javax.ws.rs.NotFoundException;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -68,5 +70,31 @@ public class TimeEntryService {
     Optional<TimeEntry> findById(Long id, AuthenticationContext ctx) {
         return TimeEntry.<TimeEntry>findByIdOptional(id)
                 .filter(ctx::canAccess);
+    }
+
+
+    @Transactional
+    public Optional<Long> deleteTimeEntry(Long timeSheetId, Long timeEntryId, AuthenticationContext ctx) {
+        logger.debug("Delete timeEntry for timeSheetId={} with timeEntryId={}, request={}, ctx={}", timeSheetId, timeEntryId, ctx);
+        Optional<TimeEntry> timeEntryOptional = findById(timeEntryId, ctx);
+
+        if (!timeEntryOptional.isPresent()) {
+            throw new NotFoundException("The user can't delete time entry with Id [ " + timeEntryId + " ], from the time sheet with Id [ " + timeSheetId + " ]");
+        }
+
+        try {
+            var timeEntry = timeEntryOptional.get();
+
+            if (!ctx.canAccess(timeEntry)) {
+                throw new ForbiddenException("The user can't delete time entry with Id [ " + timeEntryId + " ], from the time sheet with Id [ " + timeSheetId + " ]");
+            }
+
+            timeEntry.delete();
+
+        } catch (Exception e) {
+            throw new RuntimeException("The time entry deletion failed for time entry with Id [ " + timeEntryId + " ], from the time sheet with Id [ " + timeSheetId + " ]");
+        }
+
+        return Optional.of(timeEntryId);
     }
 }

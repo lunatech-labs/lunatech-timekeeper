@@ -62,4 +62,15 @@ public class TimeEntryResource implements TimeEntryResourceApi {
                 .map(it -> Response.noContent().build())
                 .orElseThrow(NotFoundException::new);
     }
+
+    @RolesAllowed({"user"})
+    @Override
+    @Counted(name = "countDeleteTimeEntry", description = "Counts how many times the user to delete the time entry on method 'deleteTimeEntry'")
+    @Timed(name = "timeDeleteTimeEntry", description = "Times how long it takes the user to delete the time entry on method 'deleteTimeEntry'", unit = MetricUnits.MILLISECONDS)
+    public Response deleteTimeEntry(Long timeSheetId, Long timeEntryId) {
+        final var ctx = authentication.context();
+        return timeEntryService.deleteTimeEntry(timeSheetId, timeEntryId, ctx)
+                .map(entryId -> Response.ok("The time entry with id [ " + entryId + " ] for time sheet with Id [ " + timeSheetId + " ] has been successfully deleted").build())
+                .orElseThrow(NotFoundException::new);
+    }
 }

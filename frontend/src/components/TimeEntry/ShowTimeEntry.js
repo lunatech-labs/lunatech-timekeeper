@@ -21,7 +21,7 @@ import {Button} from 'antd';
 import Tooltip from 'antd/lib/tooltip';
 import {ClockCircleOutlined, DeleteOutlined, CopyOutlined, EditOutlined} from '@ant-design/icons';
 
-const ShowTimeEntry = ({entry, onClickEdit}) => {
+const ShowTimeEntry = ({entry, onClickEdit, onClickDelete}) => {
   const duration = entry.numberOfHours;
 
   return (
@@ -41,7 +41,7 @@ const ShowTimeEntry = ({entry, onClickEdit}) => {
               <Button type="link" size="small" shape="circle" icon={<CopyOutlined />}/>
             </Tooltip>
             <Tooltip title="Delete" key="delete">
-              <Button type="link" size="small" shape="circle" icon={<DeleteOutlined />}/>
+              <Button onClick={onClickDelete} type="link" size="small" shape="circle" icon={<DeleteOutlined />}/>
             </Tooltip>
           </div>
         </div>

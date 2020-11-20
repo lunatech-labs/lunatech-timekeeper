@@ -166,6 +166,32 @@ export const useTimeKeeperAPIPut = (urlAPI, formData, booleanCallback, formatDat
   });
 };
 
+export const useTimeKeeperAPIDelete = (urlAPI, formData, booleanCallback, formatData) => {
+  const [keycloak, initialized] = useKeycloak();
+
+  useEffect(() => {
+    if (initialized) {
+      localStorage.setItem('x-auth-token', keycloak.token);
+    }
+  }, [urlAPI, initialized, keycloak]
+  );
+
+  return useRequest((formData) => ({
+    url: process.env.REACT_APP_QUARKUS_BACKEND + urlAPI,
+    method: 'delete',
+    data: formatData ? formatData(formData) : formData
+  }), {
+    manual: true,
+    onSuccess: () => {
+      if (booleanCallback) {
+        booleanCallback(true);
+      } else {
+        console.error('Err: please set a callback for DELETE call to ' + urlAPI);
+      }
+    }
+  });
+};
+
 export const sortListByName = (listToSort) => listToSort.sort((a,b)=>{
   return a.name.localeCompare(b.name);
 });

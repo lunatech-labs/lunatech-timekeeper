@@ -148,6 +148,13 @@ const TimeEntriesPage = () => {
     setViewMode();
   };
 
+  const onSuccessDeleteTimeEntries = () => {
+    closeModal();
+    weekData.run();
+    monthData.run();
+    setViewMode();
+  };
+
   const setViewMode = () => setMode('view');
   const setAddMode = () => setMode('add');
   const setEditMode = () => setMode('edit');
