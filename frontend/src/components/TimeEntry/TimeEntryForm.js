@@ -34,7 +34,7 @@ const TimeEntryForm = ({entries, userEvents, currentDay, form, onSuccess, onCanc
   const setEditMode = () => setMode('edit');
   const [entry, setEntry] = useState();
 
-    useEffect(() => {
+  useEffect(() => {
     if(selectedEntryId) {
       const localEntry = entries[0].find(e => e.id === selectedEntryId);
       if (localEntry) {
@@ -101,28 +101,28 @@ const TimeEntryForm = ({entries, userEvents, currentDay, form, onSuccess, onCanc
     return displayUserEventsAndEntries(entries, userEvents, date);
   };
   const Entries = ({entries}) => {
-      const [urlDelete, setDeleteUrl] = useState('');
-      const callDeleteEntry = useTimeKeeperAPIDelete(urlDelete);
+    const [urlDelete, setDeleteUrl] = useState('');
+    const callDeleteEntry = useTimeKeeperAPIDelete(urlDelete);
 
-      // Todo: Avoid console errors and find better way to use Hooks and call API delete
-      useEffect(() => {
-          return () => {
-              callDeleteEntry.run().then(_ => onSuccess && onSuccess());
-          };
-      }, [urlDelete]);
-
-      const onDelete = (timeSheetId, timeEntryId) => {
-          const url = `/api/timeSheet/${timeSheetId}/timeEntry/${timeEntryId}/delete`;
-          setDeleteUrl(url);
+    // Todo: Avoid console errors and find better way to use Hooks and call API delete
+    useEffect(() => {
+      return () => {
+        callDeleteEntry.run().then(onSuccess && onSuccess());
       };
+    }, [urlDelete]);
+
+    const onDelete = (timeSheetId, timeEntryId) => {
+      const url = `/api/timeSheet/${timeSheetId}/timeEntry/${timeEntryId}/delete`;
+      setDeleteUrl(url);
+    };
 
     const showTimeEntries = (entries) => {
       return entries.map(entry => <ShowTimeEntry key={entry.id} entry={entry} onClickEdit={()=>{
         setEntry(entry);
         setEditMode();
       }} onClickDelete={ () => {
-          const timeSheetId = (timeSheets.data.sheets.entries) ? timeSheets.data.sheets.filter(timeSheet => timeSheet.entries.find(item => entry.id === item.id)).map(sheet => sheet.id)[0] : null;
-          onDelete(timeSheetId, entry.id);
+        const timeSheetId = (timeSheets.data.sheets.entries) ? timeSheets.data.sheets.filter(timeSheet => timeSheet.entries.find(item => entry.id === item.id)).map(sheet => sheet.id)[0] : null;
+        onDelete(timeSheetId, entry.id);
       }}/>);
     };
     return (
