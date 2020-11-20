@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
-import javax.security.auth.DestroyFailedException;
 import javax.transaction.Transactional;
 import javax.ws.rs.NotFoundException;
 import java.util.Optional;
@@ -75,24 +74,21 @@ public class TimeEntryService {
 
     @Transactional
     public Optional<Long> deleteTimeEntry(Long timeSheetId, Long timeEntryId, AuthenticationContext ctx) {
-        logger.debug("Delete timeEntry for timeSheetId={} with timeEntryId={}, request={}, ctx={}", timeSheetId, timeEntryId, ctx);
         Optional<TimeEntry> timeEntryOptional = findById(timeEntryId, ctx);
 
         if (!timeEntryOptional.isPresent()) {
-            throw new NotFoundException("The user can't delete time entry with Id [ " + timeEntryId + " ], from the time sheet with Id [ " + timeSheetId + " ]");
+            throw new NotFoundException("The time entry not found for TimeEntryId [ " + timeEntryId + " ] and TimeSheetId [ " + timeSheetId + " ]");
         }
 
         try {
             var timeEntry = timeEntryOptional.get();
 
             if (!ctx.canAccess(timeEntry)) {
-                throw new ForbiddenException("The user can't delete time entry with Id [ " + timeEntryId + " ], from the time sheet with Id [ " + timeSheetId + " ]");
+                throw new ForbiddenException("The time entry can not be deleted because of authentication failed or access denied");
             }
-
             timeEntry.delete();
-
-        } catch (Exception e) {
-            throw new RuntimeException("The time entry deletion failed for time entry with Id [ " + timeEntryId + " ], from the time sheet with Id [ " + timeSheetId + " ]");
+        } catch (RuntimeException e) {
+            throw new RuntimeException("The user can't delete time entry with Id [ " + timeEntryId + " ], from the time sheet with Id [ " + timeSheetId + " ]" + " : " + e.getMessage());
         }
 
         return Optional.of(timeEntryId);
