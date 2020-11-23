@@ -34,12 +34,11 @@ import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
 
 import static fr.lunatech.timekeeper.resources.utils.DataTestProvider.*;
-import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.PersonnalUserEventsDef;
-import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.UserEventsDef;
+import static fr.lunatech.timekeeper.resources.utils.ResourceDefinition.*;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.create;
 import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
-import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getAdminAccessToken;
+import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.*;
 import static javax.ws.rs.core.Response.Status.OK;
 
 @QuarkusTest
@@ -140,4 +139,42 @@ class UserEventResourceTest {
                 Matchers.is(timeKeeperTestUtils.listOfTasJson(userEventTuple1._2, userEventTuple2._2))
         ).statusCode(CoreMatchers.is(OK.getStatusCode()));
     }
+
+    @Test
+    void shouldGetUserEventsByOrganisationId() {
+        final String adminToken = getAdminAccessToken();
+        final var sam = create(adminToken);
+        final var eventNameForFrance = dataTestProvider.generateRandomEventName();
+
+        // This workaround is just for fake user in order to create userId = 2
+        final String fakeToken = getUserAccessToken();
+        create(fakeToken);
+
+        final String getDutchAdminToken = getAdminAccessTokenForDutch();
+        final var dutchAdminUser = create(getDutchAdminToken);
+        final var eventNameForDutch = dataTestProvider.generateRandomEventName();
+
+        final Tuple2<UserEventRequest, UserEventResponse> userEventTuple1 =
+                dataTestProvider.generateUserEventTuple(eventNameForFrance, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, 1L, sam.getId(), sam.getId());
+
+        final Tuple2<UserEventRequest, UserEventResponse> userEventTuple2 =
+                dataTestProvider.generateUserEventTuple(eventNameForDutch, THE_24_TH_JUNE_2020_AT_9_AM, THE_24_TH_JUNE_2020_AT_5_PM, 2L, dutchAdminUser.getId(), dutchAdminUser.getId());
+
+        create(userEventTuple1._1, adminToken);
+        create(userEventTuple2._1, getDutchAdminToken);
+
+        getValidation(
+                PersonnalUserEventsByOrganizationIdDef.uriWithMultiId(1L), adminToken
+        ).body(
+                Matchers.is(timeKeeperTestUtils.listOfTasJson(userEventTuple1._2))
+        ).statusCode(CoreMatchers.is(OK.getStatusCode()));
+
+        getValidation(
+                PersonnalUserEventsByOrganizationIdDef.uriWithMultiId(2L), getDutchAdminToken
+        ).body(
+                Matchers.is(timeKeeperTestUtils.listOfTasJson(userEventTuple2._2))
+        ).statusCode(CoreMatchers.is(OK.getStatusCode()));
+
+    }
+
 }

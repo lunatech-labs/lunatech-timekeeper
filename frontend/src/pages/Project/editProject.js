@@ -21,7 +21,7 @@ import EditProjectForm from '../../components/Projects/EditProjectForm';
 
 const EditProjectsPage = () => {
   return (
-    <MainPage title="Edit project">
+    <MainPage>
       <EditProjectForm />
     </MainPage>
   );

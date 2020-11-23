@@ -21,7 +21,7 @@ import NewProjectForm from '../../components/Projects/NewProjectForm';
 
 const NewProjectPage = () => {
   return (
-    <MainPage title="Create new project">
+    <MainPage>
       <NewProjectForm/>
     </MainPage>
   );

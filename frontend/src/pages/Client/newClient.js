@@ -21,7 +21,7 @@ import MainPage from '../MainPage/MainPage';
 
 const NewClientPage = () => {
   return (
-    <MainPage title="Create a new client">
+    <MainPage>
       <NewClientForm/>
     </MainPage>
   );

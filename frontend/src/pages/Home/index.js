@@ -20,7 +20,7 @@ import MainPage from '../MainPage/MainPage';
 
 const HomePage = () => {
   return (
-    <MainPage title={'Home'}>
+    <MainPage>
       <ShowUserPage/>
     </MainPage>
   );
