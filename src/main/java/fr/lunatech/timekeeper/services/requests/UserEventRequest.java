@@ -84,7 +84,7 @@ public class UserEventRequest {
         userEvent.endDateTime = this.endDateTime;
         userEvent.owner = owner;
         userEvent.creator = creator;
-        userEvent.organization = creator.getOrganization();
+        userEvent.organization = creator.getOrganization();   // Creators organisation
         return userEvent;
     }
 

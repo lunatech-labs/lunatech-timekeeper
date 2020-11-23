@@ -17,61 +17,35 @@
 import React from 'react';
 import {Calendar, ConfigProvider} from 'antd';
 import PropTypes from 'prop-types';
-import moment from 'moment';
-import _ from 'lodash';
 import en_GB from 'antd/lib/locale-provider/en_GB';
 import 'moment/locale/en-gb';
 
 import DatePanel from './DatePanel';
 import MonthDayCard from './MonthDayCard';
-import {isPublicHoliday, isWeekEnd, totalHoursPerDay} from '../../../utils/momentUtils';
+import {isPublicHoliday, totalHoursPerDay} from '../../../utils/momentUtils';
 import {getMaximumHoursPerDay} from '../../../utils/configUtils';
 import './MonthCalendar.less';
+import {
+  UserTimeEntryData,
+  IsDisabled,
+  UserEventEntryData,
+  IsDayWithoutAnyEntries
+} from '../CalendarUtils';
+
+/*
+* This component is used to display time and event entries for a month
+* */
 
 const MonthCalendar = (props) => {
   const {contextDate, onDateChange, onClickPlusButton, timeEntriesData, disabledWeekEnd, onPanelChange, publicHolidays, userEvents } = props;
 
-  const isDisabled = (dateAsMoment) => {
-    const userTimeEntry = UserTimeEntryData(dateAsMoment);
-    return userTimeEntry.disabled ? true :
-      (isWeekEnd(dateAsMoment) && disabledWeekEnd) || isPublicHoliday(dateAsMoment, publicHolidays);
-  };
-
-  const UserTimeEntryData = (date) => {
-    const data = timeEntriesData.find(entry => entry.date.isSame(moment(date).utc(), 'day'));
-    return _.isUndefined(data) ? {} : data;
-  };
-
-  const UserEventEntryData = (userEvents, dateAsMoment) => {
-    const data = userEvents.map(userEvent => userEvent.eventUserDaysResponse).flat()
-      .filter(eventEntry => dateAsMoment.format('YYYY-MM-DD') === eventEntry.date);
-    return _.isUndefined(data) ? [] : data;
-  };
-
-  const DayWithoutEntries = (currentDate, userTimeEntry, userEventEntry) => {
-    const today = moment();
-    const isCurrentDateBeforeToday = currentDate.isBefore(today , 'day');
-    const isUserTimeEntryEmpty = _.isEmpty(userTimeEntry);
-    const isUserEventEntryEmpty = _.isEmpty(userEventEntry);
-    return(isCurrentDateBeforeToday && isUserTimeEntryEmpty && isUserEventEntryEmpty);
-  };
-
   const MonthDayCellRender = (dateAsMoment) => {
-    const userTimeEntry = UserTimeEntryData(dateAsMoment);
+    const userTimeEntry = UserTimeEntryData(dateAsMoment, timeEntriesData);
     const userEventEntry = UserEventEntryData(userEvents, dateAsMoment);
     const hoursCompleted = totalHoursPerDay(userEvents, dateAsMoment, userTimeEntry.data) >= getMaximumHoursPerDay();
     const isItPublicHoliday = isPublicHoliday(dateAsMoment, publicHolidays);
-    const applyWarningClass = DayWithoutEntries(dateAsMoment, userTimeEntry, userEventEntry);
-    const isDayDisabled = isDisabled(dateAsMoment);
-
-    console.debug('MonthDayCellRender: [' + '\n'+
-           ' Date: '+ dateAsMoment.format('DD-MM-YYYY') + '\n' +
-           ' Hours completed on this day: ' + hoursCompleted + '\n' +
-           ' Is It PublicHoliday: ' + isItPublicHoliday + '\n' +
-           ' Mark this day with warning class: ' + applyWarningClass + '\n' +
-           ' Is this day disabled (on Weekend or Public holiday): ' + isDayDisabled + '\n' +
-           ' TimeEntry for this day: ' + JSON.stringify(userTimeEntry) + '\n' +
-           ' EventEntry for this day: ' + JSON.stringify(userEventEntry) + '\n' + ' ]');
+    const isDayWithoutAnyEntries = IsDayWithoutAnyEntries(dateAsMoment, userTimeEntry, userEventEntry);
+    const isDayDisabled = IsDisabled(dateAsMoment, timeEntriesData, disabledWeekEnd, publicHolidays);
 
     return (
       <MonthDayCard
@@ -79,7 +53,7 @@ const MonthCalendar = (props) => {
         userEventEntry={userEventEntry}
         userTimeEntry={userTimeEntry}
         onClickPlusButton={onClickPlusButton}
-        applyWarningClass={applyWarningClass}
+        isDayWithoutAnyEntries={isDayWithoutAnyEntries}
         isPublicHoliday={isItPublicHoliday}
         isDisabled={isDayDisabled}
         hoursCompleted={hoursCompleted}
@@ -97,7 +71,7 @@ const MonthCalendar = (props) => {
             return <DatePanel dateAsMoment={render.value} onChange={render.onChange} onPanelChange={onPanelChange} />;
           }}
           disabledDate={dateAsMoment => {
-            return isDisabled(dateAsMoment);
+            return IsDisabled(dateAsMoment, timeEntriesData, disabledWeekEnd, publicHolidays);
           }}
           dateCellRender={dateAsMoment => {
             return MonthDayCellRender(dateAsMoment);

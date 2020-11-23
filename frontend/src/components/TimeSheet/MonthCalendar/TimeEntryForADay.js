@@ -14,29 +14,23 @@
  * limitations under the License.
  */
 
+import {Badge} from 'antd';
 import React from 'react';
 import PropTypes from 'prop-types';
-import UserTimeEntry from './UserTimeEntry';
 
-const UserTimeEntries = ({userTimeEntry}) => {
-  return userTimeEntry.data ?
-    userTimeEntry.data.map(entry =>
-      <UserTimeEntry timeEntry={entry} key={`user-time-entry-${entry.id}`}/>
-    ) : <></>;
+const TimeEntryForADay = ({timeEntry}) => {
+  return timeEntry ?
+    <div key={`badge-${timeEntry.id}`}>
+      <Badge status='success' text={timeEntry.comment}/>
+    </div> : <></>;
 };
 
-UserTimeEntries.propTypes = {
-  userTimeEntry: PropTypes.shape({
-    date: PropTypes.object,
-    disabled: PropTypes.bool,
-    data: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number,
-        comment: PropTypes.string,
-        project: PropTypes.any
-      }).isRequired
-    )
+TimeEntryForADay.propTypes = {
+  timeEntry: PropTypes.shape({
+    id: PropTypes.number,
+    comment: PropTypes.string,
+    project: PropTypes.any
   })
 };
 
-export default UserTimeEntries;
+export default TimeEntryForADay;

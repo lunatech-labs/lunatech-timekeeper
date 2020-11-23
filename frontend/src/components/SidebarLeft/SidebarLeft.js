@@ -26,7 +26,7 @@ const { Sider } = Layout;
 const SidebarLeft = ({ collapsed }) => {
   return (
 
-    <Sider width={240} id="tk_LeftSidebar" className="site-layout-background" trigger={null} collapsible collapsed={collapsed}>
+    <Sider width={208} id="tk_LeftSidebar" className="site-layout-background" trigger={null} collapsible collapsed={collapsed}>
       <Logo />
       <MenuSidebar/>
     </Sider>
