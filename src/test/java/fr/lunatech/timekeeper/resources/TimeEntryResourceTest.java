@@ -451,7 +451,7 @@ class TimeEntryResourceTest {
         deleteValidation(TimeEntryDeleteDef.uriWithMultiId(timeSheetId, timeEntryId2), jimmyToken, Optional.empty()).statusCode(is(NOT_FOUND.getStatusCode()));
 
         // FORBIDDEN
-        deleteValidation(TimeEntryDeleteDef.uriWithMultiId(timeSheetId, timeEntryId1), "whatever", Optional.empty()).statusCode(is(NOT_FOUND.getStatusCode()));
+        deleteValidation(TimeEntryDeleteDef.uriWithMultiId(timeSheetId, timeEntryId1), "whatever", Optional.empty()).statusCode(is(FORBIDDEN.getStatusCode()));
 
     }
 }
