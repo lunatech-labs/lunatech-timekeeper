@@ -112,7 +112,7 @@ class ExportServiceIntegrationTest {
                 "08:00:00",
                 "",
                 ""
-                );
+        );
         assertEquals(result, expected);
     }
 
@@ -152,7 +152,7 @@ class ExportServiceIntegrationTest {
                     "jimmy@lunatech.fr,08:00:00,09:00:00,2020-01-01,\"Today, I did this test\",Some Project,,NewClient,,Yes" +
                     "\r\n";
             assertEquals(result, expected);
-        } catch (IOException ioe){
+        } catch (IOException ioe) {
             assert false;
         }
     }
