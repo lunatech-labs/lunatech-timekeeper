@@ -412,7 +412,7 @@ class TimeEntryResourceTest {
     }
 
     @Test
-    void should_Throw_NotFoundException_WhenDeletingTimeEntry() {
+    void should_Throw_Exception_WhenDeletingTimeEntry() {
         final String adminToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
         var sam = create(adminToken);
@@ -447,8 +447,11 @@ class TimeEntryResourceTest {
 
         getValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken).body(is(expectedTimeSheetJimmy_AfterAddingTimeEntries)).statusCode(is(OK.getStatusCode()));
 
-        // Now delete time entry with different ID ,( which is 2L in this case), should throw not found exception
+        // NOT FOUND: Now delete time entry with different ID ,( which is 2L in this case), should throw not found exception
         deleteValidation(TimeEntryDeleteDef.uriWithMultiId(timeSheetId, timeEntryId2), jimmyToken, Optional.empty()).statusCode(is(NOT_FOUND.getStatusCode()));
+
+        // FORBIDDEN
+        deleteValidation(TimeEntryDeleteDef.uriWithMultiId(timeSheetId, timeEntryId1), "whatever", Optional.empty()).statusCode(is(NOT_FOUND.getStatusCode()));
 
     }
 }
