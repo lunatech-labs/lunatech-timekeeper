@@ -30,7 +30,7 @@ public class TimeEntry extends PanacheEntityBase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
-    @Column(name = "comment", length = 255)
+    @Column(name = "comment",length = 2000)
     public String comment;
 
     @ManyToOne
@@ -49,5 +49,16 @@ public class TimeEntry extends PanacheEntityBase {
         }
         Duration d = Duration.between(startDateTime, endDateTime);
         return d.toHours();
+    }
+
+    @Override
+    public String toString() {
+        return "TimeEntry{" +
+                "id=" + id +
+                ", comment='" + comment + '\'' +
+                ", timeSheet=" + timeSheet +
+                ", startDateTime=" + startDateTime +
+                ", endDateTime=" + endDateTime +
+                '}';
     }
 }

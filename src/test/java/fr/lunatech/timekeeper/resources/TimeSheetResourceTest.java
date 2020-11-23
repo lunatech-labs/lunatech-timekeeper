@@ -223,6 +223,6 @@ class TimeSheetResourceTest {
                 TimeUnit.DAY,
                 START_DATE
         );
-        putValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken, timeKeeperTestUtils.toJson(updatedTimeSheet)).statusCode(500);
+        putValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken, timeKeeperTestUtils.toJson(updatedTimeSheet)).statusCode(400);
     }
 }

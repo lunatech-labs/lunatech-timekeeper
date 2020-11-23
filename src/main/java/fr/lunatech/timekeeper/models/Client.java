@@ -45,4 +45,14 @@ public class Client extends PanacheEntityBase {
     @NotNull
     public List<Project> projects;
 
+    @Override
+    public String toString() {
+        return "Client{" +
+                "id=" + id +
+                ", organization=" + organization.name+
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", nb of projects=" + projects.size() +
+                '}';
+    }
 }

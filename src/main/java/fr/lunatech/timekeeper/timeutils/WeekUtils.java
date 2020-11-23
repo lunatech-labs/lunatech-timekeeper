@@ -6,7 +6,6 @@ import fr.lunatech.timekeeper.services.responses.UserEventResponse;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class WeekUtils {
 
@@ -59,9 +58,9 @@ public class WeekUtils {
         return userEvents.stream()
                 .filter(userEvent -> userEvent.getAttendees().stream().anyMatch(attendee -> attendee.getUserId().equals(userId)))
                 .flatMap(userEvent -> userEvent.getEventUserDaysResponse().stream())
-                .filter(day -> TimeKeeperDateUtils.formatToLocalDate(day.getDate()).equals(date))
-                .map(userEventDay -> TimeKeeperDateUtils.getDuration(TimeKeeperDateUtils.formatToLocalDateTime(userEventDay.getStartDateTime()),
-                        TimeKeeperDateUtils.formatToLocalDateTime(userEventDay.getEndDateTime()), ChronoUnit.HOURS))
+                .filter(day -> TimeKeeperDateUtils.parseToLocalDate(day.getDate()).equals(date))
+                .map(userEventDay -> TimeKeeperDateUtils.getDuration(TimeKeeperDateUtils.parseToLocalDateTime(userEventDay.getStartDateTime()),
+                        TimeKeeperDateUtils.parseToLocalDateTime(userEventDay.getEndDateTime()), ChronoUnit.HOURS))
                 .reduce(0L, Long::sum);
     }
 }

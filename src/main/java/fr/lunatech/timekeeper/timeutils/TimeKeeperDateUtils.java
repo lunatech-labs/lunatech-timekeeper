@@ -16,10 +16,7 @@
 
 package fr.lunatech.timekeeper.timeutils;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.*;
 import java.util.List;
@@ -136,8 +133,28 @@ public class TimeKeeperDateUtils {
      * @param dateString
      * @return a localDate
      */
-    public static LocalDate formatToLocalDate(final String dateString) {
+    public static LocalDate parseToLocalDate(final String dateString) {
         return LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE);
+    }
+
+    /**
+     * Format and return the time as a String
+     *
+     * @param time is a valid time
+     * @return a String ISO LOCAL TIME
+     */
+    public static String formatToString(final LocalTime time) {
+        return DateTimeFormatter.ISO_LOCAL_TIME.format(time);
+    }
+
+    /**
+     * Returns a LocalTime from ISO LOCAL TIME String
+     *
+     * @param timeString
+     * @return a LocalTime
+     */
+    public static LocalTime parseToLocalTime(final String timeString) {
+        return LocalTime.parse(timeString, DateTimeFormatter.ISO_LOCAL_TIME);
     }
 
     /**
@@ -156,7 +173,7 @@ public class TimeKeeperDateUtils {
      * @param dateString
      * @return a localDateTime
      */
-    public static LocalDateTime formatToLocalDateTime(final String dateString) {
+    public static LocalDateTime parseToLocalDateTime(final String dateString) {
         return LocalDateTime.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
@@ -190,6 +207,21 @@ public class TimeKeeperDateUtils {
             throw new IllegalArgumentException("EndDateTime must be after startDateTime");
         }
         return from.until(to, unit);
+    }
+
+    /**
+     * Returns the time between two date in hours, minutes and seconds
+     *
+     * @param from
+     * @param to
+     * @return a String that represent the time between two date
+     */
+    public static String getDurationIntoHoursMinutesAndSecondAsString(LocalDateTime from, LocalDateTime to){
+        if (from.isAfter(to)) {
+            throw new IllegalArgumentException("EndDateTime must be after startDateTime");
+        }
+        Duration duration = Duration.between(from, to);
+        return String.format("%02d:%02d:%02d", duration.toHours(), duration.toMinutesPart(), duration.toSecondsPart());
     }
 
     /**
