@@ -46,11 +46,8 @@ import static fr.lunatech.timekeeper.resources.utils.ResourceFactory.update;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.getValidation;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.postValidation;
 import static fr.lunatech.timekeeper.resources.utils.ResourceValidation.deleteValidation;
-import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getAdminAccessToken;
-import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getUserAccessToken;
-import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.getUser2AccessToken;
-import static javax.ws.rs.core.Response.Status.FORBIDDEN;
-import static javax.ws.rs.core.Response.Status.OK;
+import static fr.lunatech.timekeeper.testcontainers.KeycloakTestResource.*;
+import static javax.ws.rs.core.Response.Status.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -363,7 +360,7 @@ class TimeEntryResourceTest {
     }
 
     @Test
-    void shouldDeleteTimeEntry() {
+    void should_DeleteTimeEntry() {
         final String adminToken = getAdminAccessToken();
         final String jimmyToken = getUserAccessToken();
         var sam = create(adminToken);
@@ -411,6 +408,47 @@ class TimeEntryResourceTest {
 
         // after successful deletion: TimeSheet should have one time entry
         getValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken).body(is(expectedTimeSheetJimmy_AfterDeletingAfternoonEntry)).statusCode(is(OK.getStatusCode()));
+
+    }
+
+    @Test
+    void should_Throw_NotFoundException_WhenDeletingTimeEntry() {
+        final String adminToken = getAdminAccessToken();
+        final String jimmyToken = getUserAccessToken();
+        var sam = create(adminToken);
+        var jimmy = create(jimmyToken);
+        final ClientResponse client = create(new ClientRequest("NewClient", "NewDescription"), adminToken);
+        ProjectRequest.ProjectUserRequest samProjectRequest = new ProjectRequest.ProjectUserRequest(sam.getId(), true);
+        ProjectRequest.ProjectUserRequest jimmyProjectRequest = new ProjectRequest.ProjectUserRequest(jimmy.getId(), false);
+        List<ProjectRequest.ProjectUserRequest> newUsers = List.of(samProjectRequest, jimmyProjectRequest);
+
+        final ProjectResponse project = create(new ProjectRequest("Some Project", true, "some description", client.getId(), true, newUsers, 1L), adminToken);
+
+        // ID is 2 since Jimmy timesheet is created after Sam's one - Sam is added before Jimmy to the Project
+        final var expectedTimeSheetJimmy = new TimeSheetResponse(2L, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(), Collections.emptyList(), null, START_DATE);
+
+        getValidation(TimeSheetPerProjectPerUserDef.uriWithMultiId(project.getId(), jimmy.getId()), adminToken).body(is(timeKeeperTestUtils.toJson(expectedTimeSheetJimmy))).statusCode(is(OK.getStatusCode()));
+
+        final Long timeSheetId = 2L;
+        final Long timeEntryId1 = 1L;
+        final Long timeEntryId2 = 2L;
+
+        // Create time entry for morning
+        LocalDateTime morningStartDateTime = LocalDateTime.of(2020, 1, 1, 9, 0);
+        TimeEntryRequest morning = new TimeEntryRequest("This morning, I did this test", morningStartDateTime, 4);
+        create(timeSheetId, morning, jimmyToken);
+
+        // THEN check if time entries has been successfully created
+        TimeSheetResponse.TimeEntryResponse expectedTimeEntry1 = new TimeSheetResponse.TimeEntryResponse(timeEntryId1, "This morning, I did this test", morningStartDateTime, 4L);
+
+        var expectedTimeSheetJimmy_AfterAddingTimeEntries = timeKeeperTestUtils.toJson(
+                new TimeSheetResponse(timeSheetId, project, jimmy.getId(), TimeUnit.HOURLY, true, null, null, TimeUnit.DAY.toString(),
+                        List.of(expectedTimeEntry1), null, START_DATE));
+
+        getValidation(TimeSheetDef.uriPlusId(timeSheetId), adminToken).body(is(expectedTimeSheetJimmy_AfterAddingTimeEntries)).statusCode(is(OK.getStatusCode()));
+
+        // Now delete time entry with different ID ,( which is 2L in this case), should throw not found exception
+        deleteValidation(TimeEntryDeleteDef.uriWithMultiId(timeSheetId, timeEntryId2), jimmyToken, Optional.empty()).statusCode(is(NOT_FOUND.getStatusCode()));
 
     }
 }
