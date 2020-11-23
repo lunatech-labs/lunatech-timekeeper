@@ -147,7 +147,8 @@ public class DataTestProvider {
     private List<User> usersTest() {
         return List.of(
                 new User(1L, "Sam", "Uell", "sam@lunatech.fr", "sam.png"),
-                new User(2L, "Jimmy", "James", "jimmy@lunatech.fr", "jimmy.png")
+                new User(2L, "Jimmy", "James", "jimmy@lunatech.fr", "jimmy.png"),
+                new User(3L, "Dutch First Name", "Dutch Last Name", "dutch@lunatech.nl", "dutch.png")
         );
     }
 

@@ -105,6 +105,20 @@ public class UserEventService {
     }
 
     /**
+     * Get all UserEvents by organisation id
+     *
+     * @param organization_id
+     * @param context
+     * @return List[UserEventResponse]
+     */
+
+    public List<UserEventResponse> getEventsByOrganizationId(Long organization_id, AuthenticationContext context) { //NOSONAR
+        return UserEvent.<UserEvent>stream("organization_id=?1", organization_id) //NOSONAR
+                .map(UserEventResponse::bind) //NOSONAR
+                .collect(Collectors.toList());
+    }
+
+    /**
      * add uservent rules
      *
      * @param request
