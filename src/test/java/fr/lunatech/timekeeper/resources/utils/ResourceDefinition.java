@@ -34,6 +34,7 @@ public enum ResourceDefinition {
     TimeSheetPerProjectPerUserDef("/api/projects/%d/users/%d", apply(Void.class, TimeSheetResponse.class)),
     TimeEntryDef("/api/timeSheet/%d/timeEntry", apply(TimeEntryRequest.class, Void.class)),
     TimeSheetDef("/api/time-sheets", apply(TimeSheetRequest.class, TimeSheetResponse.class)),
+    TimeEntryDeleteDef("/api/timeSheet/%d/timeEntry/%d/delete", apply(Void.class, Void.class)),
     PersonalTimeSheetsWeekDef("/api/my/%d?weekNumber=%d", apply(Void.class, WeekResponse.class)),
     PersonalTimeSheetsMonthDef("/api/my/%d/month?monthNumber=%d", apply(Void.class, MonthResponse.class)),
     PersonnalUserEventsDef("/api/user-events?userId=%d", apply(Void.class, UserEventResponse.class)),

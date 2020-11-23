@@ -15,7 +15,7 @@
  */
 
 import React, {useState} from 'react';
-import {Alert, Layout, Typography} from 'antd';
+import {Alert, Layout} from 'antd';
 import './MainPage.less';
 import Breadcrumbs from '../../components/Breadcrumbs/Breadcrumbs';
 import SidebarLeft from '../../components/SidebarLeft/SidebarLeft';

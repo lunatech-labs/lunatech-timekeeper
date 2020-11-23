@@ -73,4 +73,23 @@ public interface TimeEntryResourceApi {
             )
     })
     Response updateTimeEntry(@PathParam("timeSheetId") Long timeSheetId, @PathParam("timeEntryid") Long timeEntryId, @Valid @RequestBody TimeEntryRequest request, @Context UriInfo uriInfo);
+
+    @DELETE
+    @Path("/{timeEntryId}/delete")
+    @Operation(summary = "Delete a timeentry",
+            description = "Delete timeentry details.")
+    @Tag(ref = "timeEntries")
+    @APIResponses(value = {
+            @APIResponse(
+                    responseCode = "200",
+                    description = "TimeEntry deleted"
+            ),
+            @APIResponse(
+                    responseCode = "404",
+                    description = "TimeEntry not found"
+            )
+    })
+    Response deleteTimeEntry(@PathParam("timeSheetId") Long timeSheetId, @PathParam("timeEntryId") Long timeEntryId);
+
+
 }

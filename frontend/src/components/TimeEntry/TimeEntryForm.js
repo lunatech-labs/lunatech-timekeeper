@@ -17,7 +17,7 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {Alert, Button, Form, Input, Spin} from 'antd';
-import {useTimeKeeperAPI} from '../../utils/services';
+import {useTimeKeeperAPI, useTimeKeeperAPIDelete} from '../../utils/services';
 import '../Modal/ModalGeneral.less';
 import NoDataMessage from '../NoDataMessage/NoDataMessage';
 import ShowTimeEntry from './ShowTimeEntry';
@@ -30,10 +30,10 @@ import {getMaximumHoursPerDay} from '../../utils/configUtils';
 const {TextArea} = Input;
 
 const TimeEntryForm = ({entries, userEvents, currentDay, form, onSuccess, onCancel, mode, setMode, selectedEntryId}) => {
-
   const setAddMode = () => setMode('add');
   const setEditMode = () => setMode('edit');
   const [entry, setEntry] = useState();
+
   useEffect(() => {
     if(selectedEntryId) {
       const localEntry = entries[0].find(e => e.id === selectedEntryId);
@@ -41,7 +41,7 @@ const TimeEntryForm = ({entries, userEvents, currentDay, form, onSuccess, onCanc
         setEntry(localEntry);
       }
     }
-  },[entries,selectedEntryId]);
+  },[entries, selectedEntryId]);
 
   const timeSheets = useTimeKeeperAPI('/api/my/' + currentDay.year() + '?weekNumber=' + currentDay.isoWeek(), (form => form));
   if (timeSheets.loading) {
@@ -101,10 +101,28 @@ const TimeEntryForm = ({entries, userEvents, currentDay, form, onSuccess, onCanc
     return displayUserEventsAndEntries(entries, userEvents, date);
   };
   const Entries = ({entries}) => {
+    const [urlDelete, setDeleteUrl] = useState('');
+    const callDeleteEntry = useTimeKeeperAPIDelete(urlDelete);
+
+    // Todo: Avoid console errors and find better way to use Hooks and call API delete
+    useEffect(() => {
+      return () => {
+        callDeleteEntry.run().then(onSuccess && onSuccess());
+      };
+    }, [urlDelete]);
+
+    const onDelete = (timeSheetId, timeEntryId) => {
+      const url = `/api/timeSheet/${timeSheetId}/timeEntry/${timeEntryId}/delete`;
+      setDeleteUrl(url);
+    };
+
     const showTimeEntries = (entries) => {
       return entries.map(entry => <ShowTimeEntry key={entry.id} entry={entry} onClickEdit={()=>{
         setEntry(entry);
         setEditMode();
+      }} onClickDelete={ () => {
+        const timeSheetId = (timeSheets.data.sheets.entries) ? timeSheets.data.sheets.filter(timeSheet => timeSheet.entries.find(item => entry.id === item.id)).map(sheet => sheet.id)[0] : null;
+        onDelete(timeSheetId, entry.id);
       }}/>);
     };
     return (

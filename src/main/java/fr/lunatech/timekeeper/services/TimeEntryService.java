@@ -19,6 +19,7 @@ package fr.lunatech.timekeeper.services;
 import fr.lunatech.timekeeper.gauges.TimeEntriesNumberPerHoursGauge;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.resources.exceptions.CreateResourceException;
+import fr.lunatech.timekeeper.resources.exceptions.DeleteResourceException;
 import fr.lunatech.timekeeper.services.requests.TimeEntryRequest;
 import io.quarkus.security.ForbiddenException;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
+import javax.ws.rs.NotFoundException;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -68,5 +70,28 @@ public class TimeEntryService {
     Optional<TimeEntry> findById(Long id, AuthenticationContext ctx) {
         return TimeEntry.<TimeEntry>findByIdOptional(id)
                 .filter(ctx::canAccess);
+    }
+
+
+    @Transactional
+    public Optional<Long> deleteTimeEntry(Long timeSheetId, Long timeEntryId, AuthenticationContext ctx) {
+        Optional<TimeEntry> timeEntryOptional = findById(timeEntryId, ctx);
+
+        if (!timeEntryOptional.isPresent()) {
+            throw new NotFoundException("The time entry not found for TimeEntryId [ " + timeEntryId + " ] and TimeSheetId [ " + timeSheetId + " ]");
+        }
+
+        try {
+            var timeEntry = timeEntryOptional.get();
+
+            if (!ctx.canAccess(timeEntry)) {
+                throw new ForbiddenException("The time entry can not be deleted because of authentication failed or access denied");
+            }
+            timeEntry.delete();
+        } catch (PersistenceException e) {
+            throw new DeleteResourceException("The user can't delete time entry with Id [ " + timeEntryId + " ], from the time sheet with Id [ " + timeSheetId + " ]", e);
+        }
+
+        return Optional.of(timeEntryId);
     }
 }
