@@ -17,18 +17,18 @@
 package fr.lunatech.timekeeper.services.exports;
 
 import fr.lunatech.timekeeper.csv.ImportedTimeEntry;
+import fr.lunatech.timekeeper.models.Client;
+import fr.lunatech.timekeeper.models.Organization;
 import fr.lunatech.timekeeper.models.Project;
+import fr.lunatech.timekeeper.models.User;
 import fr.lunatech.timekeeper.models.time.TimeEntry;
 import fr.lunatech.timekeeper.models.time.TimeSheet;
-import fr.lunatech.timekeeper.testcontainers.KeycloakTestResource;
-import io.quarkus.test.common.QuarkusTestResource;
-import io.quarkus.test.junit.QuarkusTest;
-import org.flywaydb.core.Flyway;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Tag;
+import fr.lunatech.timekeeper.timeutils.TimeUnit;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -92,6 +92,5 @@ class ExportServiceTest {
 
         assertEquals(exportService.importedTimeEntryToTogglCsvLine(importedTimeEntry), expected);
     }
-
 
 }
