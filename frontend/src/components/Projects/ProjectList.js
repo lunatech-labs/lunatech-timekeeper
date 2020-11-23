@@ -188,7 +188,8 @@ const ProjectList = () => {
           id="tk_Card_Sm"
           bordered={false}
           title={
-            <Space size={'middle'}>
+            <div>
+              <a className="tk_Link_Project" href={`/projects/${item.id}`}></a>
               <Avatar src={getLogoURL(item)} shape={'square'} size="large"/>
               <div className="tk_Card_ProjectHeader">
                 <div className="tk_Card_ProjectTitle">
@@ -198,7 +199,7 @@ const ProjectList = () => {
                   {item.publicAccess ? <UnlockOutlined/> :
                     <LockFilled/>}<span>{item.publicAccess ? ' Public' : ' Private project'}</span></span>
               </div>
-            </Space>
+            </div>
           }
           extra={[
             <span key='editKey'>{canEditOneProject(item)? <Tooltip title="Edit this project" key="edit">
@@ -209,9 +210,8 @@ const ProjectList = () => {
           actions={[item.users.length === 0 ? <Panel id="tk_ProjectNoCollapse" key="projectList" header={<Space
             size="small"><UserOutlined/><Pluralize label="member" size={item.users.length}/></Space>}/> :
             <Collapse bordered={false} expandIconPosition={'right'} key="projects">
-              <Panel header={<Space
-                size="small"><UserOutlined/>{item.users.length}{item.users.length <= 1 ? 'member' : 'members'}</Space>}
-              key="members">
+              <Panel header={
+                <Space size="small"><UserOutlined/>{item.users.length}{item.users.length <= 1 ? 'member' : 'members'}</Space>}key="members">
                 <List
                   id={'tk_ProjectMembers'}
                   dataSource={sortMember(item.users)}
@@ -226,11 +226,7 @@ const ProjectList = () => {
           ]}
         >
           {
-            <div className="descriptionBox">
-              <a className="descriptionLink" href={`/projects/${item.id}`}>
-                <Meta description={item.description}/>
-              </a>
-            </div>
+            <Meta description={item.description}/>
           }
         </Card>
       </List.Item>

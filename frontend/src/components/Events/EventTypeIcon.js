@@ -15,25 +15,32 @@
  */
 
 import React from 'react';
+import {UserOutlined, BankOutlined} from '@ant-design/icons';
 import PropTypes from 'prop-types';
-import './CardWeekCalendar.less';
-const CardWeekCalendar = ( {children, onClick, onMouseOver, onMouseLeave} ) => {
-  return (
-    <div className="tk_CardWeekCalendar" onClick={onClick} onMouseOver={onMouseOver} onMouseLeave={onMouseLeave}>
-      {children}
-    </div>
-  );
+import './EvenTypeIcon.less';
+
+const EventTypeIcon = ({iconName, text}) => {
+  if(iconName === 'UserOutlined'){
+    return (
+      <div className="tk_EventType_InnerChoice">
+        <UserOutlined />
+        <p>{text}</p>
+      </div>
+    );
+  }
+  if(iconName === 'BankOutlined'){
+    return (
+      <div className="tk_EventType_InnerChoice">
+        <BankOutlined />
+        <p>{text}</p>
+      </div>
+    );
+  }
 };
 
-CardWeekCalendar.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node
-  ]).isRequired,
-  disabled: PropTypes.bool,
-  onMouseOver: PropTypes.func,
-  onMouseLeave: PropTypes.func,
-  onClick: PropTypes.func
+EventTypeIcon.propTypes = {
+  iconName: PropTypes.string,
+  text: PropTypes.string
 };
 
-export default CardWeekCalendar;
+export default EventTypeIcon;

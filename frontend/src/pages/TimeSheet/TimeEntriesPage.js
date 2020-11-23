@@ -20,34 +20,15 @@ import {useLocation} from 'react-router';
 import queryString from 'query-string';
 import moment from 'moment';
 import MainPage from '../MainPage/MainPage';
-import WeekCalendar from '../../components/TimeSheet/WeekCalendar';
-import TimeEntry from '../../components/TimeEntry/TimeEntry';
+import WeekCalendar from '../../components/TimeSheet/WeekCalendar/WeekCalendar';
 import {useTimeKeeperAPI} from '../../utils/services';
-import {Alert, Badge, Form, Modal} from 'antd';
+import {Alert, Form, Modal} from 'antd';
 import TimeEntryForm from '../../components/TimeEntry/TimeEntryForm';
 import UserTimeSheetList from '../../components/TimeSheet/UserTimeSheetList';
-import MonthCalendar from '../../components/TimeSheet/MonthCalendar';
+import MonthCalendar from '../../components/TimeSheet/MonthCalendar/MonthCalendar';
 import CalendarSelectionMode from '../../components/TimeSheet/CalendarSelectionMode';
 import {getIsoMonth, isNotPublicHoliday, isNotWeekEnd} from '../../utils/momentUtils';
-
-//https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-an-array-of-objects/34890276#34890276
-const groupBy = function (xs, key) {
-  return xs.reduce(function (rv, x) {
-    (rv[key(x)] = rv[key(x)] || []).push(x);
-    return rv;
-  }, {});
-};
-
-const computeData = (timeSheets) => Object.entries(groupBy(timeSheets.flatMap(({entries, project}) => entries.map(x => ({
-  ...x,
-  project
-}))), entry => moment(entry.startDateTime).format('YYYY-MM-DD'))).map(([key, value]) => {
-  return ({
-    data: value,
-    date: moment(key),
-    disabled: false
-  });
-});
+import {groupBy} from '../../utils/jsFunctionUtils';
 
 const TimeEntriesPage = () => {
   const history = useHistory();
@@ -55,7 +36,6 @@ const TimeEntriesPage = () => {
   const [calendarMode, setCalendarMode] = useState('week');
   const firstDayOfCurrentWeek = moment().utc().startOf('week');
   const [contextDate, setContextDate] = useState(firstDayOfCurrentWeek);
-  const today = () => firstDayOfCurrentWeek.clone();
   const [prefixWeekUrl, setPrefixWeekUrl] = useState(() => {
     if (location.search) {
       let searchParams = queryString.parse(location.search);
@@ -120,7 +100,12 @@ const TimeEntriesPage = () => {
 
   const timeSheets = calendarMode === 'week' ?
     (weekData.data && !weekData.loading ? weekData.data.sheets : []) : (monthData.data && !monthData.loading ? monthData.data.sheets : []);
-  const days = computeData(timeSheets);
+
+  const timeEntriesData = (timeSheets) => Object.entries(
+    groupBy(timeSheets.flatMap(({entries, project}) => entries.map(x => ({...x, project}))), entry => entry.startDateTime))
+    .map(([date, timeEntry]) => {
+      return ({ data: timeEntry, date: moment(date), disabled: false});
+    });
 
   const publicHolidays = calendarMode === 'week' ?
     (weekData.data && !weekData.loading ? weekData.data.publicHolidays : []) : (monthData.data && !monthData.loading ? monthData.data.publicHolidays : []);
@@ -128,31 +113,11 @@ const TimeEntriesPage = () => {
   const userEvents = calendarMode === 'week' ?
     (weekData.data && !weekData.loading ? weekData.data.userEvents : []) : (monthData.data && !monthData.loading ? monthData.data.userEvents : []);
 
-  const datas = {
-    firstDayOfWeek: weekData.data ? moment.utc(weekData.data.firstDayOfWeek) : today(),
-    days: days
-  };
-
-  const entriesOfSelectedDay = days.filter(day => day.date.format('YYYY-MM-DD') === taskMoment.format('YYYY-MM-DD'));
+  const entriesOfSelectedDay = timeEntriesData(timeSheets).filter(day => day.date.format('YYYY-MM-DD') === taskMoment.format('YYYY-MM-DD'));
 
   const resetForm = () => form.resetFields();
   const openModal = () => setVisibleEntryModal(true);
   const closeModal = () => setVisibleEntryModal(false);
-
-  const convertDateTimeToDate = (dateTime) => moment(moment(dateTime).format('YYYY-MM-DD'), 'YYYY-MM-DD');
-
-  const getEventsOnDate = (date) => userEvents.filter(userEvent =>
-    date.isBetween(
-      convertDateTimeToDate(userEvent.startDateTime).subtract(1, 'second'),
-      convertDateTimeToDate(userEvent.endDateTime).add(1, 'day')
-    )
-  );
-
-  // A day without entries in the past should be displayed with "warn" design
-  const hasWarnNoEntryInPastDay = (date, day) => {
-    const hasEventOnThisDate = getEventsOnDate(date).length > 0;
-    return moment().subtract('1', 'days').isAfter(date) && !day && !hasEventOnThisDate;
-  };
 
   const onClickAddTask = (e, m) => {
     setTaskMoment(m);
@@ -168,18 +133,19 @@ const TimeEntriesPage = () => {
     }
   };
 
-  const onClickEntryCard = (e, m, selectedEntryId) => {
+  const onClickEntryCard = (mouseEvent, dateAsMoment, selectedEntryId) => {
     setSelectedEntryId(selectedEntryId);
-    setTaskMoment(m);
+    setTaskMoment(dateAsMoment);
     setEditMode();
     openModal();
-    e.stopPropagation();
+    mouseEvent.stopPropagation();
   };
 
-  const removeDuplicatesElementAndSort = (array) => {
-    const set = new Set(array);
-    const arraySorted = [...set].sort((a, b) => a.localeCompare(b));
-    return arraySorted;
+  const onSuccessTimeEntries = () => {
+    closeModal();
+    weekData.run();
+    monthData.run();
+    setViewMode();
   };
 
   const setViewMode = () => setMode('view');
@@ -188,30 +154,32 @@ const TimeEntriesPage = () => {
 
   const timeEntryForm = () => {
     if (selectedEntryId && mode === 'edit') {
-      return <TimeEntryForm selectedEntryId={selectedEntryId} setMode={setMode}
-        entries={entriesOfSelectedDay.map(entries => entries.data)} currentDay={taskMoment}
-        userEvents={userEvents} form={form} mode={mode}
-        onSuccess={() => {
-          closeModal();
-          weekData.run();
-          monthData.run();
-          setViewMode();
-        }} onCancel={() => setViewMode()}
+      return <TimeEntryForm
+        mode={mode}
+        setMode={setMode}
+        selectedEntryId={selectedEntryId}
+        entries={entriesOfSelectedDay.map(entries => entries.data)}
+        currentDay={taskMoment}
+        userEvents={userEvents}
+        form={form}
+        onSuccess={onSuccessTimeEntries}
+        onCancel={() => setViewMode()}
       />;
     }
-    return <TimeEntryForm setMode={setMode} entries={entriesOfSelectedDay.map(entries => entries.data)}
-      userEvents={userEvents} currentDay={taskMoment} form={form} mode={mode}
-      onSuccess={() => {
-        closeModal();
-        weekData.run();
-        monthData.run();
-        setViewMode();
-      }} onCancel={() => setViewMode()}
+    return <TimeEntryForm
+      mode={mode}
+      setMode={setMode}
+      entries={entriesOfSelectedDay.map(entries => entries.data)}
+      userEvents={userEvents}
+      currentDay={taskMoment}
+      form={form}
+      onSuccess={onSuccessTimeEntries}
+      onCancel={() => setViewMode()}
     />;
   };
 
   return (
-    <MainPage title="Time entries">
+    <MainPage>
       <Modal
         visible={visibleEntryModal}
         onCancel={closeModal}
@@ -227,44 +195,23 @@ const TimeEntriesPage = () => {
       {
         calendarMode === 'week' ?
           <WeekCalendar
-            onDateChange={setContextDate}
-            firstDay={contextDate}
-            disabledWeekEnd={true}
-            hiddenButtons={false}
-            onPanelChange={(id, start) => setPrefixWeekUrl(start.year() + '?weekNumber=' + start.isoWeek())}
             onClickButton={onClickAddTask}
             onClickCard={onClickCard}
-            dateCellRender={(data, date) => {
-              return (
-                <div>
-                  {data.filter(data => !!data).map(entry => {
-                    return (
-                      <TimeEntry key={entry.id} entry={entry}
-                        onClick={e => onClickEntryCard(e, date, entry.id)}/>
-                    );
-                  })}
-                </div>
-              );
-            }}
-            days={datas.days}
+            onClickEntryCard={onClickEntryCard}
+            onPanelChange={(id, start) => setPrefixWeekUrl(start.year() + '?weekNumber=' + start.isoWeek())}
+            onDateChange={setContextDate}
             publicHolidays={publicHolidays}
+            firstDay={contextDate}
+            timeEntriesData={timeEntriesData(timeSheets)}
+            disabledWeekEnd={true}
             userEvents={userEvents}
-            warningCardPredicate={hasWarnNoEntryInPastDay}
           /> :
           <MonthCalendar
             contextDate={contextDate}
             onDateChange={(date) => setContextDate(date.utc().startOf('week'))}
-            onClickButton={onClickAddTask}
-            days={datas.days}
-            dateCellRender={(data, date) => {
-              const projectsName = data.filter(data => !!data).map(item => item.project.name);
-              return removeDuplicatesElementAndSort(projectsName).map(item =>
-                <div key={`badge-entry-project-${item}-${date.format('YYYY-MM-DD')}`}>
-                  <Badge status='success' text={item}/>
-                </div>);
-            }}
+            onClickPlusButton={onClickAddTask}
+            timeEntriesData={timeEntriesData(timeSheets)}
             disabledWeekEnd={true}
-            warningCardPredicate={hasWarnNoEntryInPastDay}
             onPanelChange={(date) => {
               setPrefixMonthUrl(`${date.year()}/month?monthNumber=${getIsoMonth(date)}`);
             }}

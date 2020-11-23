@@ -24,12 +24,9 @@ import PropTypes from 'prop-types';
 import {useTimeKeeperAPI} from '../../utils/services';
 import {UserProvider} from '../../context/UserContext';
 
-
-const {Title} = Typography;
-
 const {Content, Footer} = Layout;
 
-const MainPage = ({title, children, actions, entityName, ...rest}) => {
+const MainPage = ({children, actions, entityName, ...rest}) => {
   const {data, error, loading} = useTimeKeeperAPI('/api/users/me');
 
   const [collapsed, toggle] = useState(false);
@@ -61,7 +58,6 @@ const MainPage = ({title, children, actions, entityName, ...rest}) => {
             <div className="tk_MainContent_Header">
               <div className="tk_MainContent_HeaderLeft">
                 <Breadcrumbs entityName={entityName}/>
-                <Title id="title">{title}</Title>
               </div>
               <div>{actions}</div>
             </div>
@@ -69,7 +65,7 @@ const MainPage = ({title, children, actions, entityName, ...rest}) => {
               {children}
             </div>
           </Content>
-          <Footer className="tk_Footer">TimeKeeper ©2020 Lunatech</Footer>
+          <Footer id="tk_Footer">TimeKeeper ©2020 Lunatech</Footer>
         </Layout>
       </UserProvider>
     </Layout>
@@ -77,7 +73,6 @@ const MainPage = ({title, children, actions, entityName, ...rest}) => {
 };
 
 MainPage.propTypes = {
-  title: PropTypes.string,
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node

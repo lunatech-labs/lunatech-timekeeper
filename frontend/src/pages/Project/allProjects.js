@@ -26,10 +26,7 @@ const ProjectsPage = () => {
   const isAdmin = keycloak.hasRealmRole('admin');
   const actions = isAdmin && <Link id="btnAddProject" className="tk_Btn tk_BtnPrimary" key='addLink' to={'/projects/new'}>Add a project</Link>;
   return (
-    <MainPage
-      title={'List of projects'}
-      actions={actions}
-    >
+    <MainPage actions={actions}>
       <ProjectList/>
     </MainPage>
   );
