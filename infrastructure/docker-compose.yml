@@ -34,11 +34,3 @@ services:
     ports:
       - 1026:1025
       - 8026:8025
-
-  monitoring:
-    image: "prom/prometheus"
-    container_name: "monitoring"
-    ports:
-      - 9090:9090
-    volumes:
-      - ./monitoring/prometheus/prometheus-dev.yml:/etc/prometheus/prometheus.yml
